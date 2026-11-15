@@ -1,5 +1,5 @@
 // The document engine of BIZOMAT Finance: one renderer for quotes, invoices, credit notes, bills, purchase orders and
-// expense claims. The live preview and the PDF a person downloads, prints or sends are the same bytes from this file
+// expense claims, and for the ERP's purchase orders and requests for quotation (src/worker/erp/print.ts). The live preview and the PDF a person downloads, prints or sends are the same bytes from this file
 // (the preview shows the PDF itself), so they cannot differ.
 //
 // A4, portrait or landscape; the standard PDF typefaces (Helvetica, Times, Courier: no external font files); the
@@ -10,7 +10,7 @@ import { PDFDocument, StandardFonts, degrees, rgb, type PDFFont, type PDFPage, t
 import { pdfSafe } from '../services/reports/pdf';
 import { formatMoney } from '../../shared/crm/money';
 
-export type RenderKind = 'quote' | 'invoice' | 'credit_note' | 'bill' | 'purchase_order' | 'expense_claim';
+export type RenderKind = 'quote' | 'invoice' | 'credit_note' | 'bill' | 'purchase_order' | 'expense_claim' | 'rfq';
 
 export interface RenderLine {
   kind: 'item' | 'heading';
@@ -234,7 +234,7 @@ export function documentTitle(kind: RenderKind, gstOnIt: boolean, tpl: RenderTem
   }
   if (kind === 'quote') return tpl?.quote_title || 'Quote';
   if (kind === 'credit_note') return tpl?.credit_note_title || 'Credit note';
-  return { bill: 'Bill', purchase_order: 'Purchase order', expense_claim: 'Expense claim' }[kind];
+  return { bill: 'Bill', purchase_order: 'Purchase order', expense_claim: 'Expense claim', rfq: 'Request for quotation' }[kind];
 }
 
 export async function documentPdf(i: RenderInput): Promise<Uint8Array> {
@@ -277,7 +277,7 @@ export async function documentPdf(i: RenderInput): Promise<Uint8Array> {
     p.text(s, M.left, y, { size: 8.5, color: SLATE });
     y -= 11;
   }
-  const dueLabel = d.kind === 'quote' ? 'Valid until' : d.kind === 'purchase_order' ? 'Delivery' : 'Due';
+  const dueLabel = d.kind === 'quote' ? 'Valid until' : d.kind === 'purchase_order' ? 'Delivery' : d.kind === 'rfq' ? 'Reply by' : 'Due';
   const meta: [string, string][] = [
     ['Date', fmtDate(d.issueDate)],
     ...(d.dueDate && d.kind !== 'credit_note' ? ([[dueLabel, fmtDate(d.dueDate)]] as [string, string][]) : []),
@@ -308,7 +308,7 @@ export async function documentPdf(i: RenderInput): Promise<Uint8Array> {
   if (d.deliveryAddress) {
     let dy = startY;
     const dx = M.left + p.width / 2;
-    p.text((d.kind === 'purchase_order' ? 'Deliver to' : 'Delivery address').toUpperCase(), dx, dy, { size: 7.5, bold: true, color: SLATE });
+    p.text((d.kind === 'purchase_order' || d.kind === 'rfq' ? 'Deliver to' : 'Delivery address').toUpperCase(), dx, dy, { size: 7.5, bold: true, color: SLATE });
     dy -= 13;
     for (const s of d.deliveryAddress.split('\n')) {
       p.text(s, dx, dy, { size: 9.5 });
@@ -322,17 +322,26 @@ export async function documentPdf(i: RenderInput): Promise<Uint8Array> {
   const hasCode = d.lines.some((l) => l.kind === 'item' && l.itemCode);
   const hasUnit = d.lines.some((l) => l.kind === 'item' && l.unit);
   const hasDisc = d.lines.some((l) => l.kind === 'item' && l.discountBp);
-  const showGst = i.gst && d.taxMode !== 'none';
+  // A request for quotation carries no prices: two empty columns for the supplier to fill in instead.
+  const rfq = d.kind === 'rfq';
+  const showGst = i.gst && d.taxMode !== 'none' && !rfq;
   type Col = { key: string; label: string; w: number; align: 'left' | 'right' };
   const fixed: Col[] = [
     ...(hasCode ? [{ key: 'code', label: 'Code', w: 58, align: 'left' as const }] : []),
     { key: 'desc', label: 'Description', w: 0, align: 'left' },
     { key: 'qty', label: 'Qty', w: 40, align: 'right' },
     ...(hasUnit ? [{ key: 'unit', label: 'Unit', w: 38, align: 'left' as const }] : []),
-    { key: 'price', label: 'Unit price', w: 70, align: 'right' },
-    ...(hasDisc ? [{ key: 'disc', label: 'Disc.', w: 36, align: 'right' as const }] : []),
-    ...(showGst ? [{ key: 'gst', label: 'GST', w: 36, align: 'right' as const }] : []),
-    { key: 'amount', label: d.taxMode === 'inclusive' ? 'Amount incl.' : 'Amount', w: 78, align: 'right' },
+    ...(rfq
+      ? [
+          { key: 'your_price', label: 'Your unit price', w: 84, align: 'right' as const },
+          { key: 'your_lead', label: 'Lead time', w: 62, align: 'right' as const },
+        ]
+      : [
+          { key: 'price', label: 'Unit price', w: 70, align: 'right' as const },
+          ...(hasDisc ? [{ key: 'disc', label: 'Disc.', w: 36, align: 'right' as const }] : []),
+          ...(showGst ? [{ key: 'gst', label: 'GST', w: 36, align: 'right' as const }] : []),
+          { key: 'amount', label: d.taxMode === 'inclusive' ? 'Amount incl.' : 'Amount', w: 78, align: 'right' as const },
+        ]),
   ];
   const used = fixed.reduce((n, c) => n + c.w, 0);
   const cols = fixed.map((c) => (c.key === 'desc' ? { ...c, w: p.width - used } : c));
@@ -395,6 +404,7 @@ export async function documentPdf(i: RenderInput): Promise<Uint8Array> {
     if (d.amountPaid - credited) totals.push([d.kind === 'credit_note' ? 'Used' : 'Paid', money(-(d.amountPaid - credited)), false]);
     totals.push([d.kind === 'credit_note' ? 'Credit remaining' : 'Amount due', money(d.amountDue), true]);
   }
+  if (rfq) totals.length = 0;
   p.ensure(totals.length * 16 + 24);
   p.y -= 6;
   for (const [k, v, strong] of totals) {

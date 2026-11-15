@@ -41,17 +41,24 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   orders, technicians, labour timer, photos and documents) is built and tested at `/erp/c/<company>/maintenance`;
   M2 to M4 (preventive maintenance, readings, inspections, parts, scanning, sites, AI scheduling, reliability, offline)
   are planned. **ERP Release 1** (owner's brief of 14 Nov 2026; `docs/erp/release-1.md`, status by release in
-  `docs/erp/STATUS.md`; built on the branch `erp-release-1`, live only once merged and deployed): the product master
+  `docs/erp/STATUS.md`; merged and deployed 14 Nov 2026): the product master
   with variants, revisions with change requests and change orders (approval and release with segregation of duties),
   multi-level bills of materials, engineering documents (files or CAD references, never claimed to be on the server),
   the supplier master (ABN "format checked", linked to Finance, never copied) and their reports, at
-  `/erp/c/<company>/products` and `/procurement`; purchase orders, receiving and supplier performance are Release 2.
+  `/erp/c/<company>/products` and `/procurement`. **ERP Release 2** (`docs/erp/release-2.md`; built on the branch
+  `erp-release-2`, live only once merged and deployed; migration 0021): requisitions, requests for quotation with the
+  comparison, purchase orders (approval limits, amendments, PDF; emailing the PDF is not built), goods receipts,
+  supplier performance and one draft bill in Finance per receipt (through Finance's `createDoc`, never writing `fin_*`
+  directly), at `/procurement`; inventory (warehouses and locations, stock by lot and serial, an append-only movement
+  ledger, reservations, returns, quarantine, scrap, adjustments, counts, weighted average or FIFO valuation, QR labels,
+  a warehouse screen for phones) at `/erp/c/<company>/inventory`; warehouse manager and operator roles. Stock value is
+  **not** posted to Finance's ledger: it is recorded as planned (Release 3); never call it posted.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
-  removed (and made again only on request) in Administration. **Operations** beyond Release 1 (purchase orders and
-  receiving, inventory, manufacturing, routings, quality, supply chain) is **planned, not built**: the Operations page
-  lists it as Planned; never present it as working. The design preview is retired (owner, 14 Nov 2026: no links to previews or demos anywhere): not built into
+  removed (and made again only on request) in Administration. **Operations** beyond Releases 1 and 2 (manufacturing,
+  routings, quality, supply chain, stock postings to Finance) is **planned, not built**: the Operations page lists it
+  as Planned; never present it as working. The design preview is retired (owner, 14 Nov 2026: no links to previews or demos anywhere): not built into
   the image, and `/system-preview/` and `/erp-design-preview/` answer 301 to `/systems/erp/`. The platform
   console is `/erp/admin` (platform admins only).
   **Systems** (owner, 14 Nov 2026): the public catalogue of the software at `bizomat.ai/systems/`
@@ -59,7 +66,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `/systems/erp/`), BIZOMAT CRM (Customer Management System, `/systems/crm/`), BIZOMAT Finance (Finance Management
   System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
   Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, own sign-in
-  for now) and BIZOMAT Manufacturing and Operations (planned, `/systems/manufacturing/`). The old product pages
+  for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`: Maintenance works in the ERP today,
+  Procurement and Inventory once Release 2 is deployed; manufacturing, quality and supply chain are planned). The old product pages
   (`/work/`, `/cad-automation/`, `/crm-platform/`, `/finance-platform/`, their guides, `/products/`) answer 301 there
   (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."

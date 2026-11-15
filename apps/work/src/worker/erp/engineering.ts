@@ -14,6 +14,7 @@ import { HttpError, body, newId, notFound, now } from '../lib/util';
 import { can, requireErp, type ErpAccess } from './access';
 import { TYPE_LABELS, badState, changed, csvResponse, dollars, eventStmt, historyOf, validDate, wantsCsv, zDate, zId, zQty, zText } from './util';
 import { loadProduct } from './products';
+import { availableByProduct } from './stock';
 
 export const engineeringRoutes = new Hono<AppEnv>();
 
@@ -190,10 +191,13 @@ engineeringRoutes.get('/c/:company/revisions/:id', async (c) => {
   const db = c.env.DB;
   const r = await loadRevision(db, a.companyId, c.req.param('id'));
   const lines = await linesOf(db, a.companyId, r.id);
+  // Stock of each component (Release 2): available outside quarantine, less reservations.
+  const stock = can(a, 'inventory.view') ? await availableByProduct(db, a.companyId, lines.map((l: any) => l.component_id)) : null;
   return c.json({
     revision: revisionDTO(r),
     product: { id: r.product_id, number: r.product_number, name: r.product_name },
-    lines: lines.map(lineDTO),
+    lines: lines.map((l: any) => ({ ...lineDTO(l), available: stock ? (stock.get(l.component_id)?.available ?? 0) : null })),
+    showsStock: !!stock,
     editable: editable(r),
     can: { edit: can(a, 'products.edit') && editable(r) },
     history: await historyOf(db, a.companyId, { entityType: 'revision', entityId: r.id }, 50),
@@ -523,13 +527,34 @@ engineeringRoutes.get('/c/:company/revisions/:id/explosion', async (c) => {
   const r = await loadRevision(db, a.companyId, c.req.param('id'));
   const asOf = c.req.query('asOf');
   const { nodes, truncated } = await explode(db, a.companyId, r.id, asOf && validDate(asOf) ? asOf : null);
+  // Availability for a chosen build quantity (Release 2): each component's available stock against what the build needs
+  // (extended quantity times the build quantity). A shortage is flagged per line; a component used on several lines is
+  // also flagged when its lines together need more than is available.
+  const build = Math.min(Math.max(Number(c.req.query('quantity')) || 1, 0.001), 1e9);
+  const stock = can(a, 'inventory.view') ? await availableByProduct(db, a.companyId, nodes.map((n) => n.componentId)) : null;
+  const needed = new Map<string, number>();
+  for (const n of nodes) if (!n.optional) needed.set(n.componentId, (needed.get(n.componentId) ?? 0) + n.extendedQuantity * build);
+  const rows = nodes.map((n) => {
+    if (!stock) return { ...n, required: null, available: null, shortage: null };
+    const available = stock.get(n.componentId)?.available ?? 0;
+    const required = Math.round(n.extendedQuantity * build * 1e6) / 1e6;
+    return { ...n, required, available, shortage: !n.optional && (available + 1e-9 < required || available + 1e-9 < (needed.get(n.componentId) ?? 0)) };
+  });
   if (wantsCsv(c)) {
     return csvResponse(`bom-${r.product_number}-rev-${r.label}`, [
-      ['Level', 'Position', 'Number', 'Name', 'Type', 'Revision', 'Quantity', 'Unit', 'Scrap %', 'Extended quantity', 'Optional', 'Alternative group', 'Reference', 'Standard cost', 'Currency', 'No released revision'],
-      ...nodes.map((n) => [n.level, n.path, n.number, n.name, n.typeLabel, n.revision ?? '', n.quantity, n.uom, n.scrapPct, n.extendedQuantity, n.optional ? 'yes' : '', n.altGroup, n.refDesignator, dollars(n.unitCostCents), n.currency, n.noRelease ? 'yes' : '']),
+      ['Level', 'Position', 'Number', 'Name', 'Type', 'Revision', 'Quantity', 'Unit', 'Scrap %', 'Extended quantity', 'Optional', 'Alternative group', 'Reference', 'Standard cost', 'Currency', 'No released revision', ...(stock ? [`Required for ${build}`, 'Available', 'Shortage'] : [])],
+      ...rows.map((n) => [n.level, n.path, n.number, n.name, n.typeLabel, n.revision ?? '', n.quantity, n.uom, n.scrapPct, n.extendedQuantity, n.optional ? 'yes' : '', n.altGroup, n.refDesignator, dollars(n.unitCostCents), n.currency, n.noRelease ? 'yes' : '', ...(stock ? [n.required ?? '', n.available ?? '', n.shortage ? 'yes' : ''] : [])]),
     ]);
   }
-  return c.json({ revision: revisionDTO(r), product: { id: r.product_id, number: r.product_number, name: r.product_name }, nodes, truncated, availability: 'Component availability comes with Inventory (Release 2).' });
+  return c.json({
+    revision: revisionDTO(r),
+    product: { id: r.product_id, number: r.product_number, name: r.product_name },
+    nodes: rows,
+    truncated,
+    buildQuantity: build,
+    shortages: rows.filter((n) => n.shortage).length,
+    availability: stock ? 'Available: on hand outside quarantine, less reservations, in every warehouse. Required: extended quantity times the build quantity.' : 'Your ERP role does not include stock.',
+  });
 });
 
 engineeringRoutes.get('/c/:company/revisions/:id/cost', async (c) => {

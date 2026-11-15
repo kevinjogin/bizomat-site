@@ -267,6 +267,6 @@ reportRoutes.get('/c/:company/reports/suppliers', async (c) => {
   return c.json({
     byStatus: SUPPLIER_STATUS.map((st) => ({ value: st, label: SUPPLIER_LABELS[st], n: rows.results.filter((s) => s.status === st).length })),
     rows: rows.results.slice(0, 500).map((s) => ({ id: s.id, number: s.number, name: s.trading_name || s.legal_name, legalName: s.legal_name, category: s.category, status: s.status, statusLabel: SUPPLIER_LABELS[s.status as keyof typeof SUPPLIER_LABELS], products: s.products, preferred: s.preferred, financeLinked: !!s.fin_contact_id, leadTimeDays: s.lead_time_days, paymentTermsDays: s.payment_terms_days })),
-    performance: 'Measured from purchase orders (Release 2)',
+    performance: 'Measured from goods receipts: see the supplier delivery performance report.',
   });
 });

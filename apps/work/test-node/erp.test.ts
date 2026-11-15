@@ -43,7 +43,8 @@ describe('migration 0020', () => {
     applyMigrations(db, all.filter((x) => x.name < '0020'));
     const schema = () => db.prepare("SELECT type, name, sql FROM sqlite_master WHERE name NOT LIKE 'erp_%' AND name NOT LIKE 'sqlite_%' ORDER BY type, name").all();
     const before = schema();
-    expect(applyMigrations(db, all)).toContain(m.name);
+    // Up to 0020 (test-node/erp-r2.test.ts checks 0021 the same way).
+    expect(applyMigrations(db, all.filter((x) => x.name <= m.name))).toContain(m.name);
     expect(schema()).toEqual(before);
     const erpTables = (db.prepare("SELECT name FROM sqlite_master WHERE type = 'table' AND name LIKE 'erp_%' ORDER BY name").all() as { name: string }[]).map((r) => r.name);
     expect(erpTables).toEqual([

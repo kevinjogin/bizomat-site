@@ -40,6 +40,49 @@
 .erp-roles td { vertical-align: top; }
 .erp-report-tabs { overflow-x: auto; }
 
+/* Release 2: purchasing and inventory. */
+.mt-head > div:first-child { min-width: 0; }
+.mt-head .mt-title { overflow-wrap: anywhere; }
+.mt-badges .badge { white-space: normal; text-align: left; }
+.erp-compare tbody th { text-transform: none; letter-spacing: normal; font-weight: 500; color: var(--text); }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 14px; }
+.form-grid .span-2, .form-grid > label.span-2 { grid-column: span 2; }
+.erp-stat { display: grid; gap: 2px; }
+.erp-stat strong { font-size: 20px; font-variant-numeric: tabular-nums; }
+.erp-lines td { vertical-align: top; }
+.erp-lines .input, .erp-lines .select { min-width: 0; }
+.erp-qty-input { width: 92px; text-align: right; }
+.erp-unit-input { width: 72px; }
+.erp-money-input { width: 104px; text-align: right; }
+.erp-checks { border: 0; margin: 0 0 12px; padding: 0; display: grid; gap: 6px; }
+.erp-checks label { gap: 8px; align-items: center; }
+.erp-compare th, .erp-compare td { vertical-align: top; }
+.erp-compare thead th { min-width: 140px; }
+.erp-best { color: var(--success); font-weight: 600; }
+.erp-total th, .erp-total td { border-top: 2px solid var(--border); }
+.erp-neg { color: var(--danger); }
+.erp-receive-line { margin: 0; }
+.erp-receive-line legend { padding: 0 4px; }
+.erp-toggle { gap: 6px; }
+.erp-labels { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+.erp-label { margin: 0; padding: 10px; border: 1px dashed var(--border); border-radius: var(--radius); display: grid; justify-items: center; text-align: center; gap: 6px; break-inside: avoid; background: #fff; color: #0a1f33; }
+.erp-label img { width: 120px; height: 120px; }
+.erp-warehouse { max-width: 560px; }
+.erp-modes { gap: 6px; flex-wrap: wrap; }
+.erp-modes .btn { flex: 1 1 0; min-height: 44px; }
+.erp-scan-input { min-height: 48px; font-size: 18px; }
+.erp-scan-row { align-items: flex-end; gap: 8px; flex-wrap: wrap; }
+.erp-scan-row .btn { min-height: 48px; }
+.erp-step { margin: 0; font-size: 16px; }
+.erp-big { min-height: 52px; font-size: 17px; width: 100%; }
+.erp-big-choice { min-height: 40px; font-size: 15px; }
+.erp-camera { align-items: stretch; }
+.erp-camera-video { width: 100%; max-height: 50vh; border-radius: var(--radius); background: #000; }
+@media print {
+  .no-print, .sidebar, .topbar, .tabs, .page-header, .suite-rail { display: none !important; }
+  .erp-label { border-color: #999; }
+}
+
 @media (max-width: 760px) {
   .erp-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .data-table.responsive thead { display: none; }
@@ -51,4 +94,8 @@
   .data-table.responsive td:empty { display: none; }
   .erp-d1, .erp-d2, .erp-d3, .erp-d4, .erp-d5, .erp-d6 { padding-left: 12px; }
   .erp-bom td.num { text-align: left; }
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid .span-2, .form-grid > label.span-2 { grid-column: auto; }
+  .erp-lines .erp-qty-input, .erp-lines .erp-money-input, .erp-lines .erp-unit-input { width: 100%; text-align: left; }
+  .data-table.responsive td.num { text-align: left; }
 }

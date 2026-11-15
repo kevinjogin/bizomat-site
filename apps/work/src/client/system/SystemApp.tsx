@@ -31,6 +31,9 @@ const ProductsArea = lazy(() => import('./erp/Products').then((m) => ({ default:
 const ProcurementArea = lazy(() => import('./erp/Suppliers').then((m) => ({ default: m.ProcurementArea })));
 const ErpRolesPage = lazy(() => import('./erp/Roles').then((m) => ({ default: m.ErpRolesPage })));
 const ErpReportsArea = lazy(() => import('./erp/Reports').then((m) => ({ default: m.ErpReportsArea })));
+// ERP Release 2: /c/<company>/inventory and the purchasing and inventory settings.
+const InventoryArea = lazy(() => import('./erp/Inventory').then((m) => ({ default: m.InventoryArea })));
+const ErpSettingsPage = lazy(() => import('./erp/ErpSettings').then((m) => ({ default: m.ErpSettingsPage })));
 
 /** The ERP's products, engineering and supplier reports (src/client/system/erp/Reports.tsx keeps the same list). */
 const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
@@ -40,6 +43,16 @@ const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
   { key: 'where-used', label: 'Where used', what: 'Each component and the products that use it.' },
   { key: 'changes', label: 'Revisions and changes', what: 'Change orders, who approved and released them, and revisions by status.' },
   { key: 'suppliers', label: 'Supplier list', what: 'Suppliers by status and category, products supplied and the Finance link.' },
+  { key: 'purchase-commitments', label: 'Purchase commitments', what: 'What open purchase orders still owe.' },
+  { key: 'supplier-spend', label: 'Supplier spend', what: 'Orders placed and goods accepted per supplier.' },
+  { key: 'price-variance', label: 'Purchase price variance', what: 'Prices paid against standard costs.' },
+  { key: 'supplier-delivery', label: 'Supplier delivery', what: 'On time, in full and lead time from goods receipts.' },
+  { key: 'stock-on-hand', label: 'Stock on hand', what: 'Each product per warehouse, with its value.' },
+  { key: 'stock-valuation', label: 'Stock valuation', what: 'Quantity, unit cost and value per product.' },
+  { key: 'stock-movements', label: 'Stock movements', what: 'The movement ledger with its documents.' },
+  { key: 'stock-ageing', label: 'Stock ageing', what: 'How long stock has been held; lots expiring soon.' },
+  { key: 'slow-moving', label: 'Slow-moving stock', what: 'Stock with no issue for a while.' },
+  { key: 'shortages', label: 'Shortages', what: 'Below the reorder point or minimum.' },
 ];
 
 // ------------------------------------------------------------------ data
@@ -148,6 +161,7 @@ export function SystemRoutes() {
       {/* The module rail's Products and Engineering and the Operations page's Procurement: in the company used last. */}
       <Route path="/products/*" element={<CompanyRedirect section="products" />} />
       <Route path="/procurement/*" element={<CompanyRedirect section="procurement" />} />
+      <Route path="/inventory/*" element={<CompanyRedirect section="inventory" />} />
       <Route path="/operations" element={<Shell><Operations /></Shell>} />
       <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
       <Route path="/administration" element={<Shell><Administration /></Shell>} />
@@ -192,8 +206,8 @@ function MaintenanceRedirect() {
   return <Navigate to={`/c/${pick.id}/maintenance${location.pathname.replace(/^\/maintenance/, '')}${location.search}`} replace />;
 }
 
-/** /products and /procurement: the same section of the company used last, else the first one. */
-function CompanyRedirect({ section }: { section: 'products' | 'procurement' }) {
+/** /products, /procurement and /inventory: the same section of the company used last, else the first one. */
+function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' }) {
   const location = useLocation();
   const q = useMe();
   if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
@@ -237,6 +251,8 @@ function CompanyArea() {
         <Route path="procurement/*" element={<Suspense fallback={<Loading />}><ProcurementArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="erp-roles" element={<Suspense fallback={<Loading />}><ErpRolesPage companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="erp-reports/*" element={<Suspense fallback={<Loading />}><ErpReportsArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
+        <Route path="inventory/*" element={<Suspense fallback={<Loading />}><InventoryArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
+        <Route path="erp-settings" element={<Suspense fallback={<Loading />}><ErpSettingsPage companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="*" element={<Navigate to="home" replace />} />
       </Routes>
     </Shell>
@@ -275,6 +291,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             <NavLink to={`${base}/home`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="home" /> Dashboard</NavLink>
             <NavLink to={`${base}/products`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="diamond" /> Products and Engineering</NavLink>
             <NavLink to={`${base}/procurement`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="inbox" /> Procurement</NavLink>
+            <NavLink to={`${base}/inventory`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="layers" /> Inventory</NavLink>
             <NavLink to={`${base}/maintenance`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="wrench" /> Maintenance</NavLink>
             <NavLink to={`${base}/settings`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Company</NavLink>
           </>
@@ -546,8 +563,15 @@ function CompanyHome({ view }: { view: CompanyView }) {
         {c.role !== 'guest' ? (
           <Link to={`/c/${c.id}/procurement`} className="card card-pad co-tool-card sys-tool-card">
             <div className="row"><Icon name="inbox" /> <strong>Procurement</strong></div>
-            <p className="muted small">Suppliers: approval, contacts, the products they supply and the link to Finance.</p>
-            <p className="small">Purchase orders and receiving come with Release 2.</p>
+            <p className="muted small">Suppliers, requisitions, requests for quotation, purchase orders and goods receipts.</p>
+            <p className="small">{c.kind === 'demo' ? 'A requisition, two quotations to compare and a purchase order received into stock.' : 'Buy from approved suppliers, with approval limits and a draft bill in Finance.'}</p>
+          </Link>
+        ) : null}
+        {c.role !== 'guest' ? (
+          <Link to={`/c/${c.id}/inventory`} className="card card-pad co-tool-card sys-tool-card">
+            <div className="row"><Icon name="layers" /> <strong>Inventory</strong></div>
+            <p className="muted small">Warehouses and locations, stock by lot and serial, movements, counts and valuation.</p>
+            <p className="small">Receive, issue, move and count from a phone with the warehouse screen.</p>
           </Link>
         ) : null}
       </div>
@@ -767,12 +791,19 @@ const PLANNED: { name: string; icon: string; covers: string; today?: string; bad
   {
     name: 'Procurement',
     icon: 'inbox',
-    covers: 'Live now: the supplier master: suppliers with approval, hold and block by a procurement manager (segregation of duties), contacts, documents, the products each supplies with prices and lead times, ABN format check, and the link to the Finance supplier it is paid as.',
-    today: 'Planned (Release 2): purchase requisitions with approval, requests for quotation, purchase orders, receiving and supplier performance. Bills and payments stay in Finance and Accounting.',
-    badge: 'Partly live: suppliers',
-    live: { to: '/procurement', label: 'Open suppliers' },
+    covers: 'Live now: suppliers with approval (segregation of duties); purchase requisitions with approval; requests for quotation to approved suppliers with a PDF, recorded quotations and a comparison marking the cheapest and fastest; purchase orders with an approval limit, amendments with their history and a PDF; goods receipts with lots, serial numbers, expiry dates and damaged or rejected quantities; supplier performance from receipts; and one draft bill in Finance per receipt.',
+    today: 'Not yet: sending orders and requests by email with the PDF attached (download it and send it from your email, then record it as sent). Bills are approved and paid in Finance and Accounting.',
+    badge: 'Live',
+    live: { to: '/procurement', label: 'Open Procurement' },
   },
-  { name: 'Inventory and Warehouse', icon: 'archive', covers: 'Stock on hand by product, location and lot, movements, goods receipts, transfers, stock counts and valuation.' },
+  {
+    name: 'Inventory and Warehouse',
+    icon: 'layers',
+    covers: 'Live now: warehouses with a location tree (store, zone, rack, shelf, bin; quarantine, receiving and dispatch); stock by product, location, lot and serial; an append-only movement ledger; issues, transfers, reservations, quarantine, customer and supplier returns, scrap; adjustments with approval; stocktakes and cycle counts; weighted average or FIFO valuation; traceability; QR labels and a warehouse screen for phones.',
+    today: 'Planned: posting stock value to Finance’s ledger (Release 3; recorded as planned, nothing is posted), and inspection screens for goods flagged on receipt (Quality, Release 4).',
+    badge: 'Live',
+    live: { to: '/inventory', label: 'Open Inventory' },
+  },
   { name: 'Manufacturing', icon: 'settings', covers: 'Work orders with operations and materials, a planning board by work centre, and a shop-floor screen for reporting quantities and scrap.' },
   { name: 'Quality', icon: 'checkSquare', covers: 'Inspection plans and checklists, inspections, nonconformances and corrective actions.' },
   {
@@ -787,7 +818,7 @@ const PLANNED: { name: string; icon: string; covers: string; today?: string; bad
     name: 'Products and Engineering records',
     icon: 'diamond',
     covers: 'Live now: the product master with variants, revisions with change requests and change orders (approval and release with segregation of duties), multi-level bills of materials with where-used, comparison and cost roll-up, and engineering documents with versions and CAD references.',
-    today: 'Planned: routings and work centres (with Manufacturing), and stock and availability (with Inventory). CAD Automation builds SOLIDWORKS parts, assemblies and drawings from your AI assistant on your own computer.',
+    today: 'Live with Inventory: each component’s available stock in the bill of materials, and shortages for a build quantity. Planned: routings and work centres (with Manufacturing). CAD Automation builds SOLIDWORKS parts, assemblies and drawings from your AI assistant on your own computer.',
     badge: 'Partly live',
     live: { to: '/products', label: 'Open Products and Engineering' },
   },
@@ -797,7 +828,8 @@ function Operations() {
   usePageTitle('Operations');
   return (
     <div className="page crm-page">
-      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. Procurement (suppliers), Products and Engineering records, and Asset Management and Maintenance are partly live; the other modules are planned: they are not built yet and keep no data." />
+      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. Procurement and Inventory are live; Products and Engineering records and Asset Management and Maintenance are partly live; the other modules are planned: they are not built yet and keep no data." />
+      <OperationsToday />
       <div className="co-tools-grid">
         {PLANNED.map((m) => (
           <section key={m.name} className="card card-pad co-tool-card">
@@ -809,6 +841,43 @@ function Operations() {
         ))}
       </div>
     </div>
+  );
+}
+
+interface OperationsCounts {
+  requisitions: { draft: number; submitted: number; approved: number };
+  rfqs: { open: number; awarded: number };
+  purchaseOrders: { draft: number; awaitingApproval: number; toReceive: number };
+  receipts: { last30Days: number; inspection: number };
+  stock: { belowReorder: number; pendingAdjustments: number; openCounts: number; countsToApprove: number; warehouses: number; valueCents: number };
+}
+
+/** What waits in the company used last: approvals, orders to receive, stock to reorder, counts and adjustments. */
+function OperationsToday() {
+  const { view } = useCurrentCompany();
+  const c = view.data?.company;
+  const q = useQuery({ queryKey: ['erp', c?.id ?? '', 'operations'], queryFn: () => get<OperationsCounts>(`/erp/c/${encodeURIComponent(c!.id)}/operations`), enabled: !!c && c.role !== 'guest', retry: false });
+  if (!c || c.role === 'guest' || !q.data) return null;
+  const d = q.data;
+  const item = (n: number, label: string, to: string) => (
+    <Link key={label} to={`/c/${c.id}${to}`} className="card card-pad sys-stat">
+      <strong>{n}</strong>
+      <span className="muted small">{label}</span>
+    </Link>
+  );
+  return (
+    <section className="stack">
+      <h2 className="crm-subhead">Waiting in {c.name}</h2>
+      <div className="sys-stats">
+        {item(d.requisitions.submitted, 'Requisitions to approve', '/procurement/requisitions?status=submitted')}
+        {item(d.rfqs.awarded, 'Supplier choices to approve', '/procurement/rfqs?status=awarded')}
+        {item(d.purchaseOrders.awaitingApproval, 'Purchase orders to approve', '/procurement/purchase-orders?status=awaiting_approval')}
+        {item(d.purchaseOrders.toReceive, 'Purchase orders to receive', '/procurement/purchase-orders?status=to_receive')}
+        {item(d.stock.belowReorder, 'Products to reorder', '/erp-reports/shortages')}
+        {item(d.stock.pendingAdjustments, 'Adjustments to approve', '/inventory/adjustments')}
+        {item(d.stock.countsToApprove, 'Counts to approve', '/inventory/counts')}
+      </div>
+    </section>
   );
 }
 
@@ -831,7 +900,7 @@ function ReportsPage() {
       <p className="muted small">The figures on the <Link to={`/c/${c.id}/home`}>Dashboard</Link> come from these tools.</p>
       {c.role !== 'guest' ? (
         <section className="stack">
-          <h2 className="crm-subhead">Products, engineering and suppliers</h2>
+          <h2 className="crm-subhead">Products, engineering, purchasing and stock</h2>
           <div className="co-tools-grid">
             {ERP_REPORT_LINKS.map((r) => (
               <Link key={r.key} to={`/c/${c.id}/erp-reports/${r.key}`} className="card card-pad co-tool-card sys-tool-card">
@@ -916,8 +985,8 @@ function Administration() {
       {c.role !== 'guest' ? (
         <section className="card card-pad stack">
           <h2 className="crm-subhead">ERP roles</h2>
-          <p className="muted small">Who may change products, raise, approve and release engineering changes, approve documents, and add and approve suppliers. Nobody approves their own change order or supplier.</p>
-          <div className="row wrap"><Link className="btn" to={`/c/${c.id}/erp-roles`}><Icon name="shield" /> ERP roles</Link></div>
+          <p className="muted small">Who may change products and engineering records, buy, approve purchases, receive, move and count stock. Nobody approves what they drafted, raised, submitted or counted.</p>
+          <div className="row wrap"><Link className="btn" to={`/c/${c.id}/erp-roles`}><Icon name="shield" /> ERP roles</Link><Link className="btn" to={`/c/${c.id}/erp-settings`}><Icon name="settings" /> Purchasing and inventory settings</Link></div>
         </section>
       ) : null}
       <ExampleCard />

@@ -31,11 +31,16 @@
 //   ERP Release 1 (owner's brief of 14 Nov 2026, Release 1): the product master with variants, revisions with change
 //     requests and change orders, multi-level bills of materials, engineering documents and the supplier master
 //     (apps/work/src/worker/erp, migration 0020_erp_engineering_procurement.sql; Scenario A and the rule tests in
-//     apps/work/test/erp.test.ts and test-node/erp.test.ts). Purchase orders beyond Finance's, receiving and supplier
-//     performance are Release 2: planned.
-//   Everything else (sales orders, procurement beyond the supplier master and Finance's documents, inventory,
-//     manufacturing, quality, supply chain, service, human capital): docs/erp/architecture/02 to 10. Nothing of it is
-//     built, so it is planned.
+//     apps/work/test/erp.test.ts and test-node/erp.test.ts).
+//   ERP Release 2 (owner's brief of 14 Nov 2026, Release 2): purchase requisitions, requests for quotation with the
+//     quotation comparison, purchase orders with approval limits and amendments, goods receipts, supplier performance,
+//     one draft bill in Finance per receipt, and inventory: warehouses and locations, stock by lot and serial, the
+//     movement ledger, reservations, returns, quarantine, scrap, adjustments, counts, weighted average and FIFO
+//     valuation, traceability, QR labels and the warehouse screen (apps/work/src/worker/erp, migration
+//     0021_erp_purchasing_inventory.sql; Scenarios B and C and the rule tests in apps/work/test/erp-r2.test.ts and
+//     test-node/erp-r2.test.ts). Inventory postings to Finance's ledger are Release 3: planned.
+//   Everything else (sales orders, manufacturing, quality, supply chain, service, human capital): docs/erp/architecture/02
+//     to 10. Nothing of it is built, so it is planned.
 // Rule: if a feature cannot be found in the code or the docs above, it is planned. Notes are public text: plain
 // language, no file paths, no repository names.
 //
@@ -148,21 +153,21 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'procurement',
     name: 'Sourcing and procurement',
     summary: 'Choosing suppliers, asking for prices, ordering, receiving and matching what was ordered, received and billed.',
-    servedBy: 'BIZOMAT ERP Procurement (the supplier master); BIZOMAT Finance (purchase orders, bills)',
+    servedBy: 'BIZOMAT ERP Procurement; BIZOMAT Finance (bills and payments)',
     features: [
       cap('Supplier master', 'live', 'Suppliers with approval, hold and block by a procurement manager who did not create them, contacts, documents, payment terms, lead times and the products each supplies. Linked, not copied, to the Finance supplier they are paid as. An ABN is checked for its form only.'),
       cap('Supplier qualification', 'planned'),
-      cap('Requests for quotation (RFQs)', 'planned'),
-      cap('Supplier comparisons', 'planned'),
+      cap('Requests for quotation (RFQs)', 'live', 'To approved suppliers only, from an approved requisition or directly, with a PDF to download and send. Each supplier\'s quotation is recorded: prices, lead time, freight, payment terms, validity and documents. Sending by email with the PDF attached is not built yet.'),
+      cap('Supplier comparisons', 'live', 'Quotations side by side, line by line, with the cheapest and fastest marked. A buyer selects one with a reason; a procurement manager who did not select it approves the choice.'),
       cap('Supplier contracts', 'planned'),
-      cap('Purchase requisitions', 'planned'),
-      cap('Purchase orders', 'live', 'A Finance document with numbering, approval and PDF. Product lines, sites and receiving are planned.'),
-      cap('Purchase order to bill', 'live'),
+      cap('Purchase requisitions', 'live', 'Products or free-text items with a department, a required date, a budget reference and a reason, approved by a procurement manager who did not raise them.'),
+      cap('Purchase orders', 'live', 'In the ERP, to approved suppliers: product or free-text lines with discounts and tax codes; approved on submit within the company\'s limit, else by a procurement manager; amendments keep each earlier version and go back to approval; a PDF to download and send. Finance\'s own purchase orders remain for businesses without the ERP.'),
+      cap('Purchase order to bill', 'live', 'Each goods receipt makes one draft bill in Finance, once, for someone whose Finance role may create bills.'),
       cap('Purchase scheduling', 'planned'),
-      cap('Goods receipts', 'planned'),
-      cap('Three-way matching', 'planned', 'Needs goods receipts.'),
+      cap('Goods receipts', 'live', 'All or part of an order: accepted, damaged and rejected quantities with reasons, lot and serial numbers, expiry dates, and products that need inspection flagged. Stock comes in with the receipt, in one step.'),
+      cap('Three-way matching', 'planned', 'Receipts and their draft bills are linked; matching against the supplier\'s own invoice is planned.'),
       cap('Supplier invoices', 'live', 'Finance bills with approval and payments recorded. No payment is made from BIZOMAT.'),
-      cap('Supplier performance', 'planned', 'Measured from purchase orders and receipts (Release 2).'),
+      cap('Supplier performance', 'live', 'On time, in full and lead time, measured from goods receipts.'),
     ],
   },
   {
@@ -182,7 +187,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Design checks', 'live', 'Measuring, inspection and interference checks through CAD Automation.'),
       cap('Model import and export', 'live', 'STEP, IGES and Parasolid in; STEP, STL, Parasolid and IGES out.'),
       cap('Bill of materials (BOM) management', 'live', 'Lines with quantity, unit, scrap allowance, reference designators, position, effective dates, optional lines and alternatives. A bill of materials belongs to a revision and locks when it is released.'),
-      cap('Multi-level BOM', 'live', 'Explosion through every level, where-used, comparison of two revisions and material cost roll-up, with missing costs flagged. Loops are refused. Availability needs Inventory (planned).'),
+      cap('Multi-level BOM', 'live', 'Explosion through every level, where-used, comparison of two revisions and material cost roll-up, with missing costs flagged. Loops are refused. Each component\'s available stock, and shortages for a build quantity.'),
       cap('Routings', 'planned'),
       cap('Engineering revisions', 'live', 'Draft, in a change order, released and superseded. A release supersedes the previous revision in the same step.'),
       cap('Engineering change requests and orders (ECR and ECO)', 'live', 'Approved and released by an engineering approver who did not draft the change order; in a company of one, the exception is recorded.'),
@@ -225,25 +230,27 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'inventory',
     name: 'Inventory and warehousing',
     summary: 'What is in stock, where it is, how it moves and what it is worth.',
-    servedBy: 'BIZOMAT ERP Inventory and Warehouse (planned module), valued in BIZOMAT Finance',
+    servedBy: 'BIZOMAT ERP Inventory and Warehouse',
     features: [
-      cap('Multi-warehouse', 'planned'),
-      cap('Bins and locations', 'planned'),
-      cap('Raw materials', 'planned'),
-      cap('Work in progress stock', 'planned'),
-      cap('Finished goods', 'planned'),
-      cap('Stock movements', 'planned'),
-      cap('Batch and lot tracking', 'planned'),
-      cap('Serial numbers', 'planned'),
-      cap('Barcodes', 'planned'),
-      cap('QR scanning', 'planned'),
-      cap('Reservations', 'planned'),
-      cap('Stock valuation', 'planned', 'Valuation journals will be posted through Finance. Finance keeps no stock today.'),
-      cap('Cycle counts', 'planned'),
-      cap('Picking and packing', 'planned'),
-      cap('Receiving', 'planned'),
-      cap('Dispatch', 'planned'),
-      cap('Replenishment', 'planned'),
+      cap('Multi-warehouse', 'live'),
+      cap('Bins and locations', 'live', 'A tree of store, zone, rack, shelf and bin, with quarantine, receiving, dispatch, work-in-progress and finished-goods locations.'),
+      cap('Raw materials', 'live', 'Any product but a service can be kept in stock.'),
+      cap('Work in progress stock', 'planned', 'Work-in-progress locations exist; stock moving through production comes with Manufacturing.'),
+      cap('Finished goods', 'live', 'Kept, moved and counted like any stock. Production into stock comes with Manufacturing.'),
+      cap('Stock movements', 'live', 'An append-only ledger: every movement with its document, never changed or deleted.'),
+      cap('Batch and lot tracking', 'live', 'With expiry dates, and traceability from the supplier, order and receipt to every later move.'),
+      cap('Serial numbers', 'live', 'One unit each, never in stock twice.'),
+      cap('Stock adjustments', 'live', 'Each with a reason; above the company\'s threshold a warehouse manager who did not ask for it approves.'),
+      cap('Quarantine and returns', 'live', 'Quarantine and release, customer returns, returns to suppliers and scrap.'),
+      cap('Barcodes', 'live', 'Product numbers, SKUs and location codes typed on the warehouse screen, or read by the phone\'s camera where the browser can read codes. Not every browser can.'),
+      cap('QR scanning', 'live', 'QR labels for products and locations, made by BIZOMAT itself, to print and scan.'),
+      cap('Reservations', 'live'),
+      cap('Stock valuation', 'live', 'Weighted average or first in, first out, chosen before the first movement and then locked. Posting stock value to Finance\'s ledger is planned (Release 3): nothing is posted today.'),
+      cap('Cycle counts', 'live', 'Stocktakes and cycle counts with count sheets and variances, approved by a warehouse manager who did not count, then posted as movements.'),
+      cap('Picking and packing', 'planned', 'Issues from a location work today; pick lists and packing are planned.'),
+      cap('Receiving', 'live', 'Against purchase orders, on a computer or a phone.'),
+      cap('Dispatch', 'planned', 'Dispatch locations exist; deliveries come with Supply Chain.'),
+      cap('Replenishment', 'planned', 'Reorder points, minimums, maximums and a shortages report work today; replenishment orders are not made automatically.'),
     ],
   },
   {

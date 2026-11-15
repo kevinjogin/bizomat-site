@@ -1,7 +1,7 @@
-// BIZOMAT ERP, Release 1: Procurement, partly live: the supplier master at /erp/c/<company>/procurement. Suppliers are
-// approved, put on hold or blocked by a procurement manager who did not create them; an ABN's form and check digits are
-// checked, nothing more. Payment stays in Finance: a supplier links to the Finance supplier contact it is paid as.
-// Purchase requisitions, requests for quotation, purchase orders, receiving and supplier performance come with Release 2.
+// BIZOMAT ERP: Procurement at /erp/c/<company>/procurement. Release 1: the supplier master. Suppliers are approved, put
+// on hold or blocked by a procurement manager who did not create them; an ABN's form and check digits are checked,
+// nothing more. Payment stays in Finance: a supplier links to the Finance supplier contact it is paid as. Release 2
+// (Purchasing.tsx): requisitions, requests for quotation, purchase orders, goods receipts and supplier performance.
 import { useState, type FormEvent } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -14,8 +14,9 @@ import { Modal, useConfirm, useToast } from '../../components/ui/overlays';
 import '../../styles/maintenance.css';
 import '../../styles/erp.css';
 import { SUPPLIER_STATUS, dayText, erpPath, money, numOrNull, procurementPage, productsPage, useErpMe, type ErpEvent, type ErpFile, type ErpMe, type Supplier } from './api';
-import { CsvLink, ErpFiles, ErpUpload, FilterPanel, History, NotYet, Pager, Props, Section, SupplierBadge, options } from './common';
+import { CsvLink, ErpFiles, ErpUpload, FilterPanel, History, Pager, Props, Section, SupplierBadge, options } from './common';
 import { NoteDialog } from './Changes';
+import { PoEditor, PurchaseOrderDetail, PurchaseOrdersPage, ReceiptDetail, ReceiptsPage, RequisitionDetail, RequisitionsPage, RfqDetail, RfqsPage } from './Purchasing';
 
 export function ProcurementArea({ companyId, companyName }: { companyId: string; companyName: string }) {
   const me = useErpMe(companyId);
@@ -34,13 +35,27 @@ export function ProcurementArea({ companyId, companyName }: { companyId: string;
   const m = me.data;
   return (
     <div className="page crm-page">
-      <PageHeader title="Procurement" subtitle={`Suppliers of ${m.company.name}. Partly live: the supplier master. Purchase requisitions, requests for quotation, purchase orders and receiving are planned for Release 2.`} />
+      <PageHeader title="Procurement" subtitle={`Buying for ${m.company.name}: suppliers, requisitions, requests for quotation, purchase orders and goods receipts.`} />
       <nav className="tabs mt-tabs" aria-label="Procurement sections">
         <NavLink to={procurementPage(companyId)} end className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="building" size={14} /> Suppliers</NavLink>
+        <NavLink to={procurementPage(companyId, '/requisitions')} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="doc" size={14} /> Requisitions</NavLink>
+        <NavLink to={procurementPage(companyId, '/rfqs')} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="message" size={14} /> Quotations</NavLink>
+        <NavLink to={procurementPage(companyId, '/purchase-orders')} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="briefcase" size={14} /> Purchase orders</NavLink>
+        <NavLink to={procurementPage(companyId, '/receipts')} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="inbox" size={14} /> Receipts</NavLink>
       </nav>
       <Routes>
         <Route index element={<SuppliersPage companyId={companyId} me={m} />} />
         <Route path="suppliers/:supplierId" element={<SupplierDetail companyId={companyId} me={m} />} />
+        <Route path="requisitions" element={<RequisitionsPage companyId={companyId} me={m} />} />
+        <Route path="requisitions/:id" element={<RequisitionDetail companyId={companyId} />} />
+        <Route path="rfqs" element={<RfqsPage companyId={companyId} me={m} />} />
+        <Route path="rfqs/:id" element={<RfqDetail companyId={companyId} />} />
+        <Route path="purchase-orders" element={<PurchaseOrdersPage companyId={companyId} me={m} />} />
+        <Route path="purchase-orders/new" element={<PoEditor companyId={companyId} />} />
+        <Route path="purchase-orders/:id/edit" element={<PoEditor companyId={companyId} />} />
+        <Route path="purchase-orders/:id" element={<PurchaseOrderDetail companyId={companyId} />} />
+        <Route path="receipts" element={<ReceiptsPage companyId={companyId} />} />
+        <Route path="receipts/:id" element={<ReceiptDetail companyId={companyId} me={m} />} />
         <Route path="*" element={<Navigate to={procurementPage(companyId)} replace />} />
       </Routes>
     </div>
@@ -214,7 +229,7 @@ interface SupplierView {
   products: { productId: string; number: string; name: string; supplierPartNumber: string; priceCents: number | null; currency: string; leadTimeDays: number | null; preferred: boolean }[];
   files: ErpFile[];
   finance: FinanceView;
-  performance: { measured: false; note: string };
+  performance: { measured: true; note: string; orders: number; receipts: number; onTimeRate: number | null; onTimeMeasured: number; inFullRate: number | null; inFullMeasured: number; avgLeadTimeDays: number | null; rejectedQty: number; receivedQty: number };
   history: ErpEvent[];
   can: { edit: boolean; approve: boolean; hold: boolean; block: boolean; segregation: string | null };
 }
@@ -326,7 +341,17 @@ function SupplierDetail({ companyId, me }: { companyId: string; me: ErpMe }) {
           </Section>
           <FinancePanel companyId={companyId} supplier={s} finance={v.finance} refresh={refresh} />
           <Section title="Performance">
-            <NotYet>{v.performance.note}. On-time delivery, quality and price are measured from purchase orders and receipts, which come with Release 2. No figures are shown until then.</NotYet>
+            {!v.performance.receipts ? <p className="muted small">No goods received from this supplier yet: nothing to measure.</p> : (
+              <Props
+                items={[
+                  ['On time', v.performance.onTimeRate === null ? 'No required dates to measure against' : `${Math.round(v.performance.onTimeRate * 100)}% of ${v.performance.onTimeMeasured} receipt${v.performance.onTimeMeasured === 1 ? '' : 's'}`],
+                  ['In full', v.performance.inFullRate === null ? '' : `${Math.round(v.performance.inFullRate * 100)}% of ${v.performance.inFullMeasured} order${v.performance.inFullMeasured === 1 ? '' : 's'}`],
+                  ['Average lead time', v.performance.avgLeadTimeDays === null ? '' : `${v.performance.avgLeadTimeDays} days`],
+                  ['Damaged or rejected', `${v.performance.rejectedQty} of ${v.performance.receivedQty} received`],
+                ]}
+              />
+            )}
+            <p className="muted small">{v.performance.note}</p>
           </Section>
         </div>
         <div className="stack">

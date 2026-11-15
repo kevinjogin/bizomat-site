@@ -10,8 +10,8 @@
 // is the company's own: a registered company's Finance (co_tools), the example company's, or, for a person's own
 // company, a business workspace they own that no registered company runs.
 //
-// Supplier performance (on-time delivery, quality, price) is measured from purchase orders and receipts, which come with
-// Release 2: until then the screen says so and shows no numbers.
+// Supplier performance (on time, in full, lead time, refused quantities) is measured from goods receipts (Release 2,
+// performance.ts).
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -24,11 +24,11 @@ import { canRecord, hasPerm, loadAccess as finAccess, scopeSql, type FinAccess }
 import { can, requireErp, segregation, type ErpAccess } from './access';
 import { NUMBER_RE, SUPPLIER_STATUS, badState, changed, csvResponse, eventStmt, historyOf, likeOf, nextNumber, paging, searchText, wantsCsv, zCurrency, zText } from './util';
 import { filesOf } from './files';
+import { PERFORMANCE_HELP, supplierPerformance } from './performance';
 
 export const supplierRoutes = new Hono<AppEnv>();
 
 export const SUPPLIER_LABELS: Record<(typeof SUPPLIER_STATUS)[number], string> = { pending: 'Pending approval', approved: 'Approved', on_hold: 'On hold', blocked: 'Blocked' };
-export const PERFORMANCE_NOTE = 'Measured from purchase orders (Release 2)';
 export const ABN_NOTE = 'Format checked: the ABN has 11 digits and its check digits are right. It is not looked up on the Australian Business Register.';
 
 const zEmail = z.union([z.literal(''), z.string().trim().toLowerCase().email('Give a valid email address').max(320)]);
@@ -246,7 +246,7 @@ supplierRoutes.get('/c/:company/suppliers/:id', async (c) => {
     products,
     files: await filesOf(db, a.companyId, 'supplier_id', s.id),
     finance: await financeView(db, a, s, c.get('user')),
-    performance: { measured: false, note: PERFORMANCE_NOTE },
+    performance: { measured: true, note: PERFORMANCE_HELP, ...((await supplierPerformance(db, a.companyId, s.id))[0] ?? { orders: 0, receipts: 0, onTimeRate: null, onTimeMeasured: 0, inFullRate: null, inFullMeasured: 0, avgLeadTimeDays: null, rejectedQty: 0, receivedQty: 0 }) },
     history: await historyOf(db, a.companyId, { entityType: 'supplier', entityId: s.id }, 100),
     can: {
       edit: !s.archived_at && can(a, 'suppliers.edit'),
@@ -427,7 +427,7 @@ export async function financeOrgsFor(db: D1Database, a: ErpAccess): Promise<{ id
   return rows.results;
 }
 
-async function maybeFin(db: D1Database, orgId: string, user: { id: string; name: string }): Promise<FinAccess | null> {
+export async function maybeFin(db: D1Database, orgId: string, user: { id: string; name: string }): Promise<FinAccess | null> {
   try {
     return await finAccess(db, orgId, user);
   } catch {
