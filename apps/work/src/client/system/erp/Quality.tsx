@@ -501,7 +501,7 @@ function InspectionDetail({ companyId }: { companyId: string }) {
                           <label className="qc-reading">
                             <span className="sr-only">{ch.name}, sample {n}{ch.unit ? ` (${ch.unit})` : ''}</span>
                             <input className="input erp-scan-input" type="number" step="any" inputMode="decimal" disabled={!v.can.record} value={e.value} onChange={(x) => setEntry(ch, n, { value: x.target.value })} />
-                            {ch.unit ? <span className="muted small">{ch.unit}</span> : null}
+                            {ch.unit ? <span className="muted small" aria-hidden="true">{ch.unit}</span> : null}
                           </label>
                         ) : (
                           <div className="qc-choice" role="group" aria-label={`${ch.name}, sample ${n}`}>
@@ -509,7 +509,7 @@ function InspectionDetail({ companyId }: { companyId: string }) {
                             <button type="button" className={`btn${e.conforming === false ? ' danger' : ''}`} aria-pressed={e.conforming === false} disabled={!v.can.record} onClick={() => setEntry(ch, n, { conforming: false })}>Does not</button>
                           </div>
                         )}
-                        {r && !edited ? <span className={`small ${r.ok ? 'qc-ok-text' : 'erp-neg'}`}>{r.ok ? 'Within the limits' : ch.measured ? 'Outside the limits' : 'Not conforming'}{r.byName ? ` · ${r.byName}` : ''}</span> : edited ? <span className="small muted">Not saved</span> : null}
+                        {r && !edited ? <span className={`small ${r.ok ? 'qc-ok-text' : 'erp-neg'}`}>{ch.measured ? (r.ok ? 'Within the limits' : 'Outside the limits') : r.ok ? 'Conforms' : 'Does not conform'}{r.byName ? ` · ${r.byName}` : ''}</span> : edited ? <span className="small muted">Not saved</span> : null}
                       </div>
                     );
                   })}

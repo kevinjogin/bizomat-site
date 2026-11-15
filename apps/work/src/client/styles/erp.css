@@ -136,6 +136,7 @@ button.erp-stat { text-align: left; font: inherit; color: inherit; cursor: point
 .qc-sample-no { color: var(--text-3); }
 .qc-reading { display: flex; align-items: center; gap: 6px; }
 .qc-reading .input { min-width: 0; flex: 1 1 auto; }
+.qc-reading > span:not(.sr-only) { flex: none; white-space: nowrap; }
 .qc-choice { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
 .qc-choice .btn { min-height: 44px; justify-content: center; }
 .qc-ok-text { color: var(--success); }
