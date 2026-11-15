@@ -44,6 +44,8 @@ const SupplyChainArea = lazy(() => import('./erp/SupplyChain').then((m) => ({ de
 // jurisdiction packs for platform administrators in the console.
 const WhsArea = lazy(() => import('./whs/Whs').then((m) => ({ default: m.WhsArea })));
 const WhsLegalAdmin = lazy(() => import('./whs/LegalAdmin').then((m) => ({ default: m.LegalAdmin })));
+const BillingPage = lazy(() => import('./billing/Billing').then((m) => ({ default: m.BillingPage })));
+const BillingAdmin = lazy(() => import('./billing/BillingAdmin').then((m) => ({ default: m.BillingAdmin })));
 
 /** The ERP's products, engineering and supplier reports (src/client/system/erp/Reports.tsx keeps the same list). */
 const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
@@ -333,6 +335,7 @@ function CompanyArea() {
         <Route path="quality/*" element={<Suspense fallback={<Loading />}><QualityArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="supply-chain/*" element={<Suspense fallback={<Loading />}><SupplyChainArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="whs/*" element={<Suspense fallback={<Loading />}><WhsArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
+        <Route path="billing" element={<Suspense fallback={<Loading />}><BillingPage companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="*" element={<Navigate to="home" replace />} />
       </Routes>
     </Shell>
@@ -1098,6 +1101,8 @@ function Administration() {
         { label: 'Departments', href: toolUrl(`/company/c/${encodeURIComponent(c.id)}/departments`), icon: 'layers' },
         { label: 'Tools', href: toolUrl(`/company/c/${encodeURIComponent(c.id)}/tools`), icon: 'grid' },
         { label: 'Company settings', href: toolUrl(`/company/c/${encodeURIComponent(c.id)}/settings`), icon: 'settings' },
+        // Billing loads as a full page: its security policy lets Stripe's embedded Checkout load (src/worker/app.ts).
+        ...(c.role === 'owner' || c.role === 'admin' ? [{ label: 'Billing', href: appUrl(`/c/${encodeURIComponent(c.id)}/billing`), icon: 'dollar' }] : []),
       ]
     : [];
   const toolAdmin: { app: SysApp; label: string; href: (id: string) => string }[] = [
@@ -1177,6 +1182,7 @@ const ADMIN_NAV = [
   { to: 'companies', label: 'Companies' },
   { to: 'activity', label: 'Activity' },
   { to: 'whs', label: 'WHS legal packs' },
+  { to: 'billing', label: 'Billing' },
 ];
 
 function AdminArea() {
@@ -1197,6 +1203,7 @@ function AdminArea() {
         <Route path="companies" element={<AdminCompanies founder={founder} />} />
         <Route path="activity" element={<AdminActivity />} />
         <Route path="whs/*" element={<Suspense fallback={<Loading />}><WhsLegalAdmin /></Suspense>} />
+        <Route path="billing" element={<Suspense fallback={<Loading />}><BillingAdmin founder={founder} /></Suspense>} />
         <Route path="*" element={<Navigate to="overview" replace />} />
       </Routes>
     </div>

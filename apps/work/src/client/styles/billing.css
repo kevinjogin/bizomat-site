@@ -1,0 +1,25 @@
+/* BIZOMAT ERP, Administration > Billing (src/client/system/billing/Billing.tsx). Tokens from the app's design system. */
+.billing-page .billing-banner { margin: 0 0 12px; padding: 10px 14px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface-2); color: var(--text); }
+.billing-page .billing-banner.info { background: var(--accent-soft); border-color: var(--accent-soft); }
+.billing-page .billing-banner.warning { background: var(--warning-soft); border-color: var(--warning-soft); color: var(--warning-text); }
+.billing-page .billing-stat-text { font-size: 1.25rem; }
+.billing-page .billing-choice { gap: 10px; }
+.billing-page .billing-option { display: flex; gap: 10px; align-items: flex-start; padding: 10px 14px; border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; min-width: 200px; background: var(--surface); }
+.billing-page .billing-option.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+.billing-page .billing-option input { margin-top: 3px; }
+.billing-page .billing-facts { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 18px; margin: 0; }
+.billing-page .billing-facts dt { color: var(--text-2); }
+.billing-page .billing-facts dd { margin: 0; overflow-wrap: anywhere; }
+.billing-page .billing-notes { margin: 0; padding-left: 18px; }
+.billing-page .billing-notes li { margin: 2px 0; }
+.billing-page .billing-history { list-style: none; margin: 0; padding: 0; }
+.billing-page .billing-history li { padding: 8px 0; border-top: 1px solid var(--border); overflow-wrap: anywhere; }
+.billing-page .billing-history li:first-child { border-top: 0; }
+.billing-page .billing-checkout { border: 1px solid var(--border); border-radius: var(--radius); padding: 12px; background: var(--surface); }
+.billing-page .billing-checkout-frame { min-height: 120px; }
+.billing-page .billing-preview { border-top: 1px solid var(--border); padding-top: 12px; }
+@media (max-width: 640px) {
+  .billing-page .billing-facts { grid-template-columns: minmax(0, 1fr); }
+  .billing-page .billing-facts dt { margin-top: 6px; }
+  .billing-page .billing-option { min-width: 0; width: 100%; }
+}

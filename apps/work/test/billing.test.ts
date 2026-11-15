@@ -346,7 +346,7 @@ describe('billing configuration', () => {
     expect(bad({ STRIPE_PRICE_SEAT_ANNUAL: 'price_vitestSeatMonth' }).reason).toMatch(/same Price/);
     expect(bad({ STRIPE_PRORATION: 'sometimes' }).enabled).toBe(false);
     expect(bad({ STRIPE_API_BASE: 'http://127.0.0.1:12111', ENVIRONMENT: 'production' }).reason).toMatch(/only for development/);
-    for (const over of [{ STRIPE_SECRET_KEY: fakeKey('sk', 'live') }, { STRIPE_WEBHOOK_SECRET: '' }, {}]) {
+    for (const over of [{ STRIPE_SECRET_KEY: fakeKey('sk', 'live') }, { STRIPE_WEBHOOK_SECRET: '' }, {}] as Record<string, string>[]) {
       const r = JSON.stringify(bad(over).reason ?? '');
       expect(r).not.toMatch(/vitestNotA/);
     }
