@@ -13,6 +13,7 @@
 //   settings.ts, procurement.ts, purchasing.ts, record-files.ts, inventory.ts, stock-reports.ts: Release 2
 //   manufacturing.ts, production.ts, planning.ts, mfg-reports.ts: Release 3 (manufacturing)
 //   quality.ts, ncr.ts, quality-reports.ts: Release 4 part A (quality)
+//   sales.ts, logistics.ts, returns.ts, supply-reports.ts: Release 5 part A (supply chain and logistics)
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -41,6 +42,11 @@ import { mfgReportRoutes } from './mfg-reports';
 import { qualityRoutes, qualityCounts } from './quality';
 import { ncrRoutes } from './ncr';
 import { qualityReportRoutes } from './quality-reports';
+// Release 5 part A: supply chain and logistics
+import { salesRoutes } from './sales';
+import { logisticsRoutes } from './logistics';
+import { returnRoutes } from './returns';
+import { supplyReportRoutes, supplyCounts } from './supply-reports';
 
 export const erpRoutes = new Hono<AppEnv>();
 
@@ -122,8 +128,11 @@ erpRoutes.get('/c/:company/operations', async (c) => {
   const one = (r: D1Result) => (r.results[0] ?? {}) as Record<string, number | null>;
   // Release 4 part A: inspections waiting, failed, nonconformances and corrective actions (quality.ts)
   const quality = await qualityCounts(db, a.companyId);
+  // Release 5 part A: sales orders, shipments, invoices to make and returns (supply-reports.ts)
+  const supplyChain = await supplyCounts(db, a.companyId);
   return c.json({
     quality,
+    supplyChain,
     requisitions: { draft: one(req).draft ?? 0, submitted: one(req).submitted ?? 0, approved: one(req).approved ?? 0 },
     rfqs: { open: one(rfq).open ?? 0, awarded: one(rfq).awarded ?? 0 },
     purchaseOrders: { draft: one(po).draft ?? 0, awaitingApproval: one(po).awaiting ?? 0, toReceive: one(po).to_receive ?? 0 },
@@ -157,7 +166,8 @@ const ROLE_HELP: Record<string, string> = {
   production_operator: 'Runs operations on the shop floor: start, stop, time, output, scrap, rework, downtime and inspections; issues materials and receives finished goods',
   quality_manager: 'Inspection plans and their release, inspections, nonconformance dispositions, verification and closure; approves and closes corrective actions',
   quality_inspector: 'Records inspections with readings and photos, puts failed lots into quarantine, raises nonconformances and proposes corrective actions',
-  viewer: 'Reads products, engineering records, suppliers, purchasing, stock, manufacturing and quality',
+  sales_manager: 'Sales orders: drafts, confirms, amends and closes them, allocates stock, plans shipments, sets up carriers, authorises returns, and asks Finance for the draft invoice and credit note',
+  viewer: 'Reads products, engineering records, suppliers, purchasing, stock, manufacturing, quality and sales orders',
 };
 
 erpRoutes.get('/c/:company/roles', async (c) => {
@@ -234,3 +244,8 @@ erpRoutes.route('/', mfgReportRoutes);
 erpRoutes.route('/', qualityRoutes);
 erpRoutes.route('/', ncrRoutes);
 erpRoutes.route('/', qualityReportRoutes);
+// Release 5 part A: supply chain and logistics
+erpRoutes.route('/', salesRoutes);
+erpRoutes.route('/', logisticsRoutes);
+erpRoutes.route('/', returnRoutes);
+erpRoutes.route('/', supplyReportRoutes);

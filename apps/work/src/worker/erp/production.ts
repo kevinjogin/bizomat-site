@@ -384,7 +384,7 @@ function buildStmts(db: D1Database, companyId: string, moId: string, qty: number
  * Makes a draft manufacturing order (also used by MRP's "make" suggestions). The start date, when not given, is the
  * required date less the manufacturing lead time, and never before today.
  */
-export async function createMo(db: D1Database, a: ErpAccess, input: MoIn, extra: { mrpSuggestionId?: string; reason?: string } = {}) {
+export async function createMo(db: D1Database, a: ErpAccess, input: MoIn, extra: { mrpSuggestionId?: string; reason?: string; after?: (moId: string, number: string) => D1PreparedStatement[] } = {}) {
   const p = await loadProduct(db, a.companyId, input.productId);
   if (p.archived_at) throw new HttpError(409, `${p.number} is archived`);
   if (p.type === 'service') throw new HttpError(400, `${p.number} is a service: services are not manufactured`);
@@ -433,6 +433,8 @@ export async function createMo(db: D1Database, a: ErpAccess, input: MoIn, extra:
       after: { quantity: input.quantity, requiredDate: input.requiredDate ?? null, start, finish },
       at: t,
     }),
+    // Release 5: a sales order line's link (make to order), in the same transaction
+    ...(extra.after ? extra.after(id, number) : []),
   ]);
   return { id, number };
 }
@@ -569,6 +571,37 @@ export async function actualCosts(db: D1Database, companyId: string, moId: strin
   return { ...out, total: COST_ELEMENTS.reduce((s, k) => s + out[k], 0) };
 }
 
+/**
+ * Release 5: job profitability of an order made for sales order lines (make to order): the revenue of the quantity made
+ * for each line (the line's net value, before tax, for that share of it) less the order's actual cost. An order made to
+ * stock has no revenue linked to it.
+ */
+export async function jobProfitability(db: D1Database, companyId: string, moId: string, actualCents: number) {
+  const links = (
+    await db
+      .prepare(
+        `SELECT k.quantity AS link_qty, l.id AS line_id, l.position, l.quantity, l.net_cents, o.id AS so_id, o.number AS so_number, o.customer_name, o.currency
+           FROM erp_so_mo_links k JOIN erp_so_lines l ON l.company_id = k.company_id AND l.id = k.so_line_id JOIN erp_sales_orders o ON o.company_id = l.company_id AND o.id = l.so_id
+          WHERE k.company_id = ? AND k.mo_id = ?`,
+      )
+      .bind(companyId, moId)
+      .all<any>()
+  ).results;
+  if (!links.length) return { linked: false as const, note: 'Not made for a sales order: job profitability applies to orders made to order from a sales order line.' };
+  const lines = links.map((k) => ({ salesOrderId: k.so_id, salesOrderNumber: k.so_number, customerName: k.customer_name, linePosition: k.position, quantity: q6(k.link_qty), revenueCents: Math.round((k.net_cents * k.link_qty) / k.quantity) }));
+  const revenue = lines.reduce((s, l) => s + l.revenueCents, 0);
+  const margin = revenue - actualCents;
+  return {
+    linked: true as const,
+    lines,
+    revenueCents: revenue,
+    costCents: actualCents,
+    marginCents: margin,
+    marginPct: revenue ? Math.round((margin / revenue) * 1000) / 10 : null,
+    note: 'Revenue: the sales order line’s value before tax for the quantity made for it. Cost: the order’s actual cost by element. Freight is not included.',
+  };
+}
+
 async function costView(db: D1Database, companyId: string, mo: any) {
   const est = estimateOf(mo);
   let actual: Record<string, number>;
@@ -593,7 +626,7 @@ async function costView(db: D1Database, companyId: string, mo: any) {
     receivedValueCents: mo.received_value_cents,
     unabsorbedCents: actual.total - mo.received_value_cents,
     missing: mo.est_missing ? String(mo.est_missing).split(',').filter(Boolean) : [],
-    profitability: 'Planned. There are no sales orders before Release 5, so no revenue can be linked to a manufacturing order honestly.',
+    profitability: await jobProfitability(db, companyId, mo.id, actual.total),
     note: 'Materials: issued less returned, at the stock value of each movement. Labour and machine: time recorded at the work centre’s rates (rework time is counted under Rework). Overheads: per labour hour or as a percentage of labour and machine cost. Scrap: materials scrapped against the order. Outsourcing: the actual cost entered when an outsourced operation is completed.',
   };
 }
@@ -666,6 +699,13 @@ productionRoutes.get('/c/:company/mos/:id', async (c) => {
       await db.prepare("SELECT id, number, status, result, mo_operation_id, kind FROM erp_qc_inspections WHERE company_id = ? AND mo_id = ? AND status <> 'cancelled' ORDER BY created_at").bind(a.companyId, mo.id).all<any>()
     ).results.map((i) => ({ id: i.id, number: i.number, status: i.status, result: i.result, operationId: i.mo_operation_id, kind: i.kind })),
     ncrs: (await db.prepare("SELECT id, number, title, status FROM erp_qc_ncrs WHERE company_id = ? AND mo_id = ? ORDER BY created_at").bind(a.companyId, mo.id).all<any>()).results.map((n) => ({ id: n.id, number: n.number, title: n.title, status: n.status })),
+    // Release 5: the sales order lines this order is made for (make to order)
+    salesOrders: (
+      await db
+        .prepare('SELECT k.quantity, l.position, o.id, o.number, o.customer_name, o.status FROM erp_so_mo_links k JOIN erp_so_lines l ON l.company_id = k.company_id AND l.id = k.so_line_id JOIN erp_sales_orders o ON o.company_id = l.company_id AND o.id = l.so_id WHERE k.company_id = ? AND k.mo_id = ?')
+        .bind(a.companyId, mo.id)
+        .all<any>()
+    ).results.map((x) => ({ id: x.id, number: x.number, customerName: x.customer_name, status: x.status, linePosition: x.position, quantity: q6(x.quantity) })),
     can: {
       plan: can(a, 'production.plan'),
       edit: can(a, 'production.plan') && ['draft', 'released', 'in_progress'].includes(mo.status),

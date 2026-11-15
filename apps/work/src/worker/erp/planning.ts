@@ -2,7 +2,7 @@
 // production.plan, mrp.run, mrp.buy).
 //
 //   mps                  the master production schedule: forecast or confirmed demand for a product, a quantity, a due
-//                        date and a reference (there are no sales orders before Release 5)
+//                        date and a reference (Release 5: confirmed sales orders are demand of their own, next to it)
 //   mrp/runs             MRP, deterministic: each run is stored with its inputs, a line per product and its suggestions
 //   mrp/suggestions/:id  buy (to a requisition, through procurement.ts), make (to a draft manufacturing order, through
 //                        production.ts), expedite (an open order due after it is needed); or dismissed
@@ -12,7 +12,7 @@
 // materials (low-level codes). For each product, from its available stock (on hand outside quarantine, less
 // reservations) and in date order: receipts expected (open purchase orders at their line's or order's required date;
 // open manufacturing orders' remaining output at their required date, else their planned finish) come in; requirements (confirmed demand in the
-// schedule, forecasts if asked, open manufacturing orders' materials not yet issued or reserved, and the materials of
+// schedule, forecasts if asked, confirmed sales orders' open lines (Release 5), open manufacturing orders' materials not yet issued or reserved, and the materials of
 // the orders MRP plans for the products above) go out. When stock would fall below the safety stock, a later receipt is
 // pulled in first (expedite); otherwise an order is planned for the shortfall, sized by the minimum order and the
 // multiple, due on the date of the requirement and started its lead time before (purchase: the product supplier's,
@@ -93,7 +93,7 @@ planningRoutes.get('/c/:company/mps', async (c) => {
   const rows = await db.prepare(`${MPS_SELECT} WHERE ${where.join(' AND ')} ORDER BY e.due_date, p.number LIMIT 2000`).bind(...args).all<any>();
   const list = rows.results.map(mpsDTO);
   if (wantsCsv(c)) return csvResponse('master-production-schedule', [['Product', 'Name', 'Quantity', 'Unit', 'Due', 'Kind', 'Reference', 'Status'], ...list.map((e) => [e.productNumber, e.productName, e.quantity, e.uom, e.dueDate, e.kindLabel, e.reference, e.statusLabel])]);
-  return c.json({ entries: list, kinds: Object.entries(DEMAND_KINDS).map(([value, l]) => ({ value, label: l })), note: 'There are no sales orders before Release 5: enter confirmed demand here, with the customer or job as its reference.', can: { edit: can(a, 'production.plan') } });
+  return c.json({ entries: list, kinds: Object.entries(DEMAND_KINDS).map(([value, l]) => ({ value, label: l })), note: 'Confirmed sales orders are demand in MRP of their own. Enter here only demand that is not on a sales order (forecasts, or confirmed demand agreed another way), so nothing is counted twice.', can: { edit: can(a, 'production.plan') } });
 });
 
 const zMps = z.object({ productId: zId, quantity: z.number().positive().max(1e9), dueDate: zDate.refine((v) => !!v, 'Give the due date'), kind: z.enum(Object.keys(DEMAND_KINDS) as [string, ...string[]]), reference: zText(200).optional(), notes: zText(2000).optional() });
@@ -198,6 +198,20 @@ export async function runMrp(db: D1Database, a: { companyId: string; userId: str
       .bind(a.companyId, end)
       .all<any>()
   ).results;
+  // Release 5: confirmed sales orders: what each open line still needs (ordered less shipped less allocated: allocated
+  // stock is reserved, so it is already out of the available stock), due on the line's promised date, else the order's
+  // promised, requested or order date.
+  const salesDemand = (
+    await db
+      .prepare(
+        `SELECT l.product_id, round(l.quantity - l.shipped_qty - l.allocated_qty, 6) AS qty, COALESCE(l.promised_date, o.promised_date, o.requested_date, o.order_date) AS due, o.number, o.customer_name, l.position, p.number AS product_number
+           FROM erp_so_lines l JOIN erp_sales_orders o ON o.company_id = l.company_id AND o.id = l.so_id JOIN erp_products p ON p.company_id = l.company_id AND p.id = l.product_id
+          WHERE l.company_id = ? AND o.status IN ('confirmed','partially_allocated','allocated','partially_shipped') AND l.quantity - l.shipped_qty - l.allocated_qty > 1e-9
+            AND COALESCE(l.promised_date, o.promised_date, o.requested_date, o.order_date) <= ? ORDER BY due`,
+      )
+      .bind(a.companyId, end)
+      .all<any>()
+  ).results;
   const pos = (
     await db
       .prepare(
@@ -249,6 +263,7 @@ export async function runMrp(db: D1Database, a: { companyId: string; userId: str
   // ---- the products to plan and their levels
   const relevant = new Set<string>();
   for (const d of demand) relevant.add(d.product_id);
+  for (const d of salesDemand) relevant.add(d.product_id);
   for (const p of pos) relevant.add(p.product_id);
   for (const m of mos) relevant.add(m.product_id);
   for (const m of moNeeds) relevant.add(m.product_id);
@@ -320,6 +335,7 @@ export async function runMrp(db: D1Database, a: { companyId: string; userId: str
     events.set(id, [...(events.get(id) ?? []), e]);
   };
   for (const d of demand) add(d.product_id, { date: d.due_date, qty: Number(d.quantity), kind: 'requirement', ref: `${label(DEMAND_KINDS, d.kind)} demand${d.reference ? ` ${d.reference}` : ''} due ${d.due_date}` });
+  for (const d of salesDemand) add(d.product_id, { date: d.due, qty: Number(d.qty), kind: 'requirement', ref: `Sales order ${d.number} line ${d.position} (${d.customer_name}) due ${d.due}` });
   for (const m of moNeeds) {
     const need = Math.max(0, q6(m.required_qty - m.issued_qty - Number(m.reserved_open)));
     if (need > 0) add(m.product_id, { date: m.start_date ?? today, qty: need, kind: 'requirement', ref: `Materials for ${m.number}` });
@@ -424,6 +440,7 @@ export async function runMrp(db: D1Database, a: { companyId: string; userId: str
     horizonEnd: end,
     includeForecast,
     demand: demand.slice(0, 2000).map((d) => ({ product: d.number, quantity: d.quantity, due: d.due_date, kind: d.kind, reference: d.reference })),
+    salesOrders: salesDemand.slice(0, 2000).map((d) => ({ order: d.number, line: d.position, product: d.product_number, quantity: q6(Number(d.qty)), due: d.due, customer: d.customer_name })),
     purchaseOrders: pos.slice(0, 2000).map((p) => ({ order: p.number, product: info.get(p.product_id)?.number ?? p.product_id, outstanding: q6(p.qty), expected: p.required_date ?? p.po_required ?? p.order_date })),
     manufacturingOrders: mos.slice(0, 2000).map((m) => ({ order: m.number, product: info.get(m.product_id)?.number ?? m.product_id, status: m.status, remaining: Math.max(0, q6(m.quantity - m.completed_qty)), finish: m.finish_date ?? m.required_date })),
     stock: [...level.keys()].slice(0, 5000).map((pid) => ({ product: info.get(pid)!.number, ...(stock.get(pid) ?? { onHand: 0, reserved: 0, available: 0, quarantine: 0 }) })),

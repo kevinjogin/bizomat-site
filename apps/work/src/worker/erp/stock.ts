@@ -22,14 +22,20 @@ import type { ErpAccess } from './access';
 import type { ErpSettings } from './settings';
 
 export type InType = 'receipt' | 'customer_return' | 'adjust_in' | 'count_in' | 'production_receipt' | 'production_return' | MaintenanceInType;
-export type OutType = 'issue' | 'supplier_return' | 'adjust_out' | 'count_out' | 'scrap' | 'production_issue' | 'production_scrap' | MaintenanceOutType;
-export type SourceType = 'receipt' | 'issue' | 'transfer' | 'reservation' | 'adjustment' | 'customer_return' | 'supplier_return' | 'count' | 'quarantine' | 'scrap' | 'manufacturing_order' | MaintenanceSourceType;
+export type OutType = 'issue' | 'supplier_return' | 'adjust_out' | 'count_out' | 'scrap' | 'production_issue' | 'production_scrap' | MaintenanceOutType | SalesOutType;
+export type SourceType = 'receipt' | 'issue' | 'transfer' | 'reservation' | 'adjustment' | 'customer_return' | 'supplier_return' | 'count' | 'quarantine' | 'scrap' | 'manufacturing_order' | MaintenanceSourceType | SalesSourceType;
 
 // Release 4 (Maintenance, stage M3): spare parts issued to a maintenance work order and returned from it
 // (src/worker/maintenance/routes-parts.ts). Kept in their own block.
 export type MaintenanceInType = 'maintenance_return';
 export type MaintenanceOutType = 'maintenance_issue';
 export type MaintenanceSourceType = 'work_order';
+
+// Release 5 (supply chain): stock dispatched to a customer on a shipment (logistics.ts), allocated to a sales order line
+// (sales.ts, reservations with the sales order as their source) and returned on a return (returns.ts, Release 2's
+// customer_return movement with the return as its source).
+export type SalesOutType = 'sales_dispatch';
+export type SalesSourceType = 'shipment' | 'sales_order' | 'rma';
 
 /** The note on a Finance posting recorded as planned (nothing is posted to Finance's ledger). */
 export const PLANNED_POSTING = 'Planned: Finance posting, not built yet';
@@ -59,6 +65,8 @@ export const MOVE_LABELS: Record<string, string> = {
   // Release 4 (Maintenance)
   maintenance_issue: 'Issued to maintenance',
   maintenance_return: 'Returned from maintenance',
+  // Release 5 (supply chain)
+  sales_dispatch: 'Dispatched to a customer',
 };
 
 export interface StockKey {

@@ -1,7 +1,8 @@
 // Attachments of procurement records (requisitions, requests for quotation, supplier quotations, purchase orders and
 // goods receipts) and, from Release 3, of routings and manufacturing orders, and from Release 4 of quality records
 // (inspection plans, inspections and the photos of their characteristics, nonconformances, corrective actions'
-// evidence): erp_record_files, in the app's file store with the same checks as every other upload (routes/files.ts
+// evidence), and from Release 5 of sales orders, shipments, their proof of delivery and returns: erp_record_files, in
+// the app's file store with the same checks as every other upload (routes/files.ts
 // validateUpload). A file is served only to people who may see that kind of record in the company.
 
 import { Hono } from 'hono';
@@ -9,13 +10,13 @@ import type { AppEnv } from '../env';
 import { HttpError, newId, notFound, now } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { MAX_FILE_BYTES, validateUpload } from '../routes/files';
-import { assertCan, requireErp, type Capability } from './access';
+import { assertCan, can, requireErp, type Capability } from './access';
 import { eventStmt, zId } from './util';
 
 export const recordFileRoutes = new Hono<AppEnv>();
 
-export type RecordKind = 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order' | 'qc_plan' | 'inspection' | 'inspection_char' | 'ncr' | 'capa';
-type EventKind = 'requisition' | 'rfq' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order' | 'qc_plan' | 'inspection' | 'ncr' | 'capa';
+export type RecordKind = 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order' | 'qc_plan' | 'inspection' | 'inspection_char' | 'ncr' | 'capa' | 'sales_order' | 'shipment' | 'delivery' | 'rma';
+type EventKind = 'requisition' | 'rfq' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order' | 'qc_plan' | 'inspection' | 'ncr' | 'capa' | 'sales_order' | 'shipment' | 'rma';
 const KINDS: Record<RecordKind, { table: string; label: string; event: EventKind; parent?: string; view: Capability; number?: string }> = {
   requisition: { table: 'erp_requisitions', label: 'requisition', event: 'requisition', view: 'purchasing.view' },
   rfq: { table: 'erp_rfqs', label: 'request for quotation', event: 'rfq', view: 'purchasing.view' },
@@ -30,7 +31,13 @@ const KINDS: Record<RecordKind, { table: string; label: string; event: EventKind
   inspection_char: { table: 'erp_qc_insp_chars', label: 'characteristic', event: 'inspection', parent: 'inspection_id', view: 'quality.view', number: 'name' },
   ncr: { table: 'erp_qc_ncrs', label: 'nonconformance', event: 'ncr', view: 'quality.view' },
   capa: { table: 'erp_qc_capas', label: 'corrective action', event: 'capa', view: 'quality.view' },
+  // Release 5: supply chain. 'delivery' is the proof of delivery of a shipment (a photo, a signature image or a document).
+  sales_order: { table: 'erp_sales_orders', label: 'sales order', event: 'sales_order', view: 'sales.view' },
+  shipment: { table: 'erp_shipments', label: 'shipment', event: 'shipment', view: 'sales.view' },
+  delivery: { table: 'erp_shipments', label: 'proof of delivery of', event: 'shipment', view: 'sales.view' },
+  rma: { table: 'erp_rmas', label: 'return', event: 'rma', view: 'sales.view' },
 };
+const SALES_KINDS: readonly string[] = ['sales_order', 'shipment', 'delivery', 'rma'];
 const QUALITY_KINDS: readonly string[] = ['qc_plan', 'inspection', 'inspection_char', 'ncr', 'capa'];
 
 export function recordFileDTO(f: any) {
@@ -74,13 +81,25 @@ recordFileRoutes.post('/c/:company/record-files', async (c) => {
   else if (kind === 'qc_plan') assertCan(a, 'quality.plan');
   else if (kind === 'inspection' || kind === 'inspection_char') assertCan(a, 'quality.inspect');
   else if (kind === 'ncr') assertCan(a, 'quality.raise');
-  else if (kind !== 'capa') assertCan(a, 'purchasing.edit');
+  // Release 5: sales orders by sales managers; shipments by whoever plans or dispatches them; proof of delivery by whoever
+  // confirms deliveries; returns by whoever records or receives them
+  else if (kind === 'sales_order') assertCan(a, 'sales.edit');
+  else if (kind === 'shipment') {
+    if (!can(a, 'shipping.plan') && !can(a, 'shipping.dispatch')) assertCan(a, 'shipping.plan');
+  } else if (kind === 'delivery') assertCan(a, 'shipping.deliver');
+  else if (kind === 'rma') {
+    if (!can(a, 'returns.raise') && !can(a, 'returns.receive')) assertCan(a, 'returns.raise');
+  } else if (kind !== 'capa') assertCan(a, 'purchasing.edit');
   const id0 = zId.parse(String(form!.get('id') ?? ''));
   const p = await parent(c.env.DB, a.companyId, kind, id0);
   if (kind === 'capa') {
     const r = await c.env.DB.prepare('SELECT responsible_id, status FROM erp_qc_capas WHERE company_id = ? AND id = ?').bind(a.companyId, id0).first<{ responsible_id: string | null; status: string }>();
     if (r?.responsible_id !== a.userId) assertCan(a, 'capa.propose');
     if (r && (r.status === 'closed' || r.status === 'cancelled')) throw new HttpError(409, 'This action is closed: no more evidence can be added');
+  }
+  if (kind === 'delivery') {
+    const sh = await c.env.DB.prepare('SELECT status FROM erp_shipments WHERE company_id = ? AND id = ?').bind(a.companyId, id0).first<{ status: string }>();
+    if (sh && sh.status !== 'dispatched' && sh.status !== 'delivered') throw new HttpError(409, 'Proof of delivery is added once the shipment is dispatched');
   }
   if (kind === 'inspection_char') {
     const open = await c.env.DB.prepare("SELECT 1 AS ok FROM erp_qc_inspections WHERE company_id = ? AND id = ? AND status = 'open'").bind(a.companyId, p.entityId).first();
@@ -127,7 +146,7 @@ recordFileRoutes.get('/c/:company/record-files/:id', async (c) => {
 
 recordFileRoutes.delete('/c/:company/record-files/:id', async (c) => {
   const { a, f } = await loadRecordFile(c);
-  const manager = f.entity_type === 'routing' || f.entity_type === 'manufacturing_order' ? 'production_manager' : QUALITY_KINDS.includes(f.entity_type) ? 'quality_manager' : 'procurement_manager';
+  const manager = f.entity_type === 'routing' || f.entity_type === 'manufacturing_order' ? 'production_manager' : QUALITY_KINDS.includes(f.entity_type) ? 'quality_manager' : SALES_KINDS.includes(f.entity_type) ? 'sales_manager' : 'procurement_manager';
   if (f.uploaded_by !== a.userId && !a.roles.includes('erp_admin') && !a.roles.includes(manager)) throw new HttpError(403, `Only the person who added it, a ${manager.split('_')[0]} manager or an ERP administrator can remove it`);
   const p = await parent(c.env.DB, a.companyId, f.entity_type, f.entity_id);
   const t = now();

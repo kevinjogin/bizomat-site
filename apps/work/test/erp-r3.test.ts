@@ -236,7 +236,8 @@ describe('Scenario D: production order, routing, materials, labour, output and c
       rework: [0, 2500, 2500],
     });
     expect(costs).toMatchObject({ actualCents: 43_783, receivedValueCents: 43_783, unabsorbedCents: 0, actualUnitCents: 4378 });
-    expect(costs.profitability).toMatch(/^Planned/);
+    // Release 5: job profitability is real for orders made to order; this one was made to stock, so it has no revenue.
+    expect(costs.profitability).toMatchObject({ linked: false });
     v = await viewer.json('GET', erp(co, `/mos/${mo.id}`));
     expect(v.integration.find((e: any) => e.kind === 'finance.production_variance')).toMatchObject({ status: 'planned', amountCents: 0 });
     expect(v.integration.filter((e: any) => e.kind === 'finance.production_posting').every((e: any) => e.status === 'planned')).toBe(true);

@@ -2,7 +2,7 @@
 // consumption, labour utilisation, production variance, machine downtime, MRP suggestions and capacity load. Each takes
 // the filters that fit it (dates, work centre, product, status), lists the records behind its numbers (the screen links
 // each row to its record) and exports CSV (?format=csv). Numbers come only from the company's own records. Job
-// profitability is planned: there are no sales orders before Release 5, so no revenue can be linked to an order.
+// profitability (Release 5) is its own report in supply-reports.ts: orders made to order for a sales order line.
 
 import { Hono } from 'hono';
 import type { AppEnv } from '../env';
@@ -189,7 +189,7 @@ mfgReportRoutes.get('/c/:company/reports/production-variance', async (c) => {
       ...list.map((o) => [o.number, o.productNumber, o.productName, o.quantity, o.completedQty, day(o.closedAt), ...COST_ELEMENTS.flatMap((k) => [dollars(o.elements[k]?.estimatedCents ?? 0), dollars(o.elements[k]?.actualCents ?? 0)]), dollars(o.estimatedCents), dollars(o.actualCents), dollars(o.varianceCents)]),
     ]);
   }
-  return c.json({ from: r.from, to: r.to, rows: list, totals, note: 'Orders closed in the period. Variance: actual less estimated; above zero costs more than estimated.', profitability: 'Job profitability is planned: there are no sales orders before Release 5, so no revenue is linked to an order.' });
+  return c.json({ from: r.from, to: r.to, rows: list, totals, note: 'Orders closed in the period. Variance: actual less estimated; above zero costs more than estimated.', profitability: 'Job profitability is in its own report: orders made to order for a sales order line, their revenue against their actual cost.' });
 });
 
 // 6. Machine downtime: downtime reported on operations, by work centre and machine, with the reasons.

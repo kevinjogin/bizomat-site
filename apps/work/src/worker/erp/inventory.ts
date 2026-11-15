@@ -8,7 +8,8 @@
 //   stock (per product, or per location, lot and serial), movements, scan (a typed or scanned code to its record)
 //   stock/:op   issue, transfer, quarantine, release, customer-return, supplier-return, scrap
 //   reservations, adjustments (approval above the company's threshold), counts (stocktakes and cycle counts)
-//   valuation, trace (a lot or serial from its supplier and order to every later move, with its inspections and NCRs)
+//   valuation, trace (a lot or serial from its supplier and order to every later move, with its inspections and NCRs,
+//   and from Release 5 the manufacturing orders it went into and the shipments that delivered it or what was made of it)
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -725,6 +726,10 @@ inventoryRoutes.post('/c/:company/reservations/:id/:action{release|issue}', asyn
   const r = await db.prepare(`${RES_SELECT} WHERE r.company_id = ? AND r.id = ?`).bind(a.companyId, c.req.param('id')).first<any>();
   if (!r) throw notFound('Reservation');
   if (r.status !== 'open') badState('This reservation is closed');
+  // Release 5: stock allocated to a sales order is released or shipped from the order and its shipments, which keep the
+  // order line's allocated quantity in step
+  const so = await db.prepare('SELECT o.number FROM erp_so_allocations x JOIN erp_so_lines l ON l.company_id = x.company_id AND l.id = x.so_line_id JOIN erp_sales_orders o ON o.company_id = l.company_id AND o.id = l.so_id WHERE x.company_id = ? AND x.reservation_id = ?').bind(a.companyId, r.id).first<{ number: string }>();
+  if (so) badState(`This stock is allocated to sales order ${so.number}: release it or ship it there`);
   const open = q6(r.quantity - r.issued_qty - r.released_qty);
   const input = await body(c, z.object({ quantity: zQ.optional(), reason: zText(500).optional() }));
   const qn = input.quantity ?? open;
@@ -1214,9 +1219,41 @@ inventoryRoutes.get('/c/:company/trace', async (c) => {
     db.prepare(`SELECT i.id, i.number, i.kind, i.status, i.result, i.completed_at, i.created_at, i.quantity, p.number AS product_number FROM erp_qc_inspections i LEFT JOIN erp_products p ON p.company_id = i.company_id AND p.id = i.product_id WHERE ${qWhere('i')} AND i.status <> 'cancelled' ORDER BY i.created_at LIMIT 500`).bind(...qArgs),
     db.prepare(`SELECT n.id, n.number, n.title, n.status, n.severity, n.quantity, n.created_at, p.number AS product_number FROM erp_qc_ncrs n LEFT JOIN erp_products p ON p.company_id = n.company_id AND p.id = n.product_id WHERE ${qWhere('n')} ORDER BY n.created_at LIMIT 500`).bind(...qArgs),
   ]);
+  // Release 5: where it went. Shipments that took this lot or serial to a customer; the manufacturing orders it went
+  // into, their finished goods and the shipments of those (by the finished goods' lots, or the sales order line an
+  // order was made for).
+  const shipmentIds = [...new Set(moves.results.filter((m) => m.source_type === 'shipment' && m.source_id).map((m) => m.source_id as string))];
+  const moIds = [...new Set(moves.results.filter((m) => m.source_type === 'manufacturing_order' && m.move_type === 'production_issue' && m.source_id).map((m) => m.source_id as string))];
+  const downstream: any[] = [];
+  for (const moId of moIds.slice(0, 50)) {
+    const mo = await db.prepare('SELECT mo.id, mo.number, mo.status, p.id AS product_id, p.number AS product_number, p.name AS product_name FROM erp_mfg_orders mo JOIN erp_products p ON p.company_id = mo.company_id AND p.id = mo.product_id WHERE mo.company_id = ? AND mo.id = ?').bind(a.companyId, moId).first<any>();
+    if (!mo) continue;
+    const fgLots = (await db.prepare("SELECT DISTINCT lot FROM erp_mo_receipts WHERE company_id = ? AND mo_id = ? AND lot <> ''").bind(a.companyId, moId).all<{ lot: string }>()).results.map((x) => x.lot);
+    const byLot = fgLots.length
+      ? (await db.prepare(`SELECT DISTINCT source_id FROM erp_stock_moves WHERE company_id = ? AND product_id = ? AND source_type = 'shipment' AND lot IN (${fgLots.map(() => '?').join(',')})`).bind(a.companyId, mo.product_id, ...fgLots).all<{ source_id: string }>()).results.map((x) => x.source_id)
+      : [];
+    const byOrder = (await db.prepare("SELECT DISTINCT x.shipment_id FROM erp_so_mo_links k JOIN erp_shipment_lines x ON x.company_id = k.company_id AND x.so_line_id = k.so_line_id JOIN erp_shipments s ON s.company_id = x.company_id AND s.id = x.shipment_id WHERE k.company_id = ? AND k.mo_id = ? AND s.status IN ('dispatched','delivered')").bind(a.companyId, moId).all<{ shipment_id: string }>()).results.map((x) => x.shipment_id);
+    downstream.push({ moId: mo.id, moNumber: mo.number, moStatus: mo.status, productId: mo.product_id, productNumber: mo.product_number, productName: mo.product_name, finishedLots: fgLots, shipmentIds: [...new Set([...byLot, ...byOrder])] });
+  }
+  const allShipments = [...new Set([...shipmentIds, ...downstream.flatMap((d) => d.shipmentIds)])];
+  const shipments = allShipments.length
+    ? (
+        await db
+          .prepare(
+            `SELECT s.id, s.number, s.status, s.dispatched_at, s.delivered_at, s.received_by, s.tracking_number, o.id AS so_id, o.number AS so_number, o.customer_name, ca.name AS carrier_name
+               FROM erp_shipments s JOIN erp_sales_orders o ON o.company_id = s.company_id AND o.id = s.so_id LEFT JOIN erp_carriers ca ON ca.company_id = s.company_id AND ca.id = s.carrier_id
+              WHERE s.company_id = ? AND s.id IN (${allShipments.slice(0, 200).map(() => '?').join(',')})`,
+          )
+          .bind(a.companyId, ...allShipments.slice(0, 200))
+          .all<any>()
+      ).results
+    : [];
+  const shipDTO = (s: any) => ({ id: s.id, number: s.number, status: s.status, salesOrderId: s.so_id, salesOrderNumber: s.so_number, customerName: s.customer_name, carrierName: s.carrier_name ?? null, trackingNumber: s.tracking_number, dispatchedAt: s.dispatched_at, deliveredAt: s.delivered_at, receivedBy: s.received_by });
   return c.json({
     lot,
     serial,
+    deliveries: shipments.filter((s) => shipmentIds.includes(s.id)).map(shipDTO),
+    downstream: downstream.map((d) => ({ ...d, shipments: shipments.filter((s) => d.shipmentIds.includes(s.id)).map(shipDTO), shipmentIds: undefined })),
     quality: {
       inspections: (qInsp.results as any[]).map((i) => ({ id: i.id, number: i.number, kind: i.kind, status: i.status, result: i.result, productNumber: i.product_number, quantity: i.quantity, at: i.completed_at ?? i.created_at })),
       ncrs: (qNcr.results as any[]).map((n) => ({ id: n.id, number: n.number, title: n.title, status: n.status, severity: n.severity, productNumber: n.product_number, quantity: n.quantity, at: n.created_at })),
