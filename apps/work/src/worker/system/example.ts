@@ -182,6 +182,32 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
   const r2Files = await db.prepare('SELECT r2_key FROM erp_record_files WHERE company_id = ?').bind(companyId).all<{ r2_key: string }>();
   files.results.push(...r2Files.results);
   stmts.push(db.prepare('INSERT INTO erp_purges (company_id, started_at) VALUES (?, ?) ON CONFLICT(company_id) DO NOTHING').bind(companyId, t));
+  // ERP Release 3 records (migrations/0022_erp_manufacturing.sql) before Release 2's: they point at its reservations,
+  // locations and suppliers.
+  for (const table of [
+    'erp_mrp_suggestions',
+    'erp_mrp_lines',
+    'erp_mrp_runs',
+    'erp_mps_entries',
+    'erp_mo_costs',
+    'erp_mo_receipts',
+    'erp_mo_reports',
+    'erp_mo_time',
+    'erp_mo_reservations',
+    'erp_mo_operations',
+    'erp_mo_materials',
+    'erp_mo_assignees',
+    'erp_mo_revisions',
+    'erp_mfg_orders',
+    'erp_routing_operations',
+    'erp_routings',
+    'erp_machines',
+    'erp_work_centres',
+    'erp_product_planning',
+    'erp_mfg_settings',
+  ]) {
+    stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
+  }
   for (const table of [
     'erp_record_files',
     'erp_integration_events',
@@ -479,6 +505,55 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     await api('Purchasing', 'POST', e(`/purchase-orders/${po.id}/sent`), {});
     const poView = await api('Purchasing', 'GET', e(`/purchase-orders/${po.id}`));
     await api('Purchasing', 'POST', e(`/purchase-orders/${po.id}/receipts`), { receivedDate: d(-3), deliveryRef: 'DN-58811', lines: [{ poLineId: poView.lines[0].id, received: 40, locationId: binArms.id }] });
+
+    // ---------------------------------------------------------------- Manufacturing (ERP Release 3)
+    // Three work centres (two machines linked to the Maintenance assets above), released routings for the weldment and
+    // the kit, a manufacturing order for ten weldments in progress (materials reserved, gusset plates issued, the laser
+    // cutting done with its labour and machine time, welding started), a confirmed demand for 60 kits in the master
+    // production schedule, and an MRP run whose suggestions are left open to review.
+    await api('Manufacturing', 'PUT', e('/mfg-settings'), { overCompletionPct: 5, reserveOnRelease: true });
+    await loc({ code: 'WIP', name: 'Work in progress', level: 'zone', kind: 'work_in_progress', parentId: store.id });
+    const fgLoc = await loc({ code: 'FG', name: 'Finished goods', level: 'zone', kind: 'finished_goods', parentId: store.id });
+    await api('Manufacturing', 'PUT', e('/mfg-settings'), { fgLocationId: fgLoc.id });
+    const wc = (b: Record<string, unknown>) => api('Manufacturing', 'POST', e('/work-centres'), b);
+    const cut = await wc({ code: 'CUT', name: 'Laser cutting', hoursPerDay: 8, efficiencyPct: 90, machines: 1, labourRateCents: 6500, machineRateCents: 4500, overheadRateCents: 1500 });
+    const fab = await wc({ code: 'FAB', name: 'Welding and forming', hoursPerDay: 8, efficiencyPct: 85, machines: 2, labourRateCents: 6000, machineRateCents: 2500, overheadPct: 40 });
+    const assy = await wc({ code: 'ASSY', name: 'Assembly and packing', hoursPerDay: 7.5, machines: 2, labourRateCents: 5000, overheadPct: 30 });
+    const laserM = await api('Manufacturing', 'POST', e('/machines'), { workCentreId: cut.id, code: 'LASER-01', name: 'Laser cutter', assetId: laser.id });
+    await api('Manufacturing', 'POST', e('/machines'), { workCentreId: fab.id, code: 'PB-01', name: 'Press brake', assetId: brake.id });
+    const coater = await api('Procurement', 'POST', e('/suppliers'), { legalName: 'Example Coatings', category: 'Finishing', email: 'jobs@coatings.example.com', paymentTermsDays: 30, leadTimeDays: 4 });
+    await api('Procurement', 'POST', e(`/suppliers/${coater.id}/status`), { status: 'approved', note: 'Approved for powder coating' });
+    const routing = async (productId: string, leadTimeDays: number | null, ops: Record<string, unknown>[]) => {
+      const r = await api('Manufacturing', 'POST', e('/routings'), { productId, leadTimeDays });
+      for (const op of ops) await api('Manufacturing', 'POST', e(`/routings/${r.id}/operations`), op);
+      await api('Manufacturing', 'POST', e(`/routings/${r.id}/release`), { note: 'First routing' });
+      return r;
+    };
+    await routing(weld.id, 6, [
+      { opNo: 10, name: 'Laser cut gusset plates', workCentreId: cut.id, machineId: laserM.id, setupMinutes: 20, runMinutes: 2, crew: 1 },
+      { opNo: 20, name: 'Weld arm and gussets', workCentreId: fab.id, setupMinutes: 15, runMinutes: 8, crew: 1, inspection: true, inspectionNote: 'Check weld penetration and squareness' },
+      { opNo: 30, name: 'Powder coat', outsourced: true, supplierId: coater.id, outsourceCostCents: 180, outsourceDays: 4 },
+    ]);
+    await routing(kit.id, 2, [{ opNo: 10, name: 'Pack kit with fixings', workCentreId: assy.id, setupMinutes: 10, runMinutes: 3, crew: 1 }]);
+    await api('Manufacturing', 'PUT', e(`/products/${gusset.id}/planning`), { purchaseLeadDays: 3, safetyStock: 20 });
+    await api('Inventory', 'POST', e('/adjustments'), { productId: gusset.id, locationId: binArms.id, quantity: 21, unitCostCents: 120, reason: 'Opening stock of gusset plates' });
+    const mo = await api('Manufacturing', 'POST', e('/mos'), { productId: weld.id, quantity: 10, requiredDate: d(7), startDate: d(0), priority: 'high', customerRef: 'Stock for kits', assignees: [user.id] });
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/release`), { reserve: true });
+    const moView = await api('Manufacturing', 'GET', e(`/mos/${mo.id}`));
+    const gussetLine = moView.materials.find((m: any) => m.productId === gusset.id);
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/issue`), { lines: [{ materialId: gussetLine.id, locationId: binArms.id, quantity: gussetLine.requiredQty }] });
+    const [op10, op20] = moView.operations;
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/operations/${op10.id}/start`), {});
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/operations/${op10.id}/time`), { kind: 'labour', minutes: 45, note: 'Cutting and deburring' });
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/operations/${op10.id}/time`), { kind: 'machine', minutes: 40 });
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/operations/${op10.id}/report`), { kind: 'good', quantity: 10 });
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/operations/${op10.id}/complete`), {});
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/operations/${op20.id}/start`), {});
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/operations/${op20.id}/time`), { kind: 'labour', minutes: 30, note: 'First four brackets welded' });
+    await api('Manufacturing', 'POST', e(`/mos/${mo.id}/operations/${op20.id}/report`), { kind: 'good', quantity: 4 });
+    await api('Manufacturing', 'POST', e('/mps'), { productId: kit.id, quantity: 60, dueDate: d(21), kind: 'confirmed', reference: 'Harbour Cafe fit-out (example)' });
+    await api('Manufacturing', 'POST', e('/mps'), { productId: kit.id, quantity: 40, dueDate: d(35), kind: 'forecast', reference: 'Next month (forecast)' });
+    await api('Manufacturing', 'POST', e('/mrp/runs'), {});
   });
 }
 

@@ -1,12 +1,12 @@
-// BIZOMAT ERP, Releases 1 and 2: who may do what in a company's ERP modules (products and engineering, procurement,
-// inventory).
+// BIZOMAT ERP, Releases 1 to 3: who may do what in a company's ERP modules (products and engineering, procurement,
+// inventory, manufacturing).
 //
 // Companies are the ERP's (src/worker/system/system.ts), resolved exactly as Maintenance resolves them
 // (src/worker/maintenance/access.ts): a registered company (co_companies, its people in co_members), a person's own
 // company (sys_companies, its owner only) or their example company (sys_demo, its owner only). People who only share a
 // tool with a company (guests) and everyone outside it get 404, so another company's existence is never revealed.
 //
-// Roles (erp_user_roles from Release 1 and erp_role_grants from Release 2, read together; a person may hold several):
+// Roles (erp_user_roles from Release 1 and erp_role_grants from Release 2 on, read together; a person may hold several):
 //   erp_admin             everything, including ERP roles
 //   executive             reads everything
 //   engineer              products, variants, bills of materials, revisions, change requests and draft change orders,
@@ -19,20 +19,24 @@
 //   warehouse_manager     warehouses and locations, stock settings, approves adjustments over the threshold and counts
 //                         (and does an operator's work)
 //   warehouse_operator    receives goods, issues, transfers, reserves, returns, quarantines and counts stock
-//   viewer                reads products, engineering records, suppliers, purchasing and stock
+//   production_manager    work centres, machines and routings (drafts); manufacturing orders from draft to close, the
+//                         master production schedule, MRP runs and their suggestions (and does an operator's work)
+//   production_operator   runs operations on the shop floor: start, stop, labour and machine time, output, scrap, rework,
+//                         downtime and inspection results; issues materials and receives finished goods
+//   viewer                reads products, engineering records, suppliers, purchasing, stock and manufacturing
 // The company's owner and administrators are ERP administrators; other members are viewers until an ERP administrator
 // gives them roles. In a person's own or example company the owner is the ERP administrator.
 //
 // Segregation of duties: nobody approves a change order they drafted, a supplier they created, a requisition they
 // raised, a purchase order or quotation choice they made, an adjustment they asked for or a count they counted, unless
 // they are the only person in the company (own and example companies, or a registered company of one); that exception is
-// recorded on the record and in the history.
+// recorded on the record and in the history. Release 3: nobody releases a routing revision they drafted.
 
 import type { Context } from 'hono';
 import type { AppEnv } from '../env';
 import { HttpError, notFound } from '../lib/util';
 
-export const ERP_ROLES = ['erp_admin', 'executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'viewer'] as const;
+export const ERP_ROLES = ['erp_admin', 'executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'viewer'] as const;
 export type ErpRole = (typeof ERP_ROLES)[number];
 
 export const ROLE_LABELS: Record<ErpRole, string> = {
@@ -44,11 +48,13 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   procurement_manager: 'Procurement manager',
   warehouse_manager: 'Warehouse manager',
   warehouse_operator: 'Warehouse operator',
+  production_manager: 'Production manager',
+  production_operator: 'Production operator',
   viewer: 'Viewer',
 };
 
 /** Everyone who may read (every role but the administrator, who may do everything). */
-const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'viewer'] as const;
+const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'viewer'] as const;
 
 /** Every action the ERP checks, and the roles that may take it (erp_admin may take every one). */
 export const CAPABILITIES = {
@@ -67,7 +73,7 @@ export const CAPABILITIES = {
   'roles.manage': [],
   // Release 2
   'purchasing.view': READERS,
-  'requisitions.raise': ['engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator'],
+  'requisitions.raise': ['engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator'],
   'requisitions.approve': ['procurement_manager'],
   'purchasing.edit': ['buyer', 'procurement_manager'],
   'purchasing.approve': ['procurement_manager'],
@@ -77,6 +83,16 @@ export const CAPABILITIES = {
   'inventory.approve': ['warehouse_manager'],
   'inventory.setup': ['warehouse_manager'],
   'settings.manage': [],
+  // Release 3
+  'manufacturing.view': READERS,
+  'manufacturing.setup': ['engineer', 'engineering_approver', 'production_manager'],
+  'routings.release': ['engineering_approver'],
+  'production.plan': ['production_manager'],
+  'production.execute': ['production_manager', 'production_operator'],
+  'production.issue': ['production_manager', 'production_operator', 'warehouse_manager', 'warehouse_operator'],
+  'production.receive': ['production_manager', 'production_operator', 'warehouse_manager', 'warehouse_operator'],
+  'mrp.run': ['production_manager'],
+  'mrp.buy': ['production_manager', 'buyer', 'procurement_manager'],
 } as const satisfies Record<string, readonly ErpRole[]>;
 export type Capability = keyof typeof CAPABILITIES;
 
@@ -124,6 +140,14 @@ const NEEDED: Partial<Record<Capability, string>> = {
   'inventory.approve': 'Only warehouse managers and ERP administrators can approve this',
   'inventory.setup': 'Only warehouse managers and ERP administrators can change warehouses, locations and stock settings',
   'settings.manage': 'Only ERP administrators can change the ERP settings',
+  'manufacturing.setup': 'Only engineers, engineering approvers, production managers and ERP administrators can change work centres, machines and routings',
+  'routings.release': 'Only engineering approvers and ERP administrators can release a routing',
+  'production.plan': 'Only production managers and ERP administrators can plan, release, complete or close manufacturing orders',
+  'production.execute': 'Only production managers, production operators and ERP administrators can record work on the shop floor',
+  'production.issue': 'Only production and warehouse staff and ERP administrators can issue or return materials',
+  'production.receive': 'Only production and warehouse staff and ERP administrators can receive finished goods',
+  'mrp.run': 'Only production managers and ERP administrators can run MRP or turn its suggestions into orders',
+  'mrp.buy': 'Only production managers, buyers, procurement managers and ERP administrators can turn a purchase suggestion into a requisition',
 };
 
 export function deny(msg = 'You do not have permission to do that'): never {

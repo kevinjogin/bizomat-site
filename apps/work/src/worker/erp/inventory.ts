@@ -1159,7 +1159,7 @@ inventoryRoutes.get('/c/:company/valuation', async (c) => {
     rows: list,
     totalCents: total,
     note: wh ? 'A warehouse’s value is its quantity at the product’s average unit cost.' : null,
-    financePosting: 'Planned: Finance posting (Release 3). Stock value is kept in the ERP and is not posted to Finance’s ledger yet.',
+    financePosting: 'Planned: Finance posting, not built yet. Stock value is kept in the ERP and is not posted to Finance’s ledger.',
   });
 });
 
