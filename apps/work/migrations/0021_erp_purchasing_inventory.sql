@@ -60,7 +60,8 @@ CREATE TABLE erp_done (
 CREATE TABLE erp_record_files (
   id TEXT PRIMARY KEY,
   company_id TEXT NOT NULL,
-  entity_type TEXT NOT NULL CHECK (entity_type IN ('requisition','rfq','quotation','purchase_order','receipt')),
+  -- requisition, rfq, quotation, purchase_order, receipt (checked by record-files.ts; later releases add kinds)
+  entity_type TEXT NOT NULL CHECK (length(entity_type) BETWEEN 1 AND 40),
   entity_id TEXT NOT NULL,
   name TEXT NOT NULL,
   mime TEXT NOT NULL,
@@ -407,7 +408,11 @@ CREATE TABLE erp_stock_moves (
   id TEXT PRIMARY KEY,
   company_id TEXT NOT NULL,
   group_id TEXT NOT NULL,
-  move_type TEXT NOT NULL CHECK (move_type IN ('receipt','issue','transfer_out','transfer_in','reserve','unreserve','adjust_in','adjust_out','customer_return','supplier_return','count_in','count_out','quarantine_out','quarantine_in','release_out','release_in','scrap')),
+  -- receipt, issue, transfer_out, transfer_in, reserve, unreserve, adjust_in, adjust_out, customer_return,
+  -- supplier_return, count_in, count_out, quarantine_out, quarantine_in, release_out, release_in, scrap. The names are
+  -- checked by stock.ts, not listed here, so later releases (manufacturing) add movement types without rebuilding this
+  -- append-only table.
+  move_type TEXT NOT NULL CHECK (length(move_type) BETWEEN 1 AND 40),
   product_id TEXT NOT NULL,
   location_id TEXT NOT NULL,
   lot TEXT NOT NULL DEFAULT '',
@@ -417,7 +422,9 @@ CREATE TABLE erp_stock_moves (
   reserved_delta REAL NOT NULL DEFAULT 0,
   unit_cost_cents REAL,
   value_delta_cents INTEGER NOT NULL DEFAULT 0,
-  source_type TEXT NOT NULL CHECK (source_type IN ('receipt','issue','transfer','reservation','adjustment','customer_return','supplier_return','count','quarantine','scrap')),
+  -- receipt, issue, transfer, reservation, adjustment, customer_return, supplier_return, count, quarantine, scrap
+  -- (checked by stock.ts, as move_type)
+  source_type TEXT NOT NULL CHECK (length(source_type) BETWEEN 1 AND 40),
   source_id TEXT,
   reference TEXT NOT NULL DEFAULT '',
   reason TEXT NOT NULL DEFAULT '',
@@ -626,7 +633,8 @@ CREATE INDEX erp_receipt_lines_po_line ON erp_receipt_lines(company_id, po_line_
 CREATE TABLE erp_integration_events (
   id TEXT PRIMARY KEY,
   company_id TEXT NOT NULL,
-  kind TEXT NOT NULL CHECK (kind IN ('finance.draft_bill','finance.inventory_posting')),
+  -- finance.draft_bill, finance.inventory_posting (checked by the code; later releases add kinds)
+  kind TEXT NOT NULL CHECK (length(kind) BETWEEN 1 AND 40),
   source_type TEXT NOT NULL,
   source_id TEXT NOT NULL,
   target TEXT NOT NULL DEFAULT 'finance',
