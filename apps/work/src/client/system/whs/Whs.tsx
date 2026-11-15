@@ -118,9 +118,22 @@ interface Dashboard {
   incidents: { open: number; inPeriod: number; nearMisses: number; serious: number; toInvestigate: number; toDecide: number; toSubmit: number; lti: number; fatalities: number; recordable: number; submissions: number };
   actions: { open: number; overdue: number; toVerify: number; raised: number; completed: number; onTime: number; withDue: number; onTimePct: number | null };
   riskAssessments: { drafts: number; submitted: number; reviewDue: number; approved: number; outstanding: number };
-  rates: { available: boolean; hours: number; ltifr: number | null; trifr: number | null; note: string };
+  rates: {
+    available: boolean;
+    period: { from: string; to: string; months: number } | null;
+    hours: number;
+    lti: number;
+    recordable: number;
+    ltifr: number | null;
+    trifr: number | null;
+    missing: { month: string; siteId: string | null; siteName: string | null; reason: string }[];
+    note: string;
+    formula: { ltifr: string; trifr: string };
+    counting: string;
+    scope: string | null;
+  };
   trend: { month: string; incidents: number; nearMisses: number; injuries: number; serious: number; lti: number; severity: Record<string, number>; hazards: number; actionsClosed: number }[];
-  sites: { id: string; name: string; hazards: number; incidents: number; nearMisses: number; lti: number }[];
+  sites: { id: string; name: string; hazards: number; incidents: number; nearMisses: number; lti: number; rates: { available: boolean; ltifr: number | null; trifr: number | null; hours: number; note: string } | null }[];
   departments: { id: string; name: string; hazards: number; incidents: number; lti: number }[];
   levels: { key: string; label: string }[];
   planned: string[];
@@ -205,15 +218,21 @@ function DashboardView({ companyId, me }: { companyId: string; me: WhsMe }) {
                 <div><dt>Serious incidents</dt><dd>{d.incidents.serious}</dd></div>
                 <div><dt>Deaths</dt><dd>{d.incidents.fatalities}</dd></div>
               </dl>
+            </Section>
+            <Section title="Injury frequency rates">
               {d.rates.available ? (
                 <dl className="co-figures">
                   <div><dt>LTIFR</dt><dd>{d.rates.ltifr}</dd></div>
                   <div><dt>TRIFR</dt><dd>{d.rates.trifr}</dd></div>
                   <div><dt>Hours worked</dt><dd>{d.rates.hours.toLocaleString()}</dd></div>
+                  <div><dt>Lost time injuries counted</dt><dd>{d.rates.lti}</dd></div>
+                  <div><dt>Recordable injuries counted</dt><dd>{d.rates.recordable}</dd></div>
                 </dl>
-              ) : null}
-              <p className="muted small">{d.rates.note}</p>
-              <p className="muted small">Recordable: medical treatment, restricted duties, lost time, hospital admission or death.</p>
+              ) : <p className="small"><strong>LTIFR and TRIFR: not shown.</strong></p>}
+              <p className={d.rates.available ? 'muted small' : 'small'}>{d.rates.note}</p>
+              <p className="muted small">{d.rates.formula.ltifr}. {d.rates.formula.trifr}.</p>
+              <p className="muted small">{d.rates.counting}</p>
+              {d.rates.scope ? <p className="muted small">{d.rates.scope}</p> : null}
             </Section>
             <Section title="Corrective action completion">
               <dl className="co-figures">
@@ -243,8 +262,8 @@ function DashboardView({ companyId, me }: { companyId: string; me: WhsMe }) {
             <Section title="Sites">
               {d.sites.length ? (
                 <table className="data-table responsive">
-                  <thead><tr><th>Site</th><th className="num">Active hazards</th><th className="num">Incidents</th><th className="num">Near misses</th><th className="num">Lost time</th></tr></thead>
-                  <tbody>{d.sites.map((s) => <tr key={s.id}><td data-label="Site">{s.name}</td><td className="num" data-label="Active hazards">{s.hazards}</td><td className="num" data-label="Incidents">{s.incidents}</td><td className="num" data-label="Near misses">{s.nearMisses}</td><td className="num" data-label="Lost time">{s.lti}</td></tr>)}</tbody>
+                  <thead><tr><th>Site</th><th className="num">Active hazards</th><th className="num">Incidents</th><th className="num">Near misses</th><th className="num">Lost time</th><th className="num">LTIFR</th><th className="num">TRIFR</th></tr></thead>
+                  <tbody>{d.sites.map((s) => <tr key={s.id}><td data-label="Site">{s.name}</td><td className="num" data-label="Active hazards">{s.hazards}</td><td className="num" data-label="Incidents">{s.incidents}</td><td className="num" data-label="Near misses">{s.nearMisses}</td><td className="num" data-label="Lost time">{s.lti}</td>{s.rates?.available ? <><td className="num" data-label="LTIFR">{s.rates.ltifr}</td><td className="num" data-label="TRIFR">{s.rates.trifr}</td></> : <td colSpan={2} className="muted small" data-label="Rates">{s.rates ? s.rates.note : ''}</td>}</tr>)}</tbody>
                 </table>
               ) : <p className="muted small">No sites yet. Sites are added in Maintenance, Settings, and given their jurisdictions in WHS settings.</p>}
             </Section>

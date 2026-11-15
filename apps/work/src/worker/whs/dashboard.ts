@@ -1,12 +1,14 @@
 // BIZOMAT WHS, Release 1: the WHS dashboard (brief section 4). Real counts only, from the company's own records, with
 // filters for site, department, dates, incident type and risk level, monthly trends and site and department comparison.
 // Every figure is an actual: BIZOMAT WHS makes no forecasts. Injury frequency rates need hours worked, which BIZOMAT does
-// not track: a WHS manager enters hours worked per site and month (WHS settings), and a rate is shown only for a period
-// whose every month has hours entered; otherwise the counts are shown and the screen says why there is no rate.
+// not track: a WHS manager enters hours worked per site and month (WHS settings), and a rate is shown only over whole
+// months whose every site has hours entered; otherwise the counts are shown and the screen says which months and sites
+// lack hours (hours.ts).
 
 import type { WhsAccess } from './access';
 import { actionScope, hazardScope, incidentScope } from './access';
 import { INCIDENT_KINDS, SEVERITIES, currentMatrix, isoDate, levelLabel, monthsBetween, validDate } from './util';
+import { frequencyRates } from './hours';
 
 export interface DashboardFilters {
   from: string;
@@ -151,25 +153,9 @@ export async function dashboard(db: D1Database, a: WhsAccess, f: DashboardFilter
     };
   });
 
-  // Frequency rates: only with hours worked for every month of the period (for the site filtered, or company-wide).
-  const hours = await db
-    .prepare(`SELECT month, SUM(hours) AS h FROM whs_hours WHERE company_id = ? AND month >= ? AND month <= ? ${f.site ? 'AND site_id = ?' : ''} GROUP BY month`)
-    .bind(...(f.site ? [a.companyId, f.from.slice(0, 7), f.to.slice(0, 7), f.site] : [a.companyId, f.from.slice(0, 7), f.to.slice(0, 7)]))
-    .all<{ month: string; h: number }>();
-  const withHours = new Set(hours.results.filter((h) => Number(h.h) > 0).map((h) => h.month));
-  const missing = months.filter((m) => !withHours.has(m));
-  const totalHours = hours.results.reduce((s, h) => s + Number(h.h), 0);
-  const rate = (count: number) => Math.round(((count * 1_000_000) / totalHours) * 100) / 100;
-  const rates =
-    !missing.length && totalHours > 0 && !f.department && !f.kind
-      ? { available: true, hours: totalHours, ltifr: rate(n(I, 'lti')), trifr: rate(n(I, 'recordable')), note: 'Per million hours worked, from the hours entered in WHS settings.' }
-      : {
-          available: false,
-          hours: totalHours,
-          ltifr: null,
-          trifr: null,
-          note: f.department || f.kind ? 'Rates are not worked out for a department or an incident type: hours worked are entered per site.' : `Rates need hours worked, which BIZOMAT does not track. ${missing.length} of ${months.length} months in this period have no hours entered: a WHS manager enters them in WHS settings.`,
-        };
+  // Frequency rates: over whole months only, with hours worked for every site that worked in each of them (hours.ts).
+  const fr = await frequencyRates(db, a, f);
+  const rates = { ...fr.company, formula: fr.formula, counting: fr.counting, scope: fr.scope };
 
   return {
     filters: f,
@@ -180,7 +166,10 @@ export async function dashboard(db: D1Database, a: WhsAccess, f: DashboardFilter
     riskAssessments: { drafts: n(R, 'drafts'), submitted: n(R, 'submitted'), reviewDue: n(R, 'review_due'), approved: n(R, 'approved'), outstanding: n(R, 'drafts') + n(R, 'submitted') + n(R, 'review_due') },
     rates,
     trend,
-    sites: (sites.results as any[]).map((s) => ({ id: s.id, name: s.name, hazards: n(s, 'hazards'), incidents: n(s, 'incidents'), nearMisses: n(s, 'near_misses'), lti: n(s, 'lti') })),
+    sites: (sites.results as any[]).map((s) => {
+      const r = fr.sites[s.id];
+      return { id: s.id, name: s.name, hazards: n(s, 'hazards'), incidents: n(s, 'incidents'), nearMisses: n(s, 'near_misses'), lti: n(s, 'lti'), rates: r ? { available: r.available, ltifr: r.ltifr, trifr: r.trifr, hours: r.hours, note: r.available ? '' : r.note } : null };
+    }),
     departments: (depts.results as any[]).map((d) => ({ id: d.id, name: d.name, hazards: n(d, 'hazards'), incidents: n(d, 'incidents'), lti: n(d, 'lti') })),
     levels: matrix.levels.map((l) => ({ key: l.key, label: levelLabel(matrix, l.key) })),
     severities: SEVERITIES,
