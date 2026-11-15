@@ -90,6 +90,7 @@ Fly secrets are app-wide environment variables on every Machine (verified in Fly
 | CAD data keys (`secret.keys`, `bridge-signing-key.pem`, `ai_keys.secret`) | cad | CAD volume only (never Fly secrets) |
 | `GOOGLE_CLIENT_ID` / `_SECRET` (each app) | work, cad | Fly secrets, per-role allowlist |
 | `CF_ACCOUNT_ID` / `CF_AI_TOKEN` | web | Fly secrets, per-role allowlist; the token needs only Workers AI read/run permission |
+| `WEB_DOWNLOADS_R2_ACCESS_KEY_ID` / `WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY` | web | Repository secrets staged by the deploy (never printed); an R2 token with Object Read only, for the bucket `bizomat-downloads` alone, so it can read the public installers and nothing else |
 | `TURNSTILE_SECRET_KEY` | web | Fly secret, per-role allowlist |
 
 Each role runs as its own unprivileged user with a clean environment, so a compromised web or work process cannot
