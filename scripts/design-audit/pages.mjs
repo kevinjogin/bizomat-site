@@ -17,6 +17,8 @@ export const PAGES = [
   { path: '/systems/engineering/guide/', name: 'system-engineering-guide', ci: true },
   { path: '/systems/manufacturing/', name: 'system-manufacturing', key: true, ci: true },
   { path: '/systems/manufacturing/guide/', name: 'system-manufacturing-guide', ci: true },
+  { path: '/systems/whs/', name: 'system-whs', key: true, ci: true },
+  { path: '/systems/whs/guide/', name: 'system-whs-guide', ci: true },
   { path: '/resources/', name: 'resources', key: true, ci: true },
   { path: '/tools/', name: 'tools', key: true, ci: true },
   { path: '/tools/?tool=air-pipe-drop', name: 'tool-app', ci: true },
