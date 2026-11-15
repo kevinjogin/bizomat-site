@@ -274,13 +274,17 @@ Done: the live product and price (owner); `WORK_STRIPE_ENVIRONMENT = "live"` and
 
    Save its signing secret as the repository secret `WORK_STRIPE_WEBHOOK_SECRET`. Create it shortly before the
    deploy: until billing is on, production answers 503 and Stripe retries.
-5. **Deploy** (Actions > Deploy BIZOMAT, `confirm` = `DEPLOY`):
+5. **Check before deploying:** Actions > Stripe live settings check (`.github/workflows/stripe-check.yml`). It says
+   by name whether each secret is set and live, and whether the secret key reads the configured price and holds every
+   permission above. It makes, changes and charges nothing, touches nothing on Fly and prints no value. Deploy only
+   when it passes.
+6. **Deploy** (Actions > Deploy BIZOMAT, `confirm` = `DEPLOY`):
    - the run's summary names each staged setting and each missing one;
    - a test key stops the deploy before anything is staged;
    - the public checks say "billing is configured" (the webhook answers 400 to an unsigned delivery).
-6. **The console** (`/erp/admin/billing`, the founder): it shows "On, live" and the price checked with Stripe. Until
+7. **The console** (`/erp/admin/billing`, the founder): it shows "On, live" and the price checked with Stripe. Until
    step 1 is done, it says the price does not say whether GST is included or added.
-7. **Open subscriptions:** "Who may start a subscription", first Platform admins, then everyone. A real subscription
+8. **Open subscriptions:** "Who may start a subscription", first Platform admins, then everyone. A real subscription
    charges a real card: only with the owner's explicit approval.
 
 Also before customers pay: the account activated (legal entity, ABN, bank account), terms of sale and a refund policy,
