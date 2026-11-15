@@ -2,7 +2,7 @@
 
 Three modes:
 - accounts: at least one account exists (accounts.py). Every page, API call and MCP request needs a signed-in person
-  (email + password or Google, server-side sessions; AI apps sign in with OAuth, mcpauth.py). The owner adds or
+  (email + password, Google or BIZOMAT, server-side sessions; AI apps sign in with OAuth, mcpauth.py). The owner adds or
   invites people, or turns on open sign-up.
 - setup: no account yet on a server others can reach (a public address is set, or the request did not come from
   this machine). Only the setup page works: the first person to create an account there becomes the owner. Nothing
@@ -322,9 +322,9 @@ def oauth_problem_page(message: str) -> bytes:
 
 # Privacy notice: public (Google requires one before a sign-in app can be used by anyone), about this service.
 PRIVACY_BODY = """<main id="main"><div class="doc-hero"><div class="container"><span class="eyebrow">Legal</span><h1>Privacy</h1>
-<p>What BIZOMAT CAD Automation keeps about you, why, and who else sees it. Last updated 5 November 2026.</p></div></div>
+<p>What BIZOMAT CAD Automation keeps about you, why, and who else sees it. Last updated 15 November 2026.</p></div></div>
 <div class="container doc-layout"><nav class="toc" aria-label="On this page"><h4>On this page</h4><ol>
-<li><a href="#summary">Summary</a></li><li><a href="#kept">What is kept</a></li><li><a href="#google">Sign in with Google</a></li>
+<li><a href="#summary">Summary</a></li><li><a href="#kept">What is kept</a></li><li><a href="#bizomat">Sign in with BIZOMAT</a></li><li><a href="#erp">BIZOMAT ERP</a></li><li><a href="#google">Sign in with Google</a></li>
 <li><a href="#ai">AI assistants</a></li><li><a href="#who">Who can see your work</a></li><li><a href="#delete">Deleting your data</a></li>
 <li><a href="#changes">Changes</a></li></ol></nav><article class="prose">
 <section id="summary"><h2>Summary</h2>
@@ -334,8 +334,8 @@ you in, know your computers and pass work between your assistant and SOLIDWORKS.
 tracked across other sites. This notice covers this service only; the BIZOMAT website has its own
 <a href="__PLATFORM_PRIVACY__" rel="noopener">privacy notice</a>.</p></section>
 <section id="kept"><h2>What is kept</h2><ul>
-<li><b>Your account:</b> your name, your email address, and either a password (stored only as a one-way hash) or the ID of
-the Google account you sign in with.</li>
+<li><b>Your account:</b> your name, your email address, and a password (stored only as a one-way hash), the ID of the
+BIZOMAT account or the ID of the Google account you sign in with.</li>
 <li><b>Your connections:</b> the AI assistants you connected (their name and sign-in tokens, stored only as one-way hashes)
 and your add-in key, so SOLIDWORKS on your computer can reach your account.</li>
 <li><b>Your computers:</b> the name you gave each paired computer, its Windows computer name and version, the public half of
@@ -343,13 +343,31 @@ its key, and when it was last seen.</li>
 <li><b>A record of commands:</b> for each command sent to one of your computers, which tool and assistant sent it, when,
 its status and its result. The command's details are kept only as a fingerprint (a hash).</li>
 <li><b>Sign-in sessions:</b> a random token in a cookie, so you stay signed in. A second, short-lived cookie protects the
-Google sign-in step and is removed after it.</li>
+BIZOMAT or Google sign-in step and is removed after it.</li>
 <li><b>Work in passing:</b> while your assistant works, the commands it sends and the shapes SOLIDWORKS sends back (for
 example a STEP copy of a part, to measure and check it) pass through this service. They are held in memory or for a short
 time to do that work, then dropped. Files you upload for import are deleted once imported, or after 30 minutes. Your
 SOLIDWORKS files are saved on your computer.</li></ul>
 <p>These pages load nothing from other sites: the fonts and pictures come from this service, so opening them tells no one
 else that you visited.</p></section>
+<section id="bizomat"><h2>Sign in with BIZOMAT</h2>
+<p>If you choose Continue with BIZOMAT, you sign in on bizomat.ai with your BIZOMAT account and confirm that CAD Automation
+may use it. BIZOMAT then tells this service your BIZOMAT account ID, your name, your email address, whether that address
+is confirmed, and the BIZOMAT companies you belong to.</p>
+<p>This service uses it only to sign you in and to link the sign-in to your account. It keeps the BIZOMAT account ID with
+your account, and your name and email address as your account's own. It does not keep your companies. It does not sell or
+share it, use it for advertising, or use it to train AI models. BIZOMAT's own privacy notice covers what BIZOMAT keeps.</p></section>
+<section id="erp"><h2>BIZOMAT ERP</h2>
+<p>When this service is connected to BIZOMAT, it reports the status of your CAD Automation to BIZOMAT ERP every few
+minutes, so you can see it there with your company's other tools. It reports only an account whose email address is
+confirmed: the owner's own, or one confirmed by a BIZOMAT or Google sign-in.</p>
+<p>The report has your email address and, if you signed in with BIZOMAT, your BIZOMAT account ID. It lists your computers
+(the name you gave each, whether it is online, the SOLIDWORKS version and state, the add-in version and when it was last
+seen), your last few commands (an ID, the tool, its status and when) and your connected AI assistants (their name and when
+they were connected and last used). It never has a password, key or token, a file name or path, or anything from your
+models.</p>
+<p>BIZOMAT ERP shows it to you and, in a company you belong to on BIZOMAT, to that company's owner and administrators.
+When your account is removed here, the report is withdrawn.</p></section>
 <section id="google"><h2>Sign in with Google</h2>
 <p>If you choose Continue with Google, Google tells this service your name, your email address, whether that address is
 verified, your Google account ID and, for work accounts, your organisation's domain. It asks for nothing else: no access to
@@ -362,8 +380,9 @@ your Google account settings (Security, Third-party connections).</p></section>
 measurements, preview images of your SOLIDWORKS model), under that assistant's own privacy terms. It can only do what the
 tools allow, only while you keep it connected, and only with the computers paired to your account.</p></section>
 <section id="who"><h2>Who can see your work</h2>
-<p>Only you and the assistants you connect. The people who run this service can technically reach the data stored on it,
-as with any online service.</p></section>
+<p>Only you and the assistants you connect. The status report to BIZOMAT ERP (above) shows your computers, commands and
+assistants, never your models. The people who run this service can technically reach the data stored on it, as with
+any online service.</p></section>
 <section id="delete"><h2>Deleting your data</h2>
 <p>Disconnect assistants, remove computers or make a new add-in key on your dashboard. To close your account and remove
 your sign-in details, ask your administrator or the person who invited you.</p></section>
@@ -395,13 +414,27 @@ GOOGLE_G = ('<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true">
             '<path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.2-13.5-10l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>')
 
 
-def _google_block(nxt: str = "/", invite: str = "", label: str = "Continue with Google") -> str:
-    from . import oauth
-    if not oauth.enabled():
-        return ""
+def _bizomat_b() -> str:
+    """The BIZOMAT mark (the B and its teal arrow on the navy tile), 18 px, for the sign-in button."""
+    from . import bizomat_brand as bz
+    return (f'<svg width="18" height="18" viewBox="0 0 {bz.MARK_SIZE} {bz.MARK_SIZE}" aria-hidden="true" focusable="false">'
+            f'<rect width="{bz.MARK_SIZE}" height="{bz.MARK_SIZE}" rx="{bz.MARK_RADIUS}" fill="{bz.NAVY}"/>'
+            f'<g transform="{bz.MARK_TRANSFORM}"><path fill="#ffffff" fill-rule="evenodd" d="{bz.B_PATH}"/>'
+            f'<path fill="{bz.TEAL_MARK}" d="{bz.ARROW_PATH}"/></g></svg>')
+
+
+def _google_block(nxt: str = "/", invite: str = "", verb: str = "Continue") -> str:
+    """The sign-in buttons that are turned on ("<verb> with BIZOMAT", "<verb> with Google"), then "or with email";
+    nothing when neither is on."""
+    from . import bizomat_id, oauth
     q = urlencode({k: v for k, v in (("next", nxt), ("invite", invite)) if v and v != "/"})
-    return (f'<a class="gbtn" href="/auth/google{"?" + q if q else ""}">{GOOGLE_G}<span>{label}</span></a>'
-            '<div class="or">or with email</div>')
+    q = "?" + q if q else ""
+    out = ""
+    if bizomat_id.enabled():
+        out += f'<a class="gbtn" href="/auth/bizomat{q}">{_bizomat_b()}<span>{verb} with BIZOMAT</span></a>'
+    if oauth.enabled():
+        out += f'<a class="gbtn" href="/auth/google{q}">{GOOGLE_G}<span>{verb} with Google</span></a>'
+    return out + '<div class="or">or with email</div>' if out else ""
 
 
 PITCH = "Turn engineering intent into CAD."
@@ -507,7 +540,7 @@ def _signup_page(nxt="/", error="", form=None):
                   _field("email", "Email", "email", "username", False, form.get("email", "")),
                   _new_password_field()],
                  "Create account", nxt, error, '<div class="links"><a href="/login">I already have an account</a></div>' + SHOW_SCRIPT,
-                 _google_block(nxt, label="Sign up with Google"))
+                 _google_block(nxt, verb="Sign up"))
 
 
 def _setup_page(nxt, error="", form=None):
@@ -531,7 +564,7 @@ def _join_page(token, error="", form=None):
                                            _field("email", "Email", "email", "username", False, form.get("email", "")),
                                            _new_password_field()],
                  "Create account", "/", error, '<div class="links"><a href="/login">I already have an account</a></div>' + SHOW_SCRIPT,
-                 _google_block("/", token, "Join with Google"))
+                 _google_block("/", token, "Join"))
 
 
 async def _send(send, status: int, body: bytes, headers: list) -> None:
@@ -750,7 +783,7 @@ class PasswordGate:
             m = mode(scope)
         except accounts.AccountError as e:  # damaged or missing accounts file: closed, never open
             return await _send(send, 503, json.dumps({"error": str(e)}).encode(), [(b"content-type", b"application/json")])
-        if path in ("/login", "/setup", "/reset", "/logout", "/signup", "/access") or path.startswith("/join/") or path.startswith("/auth/google"):
+        if path in ("/login", "/setup", "/reset", "/logout", "/signup", "/access") or path.startswith("/join/") or path.startswith(("/auth/google", "/auth/bizomat")):
             return await self._page(path, scope, receive, send)
         # /mcp and /mcp/<key> (and the add-in's /mcp/sw/): their tokens are the keys. OAuth metadata, registration,
         # token and revoke are for AI apps (no cookies).
@@ -803,6 +836,9 @@ class PasswordGate:
 
         if path == "/auth/google" or path == "/auth/google/callback":
             return await self._google(path, scope, q, go, send)
+
+        if path == "/auth/bizomat" or path == "/auth/bizomat/callback":
+            return await _bizomat_flow(path, scope, q, go, send)
 
         if path == "/access":
             if m != "accounts":
@@ -968,6 +1004,59 @@ async def _google_flow(path, scope, q, go, send):
                 u = await asyncio.to_thread(accounts.accept_invite, st["i"], info["email"], info.get("name") or "", None, google=info["sub"])
             else:
                 u = await asyncio.to_thread(accounts.sign_up, info["email"], info.get("name") or "", None, google=info["sub"])
+        except accounts.AccountError as e:
+            msg = str(e)
+            if "invite-only" in msg:
+                msg = f"There is no account for {info['email']}. This server is invite-only: ask the owner for an invite link."
+            return await fail(msg, 403)
+    if u.get("suspended"):
+        return await fail(SUSPENDED, 403)
+    return await go(_safe_next(st.get("n") or "/"), _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])), clear)
+
+
+async def _bizomat_flow(path, scope, q, go, send):
+    """Sign in with BIZOMAT (bizomat_id.py): the same account rules as Google, without the early-access keep step."""
+    from . import accounts, bizomat_id, oauth
+    if not bizomat_id.enabled():
+        return await go("/login")
+    if path == "/auth/bizomat":
+        nxt = _safe_next(q.get("next") or "/")
+        url, cookie = bizomat_id.start(_request_base(scope) + "/auth/bizomat/callback", nxt, q.get("invite", "")[:200])
+        c = f"{bizomat_id.STATE_COOKIE}={cookie}; Path=/auth/bizomat; Max-Age={bizomat_id.STATE_TTL}; HttpOnly; SameSite=Lax{_secure(scope)}"
+        return await go(url, c.encode())
+    clear = f"{bizomat_id.STATE_COOKIE}=; Path=/auth/bizomat; Max-Age=0; HttpOnly; SameSite=Lax".encode()
+    st = oauth.read_state(_cookie(scope, bizomat_id.STATE_COOKIE))
+
+    async def fail(msg, status=400):
+        return await _send(send, status, _login_page((st or {}).get("n", "/"), msg) if mode(scope) == "accounts" else
+                           _setup_page("/", msg), HTML + [(b"set-cookie", clear)])
+
+    if not st or not q.get("state") or not _eq(q["state"], st.get("s", "")):
+        return await fail("The BIZOMAT sign-in expired. Try again.")
+    if q.get("error"):
+        return await fail("BIZOMAT sign-in was cancelled.")
+    try:
+        info = await bizomat_id.exchange(q.get("code", ""), st["r"], st["s"])
+    except ValueError as e:
+        return await fail(str(e))
+    except Exception:
+        return await fail("Could not reach BIZOMAT. Try again.")
+    if not accounts.any_users():
+        return await fail("Create the owner account first, then sign in with BIZOMAT.")
+    verified = info.get("email_verified") is True
+    try:
+        u = await asyncio.to_thread(accounts.bizomat_user, info["sub"], info["email"], verified)
+    except accounts.AccountError as e:
+        return await fail(str(e), 403)
+    if u is None:
+        if not verified:
+            return await fail("Your BIZOMAT email is not confirmed yet. Confirm it from the email BIZOMAT sent you, then try again.")
+        try:
+            if st.get("i") and accounts.invite_valid(st["i"]):
+                u = await asyncio.to_thread(accounts.accept_invite, st["i"], info["email"], info.get("name") or "", None,
+                                            bizomat=info["sub"])
+            else:
+                u = await asyncio.to_thread(accounts.sign_up, info["email"], info.get("name") or "", None, bizomat=info["sub"])
         except accounts.AccountError as e:
             msg = str(e)
             if "invite-only" in msg:

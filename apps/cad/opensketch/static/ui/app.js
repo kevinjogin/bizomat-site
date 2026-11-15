@@ -242,12 +242,27 @@
   // who chose each password (the server keeps only a one-way hash, so nobody can read a password back)
   function pwCell(u) {
     const by = u.password_by;
-    const text = !u.has_password ? (u.google ? 'Google sign-in only' : 'None yet')
+    const text = !u.has_password ? (u.bizomat && u.google ? 'BIZOMAT or Google sign-in only' : u.bizomat ? 'BIZOMAT sign-in only' : u.google ? 'Google sign-in only' : 'None yet')
       : by === 'owner' ? 'Set by you' : by === 'suggested' ? 'Kept the suggested one'
       : by === 'self' ? (u.role === 'owner' ? 'Yours' : 'Chosen by them') : 'Not recorded';
     const td = el('td'); td.append(el('span', '', text));
     if (u.has_password && u.password_at) td.append(el('span', 'meta', 'Changed ' + new Date(u.password_at * 1000).toLocaleDateString()));
     return td;
+  }
+  // the status report to BIZOMAT ERP (erpstatus.py): on or off, the last report that went through, the last error
+  function paintErp(e) {
+    if (!$('erp-state') || !e) return;
+    const when = (t) => new Date(t * 1000).toLocaleString();
+    if (!e.on) {
+      $('erp-state').textContent = 'Off. It turns on with Sign in with BIZOMAT, when the BIZOMAT client secret is set on this server.';
+      $('erp-ok').textContent = ''; $('erp-err').textContent = ''; return;
+    }
+    $('erp-state').textContent = 'On. Reports go to ' + e.address + ' every ' + Math.round(e.every_s / 60) + ' minutes, and soon after a computer connects or a job finishes.'
+      + (e.running ? '' : ' The reporter is not running: restart the server.');
+    $('erp-ok').textContent = e.last_ok ? 'Last report: ' + when(e.last_ok) + ', ' + e.accounts + (e.accounts === 1 ? ' person' : ' people')
+      + (e.left_out ? '. Left out: ' + e.left_out + ' (email not confirmed).' : '.') : 'No report has gone through yet.';
+    $('erp-err').textContent = e.last_error ? 'Last error: ' + when(e.last_error.at) + ': ' + e.last_error.message
+      + (e.failures ? ' (' + e.failures + ' in a row)' : e.last_ok && e.last_ok > e.last_error.at ? ' Reports have gone through since.' : '') : 'No errors.';
   }
   async function loadPeople() {
     try {
@@ -292,6 +307,7 @@
         li.append(m, x); ul.append(li);
       }
       $('open-signup').checked = !!(d.settings && d.settings.open_signup);
+      paintErp(d.erp);
       err('');
     } catch (er) { failed(er); }
   }

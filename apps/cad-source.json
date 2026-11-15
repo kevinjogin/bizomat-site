@@ -1,7 +1,7 @@
 {
   "repository": "kevinjogin/bizomat-cad",
-  "commit": "f61adba94bb690f1c7d8f820c4f3e32e7514defd",
-  "tree": "7e48574d756c0a0458720afd655603ef26519261",
-  "subject": "cados stays on: bizomat.ai/cad reaches it over the private network, which cannot wake it (#6)",
+  "commit": "ce0c8101c8a1e551f081ebda4f16b17cb46194b6",
+  "tree": "fef922e133723304b573075db2d2172663bbd51a",
+  "subject": "Sign in with BIZOMAT, and CAD status in BIZOMAT ERP (both off until the secret is set) (#4)",
   "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
 }

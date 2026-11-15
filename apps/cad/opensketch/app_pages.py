@@ -273,6 +273,11 @@ below, so they choose it from the start.</p></div>
 <section class="panel" aria-labelledby="signup-h"><div class="panel-head"><h2 id="signup-h">Sign-up</h2></div><div class="panel-body">
 <label class="small" style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="open-signup">
 Anyone with the address can create an account (off: only people you add or invite)</label></div></section>
+<section class="panel" aria-labelledby="erp-h"><div class="panel-head"><h2 id="erp-h">BIZOMAT ERP</h2>
+<p>Each person's computers, recent jobs and AI assistants are reported to BIZOMAT ERP, which shows them under their
+company. Only people whose email is confirmed are reported: you, and people who signed in with BIZOMAT or Google.</p></div>
+<div class="panel-body"><p id="erp-state" role="status">Checking.</p><p class="small muted" id="erp-ok"></p>
+<p class="small muted" id="erp-err"></p></div></section>
 </div>"""
     return _shell("admin", body, base, True)
 

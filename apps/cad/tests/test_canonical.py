@@ -297,6 +297,34 @@ def test_google_sign_in_comes_back_under_cad(monkeypatch):
     assert asked == [back]
     assert browser.get(PRE + "/api/account", headers={"host": SITE}).json()["user"]["google"]
 
+
+def test_bizomat_sign_in_comes_back_under_cad(monkeypatch):
+    """BIZOMAT sends the person back under /cad: the return address BIZOMAT lists for the client "cad" (its setting
+    BIZOMAT_ID_CLIENTS) is https://bizomat.ai/cad/auth/bizomat/callback, and the state cookie is scoped there."""
+    from opensketch import bizomat_id
+    browser = _setup_owner()
+    monkeypatch.setenv("BIZOMAT_ID_CLIENT_SECRET", "s" * 40)
+    asked = []
+
+    async def exchange(code, redirect_uri, state):
+        asked.append(redirect_uri)
+        return {"sub": "bz-1", "email": "owner@example.com", "email_verified": True, "name": "Owner"}
+    monkeypatch.setattr(bizomat_id, "exchange", exchange)
+    back = NEW + "/auth/bizomat/callback"
+    browser.get(PRE + "/logout", headers={"host": SITE})
+    login = browser.get(PRE + "/login", headers={"host": SITE})
+    assert 'href="/cad/auth/bizomat"' in login.text
+    _policy_holds(login)
+    r = browser.get(PRE + "/auth/bizomat", headers={"host": SITE}, follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"].startswith("https://bizomat.ai/company/authorize?")
+    assert parse_qs(urlparse(r.headers["location"]).query)["redirect_uri"] == [back]
+    assert "Path=/cad/auth/bizomat;" in r.headers["set-cookie"]
+    state = parse_qs(urlparse(r.headers["location"]).query)["state"][0]
+    r = browser.get(f"{PRE}/auth/bizomat/callback?state={state}&code=good-code", headers={"host": SITE}, follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == PRE + "/", r.text[:300]
+    assert asked == [back]
+    assert browser.get(PRE + "/api/account", headers={"host": SITE}).json()["user"]["bizomat"]
+
 def test_sign_in_to_another_server_is_refused():
     browser = _setup_owner()
     reg = browser.post("/cad/oauth/register", json={"client_name": "Claude", "redirect_uris": [CALLBACK]}).json()

@@ -326,7 +326,7 @@ the connector address. If a client cannot sign in, use the private address in <a
 
 <section id="auth"><h2>Authentication</h2>
 <div class="table-wrap"><table><thead><tr><th>Who</th><th>How it signs in</th><th>How to revoke</th></tr></thead><tbody>
-<tr><td>You</td><td>Email and password, or Google where your administrator turned it on.</td><td>Sign out. An administrator can suspend or remove an account.</td></tr>
+<tr><td>You</td><td>Email and password, or your BIZOMAT account or Google where they are turned on.</td><td>Sign out. An administrator can suspend or remove an account.</td></tr>
 <tr><td>AI assistants</td><td>OAuth 2.1 with PKCE. You approve each assistant on a consent page.</td><td>Disconnect it on the CAD Assistant page.</td></tr>
 <tr><td>Private address</td><td>A secret key in the address itself, for clients without sign-in.</td><td>Make a new address in Settings. The old one stops at once.</td></tr>
 <tr><td>Your computers</td><td>A pairing code you confirm, then a key held in the Windows key store. Every request is signed.</td><td>Remove the computer on the SOLIDWORKS page.</td></tr>
@@ -348,6 +348,9 @@ time, and reports each step as ok, check or failed with the reason. Close or del
 <section id="computers"><h2>Several computers</h2>
 <p>Install and pair each computer the same way. Each one gets its own key. The SOLIDWORKS page lists them: set a default or
 remove one. When more than one is online, tell your assistant which to use, for example "on DESK-02".</p>
+<p>Where this server is connected to BIZOMAT, your computers, recent commands and AI assistants also show in BIZOMAT ERP,
+with your company's other tools, within a few minutes. Only accounts with a confirmed email are shown there: sign in
+with BIZOMAT once to confirm yours.</p>
 <p><b>New or lost computer:</b> remove the old one on the SOLIDWORKS page. It stops working at once. Then install and pair
 the new one. Nothing needs to be copied.</p></section>
 

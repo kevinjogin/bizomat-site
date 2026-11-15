@@ -558,7 +558,8 @@ function Set-McpSecrets {
     $dir = Join-Path $c.Dir 'cloudflare\mcp'
     $w = Get-Wrangler $dir
     $wanted = @('OPENSKETCH_PASSWORD', 'OPENSKETCH_MCP_TOKEN', 'OPENSKETCH_KEY_SECRET', 'GOOGLE_CLIENT_ID',
-        'GOOGLE_CLIENT_SECRET', 'OPENSKETCH_ACCESS_CODE', 'OPENSKETCH_INSTALLER_URL', 'OPENSKETCH_ADDIN_URL')
+        'GOOGLE_CLIENT_SECRET', 'OPENSKETCH_ACCESS_CODE', 'OPENSKETCH_INSTALLER_URL', 'OPENSKETCH_ADDIN_URL',
+        'BIZOMAT_ID_CLIENT_SECRET', 'BIZOMAT_ID_CLIENT_ID', 'BIZOMAT_ID_URL')
     $json = Get-Output 'fly' @('secrets', 'list', '--app', $CadApp, '--json')
     if (-not $json) { Stop-Here "Could not list the secrets of the Fly app $CadApp (fly auth login)." }
     $have = @()
