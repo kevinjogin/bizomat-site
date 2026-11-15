@@ -80,3 +80,21 @@ export async function applyD1Migrations(db: D1Database, migrations: D1Migration[
     await db.batch([...m.queries.map((q) => db.prepare(q)), insert.bind(m.name)]);
   }
 }
+
+/** The Workers test helpers for a request handled directly by the Worker's default export (test/billing.test.ts):
+ * an ExecutionContext whose waitUntil promises can be awaited, as in workerd. */
+export function createExecutionContext(): ExecutionContext & { __waits: Promise<unknown>[] } {
+  const waits: Promise<unknown>[] = [];
+  return {
+    __waits: waits,
+    waitUntil: (p: Promise<unknown>) => void waits.push(Promise.resolve(p).catch(() => undefined)),
+    passThroughOnException: () => undefined,
+    props: {},
+  } as unknown as ExecutionContext & { __waits: Promise<unknown>[] };
+}
+
+export async function waitOnExecutionContext(ctx: ExecutionContext): Promise<void> {
+  const waits = (ctx as unknown as { __waits?: Promise<unknown>[] }).__waits ?? [];
+  // A promise may add another (a webhook's processing after its answer): wait until none are left.
+  for (let i = 0; i < waits.length; i++) await waits[i];
+}

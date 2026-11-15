@@ -288,9 +288,10 @@ the minutes are short: Actions > the workflow > Disable workflow.
 
 ## 11. Recovery and maintenance
 
-- **A bad release:** `flyctl releases -a bizomat --image` lists the releases with their images. Redeploy the
-  previous one: `flyctl deploy --config fly.website.toml -a bizomat --image <registry.fly.io/bizomat:deployment-...>
-  --ha=false`.
+- **A bad release:** `flyctl releases -a bizomat --image` lists the releases with their images (since the deploy
+  improvements of 15 Nov 2026 labelled `<commit>-run<number>`). Redeploy the previous one:
+  `flyctl deploy --config fly.website.toml -a bizomat --image <registry.fly.io/bizomat:...> --ha=false`, or one group
+  only, leaving the others as they are, with `--process-groups web` (or `work`, `proxy`).
 - **Project Management's data:** volume `work_data` on the `work` Machine, with Fly's daily snapshots. To restore:
   `flyctl volumes snapshots list <volume-id> -a bizomat`, make a new volume from a snapshot, move the Machine onto it,
   check it, then remove the old one. Step by step: [infrastructure/README.md](infrastructure/README.md) and

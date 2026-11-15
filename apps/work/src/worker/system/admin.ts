@@ -8,6 +8,7 @@ import { HttpError, clientIp, notFound, now } from '../lib/util';
 import { auditStmt } from '../services/audit';
 import { coAuditStmt } from '../company/access';
 import { backfillOwnCompanies } from './system';
+import { companiesOfUser, requestSeatSync } from '../billing/seats';
 
 export const adminSystemRoutes = new Hono<AppEnv>();
 
@@ -147,6 +148,8 @@ adminSystemRoutes.post('/users/:id/:action{disable|enable}', async (c) => {
   // A disabled account is signed out everywhere at once (sessions and API tokens stop at the next request anyway).
   if (action === 'disable') stmts.push(c.env.DB.prepare("UPDATE sessions SET revoked_at = ?, ended_at = COALESCE(ended_at, ?), end_reason = COALESCE(end_reason, 'revoked') WHERE user_id = ? AND revoked_at IS NULL").bind(t, t, id));
   await c.env.DB.batch(stmts);
+  // A disabled account is not billed; enabled again, it is (src/worker/billing/seats.ts).
+  requestSeatSync(c, await companiesOfUser(c.env.DB, id), action === 'disable' ? 'user.disabled' : 'user.enabled');
   return c.json({ ok: true });
 });
 

@@ -226,6 +226,7 @@ export function Register() {
           <DetailsFields d={d} set={set} result={result} />
           <h2 className="crm-subhead">Tools</h2>
           <p className="muted small">Each tool gets its own space for the company. You own them all and choose who else uses each one.</p>
+          <p className="muted small">Registering is free. BIZOMAT ERP subscriptions for registered companies, charged per active user every month, are not open yet, and nothing is charged today. <a href="https://bizomat.ai/pricing/" target="_blank" rel="noopener noreferrer">Pricing and billing</a></p>
           <div className="co-tool-choices">
             {TOOL_APPS.map((app) => {
               const choice = tools[app];

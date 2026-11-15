@@ -54,6 +54,12 @@ flyctl releases -a bizomat --image
 flyctl deploy --config fly.website.toml -a bizomat --image <the previous image> --ha=false
 ```
 
+One group only (the others keep running what they run), for example the website:
+
+```bash
+flyctl deploy --config fly.website.toml -a bizomat --image <the previous image> --process-groups web --ha=false
+```
+
 Database (only if data must go back to the moment before the migration; changes made since are lost):
 
 1. Stop the work service with maintenance mode: `fly ssh console -a bizomat --process-group work`, then

@@ -132,13 +132,14 @@ def test_csharp_companion_and_addin_link_end_to_end(base, probe_dll, tmp_path): 
         assert got["r"][0]["ok"] is False and got["r"][0]["code"] == "CANCELLED", got
         assert db.command_record(None, cid)["status"] == "cancelled"
 
-        # paused by the person at the computer: refused with that reason
+        # paused by the person at the computer: refused with that reason. The gateway must hear of a pause and of a
+        # resume within seconds, not after the long poll held at the time (up to 25 s): docs/BRIDGE-PROTOCOL.md section 5.
         probe.say("pause")
-        assert _until(lambda: _mcp(base, "sw_status", {})[1].get("note", "").startswith("CAD Automation is paused"))
+        assert _until(lambda: _mcp(base, "sw_status", {})[1].get("note", "").startswith("CAD Automation is paused"), 5)
         res, out = _mcp(base, "sw_get_document", {})
         assert res.get("isError") and out["error_code"] == "PAUSED"
         probe.say("resume")
-        assert _until(lambda: not _mcp(base, "sw_get_document", {})[0].get("isError"))
+        assert _until(lambda: not _mcp(base, "sw_get_document", {})[0].get("isError"), 5)
 
         # the companion restarts (crash, update, Windows restart): same identity, no pairing, connects by itself
         probe.kill()

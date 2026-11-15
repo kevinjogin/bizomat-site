@@ -29,6 +29,9 @@ kill_timeout = 15
 [build]
   dockerfile = "infrastructure/fly/Dockerfile"
   ignorefile = ".dockerignore"
+  # proxy, web and work only: no CAD Automation in this app's image (the app cados serves /cad), so each Machine
+  # replacement fetches about 1 GB less (docs/deployment/DOWNTIME-REVIEW.md, recommendation 4)
+  build-target = "runtime-website"
 
 [deploy]
   # rolling is the only strategy for Machines with volumes. work is offline while its Machine is replaced (10-60 s):
@@ -64,6 +67,17 @@ kill_timeout = 15
   # Its address: a page asked for on another host (work.kevos.com once it points here, bizomat.fly.dev) answers 301 to
   # the same path under it; /api/ and the files keep answering there for open tabs.
   WORK_CANONICAL_URL = "https://bizomat.ai/tasks"
+  # Billing (docs/billing/README.md): live Stripe only (owner, 15 Nov 2026: the app refuses test mode when ENVIRONMENT
+  # is production, and the deploy stages only live keys). The price is the owner's live price (AUD 10.00 per user per
+  # month, read from Stripe on 15 Nov 2026; src/config/pricing.ts must name the same id, tests/pricing.test.ts). Billing
+  # stays off until the live secret key, publishable key and webhook signing secret are set as repository secrets
+  # (.github/scripts/stage-secrets.sh); even then nobody can subscribe until the founder opens subscriptions in the
+  # console, and the app sells a live price only once its GST treatment (tax behaviour) is set in Stripe.
+  WORK_STRIPE_ENVIRONMENT = "live"
+  WORK_STRIPE_PRICE_SEAT_MONTHLY = "price_1UbyE5Rs74vQph6MdBU51OeG"
+  # On SIGTERM the router gives open requests 3 s (it was 10 s), then closes long polls and WebSockets, which reconnect
+  # (docs/deployment/DOWNTIME-REVIEW.md, recommendation 5). kill_timeout stays 15 s.
+  PROXY_SHUTDOWN_GRACE_MS = "3000"
   # CAD Automation's address, the same as the cados app's fly.toml. The entrypoint passes OPENSKETCH_* to a cad role
   # only, and this app runs none since 9 Nov 2026, so these two have no effect here; they stay so that the Machines'
   # settings are unchanged and infrastructure/fly/test/check-config.py keeps checking the address.

@@ -175,6 +175,9 @@
 
 /* ---------- Planned page and guide details ---------- */
 .sys-hero-status { margin-top: 1rem; }
+/* /pricing/: the price per user, from src/config/pricing.ts */
+.pricing-price { display: flex; flex-wrap: wrap; align-items: baseline; gap: .2rem .6rem; margin: 1rem 0 0; color: var(--ink-2); }
+.pricing-price strong { color: var(--ink); font: 650 var(--step-4)/1.1 var(--font-display); }
 .sys-features--spaced { margin-top: 1.5rem; }
 .sys-feature__state { color: var(--ink) !important; font-weight: 600; font-size: .92rem !important; }
 .sys-feature__items { margin-top: .9rem; }

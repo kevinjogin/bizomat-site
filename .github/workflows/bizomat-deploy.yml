@@ -3,9 +3,10 @@
 #   Actions > BIZOMAT deploy (bizomat) > Run workflow on main, confirm = DEPLOY.
 # No push, merge, tag or schedule starts it, so nothing reaches production by accident.
 #
-# It deploys fly.website.toml, the configuration production runs today (the laptop's `bizomat.ps1 deploy website`
-# runs the same command), and only ever targets the app `bizomat` (fixed below). It never touches the app `cados`, DNS
-# or Cloudflare, never creates an app, volume or IP address, and sets no secret. (fly.toml is the earlier single-app
+# It deploys fly.website.toml, the configuration production runs today, and only ever targets the app `bizomat`
+# (fixed below). It never touches the app `cados`, DNS or Cloudflare, and never creates an app, volume or IP address.
+# The only secrets it sets are the optional settings named in .github/scripts/stage-secrets.sh, taken from this
+# repository's secrets (BIZOMAT_ID_CLIENT_SECRET, WORK_STRIPE_*), never printed. (fly.toml is the earlier single-app
 # plan; it routes /cad inside this app and is not deployed by this workflow.)
 #
 # Repository secret (Settings > Secrets and variables > Actions):
@@ -15,13 +16,16 @@
 # Steps: the preflight (.github/scripts/fly-preflight.py) compares fly.website.toml with the live Machines and stops
 # when the deploy would add or remove a Machine or change its size, memory or region (allow_machine_change = YES lets a
 # deliberate change through). fly.website.toml matches the live Machines (read from Fly on 9 Nov 2026: proxy, web and
-# work in syd), so the preflight passes for it. Then the deploy (the image built on the runner with --local-only and
-# pushed to Fly's registry; rolling, --ha=false: one Machine per group, replaced in place), a wait for
-# https://bizomat.fly.dev/__proxy/health to report the new version, and the public checks the laptop tool runs.
+# work in syd), so the preflight passes for it. Then (docs/deployment/DOWNTIME-REVIEW.md): the image is built once on
+# the runner (Dockerfile target runtime-website, no CAD) and pushed to Fly's registry; when the router's own files
+# changed since the version it runs (or deploy_proxy = yes), all three groups are replaced together as before;
+# otherwise work and then web are replaced while the router keeps running (rolling, --ha=false: one Machine per group,
+# replaced in place). Then a check that each Machine runs the new image, the public checks, and a summary of what
+# visitors saw, measured once a second during the deploy.
 #
 # Rollback: `flyctl releases -a bizomat --image`, then
 #   `flyctl deploy --config fly.website.toml -a bizomat --image <the previous image> --ha=false`
-# (README.md, "Recovery and maintenance").
+# or one group only with `--process-groups web` (README.md, "Recovery and maintenance").
 name: BIZOMAT deploy (bizomat)
 
 on:
@@ -35,6 +39,10 @@ on:
         description: Type YES only if the deploy is meant to change the Machines (groups, count, size, memory, region)
         required: false
         default: ""
+      deploy_proxy:
+        description: "auto: replace the router only when its files changed since the version it runs; yes: always"
+        required: false
+        default: auto
 
 permissions:
   contents: read
@@ -65,6 +73,8 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           persist-credentials: false
+          # the whole history: the deploy compares the router's running version with this commit
+          fetch-depth: 0
 
       - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
 
@@ -79,15 +89,33 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
         run: |
           names="$(flyctl secrets list --app "$APP" --json | jq -r '.[] | (.Name // .name)')"
-          # WORK_ABR_GUID and WORK_BIZOMAT_ID_CLIENTS: company accounts (docs/company/README.md)
+          # WORK_ABR_GUID and WORK_BIZOMAT_ID_CLIENTS: company accounts (docs/company/README.md); WORK_STRIPE_*: billing,
+          # off until all are set (docs/billing/README.md)
           for s in CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY WORK_GOOGLE_CLIENT_ID WORK_GOOGLE_CLIENT_SECRET \
-            WORK_ABR_GUID WORK_BIZOMAT_ID_CLIENTS; do
+            WORK_ABR_GUID WORK_BIZOMAT_ID_CLIENTS WORK_STRIPE_ENVIRONMENT WORK_STRIPE_SECRET_KEY WORK_STRIPE_PUBLISHABLE_KEY \
+            WORK_STRIPE_WEBHOOK_SECRET WORK_STRIPE_PRICE_SEAT_MONTHLY WORK_STRIPE_PRICE_SEAT_ANNUAL; do
             if grep -qx "$s" <<<"$names"; then
-              echo "Optional secret $s is set on $APP"
+              case "$s" in
+                # Set in fly.website.toml since 15 Nov 2026; a Fly secret of the same name would override it.
+                WORK_STRIPE_ENVIRONMENT|WORK_STRIPE_PRICE_SEAT_MONTHLY)
+                  echo "::warning::$s is also a Fly secret on $APP and overrides fly.website.toml: unset it (flyctl secrets unset $s --stage)" ;;
+                *) echo "Optional secret $s is set on $APP" ;;
+              esac
             else
               echo "::notice::Optional secret $s is not set on $APP"
             fi
           done
+
+      # The CAD sign-in client and the billing keys, from repository secrets, staged for the deploy below to apply
+      # (.github/scripts/stage-secrets.sh): values are never printed; an unset secret keeps what Fly has.
+      - name: Stage settings from repository secrets (values never printed)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+          CAD_CLIENT_SECRET: ${{ secrets.BIZOMAT_ID_CLIENT_SECRET }}
+          STRIPE_SECRET: ${{ secrets.WORK_STRIPE_SECRET_KEY }}
+          STRIPE_PUBLISHABLE: ${{ secrets.WORK_STRIPE_PUBLISHABLE_KEY }}
+          STRIPE_WEBHOOK: ${{ secrets.WORK_STRIPE_WEBHOOK_SECRET }}
+        run: bash .github/scripts/stage-secrets.sh
 
       # A restore point for Project Management's data before the new version starts (a new version can carry database
       # migrations). Fly also snapshots the volume daily (30 days), and the work server copies its database to
@@ -109,31 +137,92 @@ jobs:
 
       # The image is built here, on the runner, as BIZOMAT CI builds it ("image and local stack"), then pushed to Fly's
       # registry. Fly's remote builder stopped answering during the website build on both attempts of the first
-      # deploy from this workflow (10 Nov 2026), so it is not used.
-      - name: Make room on the runner (the image builds the website, the .NET add-in and OpenCascade)
+      # deploy from this workflow (10 Nov 2026), so it is not used. The image is the Dockerfile target runtime-website
+      # (fly.website.toml [build]): proxy, web and work, without CAD Automation.
+      - name: Make room on the runner
         run: sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL && df -h /
 
-      - name: Deploy (rolling, one Machine per process group)
+      # What visitors see, once a second, from now until the public checks have finished (the last step summarises it).
+      - name: Start measuring what visitors see
+        run: |
+          nohup bash -c 'while true; do t="$(date -u +%H:%M:%S)"; for u in https://bizomat.ai/ https://bizomat.ai/erp/login; do echo "$t $u $(curl -s -o /dev/null -w "%{http_code}" --max-time 5 "$u")"; done; sleep 1; done' > "$RUNNER_TEMP/outage.log" 2>&1 &
+          echo $! > "$RUNNER_TEMP/outage.pid"
+
+      - name: Build and push the image (once)
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
         run: |
-          flyctl deploy --config "$CONFIG" --app "$APP" --local-only --ha=false \
-            --build-arg BIZOMAT_VERSION="${GITHUB_SHA::7}" --wait-timeout 10m
+          label="${GITHUB_SHA::7}-run${GITHUB_RUN_NUMBER}"
+          flyctl deploy --config "$CONFIG" --app "$APP" --local-only --build-only --push --image-label "$label" \
+            --build-arg BIZOMAT_VERSION="${GITHUB_SHA::7}"
+          echo "IMAGE=registry.fly.io/$APP:$label" >> "$GITHUB_ENV"
+          echo "IMAGE_LABEL=$label" >> "$GITHUB_ENV"
 
-      # flyctl reports success once the Machines run; ask the router itself which version it serves
-      - name: The router serves the new version
+      # The router (proxy) is replaced only when something it runs changed since the version it reports, or when asked:
+      # while it stays up, bizomat.ai is never down as a whole and /cad is not touched (docs/deployment/DOWNTIME-REVIEW.md,
+      # recommendation 2). When it must be replaced, all three groups are replaced together, as before, so the site is
+      # down once rather than three times.
+      - name: Does the router need replacing?
+        env:
+          DEPLOY_PROXY: ${{ inputs.deploy_proxy }}
+        run: |
+          running="$(curl -fsS --max-time 10 "https://$APP.fly.dev/__proxy/health" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)"
+          need=yes
+          why="the version it runs is unknown"
+          if [ "$DEPLOY_PROXY" = "yes" ]; then
+            why="asked for (deploy_proxy = yes)"
+          elif [ -n "$running" ] && git cat-file -e "${running}^{commit}" 2>/dev/null; then
+            changed="$(git diff --name-only "$running" HEAD -- infrastructure/proxy infrastructure/fly/entrypoint.sh infrastructure/fly/Dockerfile fly.website.toml)"
+            if [ -z "$changed" ]; then
+              need=no
+              why="nothing it runs changed since $running"
+            else
+              why="changed since $running: $(echo "$changed" | tr '\n' ' ')"
+            fi
+          fi
+          echo "PROXY_NEEDED=$need" >> "$GITHUB_ENV"
+          echo "- Router (proxy): $( [ "$need" = yes ] && echo replaced || echo kept running ), $why" | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Deploy (proxy, web and work together)
+        if: env.PROXY_NEEDED == 'yes'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: flyctl deploy --config "$CONFIG" --app "$APP" --image "$IMAGE" --ha=false --wait-timeout 10m
+
+      - name: Deploy work, then web (the router keeps running)
+        if: env.PROXY_NEEDED != 'yes'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
+        run: |
+          flyctl deploy --config "$CONFIG" --app "$APP" --image "$IMAGE" --process-groups work --ha=false --wait-timeout 10m
+          flyctl deploy --config "$CONFIG" --app "$APP" --image "$IMAGE" --process-groups web --ha=false --wait-timeout 10m
+
+      # flyctl reports success once the Machines run; check what each one runs
+      - name: The Machines run the new version
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_BIZOMAT_TOKEN }}
         run: |
           want="${GITHUB_SHA::7}"
-          got=""
+          groups="web work"
+          [ "$PROXY_NEEDED" = yes ] && groups="proxy web work"
           for _ in $(seq 1 36); do
-            got="$(curl -fsS --max-time 10 "https://$APP.fly.dev/__proxy/health" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)"
-            if [ "$got" = "$want" ]; then
-              echo "BIZOMAT $want is running on the Fly app $APP" >> "$GITHUB_STEP_SUMMARY"
+            ok=1
+            list="$(flyctl machines list --app "$APP" --json 2>/dev/null || echo '[]')"
+            for g in $groups; do
+              n="$(jq --arg g "$g" --arg l "$IMAGE_LABEL" '[.[] | select((.config.metadata.fly_process_group // "") == $g) | select(.state == "started") | select(((.config.image // "") | endswith(":" + $l)) or ((.image_ref.tag // "") == $l))] | length' <<<"$list")"
+              [ "$n" -ge 1 ] || ok=0
+            done
+            if [ "$PROXY_NEEDED" = yes ]; then
+              got="$(curl -fsS --max-time 10 "https://$APP.fly.dev/__proxy/health" 2>/dev/null | jq -r '.version // empty' 2>/dev/null || true)"
+              [ "$got" = "$want" ] || ok=0
+            fi
+            if [ "$ok" = 1 ]; then
+              echo "BIZOMAT $want ($IMAGE_LABEL) is running on $groups of the Fly app $APP" >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
             sleep 5
           done
-          echo "::error::https://$APP.fly.dev/__proxy/health did not show version $want within 3 minutes (last: ${got:-none}). See 'flyctl logs -a $APP'; to go back: README.md, Recovery and maintenance."
+          echo "::error::The Machines ($groups) did not all run $IMAGE_LABEL within 3 minutes. See 'flyctl logs -a $APP'; to go back: README.md, Recovery and maintenance."
           exit 1
 
       # The checks the laptop tool runs after `bizomat.ps1 deploy website`. A backend can need a moment after the
@@ -164,5 +253,44 @@ jobs:
           wait_for "the retired design preview answers 301 to the ERP page (/system-preview/)" '[ "$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 15 https://bizomat.ai/system-preview/)" = "301 https://bizomat.ai/systems/erp/" ]' || fail=1
           wait_for "the public Systems pages answer (/systems/: 200)" '[ "$(code https://bizomat.ai/systems/)" = 200 ]' || fail=1
           wait_for "Resources stay public (/resources/: 200, no sign-in)" '[ "$(code https://bizomat.ai/resources/)" = 200 ]' || fail=1
+          wait_for "the pricing page answers (/pricing/: 200)" '[ "$(code https://bizomat.ai/pricing/)" = 200 ]' || fail=1
+          # Billing (docs/billing/README.md): an unsigned webhook delivery says only whether billing is configured (503:
+          # off; 400: on, the signature refused). Nothing is processed and nothing is charged.
+          case "$(code https://bizomat.ai/erp/api/billing/stripe-webhook "{}")" in
+            503) echo "info: billing is off in production (the webhook answers 503)" | tee -a "$GITHUB_STEP_SUMMARY" ;;
+            400) echo "info: billing is configured in production (the webhook refuses an unsigned delivery: 400); subscriptions open only when the founder opens them in the console" | tee -a "$GITHUB_STEP_SUMMARY" ;;
+            *) echo "FAIL the billing webhook gave an unexpected answer"; echo "- FAILED: the billing webhook gave an unexpected answer" >> "$GITHUB_STEP_SUMMARY"; fail=1 ;;
+          esac
           echo "info: bizomat.ai/login -> $(code https://bizomat.ai/login) (301 expected); bizomat.fly.dev/ -> $(code https://bizomat.fly.dev/) (301 expected)" | tee -a "$GITHUB_STEP_SUMMARY"
           exit "$fail"
+
+      # CAD sign-in (docs/cad/SIGN-IN-SETUP.md): proves that this app holds the SHA-256 of the same secret the repository
+      # holds, without printing it: the token endpoint is asked to swap a made-up code with the client cad's credentials.
+      # The same secret answers invalid_grant (400: the client and secret are right, the code is not); a different one,
+      # or no client, answers invalid_client (401). Nothing is written but a rate-limit count. The secret reaches curl on
+      # standard input, never on a command line.
+      - name: CAD sign-in client (the secret is never printed)
+        env:
+          CAD_CLIENT_SECRET: ${{ secrets.BIZOMAT_ID_CLIENT_SECRET }}
+        run: |
+          if [ -z "$CAD_CLIENT_SECRET" ]; then
+            echo "info: BIZOMAT_ID_CLIENT_SECRET is not set in this repository; CAD sign-in is not checked" | tee -a "$GITHUB_STEP_SUMMARY"; exit 0
+          fi
+          code="$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')"
+          verifier="$(python3 -c 'import secrets; print(secrets.token_urlsafe(48))')"
+          answer="$(printf 'user = "cad:%s"\n' "$CAD_CLIENT_SECRET" | curl -s -K - --max-time 15 -w '\n%{http_code}' \
+            --data-urlencode grant_type=authorization_code --data-urlencode "code=$code" --data-urlencode "code_verifier=$verifier" \
+            --data-urlencode redirect_uri=https://bizomat.ai/cad/auth/bizomat/callback https://bizomat.ai/company/api/id/token)"
+          status="$(tail -n1 <<<"$answer")"; error="$(head -n -1 <<<"$answer" | jq -r '.error // empty' 2>/dev/null || true)"
+          if [ "$status" = 400 ] && [ "$error" = invalid_grant ]; then
+            echo "- ok: CAD sign-in: the client cad is configured here with the repository secret's SHA-256 (a made-up code was refused as invalid_grant)" | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            echo "::error::CAD sign-in: the client cad does not take the repository secret (HTTP $status, ${error:-no error code}): WORK_BIZOMAT_ID_CLIENTS on $APP and BIZOMAT_ID_CLIENT_SECRET differ, or the client is missing"
+            echo "- FAILED: CAD sign-in client check (HTTP $status, ${error:-no error code})" >> "$GITHUB_STEP_SUMMARY"; exit 1
+          fi
+
+      - name: What visitors saw during the deploy
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/outage.pid" ]; then kill "$(cat "$RUNNER_TEMP/outage.pid")" 2>/dev/null || true; fi
+          python3 .github/scripts/outage-summary.py "$RUNNER_TEMP/outage.log" | tee -a "$GITHUB_STEP_SUMMARY"

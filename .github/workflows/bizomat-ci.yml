@@ -212,6 +212,15 @@ jobs:
         run: docker build -f infrastructure/fly/Dockerfile -t "$BIZOMAT_IMAGE" --build-arg BIZOMAT_VERSION="${GITHUB_SHA::7}" .
       - name: Image size
         run: docker image ls "$BIZOMAT_IMAGE" --format '{{.Repository}}:{{.Tag}} {{.Size}}' | tee -a "$GITHUB_STEP_SUMMARY"
+      # What the Fly app bizomat deploys (fly.website.toml [build] build-target): proxy, web and work without CAD
+      # Automation. Built from the same cached stages, so it costs little; it must start web and work and refuse cad.
+      - name: The deployed image (target runtime-website), its size, and that it has no CAD
+        run: |
+          docker build -f infrastructure/fly/Dockerfile --target runtime-website -t bizomat-website:ci --build-arg BIZOMAT_VERSION="${GITHUB_SHA::7}" .
+          docker image ls bizomat-website:ci --format 'bizomat-website (deployed image): {{.Size}}' | tee -a "$GITHUB_STEP_SUMMARY"
+          docker run --rm --entrypoint sh bizomat-website:ci -c 'test ! -e /opt/cad && test -f /app/web/dist-server/server.mjs && test -f /app/work/dist/node/server.mjs && test -f /app/proxy/server.mjs && node --version'
+          if docker run --rm bizomat-website:ci /usr/local/bin/bizomat-entrypoint cad > /tmp/cad.out 2>&1; then echo "::error::the cad role started on the website image"; exit 1; fi
+          grep -q "no CAD Automation" /tmp/cad.out && echo "cad role refused on the website image, as intended"
       - name: Entrypoint (secret isolation per role, volumes, secret files, maintenance mode, refusals)
         run: bash infrastructure/fly/test/entrypoint.test.sh "$BIZOMAT_IMAGE"
       - name: Migration round trip in the image (export, restore, verify)

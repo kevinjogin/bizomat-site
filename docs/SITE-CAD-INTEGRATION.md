@@ -122,3 +122,10 @@ repository with its image and entrypoint tests.
 | Fly app name, organization or private port | `UPSTREAM_CAD` | `fly.toml`, Dockerfile CMD |
 | Brand or footer text | `shared/brand/`, `src/config/platform.ts` | `opensketch/brand.py`, the brand copies |
 | A deploy | `bizomat-deploy.yml` (bizomat only) | `deploy.yml` (cados only) |
+
+## 8. Sign in with BIZOMAT and CAD status in BIZOMAT ERP
+
+One secret switches on both: CAD keeps it (`BIZOMAT_ID_CLIENT_SECRET` on `cados`), and this app keeps its SHA-256
+(`WORK_BIZOMAT_ID_CLIENTS` on `bizomat`). Both are off until the owner sets them. The settings, how each side checks
+the other, the owner's steps (BIZOMAT first), the checks after and the rollback are in `docs/cad/SIGN-IN-SETUP.md`.
+CAD's own copy of this file (`apps/cad/docs/SITE-CAD-INTEGRATION.md`, section 8) says what CAD reports.

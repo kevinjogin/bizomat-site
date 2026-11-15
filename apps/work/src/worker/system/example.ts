@@ -198,6 +198,7 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
       'whs_risk_assessments',
       'whs_hazards',
       'whs_site_packs',
+      'whs_hours_revisions',
       'whs_hours',
       'whs_policies',
       'whs_settings',

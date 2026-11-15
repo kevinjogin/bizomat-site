@@ -407,6 +407,10 @@ released; development-signed), never overwritten.
 - On Cloudflare: a state file over 64 MiB is not copied to R2 (logged; `bridge.sqlite` grows with the command
   history); files in transit (uploads, exports, file chunks) do not survive a container restart; a container killed
   without SIGTERM loses up to 2 s of changes.
+- Pause and resume (15 Nov 2026): the Companion posts its status beside the held long poll (`PushStatusSoon` in
+  `CompanionEngine.SetPaused`), so the gateway sees a resume within about 0.5 s. Before, it waited for the poll (up to
+  25 s), the AI's commands were refused as PAUSED meanwhile, and `tests/test_bridge_e2e.py` failed about one run in
+  three; the test now requires pause and resume to be seen within 5 s.
 - KEVOS: not yet run on Windows or in a real SOLIDWORKS; the MSI is built only by CI; no MCP progress notifications
   (JSON responses), progress is in `sw_command_status`; ChatGPT and Grok connectors untested; the gateway is one
   process (SQLite, live sessions in memory).

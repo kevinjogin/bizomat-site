@@ -76,18 +76,15 @@ RUN python -m venv /opt/cad/venv \
  && /opt/cad/venv/bin/pip install -q --require-hashes -r /tmp/requirements.txt
 
 # ----------------------------------------------------------------------------------------------- runtime
-# Everything but the website and work builds: enough to run the proxy and cad roles (local checks, CI smoke
-# runs before the web and work servers exist).
-FROM ${PYTHON_IMAGE} AS runtime-base
+# What every role needs: Node, one user per role, the proxy, the entrypoint and the restore scripts. No CAD.
+FROM ${PYTHON_IMAGE} AS runtime-common
 
 ENV PYTHONUNBUFFERED=1 PYTHONDONTWRITEBYTECODE=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1 \
     NODE_ENV=production
 
-# OpenCascade (build123d) needs these X/GL libraries even without a screen (its OCP module also links libexpat
-# directly); libstdc++ is also node's.
+# libstdc++ is node's; the certificates are for outgoing https.
 RUN apt-get update -qq \
- && apt-get install -y -qq --no-install-recommends \
-      libgl1 libglu1-mesa libxrender1 libxext6 libx11-6 libexpat1 libstdc++6 ca-certificates \
+ && apt-get install -y -qq --no-install-recommends libstdc++6 ca-certificates \
  && rm -rf /var/lib/apt/lists/*
 
 # Node 22 from the official image (the sketch solver of cad, the proxy, web and work)
@@ -104,6 +101,30 @@ RUN set -eu; \
     done; \
     mkdir -p /data /app
 
+# proxy, entrypoint, cad's holding page and the restore scripts (infrastructure/migrate, run with fly ssh console)
+COPY infrastructure/proxy/package.json infrastructure/proxy/*.mjs /app/proxy/
+COPY infrastructure/migrate /usr/local/lib/bizomat/migrate
+COPY infrastructure/fly/cad-holding.py /usr/local/lib/bizomat/cad-holding.py
+COPY infrastructure/fly/entrypoint.sh /usr/local/bin/bizomat-entrypoint
+RUN chmod -R a+rX /app /usr/local/lib/bizomat \
+ && chmod 0755 /usr/local/bin/bizomat-entrypoint \
+ && find /usr/local/lib/bizomat -name '*.sh' -exec chmod 0755 {} +
+
+EXPOSE 8080 8003 8002 8001
+# Each Fly process group (and each compose service) runs `bizomat-entrypoint <role>`.
+CMD ["/usr/local/bin/bizomat-entrypoint", "help"]
+
+# Everything but the website and work builds: enough to run the proxy and cad roles (local checks, CI smoke
+# runs before the web and work servers exist).
+FROM runtime-common AS runtime-base
+
+# OpenCascade (build123d) needs these X/GL libraries even without a screen (its OCP module also links libexpat
+# directly).
+RUN apt-get update -qq \
+ && apt-get install -y -qq --no-install-recommends \
+      libgl1 libglu1-mesa libxrender1 libxext6 libx11-6 libexpat1 \
+ && rm -rf /var/lib/apt/lists/*
+
 # cad: packages, the add-in download, then the code (owned by root, read-only to the service)
 COPY --from=cad-deps /opt/cad/venv /opt/cad/venv
 COPY --from=swaddin /out /tmp/swaddin
@@ -119,19 +140,24 @@ RUN cd /app/cad \
  && /opt/cad/venv/bin/python -m compileall -q /app/cad/opensketch
 # which CADOS commit apps/cad is (scripts/sync-cad.mjs): the cad role reports it as its version (/healthz)
 COPY apps/cad-source.json /app/cad/cad-source.json
+RUN chmod -R a+rX /app/cad
 
-# proxy, entrypoint, cad's holding page and the restore scripts (infrastructure/migrate, run with fly ssh console)
-COPY infrastructure/proxy/package.json infrastructure/proxy/*.mjs /app/proxy/
-COPY infrastructure/migrate /usr/local/lib/bizomat/migrate
-COPY infrastructure/fly/cad-holding.py /usr/local/lib/bizomat/cad-holding.py
-COPY infrastructure/fly/entrypoint.sh /usr/local/bin/bizomat-entrypoint
-RUN chmod -R a+rX /app /usr/local/lib/bizomat \
- && chmod 0755 /usr/local/bin/bizomat-entrypoint \
- && find /usr/local/lib/bizomat -name '*.sh' -exec chmod 0755 {} +
-
-EXPOSE 8080 8003 8002 8001
-# Each Fly process group (and each compose service) runs `bizomat-entrypoint <role>`.
-CMD ["/usr/local/bin/bizomat-entrypoint", "help"]
+# ----------------------------------------------------------------------------------------------- the deployed image
+# What the Fly app bizomat runs (fly.website.toml, [build] build-target): proxy, web and work, without CAD Automation
+# (the app cados serves /cad), so every Machine replacement fetches about 1 GB less (docs/deployment/DOWNTIME-REVIEW.md,
+# recommendation 4). The cad role refuses to start on it.
+FROM runtime-common AS runtime-website
+COPY --from=web-build /src/package.json /app/web/package.json
+COPY --from=web-build /src/dist-server /app/web/dist-server
+COPY --from=web-build /src/dist /app/web/dist
+COPY --from=work-build /src/apps/work/package.json /app/work/package.json
+COPY --from=work-build /src/apps/work/migrations /app/work/migrations
+COPY --from=work-build /src/apps/work/node_modules /app/work/node_modules
+COPY --from=work-build /src/apps/work/dist /app/work/dist
+RUN chmod -R a+rX /app/web /app/work
+# the version last, so a new one (every deploy) changes no layer above
+ARG BIZOMAT_VERSION=dev
+ENV BIZOMAT_VERSION=${BIZOMAT_VERSION}
 
 # ----------------------------------------------------------------------------------------------- final image
 FROM runtime-base AS runtime

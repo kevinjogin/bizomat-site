@@ -7,6 +7,7 @@ export const PAGES = [
   { path: '/systems/', name: 'systems', key: true, ci: true },
   { path: '/systems/erp/', name: 'system-erp', key: true, ci: true },
   { path: '/systems/erp/guide/', name: 'system-erp-guide', key: true, ci: true },
+  { path: '/pricing/', name: 'pricing', key: true, ci: true },
   { path: '/systems/crm/', name: 'system-crm', ci: true },
   { path: '/systems/crm/guide/', name: 'system-crm-guide', ci: true },
   { path: '/systems/finance/', name: 'system-finance', ci: true },

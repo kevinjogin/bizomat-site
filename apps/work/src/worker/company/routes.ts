@@ -4,6 +4,7 @@
 // verify.ts (registration checks), sync.ts (keeping the tools in step) and summary.ts (the control centre's numbers).
 
 import { Hono } from 'hono';
+import { hasOpenSubscription, requestSeatSync } from '../billing/seats';
 import { z } from 'zod';
 import type { AppEnv, Env } from '../env';
 import { HttpError, body, clientIp, newId, notFound, now, placeholders, randomToken, sha256Hex } from '../lib/util';
@@ -595,6 +596,8 @@ one.delete('/', async (c) => {
   const a = await requireCompany(c, 'owner');
   const input = await body(c, z.object({ confirm: z.string().max(200) }));
   if (input.confirm.trim() !== a.company.name) throw new HttpError(400, 'Type the company’s name to confirm');
+  // A company that is still paying keeps its account until the subscription has ended (Stripe would go on charging).
+  if (await hasOpenSubscription(c.env.DB, a.companyId)) throw new HttpError(409, 'This company has a subscription that has not ended. Cancel it under Administration, Billing, and delete the company once it has ended.', { code: 'SUBSCRIPTION_OPEN' });
   const t = now();
   // The tools stay as they are, with their people and records: only the company account goes.
   await c.env.DB.batch([
@@ -666,6 +669,8 @@ one.post('/members', async (c) => {
     db.prepare('INSERT INTO co_members (company_id, user_id, role, title, tasks_role, crm_role, fin_role, invited_by, joined_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(a.companyId, input.userId, input.role, input.title, roles.tasks, roles.crm, roles.finance, a.userId, now()),
     coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'member.added', targetType: 'user', targetId: input.userId, metadata: { role: input.role }, ip: clientIp(c) }),
   ]);
+  // One more billable user: the subscription's quantity follows (src/worker/billing/seats.ts).
+  requestSeatSync(c, [a.companyId], 'member.added');
   return c.json({ ok: true }, 201);
 });
 
@@ -709,6 +714,8 @@ async function removeMember(c: any, a: CompanyAccess, targetId: string, action: 
   ]);
   const { syncDepartment } = await import('./sync');
   for (const d of depts.results) await syncDepartment(db, a.tools, d.department_id);
+  // One billable user fewer: the subscription's quantity follows (src/worker/billing/seats.ts).
+  requestSeatSync(c, [a.companyId], action);
 }
 
 one.delete('/members/:userId', async (c) => {
@@ -942,6 +949,7 @@ companyRoutes.post('/invitations/:token/accept', async (c) => {
   ]);
   const { syncDepartment } = await import('./sync');
   for (const d of live) await syncDepartment(db, tools, d);
+  requestSeatSync(c, [inv.company_id], 'invitation.accepted');
   return c.json({ companyId: inv.company_id });
 });
 

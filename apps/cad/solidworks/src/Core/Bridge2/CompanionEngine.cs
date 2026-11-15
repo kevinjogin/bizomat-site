@@ -302,9 +302,13 @@ namespace OpenSketch.Sw.Bridge
         public void SetPaused(bool paused)
         {
             Paused = paused;
-            statusDirty = true;
             BroadcastState();
             Changed?.Invoke();
+            // The gateway refuses commands while it believes the computer is paused, so it must hear of a pause or a
+            // resume at once: the cloud loop only posts status between long polls, which are held up to 25 s, so a
+            // resume made during a poll was seen up to 25 s late and the AI's commands were refused meanwhile.
+            // PushStatusSoon posts beside the poll; when not connected, the next hello carries "paused" instead.
+            PushStatusSoon();
             kick.Set();
             log(paused ? "paused by the user" : "resumed by the user");
         }

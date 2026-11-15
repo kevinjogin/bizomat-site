@@ -90,7 +90,7 @@ created -> queued -> delivered -> accepted -> running -> succeeded | failed | ca
 
 | Link | Heartbeat | Lost | Reconnect |
 |---|---|---|---|
-| Companion to gateway | Each long poll (held 25 s). Online = polled in the last 70 s. Status (SOLIDWORKS sessions, documents, busy, dialogs) is posted when it changes and every 60 s. | A poll not answered in 40 s is abandoned | Backoff 1, 2, 4 ... 60 s with jitter; at once after a network change, resume from sleep or unlock. 409 (`replaced`, `restarted`): hello again. 401 removed/unknown: stop and show "pair again". |
+| Companion to gateway | Each long poll (held 25 s). Online = polled in the last 70 s. Status (SOLIDWORKS sessions, documents, busy, dialogs, paused) is posted when it changes, at once and beside the held poll (never after it: a resume must not wait up to 25 s), and every 60 s. | A poll not answered in 40 s is abandoned | Backoff 1, 2, 4 ... 60 s with jitter; at once after a network change, resume from sleep or unlock. 409 (`replaced`, `restarted`): hello again. 401 removed/unknown: stop and show "pair again". |
 | Companion to add-in | `pipe.ping` every 10 s, answered on the add-in's pipe thread with `ui_responsive`, `modal_dialog`, `busy` | 3 missed: the link is closed | The add-in reconnects (1, 2, 5, 10 s) and starts the companion when it has been missing for 5 s. A SOLIDWORKS that closes or crashes while it works: the command fails as `RESULT_LOST` after 5 s. |
 
 ## 6. The pipe (companion and add-in)

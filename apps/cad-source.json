@@ -1,7 +1,7 @@
 {
   "repository": "kevinjogin/bizomat-cad",
-  "commit": "ce0c8101c8a1e551f081ebda4f16b17cb46194b6",
-  "tree": "fef922e133723304b573075db2d2172663bbd51a",
-  "subject": "Sign in with BIZOMAT, and CAD status in BIZOMAT ERP (both off until the secret is set) (#4)",
+  "commit": "17fc4625d8b5dda3e8f883333c2bcbee85edc8f4",
+  "tree": "8a5aaa77fa511c7cfa6cfceda8a509ef5f9189ec",
+  "subject": "Companion: post pause and resume at once, not after the held long poll (#7) [skip ci]",
   "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
 }
