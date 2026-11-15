@@ -266,7 +266,7 @@ entitlement decisions. The website keeps only public pages (`/pricing/`) and red
 
 | Path | What |
 | --- | --- |
-| `apps/work/migrations/0026_billing.sql` | The billing tables (4.5), additive |
+| `apps/work/migrations/0027_billing.sql` | The billing tables (4.5), additive |
 | `apps/work/src/worker/billing/config.ts` | Reads and checks `STRIPE_*`; returns a working config or a reason billing is off (never a key value) |
 | `apps/work/src/worker/billing/stripe.ts` | The one Stripe client: `stripe` npm package (v23.1.0, zero dependencies, no install scripts, pins API `2026-10-28.endive`), fetch HTTP client so it runs on Node and workerd, request timeout, retries, idempotency keys, and the `livemode` guard on every response |
 | `.../billing/catalog.ts` | Plans, add-ons and prices; optional seeds from `STRIPE_PRICE_*`; verification against Stripe |
@@ -338,7 +338,9 @@ and dead filters) and "Reprocess"; "Reconcile with Stripe"; the plan catalogue (
 in Stripe"); founder-only: refund, credit note, customer credit, cancel a subscription, apply a coupon, grants, the
 enforcement switches and the billing audience.
 
-### 4.5 Data model: migration `0026_billing.sql` (additive)
+### 4.5 Data model: migration `0027_billing.sql` (additive)
+
+Numbering: 0026 is taken by BIZOMAT WHS Release 1 (`0026_whs_core.sql`, built in parallel); billing takes the next free number when it is built.
 
 New tables, indexes and one trigger only; no existing table, column or row changes, so the previous image runs on the
 migrated database (as `0013`, `0016`, `0019` and `0025` say of themselves). SQLite and D1 compatible. No foreign keys to `co_companies`
@@ -680,7 +682,7 @@ Each phase is its own pull request (or several), reviewed and deployed by the ow
 
 ### Phase A: core billing
 
-1. Migration `0026_billing.sql`; `config.ts`, `stripe.ts` (client, guards, redaction); entrypoint mapping, `config.ts`
+1. Migration `0027_billing.sql`; `config.ts`, `stripe.ts` (client, guards, redaction); entrypoint mapping, `config.ts`
    `BILLING_VARS`, `env.ts`, isolation test, local compose placeholders that are not key-shaped.
 2. Catalogue and console editor; price verification; env seeds.
 3. Billing accounts and Stripe Customers; billing details.
@@ -882,7 +884,7 @@ Deploy only through `.github/workflows/bizomat-deploy.yml` (`confirm` = `DEPLOY`
 Machine, process group, memory or volume changes; the preflight enforces it.
 
 1. **Billing dark.** Phase A merged and deployed with no Stripe secrets: billing off, webhook 503,
-   `GET /erp/api/billing/config` → `enabled: false`, every module `off`. Migration 0026 is additive; the server copies
+   `GET /erp/api/billing/config` → `enabled: false`, every module `off`. Migration 0027 is additive; the server copies
    the database to `pre-migration-backups/` before applying it, and the workflow snapshots `work_data`.
 2. **Test mode on production, admins only.** Test secrets staged; `WORK_STRIPE_ENVIRONMENT = "test"` in
    `fly.website.toml` by pull request; deploy; the founder sets the audience to `admins` in the console. Only platform
