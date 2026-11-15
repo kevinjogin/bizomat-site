@@ -53,7 +53,9 @@ server (`whs/access.ts`).
 | ERP administrator (`erp_admin`) | What a WHS manager may, except medical details; reads confidential reports only while nobody holds WHS manager or health officer |
 
 - **Medical details:** only health officers. A WHS manager does not read them, unless also given Health officer. In a
-  company of one person (own and example companies) that person holds every capability, as elsewhere in the ERP.
+  company of one person (own and example companies) that person holds every capability, as elsewhere in the ERP. The
+  company's owner and administrators cannot be given Health officer at all (ERP roles go to members only), so medical
+  access is always a grant to a named member, recorded in the ERP's history.
 - **Confidential reports:** psychosocial, violence and fatigue hazards and psychosocial incidents can be marked
   confidential. They are read by the reporter, WHS managers and health officers (and ERP administrators while no one
   holds either role); the form says who before it is sent.
@@ -61,7 +63,7 @@ server (`whs/access.ts`).
   someone other than the drafter, lead or submitter, or completer; the one-person exception is recorded, as in the
   ERP. Platform legal rules follow the same rule (a lone platform admin is the recorded exception).
 
-## Data (migration 0026)
+## Data (migrations 0026 and 0028)
 
 32 tables, all prefixed `whs_`. Company tables carry `company_id` and use composite `(company_id, id)` keys.
 
@@ -73,6 +75,9 @@ server (`whs/access.ts`).
   `whs_incidents`, `whs_incident_revisions`, `whs_health`; `whs_investigations`, `whs_inv_team`, `whs_inv_timeline`,
   `whs_inv_statements`; `whs_rule_checks`, `whs_reg_notices`; `whs_actions` (polymorphic source); `whs_links`,
   `whs_comments`, `whs_files`, `whs_alerts`, `whs_events`; `whs_purges`.
+- **Hours worked history** (migration `0028_whs_hours.sql`, additive): `whs_hours_revisions`, one row per change to
+  one site and month (hours before and after, who, when, reason). Append-only by trigger (only the example company's
+  removal passes, through `whs_purges`); an account's deletion only clears who made the change.
 - **Protections in the database:** incidents, health records and notification records cannot be deleted; a recorded
   submission cannot be changed and needs its method, time, who and reference (a CHECK); the history tables
   (`whs_events`, `whs_legal_events`, `whs_incident_revisions`, `whs_rule_checks`) are append-only. Every change to a
@@ -143,9 +148,65 @@ verification.
   escalated in the app (once each) to the responsible person and WHS managers by the 15-minute run and on the
   dashboard, and show in My Work.
 - **Dashboard:** counts from the records only, filtered by site, department, dates, incident kind and risk level;
-  twelve months of incidents and hazards; sites and departments compared. Lost-time and recordable injury frequency
-  rates appear only when hours worked are entered for every month of the period (WHS manager, Settings), and not for
-  a department or incident type filter (hours are per site).
+  twelve months of incidents and hazards; sites and departments compared. Lost time and recordable injury frequency
+  rates: see "Hours worked and injury frequency rates" below.
+
+## Hours worked and injury frequency rates
+
+Follow-up of 15 Nov 2026 (owner's brief, task 2). Code: `apps/work/src/worker/whs/hours.ts`.
+
+- **Who enters hours:** WHS managers and ERP administrators, in WHS settings, per site and month. BIZOMAT does not
+  track hours and has no payroll link. People who read the WHS registers (WHS staff, health and safety
+  representatives, health officers, executives, ERP administrators) see the hours and their history; a person who only
+  reports sees neither.
+- **Rules (checked on the server):** a month like 2026-11, from January 2000 to the current month (never a month that
+  has not started); hours a number from 0 to 10,000,000 per site and month, kept to two decimals; each site and month
+  once per save; a site of the company (archived sites too, for the months they were in use). A month has either one
+  figure for the whole company (not split by site) or figures by site, never both, so no hours are counted twice.
+  Entering the same figure again changes nothing.
+- **History:** every entry, change and removal is a row of `whs_hours_revisions` written in the same transaction as
+  the change, with the figure before read inside that transaction. Changing or removing a recorded figure needs a
+  reason (at least three characters). WHS settings lists the last changes; the WHS history (`whs_events`) records each
+  save with its reason. Figures saved before migration 0028 have no history row of their own; their first change
+  after it records the figure before.
+- **Rates:** worked out on the dashboard, company-wide (or for the site filtered) and for each site:
+  - LTIFR = lost time injuries x 1,000,000 / hours worked; TRIFR = recordable injuries x 1,000,000 / hours worked.
+  - Lost time injuries are incidents classified "Lost time (unable to work a shift or more)". Recordable injuries are
+    incidents classified Medical treatment, Restricted or alternative duties, Lost time, Admitted to hospital as an
+    in-patient, or Death. These are BIZOMAT's counting rules from the outcome recorded on each incident, said on the
+    screen, not a regulator's definition. Medical details (`whs_health`, days lost included) are never used.
+  - Only whole calendar months count, because hours are entered by month: a period that starts or ends inside a month
+    leaves that month out (the default period, twelve months to today, covers the eleven finished months). No whole
+    month, or more than ten years: no figure, and the screen says why.
+  - Every site in use needs a figure for each month (0 for a month it did not operate): the date a site was added to
+    BIZOMAT is not the date it opened, so leaving out a site added later could undercount hours and overstate the
+    rates. An archived site needs hours from the month it was added to the month it was archived, and any month it
+    has hours or incidents. A company with no sites enters one figure for the whole company.
+  - When anything is missing the figure is not shown: "Cannot be calculated: hours worked missing for <site>
+    (<months>) ...". Hours that add up to zero, and a month with both a whole-company and site figures (possible only
+    for figures saved before this follow-up), also give no figure, with the reason. Department and incident-type
+    filters give no rates (hours are per site).
+  - The incidents counted are those the person may see (the dashboard's rule). For someone who does not read
+    confidential reports the screen says the figures of WHS managers also count confidential reports.
+
+## Medical privacy review (15 Nov 2026)
+
+Checked against the owner's brief (task 2, points 1 to 8):
+
+| Point | Result |
+| --- | --- |
+| Medical details only for health officers | Held. `whs_health` is read only by `GET .../incidents/:id/health`, which needs the health capability (health officers, or the one person of a one-person company). Health files are added and served only to health officers. Tested for the WHS manager, WHS officer, investigator, representative, executive, owner and the reporter: the incident, the list, the CSV export, search, the dashboard, settings, alerts, My Work and the summary carry none of it (`apps/work/test/whs-hours.test.ts`). |
+| Managers and supervisors never automatically | Held. The WHS manager and ERP administrators do not get it; owners and administrators cannot be given Health officer. |
+| History and search | The incident's tracked changes (`whs_incident_revisions`) have no medical fields; the health history names the fields changed, never values; the search text is the number, title, description and location only. |
+| Platform console | `/api/admin/whs` holds the legal packs only, no company records. |
+| Regulator reporting stays human | Held. The decision is a person's; the submission is a person's record ("Submission recorded"); BIZOMAT sends nothing to a regulator. |
+| Legal packs Not verified | Held. Every seeded rule is Not verified until a platform administrator verifies it in the app with the source checked. |
+| No compliance or certification claims | Held (`tests/whs-claims.test.ts`, which also reads the new screens and messages). |
+| Planned modules | Held: listed with the Planned label on the dashboard and the public pages. |
+
+Found and changed in this follow-up: WHS settings returned the hours worked to every member of the company, including
+people who only report; they now go only to people who read the WHS registers. Not a medical field, but company data a
+reporter does not need.
 
 ## Example company
 
@@ -165,6 +226,12 @@ made again; removal deletes the WHS records through `whs_purges`.
 - `apps/work/test-node/whs-core.test.ts` (Node runtime): the migration is additive with no kind lists in CHECKs,
   earlier tables unchanged, a hazard to closure with the evidence refusal, a verified rule's due time and submission,
   database protections, example company.
+- `apps/work/test/whs-hours.test.ts` (workerd): who may enter hours, the validation rules, the history with reasons and
+  its database protection, company isolation, LTIFR and TRIFR (whole months, every site, the "cannot be calculated"
+  notes, zero hours, filters), and that medical details reach nobody but health officers.
+- `apps/work/test-node/whs-hours.test.ts` (Node runtime): migration 0028 is additive and leaves earlier tables as they
+  were, the history is append-only on node:sqlite while an account can still be deleted, hours and rates over HTTP,
+  and the example company's removal.
 - `tests/whs-claims.test.ts` (website): no compliance or certification claims; planned parts labelled Planned.
 
 ## Planned (not built)
@@ -179,7 +246,14 @@ surveillance; the compliance and obligations register; electronic submission to 
 - WHS managers do not read medical details; only health officers do. Say if WHS managers should.
 - ERP administrators read confidential reports only while the company has no WHS manager or health officer.
 - Injury frequency rates need hours worked entered by a WHS manager per site and month; there is no payroll or
-  timesheet source.
+  timesheet source. Every site in use needs a figure for each month, so a site added later needs 0 for its earlier
+  months before past rates show again. Say if a quicker way to enter those is wanted.
+- The counting rules for rates (which outcomes are lost time and recordable) are BIZOMAT's, from the incident's
+  recorded outcome. Say if your organisation counts differently (for example deaths as lost time injuries).
+- The body part and nature of injury are part of the incident's classification, which everyone who reads the
+  registers sees (executives and health and safety representatives too). Say if they should be limited to WHS staff.
+- The injured person cannot read their own confidential health record in BIZOMAT; a health officer can give it to
+  them. Say if they should see it themselves.
 - My Work now shows Health and Safety items (earlier releases kept ERP records out of My Work).
 - Sites come from Maintenance only; WHS does not create sites.
 - The rail has eleven entries now (Health and Safety added). Say if it should sit under Operations instead.
