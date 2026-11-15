@@ -84,6 +84,15 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   draft credit note per return through Finance's own code; traceability to the delivery and seven reports; the sales
   manager role. The value of stock sold is **not** posted to Finance's ledger (recorded as planned); carrier bookings,
   landed costs and forecasting are planned.
+  **BIZOMAT WHS** (Work Health & Safety Management System, owner's WHS brief of 15 Nov 2026; `docs/whs/README.md`;
+  Release 1 built on the branch `whs-release-1`, migration 0026, **not deployed** until the owner merges it): the
+  Health and Safety module at `/erp/c/<company>/whs`: hazards, risk assessments on the company's matrix, incidents with
+  investigations, the regulator notification record, actions with evidence, confidential health records (health
+  officers only) and jurisdiction packs. Every legal instrument and rule is **Not verified** until a platform
+  administrator verifies it in the app: never call the product, its rules or a business using it compliant, certified
+  or legally verified (`tests/whs-claims.test.ts`). BIZOMAT never decides reportability and does not submit to
+  regulators. Inspections, permits, contractors, training, chemicals, PPE, emergency management, consultation, health
+  surveillance and the compliance register are planned.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is

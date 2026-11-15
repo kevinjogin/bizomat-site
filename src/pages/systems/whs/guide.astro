@@ -1,0 +1,224 @@
+---
+// /systems/whs/guide/: how to use BIZOMAT WHS, step by step. It is the Health and Safety module of BIZOMAT ERP, so
+// buttons and fields are named as the application labels them (apps/work/src/client/system/whs/*.tsx). Facts come from
+// docs/whs/README.md and the server (apps/work/src/worker/whs). What is not built is labelled Planned. The legal packs
+// are Not verified until a platform administrator verifies them in the app, and nothing here may say the product makes
+// a business meet the law or that an outside body approved it (tests/whs-claims.test.ts). Screens are real (src/data/screenshots.ts), of
+// the example company's invented data. Markup follows the Manufacturing and Operations guide.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Button from '../../../components/Button.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import StatusLegend from '../../../components/StatusLegend.astro';
+import '../../../styles/product.css';
+import '../../../styles/visuals.css';
+import '../../../styles/systems.css';
+import { screenshots } from '../../../data/screenshots.ts';
+import { SITE } from '../../../config/site.ts';
+import { SYSTEMS_HOME, systemById, type FeatureStatus } from '../../../config/systems.ts';
+
+const sys = systemById('whs');
+const erp = systemById('erp');
+const PAGE = sys.guide ?? '/systems/whs/guide/';
+const access = sys.access!;
+const shot = (name: string) => screenshots('erp').find((s) => s.src.endsWith(`/${name}.webp`));
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.short, href: sys.url }, { label: 'User guide', href: PAGE }];
+const description = 'How to use BIZOMAT WHS, step by step: set up sites and roles, report hazards and incidents, assess risk, investigate, record notifications, close actions.';
+
+interface Step { t: string; x: string; st?: FeatureStatus }
+interface Part { id: string; title: string; st: FeatureStatus; lead?: string; steps: Step[]; shot?: string }
+const parts: Part[] = [
+  {
+    id: 'start', title: 'Open Health and Safety and set it up', st: 'live',
+    lead: 'BIZOMAT WHS is the Health and Safety module of BIZOMAT ERP. Sign in, choose your company, then choose Health and Safety in the rail.',
+    steps: [
+      { t: 'Try the example company', x: 'Acme Studio (example) has invented health and safety records: a hazard being controlled, an approved JSA, a near miss and an injury with its investigation, and a notification record marked as example data. Only you see it, and it sends no email.' },
+      { t: 'Give WHS roles', x: 'In Administration, ERP roles, the company\'s owner or an administrator gives people WHS manager, WHS officer or supervisor, Incident investigator, Health and safety representative or Health officer. Everyone in the company can report without a role.' },
+      { t: 'Who reads medical details', x: 'Only health officers read medical treatment details. A WHS manager does not, unless the same person is also given Health officer.' },
+      { t: 'Give each site its jurisdiction', x: 'Sites come from Maintenance (Maintenance, Settings). In Health and Safety, Settings, Sites and their jurisdictions, a WHS manager chooses each site\'s jurisdiction, for example New South Wales. An incident is checked against its own site\'s jurisdictions only.' },
+      { t: 'Set the risk matrix', x: 'Settings, Risk matrix shows the default 5 by 5 matrix. A WHS manager can change the scales, labels and levels; each change is a new version, and every rating keeps the version it was made on.' },
+      { t: 'Enter hours worked', x: 'For injury frequency rates, a WHS manager enters the hours worked per site per month in Settings, Hours worked. Without hours, no rate is shown.' },
+    ],
+    shot: 'erp-whs',
+  },
+  {
+    id: 'report', title: 'Report a hazard or an incident', st: 'live',
+    lead: 'Report a hazard and Report an incident are the first two buttons in Health and Safety, large on a phone.',
+    steps: [
+      { t: 'Report a hazard', x: 'Type what you saw, choose its kind and the site, say where, and take a photo with the phone\'s camera. Choose Send the report.' },
+      { t: 'Report an incident', x: 'Choose what kind (injury, near miss, dangerous occurrence and others), what happened, when and where, who was involved, any witnesses and what was done straight away. Choose Send the report.' },
+      { t: 'Confidential reports', x: 'For a psychosocial hazard or incident, such as bullying or harassment, tick Confidential. The form says before you send who will read it: the WHS managers and health officers.' },
+      { t: 'First aid and treatment', x: 'Medical treatment details go into the confidential health record. Only health officers read it.' },
+      { t: 'Follow your report', x: 'Your own reports show on the Overview with where each stands. A serious incident alerts the WHS managers at once, in the app and by email.' },
+    ],
+  },
+  {
+    id: 'hazards', title: 'Control a hazard', st: 'live',
+    lead: 'Hazards lists every hazard with its risk level. Its steps: Reported, Assessment, Controls assigned, Implementation, Verification, Closed.',
+    steps: [
+      { t: 'Assess the risk', x: 'A WHS officer opens the hazard and chooses Assess the risk: the likelihood and the consequence on the company\'s matrix give the level.' },
+      { t: 'Assign controls', x: 'Choose Assign controls. Each control is an action with a responsible person, a due date and its place in the hierarchy of controls: elimination, substitution, isolation, engineering, administrative or PPE. A high risk that relies on administrative controls and PPE alone shows a warning.' },
+      { t: 'Implement and verify', x: 'Choose Start implementation. Once every control action is done and verified, choose Ready for verification, then Verify and close with how the controls were checked and the residual risk.' },
+      { t: 'Link records', x: 'Link a hazard to a risk assessment, an incident or a Maintenance work order. Choose Make a risk assessment to start one from the hazard.' },
+    ],
+    shot: 'erp-whs-hazard',
+  },
+  {
+    id: 'risk', title: 'Make a risk assessment', st: 'live',
+    lead: 'Risk assessments has twelve kinds: JSA, JHA, SWMS, task, workplace, plant, chemical, manual handling, construction, environmental, psychosocial and contractor.',
+    steps: [
+      { t: 'Make the draft', x: 'Choose New risk assessment, its kind, title, site and review date, then Make the draft.' },
+      { t: 'Steps, hazards and controls', x: 'Choose Edit steps, hazards and controls. Add the steps of the task, then each hazard with the harm, who is affected, the initial rating, the existing and additional controls and the residual rating.' },
+      { t: 'Submit and approve', x: 'Choose Submit for approval. A WHS manager who did not draft it approves it or returns it for changes. Approving over a warning needs the warning acknowledged.' },
+      { t: 'Review it', x: 'At its review date, or when the work, equipment, controls or circumstances change, choose Review: new revision. The approved revision stays until the new one is approved.' },
+      { t: 'The risk register', x: 'Choose Risk register and heat map: the initial and residual risk of every approved assessment and rated hazard, by site.' },
+    ],
+    shot: 'erp-whs-risk-register',
+  },
+  {
+    id: 'incidents', title: 'Respond to and investigate an incident', st: 'live',
+    lead: 'An incident\'s steps: Reported, Immediate response, Classification, Investigation, Corrective action, Verification, Closure. It is never deleted.',
+    steps: [
+      { t: 'Immediate response', x: 'Choose Record the immediate response: what was done straight away, whether first aid was given, and who was told first.' },
+      { t: 'Classify', x: 'Choose Classify: the kind, the outcome, the severity, the body part and nature of injury, and whether it is to be investigated. After this, every change to the incident is recorded with who made it, when, and the value before and after.' },
+      { t: 'Investigate', x: 'Choose Start the investigation and the lead investigator. In the Investigation tab, add the team, the timeline and witness statements, then choose Root cause analysis: five whys, the fishbone (cause and effect), contributing factors and the controls that failed.' },
+      { t: 'Approve the investigation', x: 'Choose Submit for approval once the root cause is recorded. A WHS manager who did not lead or submit it approves it or returns it for changes.' },
+      { t: 'Corrective action and closure', x: 'Raise corrective actions, choose To corrective action, then Ready for verification once they are done. Choose Verify and close with how they were verified.' },
+    ],
+    shot: 'erp-whs-investigation',
+  },
+  {
+    id: 'notification', title: 'Record a regulator notification', st: 'live',
+    lead: 'The Regulator notification tab of an incident. BIZOMAT never decides whether to notify, and does not submit to regulators.',
+    steps: [
+      { t: 'The rules of the site\'s jurisdictions', x: 'The incident is checked against the rules of its site\'s jurisdictions. A rule that is Not verified shows "Deadline not verified: check with the regulator." Only a rule that is verified and in effect on the incident\'s date flags it as possibly notifiable and works out a due time.' },
+      { t: 'Decide, with reasons', x: 'A WHS manager chooses Record the decision: notifiable or not, and why. The decision is the person\'s, never the system\'s.' },
+      { t: 'The checklist', x: 'Tick each item as it is done: the regulator told by the means the rule requires, the site preserved, the information given, written notice sent if asked for, and the confirmation attached.' },
+      { t: 'Record the submission', x: 'After you notify the regulator yourself, choose Record the submission: how (phone, online form, email or in person), when, who notified, the regulator\'s reference and the confirmation file. Until then the incident never shows as notified.' },
+      { t: 'Submit electronically', x: 'Sending a notification to a regulator from BIZOMAT is not built.', st: 'planned' },
+    ],
+    shot: 'erp-whs-notification',
+  },
+  {
+    id: 'actions', title: 'Follow actions to a verified close', st: 'live',
+    lead: 'Actions lists every corrective, preventive and improvement action, from hazards, incidents, investigations and risk assessments.',
+    steps: [
+      { t: 'New action', x: 'Choose New action: the title, the responsible person, the priority, the due date and whether evidence is required.' },
+      { t: 'Complete it', x: 'The responsible person chooses Start, then Complete with what was done. An action that needs evidence cannot be completed until a photo or document is added.' },
+      { t: 'Verify and close', x: 'Someone other than the person who completed it chooses Verify (or Not effective, which sends it back), then Close.' },
+      { t: 'Overdue actions', x: 'An overdue action is escalated in the app to the responsible person and the WHS managers, and shows in My Work and on the dashboard.' },
+    ],
+  },
+  {
+    id: 'jurisdictions', title: 'Read the jurisdiction packs', st: 'live',
+    lead: 'Jurisdictions lists each pack: the regulator, the instruments and the rules, each labelled for what it is and whether it is verified.',
+    steps: [
+      { t: 'What is in a pack', x: 'Legislation, regulations, approved codes of practice, standards, government guidance and model laws, each with its official source. Rules have versions with effective dates, so a change such as one starting on 1 December 2026 applies only from that date.' },
+      { t: 'Not verified', x: 'Every instrument and rule shows Not verified until a competent person verifies it against the official source in the platform console. Treat them as a starting point, not legal advice.' },
+      { t: 'Company policies', x: 'A WHS manager adds the company\'s own policies beside the packs, labelled Company policy.' },
+      { t: 'Countries', x: 'Australia: the Commonwealth, each state and territory, and Victoria under its own laws. Skeleton packs: New Zealand, the United Kingdom (Great Britain), Canada (federal and four provinces), Singapore and South Africa.' },
+    ],
+  },
+  {
+    id: 'planned', title: 'What is not built yet', st: 'planned',
+    lead: 'Release 1 is the core. What follows is planned and labelled Planned in the application.',
+    steps: [
+      { t: 'Inspections and audits', x: 'Workplace inspections, checklists and audits.', st: 'planned' },
+      { t: 'Documents and SWMS acknowledgement', x: 'Safe work procedures with document control, and workers acknowledging a SWMS.', st: 'planned' },
+      { t: 'Permits, contractors and visitors', x: 'Permits to work, contractor safety and visitor sign-in.', st: 'planned' },
+      { t: 'Training and competency', x: 'Training, competencies and licences.', st: 'planned' },
+      { t: 'Chemicals, plant, PPE and emergencies', x: 'Chemicals and safety data sheets, plant and equipment safety, PPE management and emergency management.', st: 'planned' },
+      { t: 'Consultation, health surveillance and the compliance register', x: 'Safety committees and consultation records, health surveillance, and the register of legal obligations.', st: 'planned' },
+    ],
+  },
+];
+
+const questions = [
+  { q: 'Do I need a separate sign-in?', a: `No. BIZOMAT WHS is part of ${erp.name}, with the same account, companies and roles.` },
+  { q: 'Can someone delete an incident?', a: 'No. Incidents, health records and notification records are never deleted, and every change after classification is kept with who made it and when.' },
+  { q: 'Can I approve my own risk assessment or investigation?', a: 'Not in a company of several people: someone else with the right role approves. In your own company, where you are the only person, you may, and the exception is recorded.' },
+  { q: 'Is the legal content advice?', a: 'No. The packs are a starting point and are Not verified until a competent person verifies them. Check your duties with the regulator or a qualified adviser.' },
+  { q: 'Does BIZOMAT notify the regulator for me?', a: 'No. You notify the regulator, then record the submission in BIZOMAT with the regulator\'s reference.' },
+];
+
+const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
+const schema = [{
+  '@type': 'HowTo', name: 'How to use BIZOMAT WHS', url: `${SITE.url}${PAGE}`, description,
+  step: parts.map((p, i) => ({ '@type': 'HowToSection', position: i + 1, name: p.title, url: `${SITE.url}${PAGE}#${p.id}`, itemListElement: p.steps.map((s, j) => ({ '@type': 'HowToStep', position: j + 1, name: s.t, text: s.x })) })),
+}];
+---
+<BaseLayout title="BIZOMAT WHS user guide" description={description} breadcrumbs={crumbs} schema={schema}>
+  <section class="pp-hero" aria-labelledby="guide-title">
+    <Container>
+      <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
+      <p class="bz-eyebrow">{sys.name} · User guide</p>
+      <h1 id="guide-title">How to use BIZOMAT WHS</h1>
+      <p class="pp-hero__lead">Step by step, from roles and sites to reports, risk assessments, investigations, notification records and actions. Buttons and fields are named as they appear in {erp.name}, under Health and Safety.</p>
+      <div class="pp-hero__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="whs-guide-start">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="whs-guide-about">About {sys.name}</Button>
+      </div>
+      <div class="sys-legend">
+        <h2 class="sys-subhead">What the labels mean</h2>
+        <p class="sys-note">Each part and some steps carry one of these labels.</p>
+        <StatusLegend />
+      </div>
+      <nav class="sys-toc" aria-label="In this guide">
+        <h2 class="sys-toc__title">In this guide</h2>
+        <ol>
+          {parts.map((p) => <li><a href={`#${p.id}`}>{p.title}</a></li>)}
+          <li><a href="#questions">Common questions</a></li>
+        </ol>
+      </nav>
+    </Container>
+  </section>
+
+  {parts.map((p, i) => (
+    <section class:list={['pp-section', { 'pp-section--tint': i % 2 === 1 }]} id={p.id} aria-labelledby={`${p.id}-title`}>
+      <Container class:list={[{ 'pp-split': Boolean(shots[p.id]) }]}>
+        <div>
+          <p class="bz-eyebrow">Step {i + 1} of {parts.length}</p>
+          <h2 id={`${p.id}-title`}>{p.title}</h2>
+          <p class="sys-guide-status"><StatusLabel status={p.st} /></p>
+          {p.lead && <p class="sys-lead">{p.lead}</p>}
+          <ol class="pp-steps sys-guide-steps">
+            {p.steps.map((s) => <li><h3>{s.t}{s.st && <> <StatusLabel status={s.st} /></>}</h3><p>{s.x}</p></li>)}
+          </ol>
+        </div>
+        {shots[p.id] && (
+          <figure class="pp-shot sys-guide-shot">
+            <img src={shots[p.id]!.src} alt={`${shots[p.id]!.title}. ${shots[p.id]!.caption}`} width="1440" height="900" loading="lazy" decoding="async" />
+            <figcaption>
+              <span>{shots[p.id]!.caption}</span>
+              <span class="viz__tag viz__tag--real">Product screen</span>
+            </figcaption>
+          </figure>
+        )}
+      </Container>
+    </section>
+  ))}
+
+  <section class="pp-section" id="questions" aria-labelledby="questions-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Common questions</p>
+        <h2 id="questions-title">Before you ask</h2>
+      </div>
+      <dl class="sys-faq sys-faq--wide">
+        {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
+      </dl>
+      <p class="pp-table-note">More on the whole ERP: the <a href={erp.guide}>{erp.name} user guide</a>. Something not covered? <a href="/contact/">Contact BIZOMAT</a>.</p>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--inverse" aria-labelledby="guide-cta">
+    <Container class="pp-band">
+      <h2 id="guide-cta">Ready? Report the first hazard in your own company.</h2>
+      <div class="pp-band__actions">
+        <Button href={access.href} variant="accent" rel="noopener" data-cta="whs-guide-band-start">{access.label}</Button>
+        <Button href={sys.url} variant="secondary" data-cta="whs-guide-band-about">About {sys.name}</Button>
+      </div>
+    </Container>
+  </section>
+</BaseLayout>

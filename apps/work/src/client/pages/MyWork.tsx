@@ -8,7 +8,9 @@ import { Icon } from '../components/ui/Icon';
 import { EmptyState, ErrorBox, Loading, PageHeader } from '../components/ui/ui';
 import { useToast } from '../components/ui/overlays';
 import type { ItemDTO } from '../../shared/types';
+import { SUITE } from '../lib/base';
 import '../styles/admin.css';
+import '../styles/whs.css';
 
 export interface WorkItem {
   item: ItemDTO;
@@ -99,6 +101,7 @@ export default function MyWork() {
   return (
     <div className="page">
       <PageHeader icon="checkSquare" title="My Work" subtitle="Everything assigned to you across the boards you can access." />
+      <HealthAndSafetyWork />
       <SharedWithMe wsId={ws.id} />
       {total === 0 && data.completed.length === 0 ? (
         <div className="card">
@@ -149,6 +152,52 @@ function SharedWithMe({ wsId }: { wsId: string }) {
           <span className="small hide-sm">{t.done ? 'Done' : ''}</span>
           <span className="muted small hide-sm">{t.sharedBy ? `Shared by ${t.sharedBy}` : ''}</span>
           <span />
+        </div>
+      ))}
+    </section>
+  );
+}
+
+interface WhsWorkItem {
+  type: 'action' | 'hazard' | 'investigation' | 'notification';
+  id: string;
+  number: string;
+  title: string;
+  due: string | null;
+  dueNote?: string;
+  overdue: boolean;
+  link: string;
+}
+
+const WHS_TYPE: Record<WhsWorkItem['type'], string> = { action: 'Action', hazard: 'Hazard', investigation: 'Investigation', notification: 'Regulator notification' };
+
+/**
+ * BIZOMAT WHS (Release 1): health and safety work assigned to you in every company: your actions (overdue first), the
+ * hazards you are responsible for, the investigations you are on, the notifications you are to make, and risk
+ * assessments waiting for your approval. Each opens in BIZOMAT ERP's Health and Safety module. Hidden when empty.
+ */
+function HealthAndSafetyWork() {
+  const q = useQuery({ queryKey: ['whs', 'my-work'], queryFn: () => get<{ companies: { company: { id: string; name: string }; items: WhsWorkItem[]; toApprove: number; unreadAlerts: number }[] }>(`/whs/my-work?today=${new Date().toISOString().slice(0, 10)}`), retry: false });
+  const companies = q.data?.companies ?? [];
+  if (!companies.length) return null;
+  const erp = SUITE || '/erp';
+  return (
+    <section className="card whs-my-work" aria-labelledby="whs-my-work">
+      <div className="card-header"><h2 id="whs-my-work" className="grow">Health and safety</h2><span className="badge">{companies.reduce((s, c) => s + c.items.length, 0)}</span></div>
+      {companies.map((c) => (
+        <div key={c.company.id} className="whs-my-company">
+          {companies.length > 1 ? <div className="muted small whs-my-name">{c.company.name}</div> : null}
+          {[...c.items].sort((a, b) => Number(b.overdue) - Number(a.overdue)).map((x) => (
+            <div key={`${x.type}:${x.id}`} className="work-row">
+              <a className="item-link ellipsis" href={`${erp}${x.link}`}><Icon name={x.type === 'action' ? 'checkSquare' : x.type === 'hazard' ? 'alert' : 'flag'} size={13} /> {x.number} {x.title}</a>
+              <span className="muted small hide-sm">{WHS_TYPE[x.type]}</span>
+              <span className={`small hide-sm${x.overdue ? ' whs-overdue' : ''}`}>{x.due ? formatDate(x.due.slice(0, 10)) : x.dueNote ?? ''}{x.overdue ? ' (overdue)' : ''}</span>
+              <span />
+              <span />
+            </div>
+          ))}
+          {c.toApprove ? <div className="work-row"><a className="item-link" href={`${erp}/c/${encodeURIComponent(c.company.id)}/whs/risk?status=submitted`}><Icon name="target" size={13} /> {c.toApprove} risk assessment{c.toApprove === 1 ? '' : 's'} waiting for approval</a><span /><span /><span /><span /></div> : null}
+          {c.unreadAlerts ? <div className="work-row"><a className="item-link" href={`${erp}/c/${encodeURIComponent(c.company.id)}/whs`}><Icon name="bell" size={13} /> {c.unreadAlerts} unread health and safety alert{c.unreadAlerts === 1 ? '' : 's'}</a><span /><span /><span /><span /></div> : null}
         </div>
       ))}
     </section>

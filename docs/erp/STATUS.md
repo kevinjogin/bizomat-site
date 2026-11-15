@@ -80,6 +80,28 @@ Built, tested and live at `bizomat.ai/erp`.
 | **Release 5 Supply chain**: traceability and reports | A lot's trace to the shipment and customer; open orders, delivery to customers, shipments by carrier, freight, returns, sales by product and customer, job profitability; drill-down and CSV; Supply Chain overview and Operations counts | Reports with exact numbers and CSV |
 | **Release 5 Supply chain**: example company | A carrier, a sales order with a made-to-order line, a delivered shipment with its draft invoice, a return with its draft credit note; no email | Example company tests (workerd and Node) |
 
+## BIZOMAT WHS, Release 1 (not deployed)
+
+Built and tested on the branch `whs-release-1` (migration 0026); not merged or deployed. Details, sources checked and
+decisions: `docs/whs/README.md`. Every legal pack is Not verified until a platform administrator verifies it in the
+application; BIZOMAT does not submit notifications to regulators.
+
+| Area | What | Evidence |
+| --- | --- | --- |
+| Placement | "Health and Safety" in the rail, `/erp/c/<company>/whs`, `/erp/whs` to the company used last; dashboard card, My Work, Reports, Administration (WHS roles) | `apps/work/test/whs-core.test.ts` |
+| Roles and access | WHS manager, WHS officer or supervisor, investigator, health and safety representative, health officer (the only role that reads medical details); everyone reports and sees their own; other companies 404; confidential psychosocial reports | Roles test; Test 12 (health and confidential reports); Test 13 (other companies) |
+| Jurisdiction engine | Platform packs, typed instruments, versioned effective-dated rules applied only when active, verified and in effect; sites to jurisdictions; never another jurisdiction's rules; draft, review, activation and verification by platform admins | Tests 3 and 11; legal workflow and effective-date tests |
+| Hazards and risk assessments | Hazard register and workflow; twelve kinds of assessment on a configurable matrix (5 by 5 by default, versioned), hierarchy of controls with its warning, approval with segregation, reviews and revisions, heat maps | Test 1; matrix test; Node hazard test |
+| Incidents and investigations | Workflow from report to closure, serious-incident alerts (in the app and by email, never for the example company), tracked changes after classification, never deleted; investigations with five whys and fishbone, approval with segregation | Test 2; Test 14 (reporting from a phone); edit history test (workerd and Node) |
+| Regulator notification record | Flag and due time only from a verified rule in effect; a person's decision with reasons; checklist; the submission with its reference and confirmation, then frozen | Test 3 (workerd and Node) |
+| Actions register | Evidence required before completion, verification by someone else, closure, overdue escalation by the 15-minute run | Evidence refusal and escalation tests |
+| Dashboard | Real counts with filters, monthly trends, sites and departments; injury rates only with hours worked entered | Escalation, My Work and rates test |
+| Example company | NSW site, a hazard through assessment, a JSA with controls, a near miss and an injury with an investigation, actions, an example notification record; no email | Example company tests (workerd and Node) |
+
+Planned: inspections and audits, documents and SWMS acknowledgement, permits, contractors and visitors, training,
+chemicals, plant safety, PPE, emergency management, consultation, health surveillance, the compliance register,
+electronic submission to regulators and verified legal content.
+
 ## In development
 
 | What | Where it stands |
@@ -157,3 +179,6 @@ rate-based repetitive schedules.
 - Release 5 part A: sales orders take products only. Service lines (installation, freight as its own product) would
   need a product type or Finance items on the order: say if wanted.
 - Release 5 part A: existing example companies are not changed; removing and remaking one adds the supply chain records.
+- BIZOMAT WHS (not deployed): its decisions are in `docs/whs/README.md` ("Decisions for the owner"): who reads medical
+  details and confidential reports, hours worked for injury rates, Health and Safety in My Work and in the rail, and who
+  verifies the legal packs.

@@ -65,6 +65,16 @@
 >     own code;
 >   - the sales manager role; seven more reports at `/erp/c/<company>/erp-reports`;
 >   - the value of stock sold is not posted to Finance's ledger: each posting is recorded as planned.
+> - **BIZOMAT WHS, Release 1** (built on the branch `whs-release-1`, **not deployed**; `docs/whs/README.md`, migration
+>   `0026_whs_core.sql`, API `/api/whs` and `/api/admin/whs`):
+>   - Health and Safety in the rail (between Maintenance and Operations) at `/erp/c/<company>/whs`; `/erp/whs` opens the
+>     company used last: report a hazard or an incident (first, large on a phone), hazards, incidents with
+>     investigations and the regulator notification record, risk assessments with the register, actions,
+>     jurisdictions and settings;
+>   - a Health and Safety card on the dashboard, a Health and safety section in My Work, a Health and Safety group in
+>     Reports, WHS roles with the ERP roles in Administration, and "WHS legal packs" in the platform console;
+>   - every legal pack is Not verified until a platform administrator verifies it; BIZOMAT does not submit
+>     notifications to regulators and never decides whether an incident is notifiable.
 > - **New ERP pages:**
 >   - My Work: the Projects and Tasks My Work of the workspace used last.
 >   - Operations: what waits in the company (approvals, orders to receive, products to reorder, adjustments and counts,
@@ -78,6 +88,8 @@
 >   - one page and one user guide per system;
 >   - Manufacturing and Operations is Available since Release 5 part A was deployed (every module works; what is not
 >     built inside them is labelled Planned), with its own guide at `/systems/manufacturing/guide/`;
+>   - BIZOMAT WHS at `/systems/whs/` with its guide `/systems/whs/guide/` (Available, some modules planned), on the
+>     WHS branch, so the website says so only once that branch is deployed;
 >   - the old product pages answer 301 there (`public/_redirects`).
 >
 > The sections below say "System" and `/system`; read them as "ERP" and `/erp`.

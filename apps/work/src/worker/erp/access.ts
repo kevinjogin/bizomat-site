@@ -28,6 +28,9 @@
 //   quality_inspector     records inspections (readings, photos, results), quarantines failed lots, raises NCRs
 //   sales_manager         sales orders (Release 5): drafts, confirms and amends them, allocates stock, plans shipments,
 //                         authorises returns, asks Finance for the draft invoice and credit note, sets up carriers
+//   whs_manager, whs_officer, whs_investigator, whs_hsr, health_officer
+//                         BIZOMAT WHS (Release 1 of WHS): their capabilities are in src/worker/whs/access.ts; here they
+//                         read the ERP as a viewer does
 //   viewer                reads products, engineering records, suppliers, purchasing, stock and manufacturing
 // The company's owner and administrators are ERP administrators; other members are viewers until an ERP administrator
 // gives them roles. In a person's own or example company the owner is the ERP administrator.
@@ -59,6 +62,12 @@ export const ERP_ROLES = [
   'quality_inspector',
   // Release 5: supply chain
   'sales_manager',
+  // BIZOMAT WHS, Release 1 (src/worker/whs/access.ts)
+  'whs_manager',
+  'whs_officer',
+  'whs_investigator',
+  'whs_hsr',
+  'health_officer',
   'viewer',
 ] as const;
 export type ErpRole = (typeof ERP_ROLES)[number];
@@ -77,11 +86,16 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   quality_manager: 'Quality manager',
   quality_inspector: 'Quality inspector',
   sales_manager: 'Sales manager',
+  whs_manager: 'WHS manager',
+  whs_officer: 'WHS officer or supervisor',
+  whs_investigator: 'Incident investigator',
+  whs_hsr: 'Health and safety representative',
+  health_officer: 'Health officer',
   viewer: 'Viewer',
 };
 
 /** Everyone who may read (every role but the administrator, who may do everything). */
-const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'quality_manager', 'quality_inspector', 'sales_manager', 'viewer'] as const;
+const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'quality_manager', 'quality_inspector', 'sales_manager', 'whs_manager', 'whs_officer', 'whs_investigator', 'whs_hsr', 'health_officer', 'viewer'] as const;
 
 /** Every action the ERP checks, and the roles that may take it (erp_admin may take every one). */
 export const CAPABILITIES = {

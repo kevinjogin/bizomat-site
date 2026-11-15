@@ -68,6 +68,13 @@
 //     logistics.ts, returns.ts, supply-reports.ts, migration 0025_erp_supply_chain.sql; Scenario G and the rule tests in
 //     apps/work/test/erp-r5-supply-chain.test.ts and test-node/erp-r5-supply-chain.test.ts). Stock value postings to
 //     Finance's ledger, carrier connections, demand and supply planning, landed costs and backorder automation: planned.
+//   BIZOMAT WHS, Release 1 (owner's WHS brief; built on the branch whs-release-1, live once merged and deployed): the
+//     hazard register, risk assessments with a configurable matrix and the hierarchy of controls, incidents with
+//     investigations, the regulator notification record (decided and submitted by people, never by the system), the
+//     actions register with evidence, confidential health records, the dashboard and versioned jurisdiction packs, all
+//     Not verified until a platform administrator verifies them (apps/work/src/worker/whs, migration 0026_whs_core.sql;
+//     apps/work/test/whs-core.test.ts and test-node/whs-core.test.ts). Inspections, permits, contractors, training,
+//     chemicals, PPE, emergency management, consultation, health surveillance and the compliance register: planned.
 //   Everything else (service, human capital): docs/erp/architecture/02 to 10. Nothing of it is built, so it is planned.
 // Rule: if a feature cannot be found in the code or the docs above, it is planned. Notes are public text: plain
 // language, no file paths, no repository names.
@@ -422,6 +429,29 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Return material authorisation (RMA)', 'planned'),
       cap('Service spare parts', 'planned'),
       cap('Service history', 'planned', 'The CRM timeline holds each customer\'s activities, notes and documents. History by product or asset is planned.'),
+    ],
+  },
+  {
+    id: 'health-safety',
+    name: 'Work health and safety',
+    summary: 'Hazards, risk assessments, incidents, investigations and corrective actions, with the regulator notification record.',
+    servedBy: 'BIZOMAT WHS, the Health and Safety module of BIZOMAT ERP',
+    features: [
+      cap('Hazard register', 'live', 'Reported from a phone with photos, rated on the company\'s risk matrix, controls assigned as actions, verified and closed.'),
+      cap('Risk assessments', 'live', 'JSA, JHA, SWMS and nine more kinds: steps, hazards, initial and residual risk, controls by the hierarchy of controls, approval by someone who did not draft them, reviews and revisions.'),
+      cap('Incident management', 'live', 'Injuries, illnesses, near misses, dangerous occurrences and more: immediate response, classification, every later change recorded, never deleted.'),
+      cap('Investigations', 'live', 'A team, a timeline, witness statements, evidence, five whys and fishbone, contributing factors and failed controls, approved before corrective action.'),
+      cap('Regulator notification records', 'live', 'A person decides with reasons and records the submission with the regulator\'s reference. BIZOMAT does not submit to regulators, and computes a due time only from a verified rule.'),
+      cap('Corrective actions', 'live', 'Evidence required before completion, verification by someone else, and overdue actions escalated in the app.'),
+      cap('Jurisdiction packs', 'live', 'Every Australian jurisdiction, with skeleton packs for New Zealand, the United Kingdom, Canada, Singapore and South Africa. Not verified until a competent person verifies them.'),
+      cap('Confidential health records', 'live', 'Medical treatment details kept apart and read only by health officers.'),
+      cap('Inspections and audits', 'planned'),
+      cap('Permits to work', 'planned'),
+      cap('Contractor and visitor safety', 'planned'),
+      cap('Chemicals and safety data sheets', 'planned'),
+      cap('Emergency management', 'planned'),
+      cap('Health surveillance', 'planned'),
+      cap('Compliance register', 'planned'),
     ],
   },
   {

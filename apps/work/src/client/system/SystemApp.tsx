@@ -40,6 +40,10 @@ const ManufacturingArea = lazy(() => import('./erp/Manufacturing').then((m) => (
 const QualityArea = lazy(() => import('./erp/Quality').then((m) => ({ default: m.QualityArea })));
 // ERP Release 5 part A: /c/<company>/supply-chain (sales orders, pick and dispatch, shipments, schedule, returns, carriers).
 const SupplyChainArea = lazy(() => import('./erp/SupplyChain').then((m) => ({ default: m.SupplyChainArea })));
+// BIZOMAT WHS, Release 1: /c/<company>/whs (hazards, risk assessments, incidents, notification records, actions), and the
+// jurisdiction packs for platform administrators in the console.
+const WhsArea = lazy(() => import('./whs/Whs').then((m) => ({ default: m.WhsArea })));
+const WhsLegalAdmin = lazy(() => import('./whs/LegalAdmin').then((m) => ({ default: m.LegalAdmin })));
 
 /** The ERP's products, engineering and supplier reports (src/client/system/erp/Reports.tsx keeps the same list). */
 const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
@@ -84,6 +88,43 @@ const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
   { key: 'sales', label: 'Sales by product and customer', what: 'What was dispatched, at its value before tax.' },
   { key: 'job-profitability', label: 'Job profitability', what: 'Orders made to order: revenue against actual cost.' },
 ];
+
+/** BIZOMAT WHS's registers and reports (each opens in the Health and Safety module, with its permissions). */
+const WHS_REPORT_LINKS: { path: string; label: string; what: string }[] = [
+  { path: '', label: 'WHS dashboard', what: 'Hazards, incidents, near misses, actions and injury rates by site, department and month.' },
+  { path: '/hazards', label: 'Hazard register', what: 'Every hazard with its risk, controls and status; CSV.' },
+  { path: '/incidents', label: 'Incident register', what: 'Incidents and near misses, their classification and notification status; CSV.' },
+  { path: '/risk/register', label: 'Risk register and heat map', what: 'Initial and residual risk of the approved assessments and the hazards.' },
+  { path: '/actions', label: 'Actions register', what: 'Corrective and preventive actions, overdue ones first; CSV.' },
+];
+
+/** The ERP dashboard's Health and Safety card: real counts of what this person may see, or their own reports. */
+function WhsCard({ companyId, demo }: { companyId: string; demo: boolean }) {
+  const q = useQuery({ queryKey: ['whs', companyId, 'summary'], queryFn: () => get<{ scope: 'register' | 'own'; activeHazards: number; highRisks: number; openIncidents: number; notifications: number; openActions: number; overdueActions: number; myActions: number; unreadAlerts: number }>(`/whs/c/${encodeURIComponent(companyId)}/summary`), retry: false });
+  const x = q.data;
+  return (
+    <Link to={`/c/${companyId}/whs`} className="card card-pad co-tool-card sys-tool-card">
+      <div className="row"><Icon name="shield" /> <strong>Health and Safety</strong></div>
+      <p className="muted small">BIZOMAT WHS: hazards, risk assessments, incidents, investigations, regulator notification records and actions.</p>
+      {x ? (
+        x.scope === 'register' ? (
+          <dl className="co-figures">
+            <div><dt>Active hazards</dt><dd>{n(x.activeHazards)}</dd></div>
+            <div><dt>High risks</dt><dd className={x.highRisks ? 'warning-text' : ''}>{n(x.highRisks)}</dd></div>
+            <div><dt>Open incidents</dt><dd>{n(x.openIncidents)}</dd></div>
+            <div><dt>Overdue actions</dt><dd className={x.overdueActions ? 'warning-text' : ''}>{n(x.overdueActions)}</dd></div>
+          </dl>
+        ) : (
+          <dl className="co-figures">
+            <div><dt>Your open reports</dt><dd>{n(x.activeHazards + x.openIncidents)}</dd></div>
+            <div><dt>Actions for you</dt><dd>{n(x.myActions)}</dd></div>
+          </dl>
+        )
+      ) : null}
+      <p className="small">{x?.notifications ? `${x.notifications} notification decision${x.notifications === 1 ? '' : 's'} or submission${x.notifications === 1 ? '' : 's'} to record. ` : ''}{demo ? 'A hazard being controlled, an approved JSA, a near miss and an injury with its investigation.' : 'Report a hazard or an incident from a phone.'}</p>
+    </Link>
+  );
+}
 
 // ------------------------------------------------------------------ data
 
@@ -195,6 +236,8 @@ export function SystemRoutes() {
       <Route path="/manufacturing/*" element={<CompanyRedirect section="manufacturing" />} />
       <Route path="/quality/*" element={<CompanyRedirect section="quality" />} />
       <Route path="/supply-chain/*" element={<CompanyRedirect section="supply-chain" />} />
+      {/* The module rail's Health and Safety: the WHS module of the company used last. */}
+      <Route path="/whs/*" element={<CompanyRedirect section="whs" />} />
       <Route path="/operations" element={<Shell><Operations /></Shell>} />
       <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
       <Route path="/administration" element={<Shell><Administration /></Shell>} />
@@ -240,7 +283,7 @@ function MaintenanceRedirect() {
 }
 
 /** /products, /procurement, /inventory and /manufacturing: the same section of the company used last, else the first one. */
-function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' | 'manufacturing' | 'quality' | 'supply-chain' }) {
+function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' | 'manufacturing' | 'quality' | 'supply-chain' | 'whs' }) {
   const location = useLocation();
   const q = useMe();
   if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
@@ -289,6 +332,7 @@ function CompanyArea() {
         <Route path="manufacturing/*" element={<Suspense fallback={<Loading />}><ManufacturingArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="quality/*" element={<Suspense fallback={<Loading />}><QualityArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="supply-chain/*" element={<Suspense fallback={<Loading />}><SupplyChainArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
+        <Route path="whs/*" element={<Suspense fallback={<Loading />}><WhsArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="*" element={<Navigate to="home" replace />} />
       </Routes>
     </Shell>
@@ -332,6 +376,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             <NavLink to={`${base}/quality`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="checkSquare" /> Quality</NavLink>
             <NavLink to={`${base}/supply-chain`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="globe" /> Supply Chain</NavLink>
             <NavLink to={`${base}/maintenance`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="wrench" /> Maintenance</NavLink>
+            <NavLink to={`${base}/whs`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> Health and Safety</NavLink>
             <NavLink to={`${base}/settings`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Company</NavLink>
           </>
         ) : null}
@@ -499,7 +544,7 @@ function ExampleBanner() {
   return (
     <section className="co-prompt sys-example-banner">
       <p>
-        <strong>Example company.</strong> Acme Studio is invented data to learn BIZOMAT: projects, customers, finance, maintenance, products and suppliers. Only you can see it, and
+        <strong>Example company.</strong> Acme Studio is invented data to learn BIZOMAT: projects, customers, finance, maintenance, products, suppliers and health and safety. Only you can see it, and
         nothing you change here affects your own companies. It sends no email. Remove it any time in Administration.
       </p>
       <Link className="btn" to="/administration">Administration</Link>
@@ -592,6 +637,7 @@ function CompanyHome({ view }: { view: CompanyView }) {
             <p className="small">Report a fault, follow your requests, or plan and record the work.</p>
           </Link>
         ) : null}
+        {c.role !== 'guest' ? <WhsCard companyId={c.id} demo={c.kind === 'demo'} /> : null}
         {c.role !== 'guest' ? (
           <Link to={`/c/${c.id}/products`} className="card card-pad co-tool-card sys-tool-card">
             <div className="row"><Icon name="diamond" /> <strong>Products and Engineering</strong></div>
@@ -1009,6 +1055,19 @@ function ReportsPage() {
           </div>
         </section>
       ) : null}
+      {c.role !== 'guest' ? (
+        <section className="stack">
+          <h2 className="crm-subhead">Health and safety</h2>
+          <div className="co-tools-grid">
+            {WHS_REPORT_LINKS.map((r) => (
+              <Link key={r.path} to={`/c/${c.id}/whs${r.path}`} className="card card-pad co-tool-card sys-tool-card">
+                <div className="row"><Icon name="shield" /> <strong className="grow">{r.label}</strong></div>
+                <p className="small">{r.what}</p>
+              </Link>
+            ))}
+          </div>
+        </section>
+      ) : null}
       <div className="co-tools-grid">
         {links.flatMap((l) =>
           one(l.app).map((t) => (
@@ -1087,6 +1146,13 @@ function Administration() {
           <div className="row wrap"><Link className="btn" to={`/c/${c.id}/erp-roles`}><Icon name="shield" /> ERP roles</Link><Link className="btn" to={`/c/${c.id}/erp-settings`}><Icon name="settings" /> Purchasing, inventory and manufacturing settings</Link></div>
         </section>
       ) : null}
+      {c.role !== 'guest' ? (
+        <section className="card card-pad stack">
+          <h2 className="crm-subhead">Health and safety</h2>
+          <p className="muted small">WHS roles are ERP roles: WHS manager, WHS officer or supervisor, incident investigator, health and safety representative and health officer. Only health officers read medical details. Each site’s jurisdictions, the risk matrix and hours worked are in WHS settings.</p>
+          <div className="row wrap"><Link className="btn" to={`/c/${c.id}/erp-roles`}><Icon name="shield" /> WHS roles</Link><Link className="btn" to={`/c/${c.id}/whs/settings`}><Icon name="settings" /> WHS settings</Link></div>
+        </section>
+      ) : null}
       <ExampleCard />
       <section className="card card-pad stack">
         <h2 className="crm-subhead">You</h2>
@@ -1110,6 +1176,7 @@ const ADMIN_NAV = [
   { to: 'users', label: 'Users' },
   { to: 'companies', label: 'Companies' },
   { to: 'activity', label: 'Activity' },
+  { to: 'whs', label: 'WHS legal packs' },
 ];
 
 function AdminArea() {
@@ -1129,6 +1196,7 @@ function AdminArea() {
         <Route path="users" element={<AdminUsers founder={founder} self={me.data.user.id} />} />
         <Route path="companies" element={<AdminCompanies founder={founder} />} />
         <Route path="activity" element={<AdminActivity />} />
+        <Route path="whs/*" element={<Suspense fallback={<Loading />}><WhsLegalAdmin /></Suspense>} />
         <Route path="*" element={<Navigate to="overview" replace />} />
       </Routes>
     </div>
