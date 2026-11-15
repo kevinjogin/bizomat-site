@@ -71,3 +71,10 @@
 .bz-badge--planned { background: transparent; color: var(--muted); }
 .status-legend { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; margin: 1rem 0 0; padding: 0; list-style: none; font-size: .9rem; color: var(--ink-2); }
 .status-legend li { display: flex; align-items: center; gap: .5rem; }
+.status-legend .bz-badge { flex: none; white-space: nowrap; }
+/* Phones: one label a line, the labels in one column and their meanings lined up beside them. */
+@media (max-width: 640px) {
+  .status-legend { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: .55rem .75rem; }
+  .status-legend li { display: grid; grid-column: 1 / -1; grid-template-columns: subgrid; align-items: baseline; }
+  .status-legend .bz-badge { justify-self: start; }
+}

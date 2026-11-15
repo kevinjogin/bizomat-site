@@ -110,8 +110,11 @@ const schema = [{
       <ul class="product-grid" role="list">
         {PRODUCTS.map((p) => (
           <li class="product-card" id={`product-${p.id}`}>
-            <p class="product-card__meta"><span class:list={['bz-badge', p.signIn ? '' : 'bz-badge--live']}>{p.signIn ? 'Sign-in' : 'Free, no sign-in'}</span>{p.formerly && <span class="product-card__formerly">Formerly {p.formerly}</span>}</p>
-            <h3 class="product-card__name">{p.name}</h3>
+            <p class="product-card__meta"><span class:list={['bz-badge', p.signIn ? '' : 'bz-badge--live']}>{p.signIn ? 'Sign-in' : 'Free, no sign-in'}</span></p>
+            <div class="product-card__title">
+              <h3 class="product-card__name">{p.name}</h3>
+              {p.formerly && <p class="product-card__formerly">Formerly {p.formerly}</p>}
+            </div>
             <p class="product-card__tagline">{p.tagline}</p>
             <ul class="product-card__list" role="list">{highlights[p.id].map((h) => <li>{h}</li>)}</ul>
             <div class="product-card__action"><Button href={p.url!} variant={p.id === 'resources' ? 'secondary' : 'primary'} arrow data-cta={`home-product-${p.id}`}>{p.action}</Button></div>
@@ -270,16 +273,23 @@ const schema = [{
   .home-more a { color: var(--accent); font-weight: 600; text-decoration: none; }
   .home-more a:hover { text-decoration: underline; text-underline-offset: 3px; }
 
-  .product-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
-  .product-card { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.4rem, 2.5vw, 2rem); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
-  .product-card__meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .75rem; margin: 0 0 1.25rem; }
-  .product-card__formerly { color: var(--muted); font-size: .8rem; }
+  /* The system cards: as many columns of at least 19rem as fit (three on a laptop or wider, two on a tablet, one on a
+     phone), so a long name or button label always has room, and six cards fill whole rows. Each card spans five rows of
+     the grid and shares them with its neighbours (subgrid), so the chip, the name (with its former name under it), the
+     tagline, the list and the button start at the same height in every card of a row, whatever wraps (design audit,
+     15 Nov 2026). */
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); gap: 1rem; margin: 0; padding: 0; list-style: none; }
+  .product-card { display: grid; grid-row: span 5; grid-template-rows: subgrid; row-gap: 0; min-width: 0; padding: clamp(1.4rem, 2.5vw, 2rem); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); }
+  .product-card > * { min-width: 0; }
+  .product-card__meta { grid-row: 1; display: flex; flex-wrap: wrap; align-items: center; gap: .4rem .75rem; margin: 0 0 1.1rem; }
+  .product-card__title { grid-row: 2; }
   .product-card__name { font-size: var(--step-2); }
-  .product-card__tagline { margin: .6rem 0 0; font-size: 1.02rem; font-weight: 560; color: var(--ink-2); }
-  .product-card__list { display: grid; gap: .45rem; margin: 1.1rem 0 0; padding: 0; list-style: none; }
+  .product-card__formerly { margin: .35rem 0 0; color: var(--muted); font-size: .84rem; line-height: 1.4; }
+  .product-card__tagline { grid-row: 3; margin: .7rem 0 0; font-size: 1.02rem; font-weight: 560; color: var(--ink-2); }
+  .product-card__list { grid-row: 4; align-self: start; display: grid; gap: .45rem; margin: 1.1rem 0 0; padding: 0; list-style: none; }
   .product-card__list li { position: relative; padding-left: 1.1rem; color: var(--ink-2); font-size: .94rem; }
   .product-card__list li::before { content: ''; position: absolute; left: 0; top: .62em; width: 7px; height: 2px; background: var(--brand-mark); }
-  .product-card__action { margin-top: auto; padding-top: 1.75rem; }
+  .product-card__action { grid-row: 5; align-self: end; padding-top: 1.75rem; }
 
   :global(.home-ai__inner) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: clamp(2rem, 4vw, 3.5rem); align-items: start; }
   .home-ai__lead { margin: .9rem 0 1.4rem; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
@@ -296,7 +306,7 @@ const schema = [{
 
   :global(.home-split) { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: clamp(2rem, 5vw, 5rem); align-items: start; }
   .home-split__copy h2 { margin-top: .9rem; max-width: 18ch; }
-  .home-split__copy > p:not(.eyebrow) { margin: 1rem 0 0; max-width: 46ch; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
+  .home-split__copy > p:not(.bz-eyebrow) { margin: 1rem 0 0; max-width: 46ch; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }
   .home-split__actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1.75rem; }
   .home-search { display: flex; gap: .4rem; max-width: 30rem; margin-top: 1.75rem; padding: .3rem; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 10px; }
   .home-search:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
@@ -330,13 +340,13 @@ const schema = [{
   .home-close__actions :global(.button--secondary:hover) { --b-fg: var(--inverse-ink); --b-border: var(--inverse-ink); --b-bg: transparent; }
 
   @media (max-width: 1000px) {
-    :global(.home-hero__inner), :global(.home-ai__inner) { grid-template-columns: 1fr; }
-    .product-grid { grid-template-columns: 1fr; }
+    /* minmax(0, 1fr), not 1fr: a 1fr column is as wide as its widest unbreakable child (the tool search field), which
+       made the page wider than a 360 px phone */
+    :global(.home-hero__inner), :global(.home-ai__inner) { grid-template-columns: minmax(0, 1fr); }
     .proof-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .product-card__action { padding-top: 1.25rem; }
-    :global(.home-split) { grid-template-columns: 1fr; }
+    :global(.home-split) { grid-template-columns: minmax(0, 1fr); }
   }
-  @media (min-width: 640px) and (max-width: 1180px) { .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 640px) {
     .topic-list { grid-template-columns: 1fr; }
     .proof-stats { grid-template-columns: 1fr; }

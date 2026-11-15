@@ -323,7 +323,7 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
   .mv strong{font-family:var(--font-sans);color:var(--m-ink);letter-spacing:-.022em;line-height:1.22;}
 
   /* INDUSTRIES: six generous sector panels connected by a quiet central spine. */
-  .mv__sectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:clamp(8px,2.4%,13px);}
+  .mv__sectors{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:repeat(3,minmax(0,1fr));gap:clamp(8px,2.4%,13px);container-type:inline-size;}
   .mv__sectors::before{
     content:'';position:absolute;z-index:-1;top:0;bottom:0;left:50%;width:2px;transform:translateX(-50%);
     background:linear-gradient(transparent,var(--m-orange),transparent);opacity:.55;
@@ -341,7 +341,8 @@ const scene = !sharedOrbit ? copy[page as keyof typeof copy] : null;
   .mv__sector-top{display:flex;justify-content:space-between;align-items:start;gap:.4rem;}
   .mv__sector-symbol{color:var(--m-orange);}
   .mv__sector-symbol svg{width:clamp(22px,5vw,32px);height:auto;max-width:100%;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
-  .mv__sector-name{font-size:clamp(.78rem,.55rem + .72vw,1.06rem);}
+  /* sized by the panel, not the window: a two-line name still leaves room for its label in a narrow panel */
+  .mv__sector-name{font-size:clamp(.72rem,3.5cqi,1.06rem);}
   @keyframes mv-sector{0%,13%{border-color:var(--m-bright);background:var(--m-soft);}24%,100%{border-color:var(--m-line);background:var(--m-card);}}
 
   /* HOW IT WORKS: a vertical, four-stage delivery system, not a generic orbit. */

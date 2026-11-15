@@ -28,17 +28,20 @@ const classes = ['button', `button--${variant}`, size === 'small' && 'button--sm
 
 <style>
   /* One button system (BIZOMAT tokens): primary (ink), accent (BIZOMAT teal, for the one main action on a screen),
-     secondary (outline), text and inverse (on dark bands). Restrained 8px corners, no shadows. */
+     secondary (outline), text and inverse (on dark bands). Restrained 8px corners, no shadows.
+     A button is never wider than the box it sits in: a label that does not fit on one line (a long product name in a
+     narrow card or on a phone) wraps onto balanced lines inside the button, with the arrow kept at its side, instead
+     of spilling past the card's edge (design audit, 15 Nov 2026). Labels that fit stay on one line. */
   .button {
     --b-bg: var(--ink); --b-fg: var(--paper); --b-border: var(--ink);
     display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
-    min-height: 46px; padding: 0 1.25rem;
+    max-width: 100%; min-height: 46px; padding: 0.55rem 1.25rem;
     background: var(--b-bg); color: var(--b-fg); border: 1px solid var(--b-border); border-radius: 8px;
-    font-size: 0.97rem; font-weight: 580; letter-spacing: -0.005em; line-height: 1.2; text-decoration: none; white-space: nowrap;
+    font-size: 0.97rem; font-weight: 580; letter-spacing: -0.005em; line-height: 1.2; text-decoration: none; text-align: center; text-wrap: balance;
     transition: background 0.18s var(--ease), color 0.18s var(--ease), border-color 0.18s var(--ease);
   }
   .button:hover { --b-bg: var(--ink-2); --b-border: var(--ink-2); color: var(--b-fg); }
-  .button--small { min-height: 38px; padding: 0 0.95rem; font-size: 0.9rem; }
+  .button--small { min-height: 38px; padding: 0.4rem 0.95rem; font-size: 0.9rem; }
   .button--accent { --b-bg: var(--accent); --b-fg: var(--on-accent); --b-border: var(--accent); }
   .button--accent:hover { --b-bg: var(--accent-strong); --b-border: var(--accent-strong); }
   .button--secondary { --b-bg: transparent; --b-fg: var(--ink); --b-border: var(--line-strong); }
@@ -48,6 +51,6 @@ const classes = ['button', `button--${variant}`, size === 'small' && 'button--sm
   .button--text { --b-bg: transparent; --b-fg: var(--ink); --b-border: transparent; min-height: 0; padding: 0.25rem 0; border-radius: 0; }
   .button--text:hover { --b-bg: transparent; --b-border: transparent; --b-fg: var(--accent); }
   .button[disabled] { opacity: 0.55; cursor: progress; }
-  .button__arrow { display: inline-block; transition: transform 0.2s var(--ease); }
+  .button__arrow { display: inline-block; flex: none; transition: transform 0.2s var(--ease); }
   .button:hover .button__arrow { transform: translateX(2px); }
 </style>

@@ -58,7 +58,13 @@ export async function mountCaptcha(el: HTMLElement): Promise<Captcha | null> {
     const existing = el.dataset.widgetId;
     const id =
       existing ??
-      h.render(el, { sitekey: SITE_KEY, theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light' });
+      h.render(el, {
+        sitekey: SITE_KEY,
+        theme: document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light',
+        // the normal check is 303 px wide: on a narrow phone (a 275 px form column at 360 px) it would stick out of
+        // the form, so the compact one (164 px) is used there
+        size: el.clientWidth > 0 && el.clientWidth < 303 ? 'compact' : 'normal',
+      });
     el.dataset.widgetId = id;
     return { token: () => h.getResponse(id) || '', reset: () => h.reset(id) };
   } catch {

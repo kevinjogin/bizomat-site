@@ -27,7 +27,7 @@ const schema = { '@type': 'Book', '@id': new URL(href, SITE.url).href + '#book',
 ---
 <BaseLayout title={`${book.data.title} (Library)`} description={book.data.description} canonical={href} schema={[schema]}
   breadcrumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.data.title,href}]}>
-  <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.data.category,href:`/reados/#${book.data.category.toLowerCase()}`}]}
+  <ReadOSBookHero crumbs={[{label:CRUMB.library,href:'/reados/'},{label:book.data.category,href:`/reados/#topic-${book.data.category.toLowerCase()}`}]}
     eyebrow={`Library / ${book.data.category} / BIZOMAT original book`} title={book.data.title} subtitle={book.data.subtitle} description={book.data.description}
     meta={[`${chapters.length} chapters`,`About ${minutes} minutes`,'Free to read',book.data.level]} draft={book.data.status==='draft'}
     startHref={publicationChapterHref(book.id,chapters[0].data.chapterSlug)} cover={{title:book.data.title,category:book.data.category,slug:book.id,motif:book.data.coverVariant,publicationLabel:'BIZOMAT ORIGINAL BOOK',chapters:chapters.length}} />
