@@ -85,7 +85,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   manager role. The value of stock sold is **not** posted to Finance's ledger (recorded as planned); carrier bookings,
   landed costs and forecasting are planned.
   **BIZOMAT WHS** (Work Health & Safety Management System, owner's WHS brief of 15 Nov 2026; `docs/whs/README.md`;
-  Release 1 built on the branch `whs-release-1`, migration 0026, **not deployed** until the owner merges it): the
+  Release 1 merged and deployed 15 Nov 2026, kevinjogin/bizomat-site#74, migration 0026): the
   Health and Safety module at `/erp/c/<company>/whs`: hazards, risk assessments on the company's matrix, incidents with
   investigations, the regulator notification record, actions with evidence, confidential health records (health
   officers only) and jurisdiction packs. Every legal instrument and rule is **Not verified** until a platform

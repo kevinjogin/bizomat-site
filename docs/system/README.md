@@ -65,7 +65,7 @@
 >     own code;
 >   - the sales manager role; seven more reports at `/erp/c/<company>/erp-reports`;
 >   - the value of stock sold is not posted to Finance's ledger: each posting is recorded as planned.
-> - **BIZOMAT WHS, Release 1** (built on the branch `whs-release-1`, **not deployed**; `docs/whs/README.md`, migration
+> - **BIZOMAT WHS, Release 1** (live since 15 Nov 2026, kevinjogin/bizomat-site#74; `docs/whs/README.md`, migration
 >   `0026_whs_core.sql`, API `/api/whs` and `/api/admin/whs`):
 >   - Health and Safety in the rail (between Maintenance and Operations) at `/erp/c/<company>/whs`; `/erp/whs` opens the
 >     company used last: report a hazard or an incident (first, large on a phone), hazards, incidents with
