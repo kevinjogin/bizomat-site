@@ -38,9 +38,13 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   computers appear only once CAD Automation reports (`/company/api/id/cad-status`, client `cad`): never present them as
   live before. **Maintenance** (Asset Management and Maintenance, owner's CMMS brief of 14 Nov 2026, MEX a functional
   reference only; `docs/maintenance/README.md`): Stage M1 (asset register and hierarchy, requests with approval, work
-  orders, technicians, labour timer, photos and documents) is built and tested at `/erp/c/<company>/maintenance`;
-  M2 to M4 (preventive maintenance, readings, inspections, parts, scanning, sites, AI scheduling, reliability, offline)
-  are planned. **ERP Release 1** (owner's brief of 14 Nov 2026; `docs/erp/release-1.md`, status by release in
+  orders, technicians, labour timer, photos and documents) is live at `/erp/c/<company>/maintenance`. Stages M2 and M3
+  (ERP Release 4, part B: preventive maintenance by time, meter or condition with idempotent generation by the cron,
+  readings, inspections with follow-ups, prestart checks that can set an asset out of service, parts issued through
+  ERP Inventory's StockOps, trades and labour costs, downtime, sites, QR scanning and reliability reports; migration
+  0024) are built and tested on the branch `erp-release-4-maintenance`, **not deployed**. M4's AI scheduling assistant
+  and offline field work are planned; maintenance costs are not posted to Finance.
+  **ERP Release 1** (owner's brief of 14 Nov 2026; `docs/erp/release-1.md`, status by release in
   `docs/erp/STATUS.md`; merged and deployed 14 Nov 2026): the product master
   with variants, revisions with change requests and change orders (approval and release with segregation of duties),
   multi-level bills of materials, engineering documents (files or CAD references, never claimed to be on the server),
