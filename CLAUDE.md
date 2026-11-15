@@ -93,8 +93,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   or legally verified (`tests/whs-claims.test.ts`). BIZOMAT never decides reportability and does not submit to
   regulators. Inspections, permits, contractors, training, chemicals, PPE, emergency management, consultation, health
   surveillance and the compliance register are planned. Hours worked by site and month (reasoned, append-only history)
-  and LTIFR/TRIFR, which show "Cannot be calculated" when hours are missing, are built on the working branch
-  (migration 0028), not deployed.
+  and LTIFR/TRIFR, which show "Cannot be calculated" when hours are missing, are live since 15 Nov 2026
+  (kevinjogin/bizomat-site#77, migration 0028, deploy run 40).
   **Billing** (owner's brief of 15 Nov 2026; `docs/billing/README.md`; migration 0027, kevinjogin/bizomat-site#77):
   one Stripe customer and subscription per registered company, charged per active member, monthly, AUD; prices only
   from Stripe Price ids in `WORK_STRIPE_*`; embedded Checkout on the ERP's billing page; signed idempotent webhook; seat
@@ -107,7 +107,9 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   (owner, 15 Nov 2026): Stripe Tax holds an active Australian registration (default exclusive), production sets
   `WORK_STRIPE_AUTOMATIC_TAX = "on"`, and the pages say "plus GST" (A$11.00 including 10% GST in Australia). The app
   refuses to sell a live price whose tax behaviour is not set (`checkPrice`): the live price must say exclusive in
-  Stripe. An annual price (`price_1UbyE6Rs74vQph6MNviG9cbJ`, AUD 100.00 a year) exists in Stripe and is not offered. Billing is on only once the live secret key, publishable key and webhook
+  Stripe. An annual price (`price_1UbyE6Rs74vQph6MNviG9cbJ`, AUD 100.00 a year) exists in Stripe and is not offered. Deployed
+  15 Nov 2026 (#77 and #78, deploy run 40, d5ae6ca): billing is **off** in production because none of the three live
+  Stripe secrets is a repository secret yet (the run's summary names them). Billing is on only once the live secret key, publishable key and webhook
   signing secret are repository secrets; even then nobody can subscribe until the founder opens subscriptions in the
   console. Never create or change Stripe products or prices without the owner's approval; never charge a real card in
   testing without it; never call BIZOMAT's invoices tax invoices or its billing tax compliant. The example company,
