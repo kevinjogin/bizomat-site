@@ -1,18 +1,37 @@
-# BIZOMAT billing: per-user subscriptions (built 15 Nov 2026; not deployed)
+# BIZOMAT billing: per-user subscriptions (built 15 Nov 2026)
 
 The owner's brief of 15 Nov 2026 replaced the four-plan model in `docs/billing/PLAN.md` with one per-user price. This page
-describes what is built, how to set it up in Stripe's test mode, and what still needs a decision. `PLAN.md` stays as the
-discovery record; where the two differ, this page is the current design.
+describes what is built, the live and sandbox configuration in Stripe, the owner's steps to go live, and what still
+needs a decision. `PLAN.md` stays as the discovery record; where the two differ, this page is the current design.
 
 **Status (15 Nov 2026):**
-- Built and tested; in kevinjogin/bizomat-site#77.
-- **Production billing is off:** production takes live Stripe settings only, and no live price or live keys are
-  approved yet.
-- **The price per user is not approved.** The public page `/pricing/` says it is being finalised and names no amount.
+- Built and tested; kevinjogin/bizomat-site#77.
+- **The live price** was created by the owner in Stripe's live mode, and read here with a read-only key:
+
+  | | Live Stripe |
+  | --- | --- |
+  | Product | `prod_VdED2AiKMDhIgM`, "BIZOMAT Business Subscription", active, tax code `txcd_10103001` |
+  | Price | `price_1UbyE5Rs74vQph6MdBU51OeG` (the product's default price), active, lookup key `bizomat_user_monthly_aud` |
+  | Amount | AUD 10.00 per unit, monthly, licensed, per unit |
+  | Tax behaviour | **unspecified**: Stripe does not say whether GST is included or added |
+
+  `fly.website.toml` sets `WORK_STRIPE_ENVIRONMENT = "live"` and this price; `src/config/pricing.ts` names the same
+  id and amount for the pages, and `tests/pricing.test.ts` keeps the two equal.
+- **GST gate:** the app sells a live price only when its tax behaviour is inclusive or exclusive
+  (`checkPrice` in `apps/work/src/worker/billing/stripe.ts`). Until the owner sets it, the billing page shows the
+  price with "GST being confirmed", and "Start subscription" stays disabled.
+- **Billing on or off in production:**
+  - It is on only when the live secret key, publishable key and webhook signing secret are on Fly. They come from
+    repository secrets at each deploy, and the deploy summary names any that is missing.
+  - The deploy's public checks say which: the webhook answers 503 when billing is off, and 400 to an unsigned delivery
+    when it is on.
+- **Subscriptions are not open:** even with billing on, nobody can subscribe until the founder sets "Who may start a
+  subscription" in the console (default: nobody).
+- **The public page** `/pricing/` shows A$10.00 per active user per month and says subscriptions are not open yet. It
+  does not say whether GST is included or added.
 - **Stripe sandbox objects, made for testing only** (owner's approval):
   - the product "BIZOMAT ERP, per active user";
-  - a monthly AUD 10.00 price, GST exclusive, `price_1Uc2bqRymx2K9qJ1EVaxV6Hd`, lookup key `bizomat_seat_monthly_aud`.
-    This test amount is not the approved commercial price;
+  - a monthly AUD 10.00 price, GST exclusive, `price_1Uc2bqRymx2K9qJ1EVaxV6Hd`, lookup key `bizomat_seat_monthly_aud`;
   - a webhook `we_1Uc2bxRymx2K9qJ1iPRF5jUV`, now **disabled**: it points at bizomat.ai, which takes live events
     only.
 
@@ -133,9 +152,11 @@ called):
 The sandbox run below used a full sandbox secret key. Before live, run the same flow once with the restricted key: a
 missing permission shows as a 403 in the billing page's message, and nothing is half applied.
 
-## Proposed Stripe configuration (for the owner's approval; not created)
+## Stripe configuration (the proposal of 15 Nov 2026)
 
-Nothing below exists in Stripe yet. Create it only after the owner approves it, in a sandbox first.
+The owner created the live product and price themselves (see Status above). The product name, description and tax
+behaviour differ from the proposal below. The live webhook destination follows this table and is created by the owner
+(Going live, below). The sandbox objects follow the proposal.
 
 | Object | Setting | Proposed value | Decision needed |
 | --- | --- | --- | --- |
@@ -156,7 +177,7 @@ Nothing below exists in Stripe yet. Create it only after the owner approves it, 
 | | Smart Retries | Stripe's default, and after the last retry: mark the subscription unpaid | Confirm |
 | | Payment methods | Cards and wallets (dynamic payment methods; the code never names payment method types) | BECS Direct Debit later if wanted |
 
-Example amounts at the proposed (not approved) A$10 per user per month, before GST (with GST-exclusive prices, 10% is added where it applies):
+Example amounts at A$10.00 per user per month (the live price). The GST columns apply only if the owner makes the price GST exclusive and BIZOMAT is registered for GST:
 
 | Users | Per month | GST (if registered and exclusive) | Total |
 | --- | --- | --- | --- |
@@ -174,6 +195,7 @@ With GST-inclusive prices, the totals are the first column, and Stripe shows the
   - each price's tax behaviour as Stripe holds it;
   - whether Stripe calculates GST (`STRIPE_AUTOMATIC_TAX`);
   - the GST on each invoice and on the estimate, as Stripe charged or calculated it.
+- **The live price's tax behaviour is unspecified** (15 Nov 2026), so the app does not sell it yet (Going live, step 1).
 - **Stripe Tax stays off until** the owner confirms BIZOMAT's GST registration and records it in Stripe (Tax >
   Registrations). Without a registration, Stripe charges no tax and gives no error.
 - **No claims:** nothing in BIZOMAT says its invoices are tax invoices or that its billing is tax compliant.
@@ -213,31 +235,62 @@ With GST-inclusive prices, the totals are the first column, and Stripe shows the
    - Subscribe a registered company with Stripe's test card `4242 4242 4242 4242`, any future date and any CVC. Use
      `4000 0000 0000 0341` to test a failed payment.
    - Invite and remove people and watch the quantity and history change.
-8. **This development environment:**
-   - Its saved `api.stripe.com` network secret is a **live** key, so no Stripe call is made from here.
-   - To test against the sandbox from a session like this one, replace that secret's value with the sandbox restricted
-     key, in the environment's settings (Network secrets).
-   - Then roll the live key in the Stripe Dashboard: it was exposed to a development environment.
+8. **This development environment** (its settings, Network secrets, for `api.stripe.com`):
+   - It held a live secret key until 15 Nov 2026, replaced by a sandbox key. Roll that live key in the Stripe Dashboard:
+     it was exposed to a development environment.
+   - For the release, the owner added a **live, read-only** restricted key ("bizomat-release-readonly"), with Products:
+     Read only, so far. Reading the price list, the webhook endpoints and the tax settings also needs Prices,
+     Webhook Endpoints, Tax Settings and Tax Registrations: Read.
+   - Remove that key when the release checks are done.
 9. **Local development:**
    - `stripe listen --forward-to localhost:8002/api/billing/stripe-webhook` gives a local `whsec_...` signing secret.
    - Set the `STRIPE_*` names in the local environment, never in a committed file.
 
-Going live is a separate, explicit approval:
-- live keys and a live webhook destination;
-- `WORK_STRIPE_ENVIRONMENT=live`;
-- the account activated (legal entity, ABN, bank account);
-- terms of sale and a refund policy;
-- the GST decision.
+## Going live (the owner's steps; values never in chat, a file or a pull request)
+
+Done: the live product and price (owner); `WORK_STRIPE_ENVIRONMENT = "live"` and the price id in `fly.website.toml`.
+
+1. **GST:** decide, with the accountant, whether A$10.00 includes GST or has GST added (Stripe cannot change it once
+   set), then set it on the live price: Product catalogue > BIZOMAT Business Subscription > the price > Tax behaviour.
+   If BIZOMAT is registered for GST, add the Australian registration in Stripe Tax and set `WORK_STRIPE_AUTOMATIC_TAX`
+   to `on`, so invoices carry the GST. Then change `gst` in `src/config/pricing.ts`, so the pages say the same.
+2. **The app's key:** in live mode, Developers > API keys > Create restricted key `bizomat-work-billing-live`, with the
+   permissions in the table above. Save it as the repository secret `WORK_STRIPE_SECRET_KEY` of
+   kevinjogin/bizomat-site (Settings > Secrets and variables > Actions).
+3. **The publishable key** (`pk_live_...`) as the repository secret `WORK_STRIPE_PUBLISHABLE_KEY`.
+4. **The live webhook:** Workbench > Webhooks > Create an event destination, in live mode:
+   - the address `https://bizomat.ai/erp/api/billing/stripe-webhook`;
+   - the payload style Snapshot;
+   - the 25 events in `HANDLED_EVENTS`.
+
+   Save its signing secret as the repository secret `WORK_STRIPE_WEBHOOK_SECRET`. Create it shortly before the
+   deploy: until billing is on, production answers 503 and Stripe retries.
+5. **Deploy** (Actions > Deploy BIZOMAT, `confirm` = `DEPLOY`):
+   - the run's summary names each staged setting and each missing one;
+   - a test key stops the deploy before anything is staged;
+   - the public checks say "billing is configured" (the webhook answers 400 to an unsigned delivery).
+6. **The console** (`/erp/admin/billing`, the founder): it shows "On, live" and the price checked with Stripe. Until
+   step 1 is done, it says the price does not say whether GST is included or added.
+7. **Open subscriptions:** "Who may start a subscription", first Platform admins, then everyone. A real subscription
+   charges a real card: only with the owner's explicit approval.
+
+Also before customers pay: the account activated (legal entity, ABN, bank account), terms of sale and a refund policy,
+and Stripe named on the privacy page.
 
 ## Tests
 
-`apps/work/test/billing.test.ts` (22 tests) runs the official Stripe SDK against an in-memory stand-in for
+`apps/work/test/billing.test.ts` (23 tests) runs the official Stripe SDK against an in-memory stand-in for
 `api.stripe.com`. The stand-in keeps customers, sessions, subscriptions and invoices, honours idempotency keys and
 records every request; no network call is made. Webhook signatures are made with Stripe's own test helper. Billing is
 switched on only for that file's requests, so the rest of the suite runs with billing off, as production does.
 
 Covered:
 - **Configuration:** every reason billing stays off; keys never appear in reasons, responses or the console.
+- **The live GST gate:** a live price is sold only when its tax behaviour is inclusive or exclusive (the owner's live
+  price, unspecified on 15 Nov 2026, is refused); the sandbox may test either way.
+- **The website** (`tests/pricing.test.ts`): `fly.website.toml` names the price `src/config/pricing.ts` publishes, in
+  live mode, never the sandbox price or a key; the pages write no amount of their own; no page states a GST treatment
+  while it is unconfirmed.
 - **Seats:**
   - who counts;
   - members and strangers refused;

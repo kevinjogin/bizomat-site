@@ -146,6 +146,20 @@ PowerShell's `ToString('x2')` both write lowercase.
 
 ## 7. Setup steps for the owner
 
+**The way used on 15 Nov 2026: repository secrets only.** The owner saved the same `BIZOMAT_ID_CLIENT_SECRET` as a
+repository secret in kevinjogin/bizomat-site and in kevinjogin/bizomat-cad. Then, in this order:
+- **The website's deploy** (`.github/workflows/bizomat-deploy.yml`) does three things:
+  - stages `WORK_BIZOMAT_ID_CLIENTS` on `bizomat` with the secret's SHA-256 and the return address above
+    (`.github/scripts/stage-secrets.sh`);
+  - after the deploy, proves the match (step "CAD sign-in client"): the token endpoint is asked to swap a made-up code
+    with the client's credentials, and the right secret answers `invalid_grant` (400), never `invalid_client` (401);
+  - never prints the secret: it reaches curl on standard input.
+- **Then CAD's deploy** (kevinjogin/bizomat-cad, Deploy to Fly.io (cados), `confirm` = `DEPLOY`) stages the secret on
+  `cados`.
+- **Then the checks in step 8.**
+
+The manual steps below are the other way, from a computer with `flyctl`.
+
 Do this from a computer where `flyctl` is signed in to the organization that holds both apps.
 - Use Git Bash on Windows, WSL, macOS or Linux; PowerShell 5.1 drops quotes inside JSON on the command line.
 - Each command below holds the secret only in a shell variable. The secret is never typed, printed or saved, so it
