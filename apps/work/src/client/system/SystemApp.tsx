@@ -34,6 +34,8 @@ const ErpReportsArea = lazy(() => import('./erp/Reports').then((m) => ({ default
 // ERP Release 2: /c/<company>/inventory and the purchasing and inventory settings.
 const InventoryArea = lazy(() => import('./erp/Inventory').then((m) => ({ default: m.InventoryArea })));
 const ErpSettingsPage = lazy(() => import('./erp/ErpSettings').then((m) => ({ default: m.ErpSettingsPage })));
+// ERP Release 3: /c/<company>/manufacturing (orders, the shop floor, planning, work centres and routings).
+const ManufacturingArea = lazy(() => import('./erp/Manufacturing').then((m) => ({ default: m.ManufacturingArea })));
 
 /** The ERP's products, engineering and supplier reports (src/client/system/erp/Reports.tsx keeps the same list). */
 const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
@@ -53,6 +55,14 @@ const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
   { key: 'stock-ageing', label: 'Stock ageing', what: 'How long stock has been held; lots expiring soon.' },
   { key: 'slow-moving', label: 'Slow-moving stock', what: 'Stock with no issue for a while.' },
   { key: 'shortages', label: 'Shortages', what: 'Below the reorder point or minimum.' },
+  { key: 'production-output', label: 'Production output', what: 'Finished goods received from manufacturing orders.' },
+  { key: 'work-order-progress', label: 'Work order progress', what: 'Open manufacturing orders, their operations and dates.' },
+  { key: 'material-consumption', label: 'Material consumption', what: 'Materials issued to, returned from and scrapped against orders.' },
+  { key: 'labour-utilisation', label: 'Labour utilisation', what: 'Hours recorded against available hours.' },
+  { key: 'production-variance', label: 'Production variance', what: 'Estimated against actual cost of closed orders.' },
+  { key: 'machine-downtime', label: 'Machine downtime', what: 'Downtime by machine and reason.' },
+  { key: 'mrp-suggestions', label: 'MRP suggestions', what: 'What to make, buy or expedite.' },
+  { key: 'capacity-load', label: 'Capacity load', what: 'Load per work centre per week.' },
 ];
 
 // ------------------------------------------------------------------ data
@@ -162,6 +172,7 @@ export function SystemRoutes() {
       <Route path="/products/*" element={<CompanyRedirect section="products" />} />
       <Route path="/procurement/*" element={<CompanyRedirect section="procurement" />} />
       <Route path="/inventory/*" element={<CompanyRedirect section="inventory" />} />
+      <Route path="/manufacturing/*" element={<CompanyRedirect section="manufacturing" />} />
       <Route path="/operations" element={<Shell><Operations /></Shell>} />
       <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
       <Route path="/administration" element={<Shell><Administration /></Shell>} />
@@ -206,8 +217,8 @@ function MaintenanceRedirect() {
   return <Navigate to={`/c/${pick.id}/maintenance${location.pathname.replace(/^\/maintenance/, '')}${location.search}`} replace />;
 }
 
-/** /products, /procurement and /inventory: the same section of the company used last, else the first one. */
-function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' }) {
+/** /products, /procurement, /inventory and /manufacturing: the same section of the company used last, else the first one. */
+function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' | 'manufacturing' }) {
   const location = useLocation();
   const q = useMe();
   if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
@@ -253,6 +264,7 @@ function CompanyArea() {
         <Route path="erp-reports/*" element={<Suspense fallback={<Loading />}><ErpReportsArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="inventory/*" element={<Suspense fallback={<Loading />}><InventoryArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="erp-settings" element={<Suspense fallback={<Loading />}><ErpSettingsPage companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
+        <Route path="manufacturing/*" element={<Suspense fallback={<Loading />}><ManufacturingArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="*" element={<Navigate to="home" replace />} />
       </Routes>
     </Shell>
@@ -292,6 +304,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             <NavLink to={`${base}/products`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="diamond" /> Products and Engineering</NavLink>
             <NavLink to={`${base}/procurement`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="inbox" /> Procurement</NavLink>
             <NavLink to={`${base}/inventory`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="layers" /> Inventory</NavLink>
+            <NavLink to={`${base}/manufacturing`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Manufacturing</NavLink>
             <NavLink to={`${base}/maintenance`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="wrench" /> Maintenance</NavLink>
             <NavLink to={`${base}/settings`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Company</NavLink>
           </>
@@ -574,6 +587,13 @@ function CompanyHome({ view }: { view: CompanyView }) {
             <p className="small">Receive, issue, move and count from a phone with the warehouse screen.</p>
           </Link>
         ) : null}
+        {c.role !== 'guest' ? (
+          <Link to={`/c/${c.id}/manufacturing`} className="card card-pad co-tool-card sys-tool-card">
+            <div className="row"><Icon name="settings" /> <strong>Manufacturing</strong></div>
+            <p className="muted small">Manufacturing orders, routings and work centres, the shop floor, MRP and capacity, and job costing.</p>
+            <p className="small">{c.kind === 'demo' ? 'An order for ten weldments in progress, and MRP suggestions for a confirmed demand of 60 kits.' : 'Plan from demand with MRP, run the shop floor from a phone, and see estimated against actual cost.'}</p>
+          </Link>
+        ) : null}
       </div>
       {!view.tools.length && c.role !== 'guest' ? (
         <section className="card card-pad stack">
@@ -800,11 +820,18 @@ const PLANNED: { name: string; icon: string; covers: string; today?: string; bad
     name: 'Inventory and Warehouse',
     icon: 'layers',
     covers: 'Live now: warehouses with a location tree (store, zone, rack, shelf, bin; quarantine, receiving and dispatch); stock by product, location, lot and serial; an append-only movement ledger; issues, transfers, reservations, quarantine, customer and supplier returns, scrap; adjustments with approval; stocktakes and cycle counts; weighted average or FIFO valuation; traceability; QR labels and a warehouse screen for phones.',
-    today: 'Planned: posting stock value to Finance’s ledger (Release 3; recorded as planned, nothing is posted), and inspection screens for goods flagged on receipt (Quality, Release 4).',
+    today: 'Planned: posting stock value to Finance’s ledger (recorded as planned, nothing is posted), and inspection screens for goods flagged on receipt (Quality, Release 4).',
     badge: 'Live',
     live: { to: '/inventory', label: 'Open Inventory' },
   },
-  { name: 'Manufacturing', icon: 'settings', covers: 'Work orders with operations and materials, a planning board by work centre, and a shop-floor screen for reporting quantities and scrap.' },
+  {
+    name: 'Manufacturing',
+    icon: 'settings',
+    covers: 'Live now: work centres and machines with a capacity calendar and cost rates; routings with revisions released by an engineering approver who did not draft them; manufacturing orders from a released bill of materials and routing, with materials reserved, issued and returned through Inventory; operations with labour and machine time, output, scrap, rework, downtime and inspection results; finished goods received at actual cost; a shop-floor screen for phones; the master production schedule, MRP with make, buy and expedite suggestions, and rough-cut capacity; estimated against actual cost by element, with variances at close.',
+    today: 'Not yet: posting production value to Finance’s ledger (recorded as planned, nothing is posted), job profitability (needs sales orders, Release 5), full Quality inspections and nonconformances (Release 4), and finite scheduling.',
+    badge: 'Live',
+    live: { to: '/manufacturing', label: 'Open Manufacturing' },
+  },
   { name: 'Quality', icon: 'checkSquare', covers: 'Inspection plans and checklists, inspections, nonconformances and corrective actions.' },
   {
     name: 'Asset Management and Maintenance',
@@ -818,7 +845,7 @@ const PLANNED: { name: string; icon: string; covers: string; today?: string; bad
     name: 'Products and Engineering records',
     icon: 'diamond',
     covers: 'Live now: the product master with variants, revisions with change requests and change orders (approval and release with segregation of duties), multi-level bills of materials with where-used, comparison and cost roll-up, and engineering documents with versions and CAD references.',
-    today: 'Live with Inventory: each component’s available stock in the bill of materials, and shortages for a build quantity. Planned: routings and work centres (with Manufacturing). CAD Automation builds SOLIDWORKS parts, assemblies and drawings from your AI assistant on your own computer.',
+    today: 'Live with Inventory: each component’s available stock in the bill of materials, and shortages for a build quantity. Live with Manufacturing: routings and work centres. CAD Automation builds SOLIDWORKS parts, assemblies and drawings from your AI assistant on your own computer.',
     badge: 'Partly live',
     live: { to: '/products', label: 'Open Products and Engineering' },
   },
@@ -828,7 +855,7 @@ function Operations() {
   usePageTitle('Operations');
   return (
     <div className="page crm-page">
-      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. Procurement and Inventory are live; Products and Engineering records and Asset Management and Maintenance are partly live; the other modules are planned: they are not built yet and keep no data." />
+      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. Procurement, Inventory and Manufacturing are live; Products and Engineering records and Asset Management and Maintenance are partly live; Quality and Supply Chain are planned: they are not built yet and keep no data." />
       <OperationsToday />
       <div className="co-tools-grid">
         {PLANNED.map((m) => (
@@ -850,6 +877,7 @@ interface OperationsCounts {
   purchaseOrders: { draft: number; awaitingApproval: number; toReceive: number };
   receipts: { last30Days: number; inspection: number };
   stock: { belowReorder: number; pendingAdjustments: number; openCounts: number; countsToApprove: number; warehouses: number; valueCents: number };
+  manufacturing?: { draft: number; released: number; inProgress: number; toClose: number; late: number; inspections: number; suggestions: { make: number; buy: number; expedite: number } };
 }
 
 /** What waits in the company used last: approvals, orders to receive, stock to reorder, counts and adjustments. */
@@ -876,6 +904,11 @@ function OperationsToday() {
         {item(d.stock.belowReorder, 'Products to reorder', '/erp-reports/shortages')}
         {item(d.stock.pendingAdjustments, 'Adjustments to approve', '/inventory/adjustments')}
         {item(d.stock.countsToApprove, 'Counts to approve', '/inventory/counts')}
+        {d.manufacturing ? item(d.manufacturing.draft, 'Manufacturing orders to release', '/manufacturing?status=draft') : null}
+        {d.manufacturing ? item(d.manufacturing.late, 'Manufacturing orders late', '/manufacturing?late=1') : null}
+        {d.manufacturing ? item(d.manufacturing.toClose, 'Manufacturing orders to close', '/manufacturing?status=completed') : null}
+        {d.manufacturing ? item(d.manufacturing.inspections, 'Inspections outstanding', '/manufacturing/shop-floor') : null}
+        {d.manufacturing ? item(d.manufacturing.suggestions.make + d.manufacturing.suggestions.buy + d.manufacturing.suggestions.expedite, 'MRP suggestions open', '/manufacturing/planning') : null}
       </div>
     </section>
   );
@@ -900,7 +933,7 @@ function ReportsPage() {
       <p className="muted small">The figures on the <Link to={`/c/${c.id}/home`}>Dashboard</Link> come from these tools.</p>
       {c.role !== 'guest' ? (
         <section className="stack">
-          <h2 className="crm-subhead">Products, engineering, purchasing and stock</h2>
+          <h2 className="crm-subhead">Products, engineering, purchasing, stock and manufacturing</h2>
           <div className="co-tools-grid">
             {ERP_REPORT_LINKS.map((r) => (
               <Link key={r.key} to={`/c/${c.id}/erp-reports/${r.key}`} className="card card-pad co-tool-card sys-tool-card">
@@ -985,8 +1018,8 @@ function Administration() {
       {c.role !== 'guest' ? (
         <section className="card card-pad stack">
           <h2 className="crm-subhead">ERP roles</h2>
-          <p className="muted small">Who may change products and engineering records, buy, approve purchases, receive, move and count stock. Nobody approves what they drafted, raised, submitted or counted.</p>
-          <div className="row wrap"><Link className="btn" to={`/c/${c.id}/erp-roles`}><Icon name="shield" /> ERP roles</Link><Link className="btn" to={`/c/${c.id}/erp-settings`}><Icon name="settings" /> Purchasing and inventory settings</Link></div>
+          <p className="muted small">Who may change products and engineering records, buy, approve purchases, receive, move and count stock, and plan and run production. Nobody approves or releases what they drafted, raised, submitted or counted.</p>
+          <div className="row wrap"><Link className="btn" to={`/c/${c.id}/erp-roles`}><Icon name="shield" /> ERP roles</Link><Link className="btn" to={`/c/${c.id}/erp-settings`}><Icon name="settings" /> Purchasing, inventory and manufacturing settings</Link></div>
         </section>
       ) : null}
       <ExampleCard />

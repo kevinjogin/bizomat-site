@@ -383,7 +383,7 @@ export async function runMrp(db: D1Database, a: { companyId: string; userId: str
     };
     if (projected < p.safety - 1e-9) {
       takeReceiptsUpTo(today);
-      if (projected < p.safety - 1e-9) await planOrder(q6(p.safety - projected), today, 'below safety stock');
+      if (projected < p.safety - 1e-9) await planOrder(q6(p.safety - projected), today, 'Below safety stock');
     }
     for (const r of reqs) {
       const d = clamp(r.date);
@@ -409,7 +409,7 @@ export async function runMrp(db: D1Database, a: { companyId: string; userId: str
     if (p.reorderPoint !== null && projected <= p.reorderPoint + 1e-9) {
       const target = p.maxQty !== null && p.maxQty > p.reorderPoint ? p.maxQty : p.reorderPoint + 1;
       const lead = await leadOf(p, target - projected);
-      await planOrder(q6(target - projected), addDays(today, lead), 'at or below the reorder point');
+      await planOrder(q6(target - projected), addDays(today, lead), 'At or below the reorder point');
     }
     lines.push({ productId: id, level: lv, source: p.source, onHand: st.onHand, reserved: st.reserved, available: st.available, safety: p.safety, reorderPoint: p.reorderPoint, scheduled: q6(scheduled), gross: q6(gross), planned: q6(planned), projectedEnd: projected, lead: await leadOf(p, Math.max(1, planned)), detail });
   }

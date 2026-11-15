@@ -1,4 +1,4 @@
-// BIZOMAT ERP, Releases 1 and 2 (Products and Engineering, Procurement, Inventory): the shapes the API returns (src/worker/erp), the fixed
+// BIZOMAT ERP, Releases 1 to 3 (Products and Engineering, Procurement, Inventory, Manufacturing): the shapes the API returns (src/worker/erp), the fixed
 // lists with their plain-language labels, and the data hooks. The server decides what each person may see and do; the
 // screens only show it.
 import { useQuery } from '@tanstack/react-query';
@@ -6,7 +6,7 @@ import { get } from '../../lib/api';
 import { appUrl } from '../../lib/base';
 import { formatMoney } from '../../../shared/crm/money';
 
-export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'warehouse_manager' | 'warehouse_operator' | 'viewer';
+export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'warehouse_manager' | 'warehouse_operator' | 'production_manager' | 'production_operator' | 'viewer';
 export type Capability =
   | 'products.view'
   | 'products.edit'
@@ -31,7 +31,16 @@ export type Capability =
   | 'inventory.operate'
   | 'inventory.approve'
   | 'inventory.setup'
-  | 'settings.manage';
+  | 'settings.manage'
+  | 'manufacturing.view'
+  | 'manufacturing.setup'
+  | 'routings.release'
+  | 'production.plan'
+  | 'production.execute'
+  | 'production.issue'
+  | 'production.receive'
+  | 'mrp.run'
+  | 'mrp.buy';
 
 export interface ErpMe {
   company: { id: string; name: string; kind: 'registered' | 'own' | 'demo' };
@@ -72,6 +81,8 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   procurement_manager: 'Procurement manager',
   warehouse_manager: 'Warehouse manager',
   warehouse_operator: 'Warehouse operator',
+  production_manager: 'Production manager',
+  production_operator: 'Production operator',
   viewer: 'Viewer',
 };
 
@@ -538,6 +549,7 @@ export const erpPath = (companyId: string, path = '') => `/erp/c/${encodeURIComp
 export const productsPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/products${path}`;
 export const procurementPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/procurement${path}`;
 export const inventoryPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/inventory${path}`;
+export const manufacturingPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/manufacturing${path}`;
 /** A file or picture served by the API (QR labels, PDFs), at its address under the app. */
 export const apiHref = (companyId: string, path: string) => appUrl(`/api${erpPath(companyId, path)}`);
 export const reportPage = (companyId: string, key = '') => `/c/${encodeURIComponent(companyId)}/erp-reports${key ? `/${key}` : ''}`;
@@ -567,3 +579,211 @@ export function dateText(iso: string | null | undefined): string {
 }
 export const dayText = (t: number | null | undefined) => (t ? new Date(t).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
 export const qty = (n: number) => (Number.isInteger(n) ? String(n) : String(Math.round(n * 1e6) / 1e6));
+
+// ------------------------------------------------------------------ Release 3: manufacturing
+
+export const MO_STATUS = { draft: 'Draft', released: 'Released', in_progress: 'In progress', completed: 'Completed', closed: 'Closed', cancelled: 'Cancelled' } as const;
+export const OP_STATUS = { pending: 'Not started', in_progress: 'In progress', paused: 'Paused', completed: 'Completed' } as const;
+export const WC_STATUS = { active: 'Active', on_hold: 'On hold', inactive: 'Inactive' } as const;
+export const ROUTING_STATUS = { draft: 'Draft', released: 'Released', superseded: 'Superseded' } as const;
+export const DAY_NAMES = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+export interface WorkCentre {
+  id: string;
+  code: string;
+  name: string;
+  description: string;
+  status: keyof typeof WC_STATUS;
+  statusLabel: string;
+  workingDays: number[];
+  workingDaysText: string;
+  hoursPerDay: number;
+  efficiencyPct: number;
+  machines: number;
+  labourRateCents: number;
+  machineRateCents: number;
+  overheadRateCents: number;
+  overheadPct: number;
+  dailyHours: number;
+  weeklyHours: number;
+  machineCount?: number;
+  openOperations?: number;
+  archived: boolean;
+}
+
+export interface Machine {
+  id: string;
+  workCentreId: string;
+  workCentreCode: string | null;
+  code: string;
+  name: string;
+  status: 'active' | 'inactive';
+  machineRateCents: number | null;
+  assetId: string | null;
+  asset: { id: string; number: string; name: string; status: string } | null;
+  down: boolean;
+  breakdown: { id: string; number: string; description: string } | null;
+  notes: string;
+  archived: boolean;
+}
+
+export interface Routing {
+  id: string;
+  productId: string;
+  productNumber: string | null;
+  productName: string | null;
+  revision: string;
+  status: keyof typeof ROUTING_STATUS;
+  statusLabel: string;
+  description: string;
+  leadTimeDays: number | null;
+  releasedByName: string | null;
+  releasedAt: number | null;
+  releaseNote: string;
+  sodException: boolean;
+  createdByName: string | null;
+  operationCount?: number;
+  createdAt: number;
+}
+
+export interface Operation {
+  id: string;
+  opNo: number;
+  name: string;
+  instructions: string;
+  workCentreId: string | null;
+  workCentreCode: string | null;
+  workCentreName: string | null;
+  machineId: string | null;
+  machineCode: string | null;
+  setupMinutes: number;
+  runMinutes: number;
+  crew: number;
+  inspection: boolean;
+  inspectionNote: string;
+  outsourced: boolean;
+  supplierId: string | null;
+  supplierName: string | null;
+  outsourceCostCents: number | null;
+  outsourceDays: number | null;
+  predecessors: number[] | null;
+  effectivePredecessors: number[];
+  overlap: boolean;
+}
+
+export interface MoOperation extends Operation {
+  status: keyof typeof OP_STATUS;
+  statusLabel: string;
+  maxQty: number;
+  goodQty: number;
+  scrapQty: number;
+  reworkQty: number;
+  downtimeMinutes: number;
+  unitsIn: number;
+  plannedStart: string | null;
+  plannedFinish: string | null;
+  startedAt: number | null;
+  completedAt: number | null;
+  inspectionResult: 'pass' | 'fail' | null;
+  inspectionComment: string;
+  actualOutsourceCents: number | null;
+  ready: boolean | null;
+  machineDown: boolean;
+  breakdown: { id: string; number: string; description: string } | null;
+}
+
+export type CostElement = 'materials' | 'labour' | 'machine' | 'outsourcing' | 'overheads' | 'scrap' | 'rework';
+
+export interface ManufacturingOrder {
+  id: string;
+  number: string;
+  productId: string;
+  productNumber: string;
+  productName: string;
+  uom: string;
+  bomRevisionId: string;
+  bomRevision: string;
+  routingId: string | null;
+  routingRevision: string | null;
+  quantity: number;
+  maxQty: number;
+  completedQty: number;
+  receivedValueCents: number;
+  startDate: string | null;
+  requiredDate: string | null;
+  finishDate: string | null;
+  method: string;
+  methodLabel: string;
+  productionType: string;
+  productionTypeLabel: string;
+  priority: string;
+  priorityLabel: string;
+  customerRef: string;
+  fgLocationId: string | null;
+  fgLocationCode: string | null;
+  notes: string;
+  status: keyof typeof MO_STATUS;
+  statusLabel: string;
+  revision: number;
+  currency: string;
+  estimate: Record<CostElement, number> & { total: number };
+  estimateMissing: string[];
+  actualCents: number | null;
+  varianceCents: number | null;
+  late: boolean;
+  overdue: boolean;
+  operations?: { total: number; done: number };
+  progressPct: number;
+  mrpSuggestionId: string | null;
+  createdByName: string | null;
+  releasedByName: string | null;
+  releasedAt: number | null;
+  completedAt: number | null;
+  closedAt: number | null;
+  cancelledAt: number | null;
+  cancelReason: string;
+  createdAt: number;
+}
+
+export interface CostView {
+  currency: string;
+  final: boolean;
+  elements: { element: CostElement; label: string; estimatedCents: number; actualCents: number; varianceCents: number }[];
+  estimatedCents: number;
+  actualCents: number;
+  varianceCents: number;
+  estimatedUnitCents: number | null;
+  actualUnitCents: number | null;
+  receivedValueCents: number;
+  unabsorbedCents: number;
+  missing: string[];
+  profitability: string;
+  note: string;
+}
+
+export interface Suggestion {
+  id: string;
+  runId: string;
+  productId: string;
+  productNumber: string;
+  productName: string;
+  uom: string;
+  kind: 'buy' | 'make' | 'expedite';
+  kindLabel: string;
+  quantity: number;
+  needDate: string | null;
+  orderDate: string | null;
+  leadTimeDays: number;
+  supplierName: string | null;
+  refType: string;
+  refId: string | null;
+  refNumber: string;
+  messages: string[];
+  reason: string;
+  status: 'open' | 'converted' | 'dismissed';
+  convertedType: string;
+  convertedId: string | null;
+  convertedNumber: string;
+}
+
+export const MESSAGE_LABELS: Record<string, string> = { late: 'Late', overdue: 'Overdue', expedite: 'Expedite' };
