@@ -78,8 +78,8 @@ async function loadRecordFile(c: any) {
   const a = await requireErp(c, 'products.view');
   const f = await c.env.DB.prepare('SELECT * FROM erp_record_files WHERE company_id = ? AND id = ? AND deleted_at IS NULL').bind(a.companyId, String(c.req.param('id')).slice(0, 64)).first();
   if (!f) throw notFound('File');
+  if (!Object.hasOwn(KINDS, f.entity_type)) throw notFound('File');
   const k = KINDS[f.entity_type as RecordKind];
-  if (!k) throw notFound('File');
   assertCan(a, k.view);
   return { a, f };
 }

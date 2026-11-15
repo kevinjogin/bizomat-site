@@ -891,8 +891,8 @@ productionRoutes.post('/c/:company/mos/:id/release', async (c) => {
       at: t,
     }),
   );
-  // released once: a second release at the same moment fails whole (and reserves nothing twice)
-  await runStock(db, stockOps.all([onceStmt(db, a.companyId, `mo-release:${mo.id}`, t)], after, { type: 'manufacturing_order', id: mo.id, kind: 'finance.production_posting' }));
+  // a draft leaves draft once: a second release, or a cancel, at the same moment fails whole (and reserves nothing twice)
+  await runStock(db, stockOps.all([onceStmt(db, a.companyId, `mo-leave-draft:${mo.id}`, t)], after, { type: 'manufacturing_order', id: mo.id, kind: 'finance.production_posting' }));
   return c.json({ order: moDTO(await loadMo(db, a.companyId, mo.id)), shortages, reserved });
 });
 
@@ -918,7 +918,8 @@ productionRoutes.post('/c/:company/mos/:id/cancel', async (c) => {
     db.prepare("UPDATE erp_mfg_orders SET status = 'cancelled', cancelled_by = ?, cancelled_at = ?, cancel_reason = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN ('draft','released')").bind(a.userId, stockOps.t, input.reason, stockOps.t, a.companyId, mo.id),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'mo.cancelled', entityType: 'manufacturing_order', entityId: mo.id, productId: mo.product_id, summary: `${mo.number} cancelled: ${input.reason}`, at: stockOps.t }),
   );
-  await runStock(db, stockOps.all([onceStmt(db, a.companyId, `mo-cancel:${mo.id}`, stockOps.t)], after, { type: 'manufacturing_order', id: mo.id, kind: 'finance.production_posting' }));
+  const once = mo.status === 'draft' ? `mo-leave-draft:${mo.id}` : `mo-cancel:${mo.id}`;
+  await runStock(db, stockOps.all([onceStmt(db, a.companyId, once, stockOps.t)], after, { type: 'manufacturing_order', id: mo.id, kind: 'finance.production_posting' }));
   return c.json(moDTO(await loadMo(db, a.companyId, mo.id)));
 });
 

@@ -397,6 +397,11 @@ describe('manufacturing under concurrency', () => {
     expect((await p.json('GET', erp(co, `/mos/${big.id}`))).order.completedQty).toBe(11);
     // An order with work recorded cannot be cancelled.
     expect((await p.req('POST', erp(co, `/mos/${big.id}/cancel`), { reason: 'Changed plans' })).status).toBe(409);
+    // A draft can be cancelled with a reason, and is then never released.
+    const d = await p.json('POST', erp(co, '/mos'), { productId: prod.id, quantity: 3 });
+    expect((await p.req('POST', erp(co, `/mos/${d.id}/cancel`), {})).status).toBe(400);
+    expect(await p.json('POST', erp(co, `/mos/${d.id}/cancel`), { reason: 'Not needed' })).toMatchObject({ status: 'cancelled', cancelReason: 'Not needed' });
+    expect((await p.req('POST', erp(co, `/mos/${d.id}/release`), {})).status).toBe(409);
   });
 });
 
