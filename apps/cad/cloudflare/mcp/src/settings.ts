@@ -12,6 +12,8 @@ import { PERSIST_HOST } from './persist';
  *   private address and of the upload and download link signatures (opensketch/auth.py _base_secret, mcp_token);
  * - OPENSKETCH_KEY_SECRET: the key of the stored Google client secret (opensketch/secretbox.py);
  * - GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET: Google sign-in set on the server rather than on the Admin page;
+ * - BIZOMAT_ID_CLIENT_SECRET (with BIZOMAT_ID_CLIENT_ID and BIZOMAT_ID_URL when they are set): Sign in with BIZOMAT
+ *   (opensketch/bizomat_id.py), off without the secret;
  * - OPENSKETCH_ADDIN_URL: where the add-in update message points.
  * tools/laptop/cloudflare.ps1 secrets mcp copies them from the Fly Machine without showing them.
  */
@@ -29,11 +31,15 @@ export const PASSED = [
   'OPENSKETCH_KEY_SECRET',
   'GOOGLE_CLIENT_ID',
   'GOOGLE_CLIENT_SECRET',
+  'BIZOMAT_ID_CLIENT_SECRET',
+  'BIZOMAT_ID_CLIENT_ID',
+  'BIZOMAT_ID_URL',
 ] as const;
 
 /** The secrets above that a Fly server may have: cloudflare.ps1 secrets mcp copies the ones set there. */
 export const FROM_FLY = ['OPENSKETCH_PASSWORD', 'OPENSKETCH_MCP_TOKEN', 'OPENSKETCH_KEY_SECRET', 'GOOGLE_CLIENT_ID',
-  'GOOGLE_CLIENT_SECRET', 'OPENSKETCH_ACCESS_CODE', 'OPENSKETCH_INSTALLER_URL', 'OPENSKETCH_ADDIN_URL'] as const;
+  'GOOGLE_CLIENT_SECRET', 'OPENSKETCH_ACCESS_CODE', 'OPENSKETCH_INSTALLER_URL', 'OPENSKETCH_ADDIN_URL',
+  'BIZOMAT_ID_CLIENT_SECRET', 'BIZOMAT_ID_CLIENT_ID', 'BIZOMAT_ID_URL'] as const;
 
 /** The server's environment inside the container. */
 export function serverEnv(env: Record<string, unknown>): Record<string, string> {

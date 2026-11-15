@@ -15,8 +15,9 @@
 # Repository secrets (Settings > Secrets and variables > Actions):
 # - FLY_CADOS_TOKEN: a deploy token for the cados app only (Fly dashboard > cados > Tokens > Create deploy token, or
 #   `fly tokens create deploy -a cados`). Until it is set nothing is deployed. Only the steps that run flyctl see it.
-# - GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET (optional), OPENSKETCH_ACCESS_CODE (optional): passed to Fly as the app's
-#   secrets when set. There is no server password.
+# - GOOGLE_CLIENT_ID + GOOGLE_CLIENT_SECRET (optional), OPENSKETCH_ACCESS_CODE (optional), BIZOMAT_ID_CLIENT_SECRET
+#   (optional: Sign in with BIZOMAT, opensketch/bizomat_id.py): passed to Fly as the app's secrets when set. There is no
+#   server password.
 #
 # Steps: the tests (tests.yml; skip_tests applies to a deploy by hand only); the preflight (.github/scripts/fly-preflight.py) compares fly.toml
 # with the live Machines and stops when the deploy would add or remove a Machine or change its size, memory or region
@@ -111,12 +112,14 @@ jobs:
           OPENSKETCH_ACCESS_CODE: ${{ secrets.OPENSKETCH_ACCESS_CODE }}
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          BIZOMAT_ID_CLIENT_SECRET: ${{ secrets.BIZOMAT_ID_CLIENT_SECRET }}
         run: |
           args=()
           if [ -n "$OPENSKETCH_ACCESS_CODE" ]; then args+=("OPENSKETCH_ACCESS_CODE=$OPENSKETCH_ACCESS_CODE"); fi
           if [ -n "$GOOGLE_CLIENT_ID" ] && [ -n "$GOOGLE_CLIENT_SECRET" ]; then
             args+=("GOOGLE_CLIENT_ID=$GOOGLE_CLIENT_ID" "GOOGLE_CLIENT_SECRET=$GOOGLE_CLIENT_SECRET")
           fi
+          if [ -n "$BIZOMAT_ID_CLIENT_SECRET" ]; then args+=("BIZOMAT_ID_CLIENT_SECRET=$BIZOMAT_ID_CLIENT_SECRET"); fi
           if [ "${#args[@]}" -gt 0 ]; then flyctl secrets set --app "$APP" --stage "${args[@]}"; else echo "No optional secrets to pass."; fi
 
       - name: Deploy

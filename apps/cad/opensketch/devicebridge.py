@@ -379,6 +379,17 @@ def _note(p: Pending, status: str, hop: str = "gateway", note: str | None = None
     p.history.append({k: v for k, v in {"status": status, "at": iso(), "hop": hop, "note": note}.items() if v is not None})
     _exec("UPDATE commands SET status=?, updated=?, attempts=?, history=? WHERE id=?",
           (status, time.time(), p.attempts, json.dumps(p.history[-50:]), p.id))
+    if status in TERMINAL:
+        _changed()
+
+
+def _changed() -> None:
+    """Tell the BIZOMAT ERP status reporter (erpstatus.py) that what it shows changed. It only sets a flag."""
+    try:
+        from . import erpstatus
+        erpstatus.changed()
+    except Exception:
+        pass
 
 
 # ----------------------------------------------------------------------------- devices
@@ -535,6 +546,7 @@ def _end_session(device_id: str, reason: str, message: str) -> None:
     if s is not None:
         s.closed = (reason, message)
         s.poke()
+    _changed()
     for p in [p for p in _pending.values() if p.payload["device_id"] == device_id]:
         if p.status not in TERMINAL:
             _note(p, "unknown" if p.status == "running" else "failed", note=message)
@@ -611,6 +623,7 @@ def approve_pairing(user: dict | None, code: str, name: str | None = None) -> di
     _exec("INSERT INTO devices (id, owner, name, jwk, jkt, created, last_seen, is_default, info) VALUES (?,?,?,?,?,?,?,?,?)",
           (did, owner, name, r["jwk"], r["jkt"], now, None, 1 if first else 0, r["info"]))
     _exec("UPDATE pairings SET status='approved', device_id=?, owner=? WHERE id=?", (did, owner, r["id"]))
+    _changed()
     return {"device_id": did, "name": name}
 
 
@@ -982,6 +995,7 @@ def hello(rec: dict, body: dict) -> dict:
     _sessions[rec["id"]] = s
     info = {k: body.get(k) for k in ("companion_version", "os", "installations") if body.get(k) is not None}
     _exec("UPDATE devices SET last_seen=?, info=? WHERE id=?", (time.time(), json.dumps(info), rec["id"]))
+    _changed()
     return {"v": PROTOCOL, "type": "device.welcome", "msg_id": ulid("msg"), "sent_at": iso(), "session_id": s.id,
             "protocol": PROTOCOL, "server_time": iso(), "device_name": rec["name"],
             "poll": {"wait_s": WAIT, "abort_after_s": WAIT + 15}, "heartbeat": {"online_window_s": ONLINE, "status_every_s": 60},
@@ -1191,6 +1205,7 @@ def result(rec: dict, body: dict) -> dict:
         hist = json.loads(row["history"] or "[]") + [{"status": final, "at": iso(), "hop": "addin", "note": "finished late"}]
         _exec("UPDATE commands SET status=?, history=? WHERE id=?", (final, json.dumps(hist[-50:]), cid))
         _drop_files(cid)
+        _changed()
     return {"v": PROTOCOL, "type": "result.receipt", "msg_id": ulid("msg"), "sent_at": iso(), "command_id": cid,
             "stored": True, "duplicate": False, "status": final}
 

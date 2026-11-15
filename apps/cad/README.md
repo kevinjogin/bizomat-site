@@ -46,8 +46,10 @@ two work together: [docs/SITE-CAD-INTEGRATION.md](docs/SITE-CAD-INTEGRATION.md).
   (`opensketch/solver/`, JavaScript). Every feature is checked and its result predicted before SOLIDWORKS sees it.
 - **Device bridge** (`swbridge.py`, `devicebridge.py`): the link that paired Windows computers poll over outgoing HTTPS
   (`/v2/device/*`, signed both ways), with every command recorded in `bridge.sqlite`.
-- **Accounts and pages**: sign-in, Google sign-in, invites, the owner's Admin page, the signed-in app (Home, CAD
+- **Accounts and pages**: sign-in, Sign in with BIZOMAT, Google sign-in, invites, the owner's Admin page, the signed-in app (Home, CAD
   Assistant, SOLIDWORKS, Tools, History, Settings) and the public product pages under `/cad`.
+- **Status in BIZOMAT ERP** (`erpstatus.py`): each account's computers, recent jobs and AI assistants, reported to
+  BIZOMAT ERP in a background thread when the BIZOMAT client secret is set (only accounts whose email is proven).
 - **BIZOMAT CAD for Windows** (`solidworks/`): the SOLIDWORKS add-in (C#, .NET Framework 4.8, COM `ISwAddin`), the
   Companion tray app (`KEVOS.Companion.exe`) that holds the signed link and hands commands to the add-in over a
   local named pipe, and `OpenSketchSW.exe`.
@@ -136,7 +138,7 @@ In short (the full contract, with a change checklist: [docs/SITE-CAD-INTEGRATION
   Windows SDK for signing.
 - **Docker** for the production image; `flyctl` for deploys and operations.
 - **On each user's computer:** Windows x64 and SOLIDWORKS (built against the 2022 interop).
-- **External services:** Fly.io (hosting), Google sign-in (optional), Cloudflare R2 for public installer downloads
+- **External services:** Fly.io (hosting), BIZOMAT sign-in and BIZOMAT ERP's CAD status on bizomat.ai (optional), Google sign-in (optional), Cloudflare R2 for public installer downloads
   (`bizomat-downloads`, published from the laptop), Cloudflare DNS for the old hosts.
 
 ## 6. Local setup
@@ -180,6 +182,7 @@ shows names only).
 | `OPENSKETCH_REQUIRE_SIGNIN` | Treat the server as public (setup page first) even without a public address |
 | `OPENSKETCH_ACCESS_CODE` | Optional early access code (secret) |
 | `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | Optional Google sign-in (secret; callback `https://bizomat.ai/cad/auth/google/callback`) |
+| `BIZOMAT_ID_CLIENT_SECRET` | Optional Sign in with BIZOMAT and the status report to BIZOMAT ERP (secret, at least 32 characters; its SHA-256 is in the BIZOMAT side's `BIZOMAT_ID_CLIENTS`; callback `https://bizomat.ai/cad/auth/bizomat/callback`; the owner's steps: [docs/SITE-CAD-INTEGRATION.md](docs/SITE-CAD-INTEGRATION.md), section 8). `BIZOMAT_ID_CLIENT_ID` (default `cad`) and `BIZOMAT_ID_URL` (default `https://bizomat.ai/company`) are for a test server |
 | `OPENSKETCH_KEY_SECRET` | Optional key for the secrets the server stores (secret; else a random key in the data folder) |
 | `OPENSKETCH_MCP_TOKEN`, `OPENSKETCH_PASSWORD` | Legacy: the seed of an old owner's private address. No server password is used |
 | `OPENSKETCH_INSTALLER_URL`, `OPENSKETCH_ADDIN_URL`, `OPENSKETCH_SW_ZIP` | Where the installer, the add-in update and the manual package come from |
@@ -196,7 +199,7 @@ shows names only).
 | Name | Used by |
 | --- | --- |
 | `FLY_CADOS_TOKEN` | `deploy.yml`, `fly-status.yml`, `domain.yml`: a deploy token for the `cados` app only |
-| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `OPENSKETCH_ACCESS_CODE` | `deploy.yml`, optional: passed to Fly as the app's secrets |
+| `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `OPENSKETCH_ACCESS_CODE`, `BIZOMAT_ID_CLIENT_SECRET` | `deploy.yml`, optional: passed to Fly as the app's secrets (staged, applied by that deploy) |
 | `KEVOS_SIGN_PFX_BASE64`, `KEVOS_SIGN_PASSWORD` | `solidworks.yml`, optional: a code-signing certificate (.pfx, base64) and its password. Without them the MSI is built unsigned |
 | `CLOUDFLARE_API_TOKEN` | `domain.yml` only (DNS for an extra host) |
 

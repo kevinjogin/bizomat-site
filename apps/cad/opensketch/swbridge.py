@@ -157,6 +157,16 @@ def drop(pid: str, why: str) -> None:
     if s is not None:
         _ended[pid] = (why, time.time())
         _close(s, why)
+        _changed()
+
+
+def _changed() -> None:
+    """Tell the BIZOMAT ERP status reporter (erpstatus.py) that what it shows changed. It only sets a flag."""
+    try:
+        from . import erpstatus
+        erpstatus.changed()
+    except Exception:
+        pass
 
 
 def _close(s: Session, why: str) -> None:
@@ -185,6 +195,7 @@ def hello(user: dict | None, info: dict) -> dict:
     s = Session(pid, {k: info.get(k) for k in ("client", "version", "sw_version", "machine", "user", "protocol", "path")
                       if info.get(k) is not None})
     _sessions[pid] = s
+    _changed()
     return {"session": s.id, "protocol": PROTOCOL, "wait": WAIT,
             "server": os.environ.get("OPENSKETCH_VERSION", "dev")}
 

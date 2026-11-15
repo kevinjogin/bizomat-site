@@ -99,8 +99,16 @@ released; development-signed), never overwritten.
 - OAuth (`mcpauth.py`): `RESOURCES` maps both paths to "CADOS" with their own protected-resource metadata; a
   token from either works on both; one connection per person and app. DCR, client metadata documents (fetched with
   `safefetch.py`: public https only, pinned address), PKCE S256, refresh rotation, revoke.
-- Sign-in (`auth.py`, `accounts.py`, `oauth.py`): accounts with scrypt passwords, invites, Google sign-in (secret
-  encrypted with `secretbox.py`), an optional early access code (`OPENSKETCH_ACCESS_CODE` or the owner's setting) that
+- Sign-in (`auth.py`, `accounts.py`, `oauth.py`, `bizomat_id.py`): accounts with scrypt passwords, invites, Google sign-in (secret
+  encrypted with `secretbox.py`), Sign in with BIZOMAT (14 Nov 2026: CAD is the client `cad` of the BIZOMAT sign-in
+  provider in kevinjogin/bizomat-site, `apps/work/src/worker/company/id-provider.ts`; OAuth code with PKCE S256, the
+  verifier derived from the state with a server key, the code swapped server to server with HTTP Basic; on only with
+  BIZOMAT_ID_CLIENT_SECRET, whose SHA-256 the BIZOMAT side lists in WORK_BIZOMAT_ID_CLIENTS; BIZOMAT_ID_CLIENT_ID and
+  BIZOMAT_ID_URL for a test server; return address https://bizomat.ai/cad/auth/bizomat/callback; the same account rules
+  as Google (`accounts.bizomat_user`: linked id, else a confirmed email, else invite or open sign-up; an unconfirmed
+  BIZOMAT email never links or creates); the account keeps the BIZOMAT id only, not the companies;
+  `tests/test_bizomat_id.py`, `tests/test_canonical.py`; the same secret turns on the status report to BIZOMAT ERP,
+  below; the owner's steps for both: `docs/SITE-CAD-INTEGRATION.md` section 8), an optional early access code (`OPENSKETCH_ACCESS_CODE` or the owner's setting) that
   makes "Internal tester" accounts. The setup page shows only until the first account exists; after that `/login` is
   Sign in ("Welcome back"), and a person already signed in on that browser (90-day session) goes straight to `next`.
   Sign-in pages and messages never name the OPENSKETCH_* settings. New-account forms (setup, join, sign-up) come with
@@ -127,6 +135,29 @@ released; development-signed), never overwritten.
   kept (refresh says suspended, works again after Resume); sign-in
   (password, Google, Companion password pairing) says it is suspended; `get_any` is for the owner's views.
   `tests/test_mcp_access.py` covers setup mode, per-person MCP, suspension, expiry and no shared password.
+- Status in BIZOMAT ERP (`erpstatus.py`, 15 Nov 2026; built on the branch `claude/bizomat-sign-in`, live once merged
+  and deployed with the secret set): CAD reports each account's computers, recent jobs and AI assistants to
+  `POST <bizomat_id.provider()>/api/id/cad-status` (https://bizomat.ai/company/api/id/cad-status, the website's
+  `apps/work/src/worker/company/id-provider.ts`; HTTP Basic, client `cad`, `BIZOMAT_ID_CLIENT_SECRET`, each part
+  form-encoded), which BIZOMAT ERP shows by company (`system/system.ts` `cadFor`: by the BIZOMAT id `sub`, or by an email
+  both sides confirmed). On only with the secret and only with accounts; a daemon thread `erp-status` started and
+  stopped by `server.lifespan`, never the event loop: a full report every 180 s, and one 10 s after a change
+  (`erpstatus.changed()` only sets a flag; called by `devicebridge` on hello, pairing, a closed session and a finished
+  command, by `swbridge` on the direct link's hello and drop; a 15 s look at which computers are online catches one that
+  stops polling), rounds at least 30 s apart, 10 s per request, back-off 1 to 30 minutes (and `Retry-After`), at most
+  100 accounts and 512 KiB per request. Only accounts whose email is proven (`accounts.confirmed_accounts`:
+  `email_verified`, set by the owner's setup and by a confirmed Google or BIZOMAT sign-in or link; typed emails never)
+  and that the ERP's own email check (zod) takes. Per account: up to 20 computers (paired ones from `bridge.sqlite` and
+  the live sessions, plus the direct link while connected: name, online, SOLIDWORKS "2022 SP5, ready" or what is
+  installed, add-in version, last seen), the last 10 commands (id, the tool's title, status, time) and up to 20 AI apps
+  (name, connected, last used). Texts cut to the ERP's limits in UTF-16 units; credential-shaped texts dropped; never
+  the ERP's optional `open` (document name), the Companion version (no field in the contract), paths, files or tokens.
+  An account no longer reported is withdrawn once (emailVerified false, no sub, empty lists); the reported emails and
+  the last outcome are kept in `erp_status.json` in the data folder. The Admin page's BIZOMAT ERP panel (`erp` in
+  `GET /api/admin/people`, `erpstatus.status()`) shows on or off, the last report and the last error. The privacy notice
+  (`auth.PRIVACY_BODY`, section `erp`) and the docs page say what is sent. Tests: `tests/test_erpstatus.py` (a
+  stand-in ERP with the ERP's own rules; the slow test runs the real work app when `BIZOMAT_WORK_APP` names a built
+  `apps/work`, and checks who sees which computer).
 - Pages: `/` is the product page for visitors (`site.landing`) and the app's Home for a signed-in person (and on an
   open server); `/overview` (product page) and `/docs` (setup, connection, auth, verify, self test, troubleshooting,
   security) are public (`auth.PUBLIC_PAGES`), as are `/privacy` and the design system under `/ui/` (`cados.css`,
@@ -381,6 +412,9 @@ released; development-signed), never overwritten.
   process (SQLite, live sessions in memory).
 - App sign-in (OAuth) is tested with the MCP Python SDK client; not yet with every AI app's connector.
 - The `ai` extra in pyproject.toml (anthropic) is no longer used; drop it the next time the pins are regenerated.
+- BIZOMAT ERP status: tested against a stand-in and the real work app run locally, not yet against production. The
+  ERP's contract has no field for the Companion's version, so it is not reported. Direct-link commands are not recorded,
+  so they are not among the reported jobs.
 
 ## Next
 

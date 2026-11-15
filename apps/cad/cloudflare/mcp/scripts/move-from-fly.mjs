@@ -73,12 +73,13 @@ export const RULES = {
 
 /**
  * The state files the server writes (opensketch: accounts.py, auth.py, mcpauth.py, oauth.py, secretbox.py, swbridge.py,
- * devicebridge.py). wrangler cannot list a bucket, so apply looks for these by name: one in the bucket that the copy
+ * devicebridge.py, erpstatus.py). wrangler cannot list a bucket, so apply looks for these by name: one in the bucket that the copy
  * does not have (google_oauth.json after Google sign-in was removed, say) would come back at the next start.
  */
 export const KNOWN = [
   'accounts.enabled', 'ai_keys.secret', 'bridge-release.json', 'bridge-signing-key.pem', 'bridge.sqlite',
-  'google_oauth.json', 'mcp_oauth.json', 'secret', 'secret.keys', 'sessions.json', 'swbridge.json', 'users.json',
+  'erp_status.json', 'google_oauth.json', 'mcp_oauth.json', 'secret', 'secret.keys', 'sessions.json', 'swbridge.json',
+  'users.json',
 ];
 
 const NAME_RE = new RegExp(`^(?:${RULES.name})$`);

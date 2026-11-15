@@ -45,11 +45,21 @@ VERSION = _commit()
 @asynccontextmanager
 async def lifespan(_app):
     _warm_owner()  # CAD runs in worker processes, one per person (cadworker.py): start the owner's now
+    _erp_status("start")  # reports to BIZOMAT ERP when its client secret is set (erpstatus.py), in its own thread
     try:
         async with mcp_server.lifespan_context():
             yield
     finally:
+        _erp_status("stop")
         cadworker.shutdown()
+
+
+def _erp_status(what: str) -> None:
+    try:
+        from . import erpstatus
+        erpstatus.start() if what == "start" else erpstatus.stop()
+    except Exception as e:  # a report to the ERP is never a reason for the server not to run
+        print(f"OpenSketch ERP status: could not {what} ({type(e).__name__})", flush=True)
 
 
 def _warm_owner() -> None:
@@ -281,9 +291,9 @@ def api_account(request: Request):
     from . import accounts
     u = _user(request)
     m = auth.mode(request.scope)
-    from . import oauth
+    from . import bizomat_id, oauth
     out = {"mode": m, "user": u, "can_setup": m in ("open", "setup"),
-           "google": oauth.enabled(), **accounts.settings()}
+           "google": oauth.enabled(), "bizomat": bizomat_id.enabled(), **accounts.settings()}
     if u and u.get("role") == "owner" and m == "accounts":
         out["users"] = accounts.list_users()
         out["invites"] = accounts.list_invites()
@@ -540,7 +550,8 @@ def api_suspend_user(user_id: str, req: Suspend, request: Request):
 
 @app.get("/api/admin/people")
 def api_admin_people(request: Request):
-    """Owner (Admin page): everyone with an account, their computers and connected AI apps; invites and sign-up settings."""
+    """Owner (Admin page): everyone with an account, their computers and connected AI apps; invites and sign-up settings;
+    whether the status report to BIZOMAT ERP is on, its last success and its last error (erpstatus.status)."""
     from . import accounts, mcpauth
     _owner(request)
     people = []
@@ -548,7 +559,9 @@ def api_admin_people(request: Request):
         devs = devicebridge.list_devices({"id": u["id"]})
         people.append(dict(u, computers=len(devs), online=sum(1 for d in devs if d["online"]),
                            apps=[g["name"] for g in mcpauth.grants_for(u["id"])]))
-    return {"people": people, "invites": accounts.list_invites(), "settings": accounts.settings(), "min_password": accounts.MIN_PASSWORD}
+    from . import erpstatus
+    return {"people": people, "invites": accounts.list_invites(), "settings": accounts.settings(), "min_password": accounts.MIN_PASSWORD,
+            "erp": erpstatus.status()}
 
 
 

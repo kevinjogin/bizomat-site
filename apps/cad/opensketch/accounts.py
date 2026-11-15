@@ -1,7 +1,7 @@
 """User accounts: people sign in with an email and a password.
 
 Stored in the data folder (OPENSKETCH_DATA):
-- `users.json`    {"users": [{id, email, name, role, salt, hash, created, email_verified, google?, mcp_n?}],
+- `users.json`    {"users": [{id, email, name, role, salt, hash, created, email_verified, google?, bizomat?, mcp_n?}],
                    "invites": [{id, hash, created, expires, by, note}], "settings": {...}}
 - `sessions.json` {sha256(cookie token): {user, created, expires}}
 
@@ -151,7 +151,8 @@ def _sha(token: str) -> str:
 
 def public(u: dict) -> dict:
     return {"id": u["id"], "email": u["email"], "name": u["name"], "role": u["role"], "created": u.get("created"),
-            "google": bool(u.get("google")), "has_password": bool(u.get("hash")), "tester": u["role"] == "tester",
+            "google": bool(u.get("google")), "bizomat": bool(u.get("bizomat")), "has_password": bool(u.get("hash")),
+            "tester": u["role"] == "tester",
             # who chose the password (never the password itself: only its one-way hash is kept): "self" (the person),
             # "suggested" (the person kept the one the form filled in), "owner" (set on the Admin page); None if unrecorded
             "password_by": u.get("pw_by") if u.get("hash") else None, "password_at": u.get("pw_at") if u.get("hash") else None,
@@ -229,15 +230,17 @@ def _check_new(email: str, name: str, password: str | None, data: dict, me: str 
 
 
 def _new_user(email: str, name: str, password: str | None, role: str, google: str | None = None, verified: bool = False,
-              by: str = "self") -> dict:
-    """A password of None (Google sign-up) stores no usable password until the person sets one. verified: the
-    email is proven (Google said so, or the owner set the server up); typed emails are not."""
+              by: str = "self", bizomat: str | None = None) -> dict:
+    """A password of None (Google or BIZOMAT sign-up) stores no usable password until the person sets one. verified:
+    the email is proven (Google or BIZOMAT said so, or the owner set the server up); typed emails are not."""
     salt = secrets.token_bytes(16)
     u = {"id": uuid.uuid4().hex[:12], "email": email, "name": name, "role": role,
          "salt": salt.hex(), "hash": _hash(password, salt) if password else "", "created": int(time.time()),
-         "email_verified": bool(verified or google)}
+         "email_verified": bool(verified or google or bizomat)}
     if google:
         u["google"] = google
+    if bizomat:
+        u["bizomat"] = bizomat
     if password:
         _stamp(u, by)
     return u
@@ -291,6 +294,16 @@ def set_password(user_id: str, new: str, current: str | None = None, by: str = "
 def find_by_email(email: str) -> dict | None:
     email = (email or "").strip().lower()
     return next((public(u) for u in _users()["users"] if u["email"] == email), None)
+
+
+def confirmed_accounts() -> list[dict]:
+    """The accounts whose email address is proven, for the status report to BIZOMAT ERP (erpstatus.py): [{id, email,
+    bizomat}]. Proven means what `email_verified` records: the owner's own setup, a confirmed Google or BIZOMAT
+    sign-in, or a link to one. An email typed at sign-up, on an invite, by the owner on the Admin page or by an early
+    tester is never proven, so such an account is left out: matching on it could show one person's computers to
+    someone else. Suspended accounts are included (their computers then read as offline)."""
+    return [{"id": u["id"], "email": u["email"], "bizomat": u.get("bizomat")} for u in _users()["users"]
+            if u.get("email_verified") is True and u.get("email") and not u["email"].endswith("@" + TESTER_DOMAIN)]
 
 
 def rename(user_id: str, name: str) -> dict:
@@ -364,7 +377,8 @@ def invite_valid(token: str) -> bool:
     return any(hmac.compare_digest(i["hash"], h) and i["expires"] > now for i in _users()["invites"])
 
 
-def accept_invite(token: str, email: str, name: str, password: str | None, google: str | None = None, by: str = "self") -> dict:
+def accept_invite(token: str, email: str, name: str, password: str | None, google: str | None = None, by: str = "self",
+                  bizomat: str | None = None) -> dict:
     with _lock:
         data = _edit()
         now = int(time.time())
@@ -373,7 +387,7 @@ def accept_invite(token: str, email: str, name: str, password: str | None, googl
         if inv is None:
             raise AccountError("This invite link has expired or was already used. Ask for a new one.")
         email, name = _check_new(email, name, password, data)
-        u = _new_user(email, name, password, "member", google, by=by)
+        u = _new_user(email, name, password, "member", google, by=by, bizomat=bizomat)
         data["users"].append(u)
         data["invites"] = [i for i in data["invites"] if i is not inv]
         _write("users.json", data)
@@ -572,7 +586,8 @@ def remove_testers() -> list[str]:
     return gone
 
 
-def sign_up(email: str, name: str, password: str | None, google: str | None = None, by: str = "self") -> dict:
+def sign_up(email: str, name: str, password: str | None, google: str | None = None, by: str = "self",
+            bizomat: str | None = None) -> dict:
     """A new member without an invite: only when the owner turned on open sign-up."""
     with _lock:
         data = _edit()
@@ -581,7 +596,7 @@ def sign_up(email: str, name: str, password: str | None, google: str | None = No
         if not data.get("settings", {}).get("open_signup"):
             raise AccountError("This server is invite-only. Ask the owner for an invite link.")
         email, name = _check_new(email, name, password, data)
-        u = _new_user(email, name, password, "member", google, by=by)
+        u = _new_user(email, name, password, "member", google, by=by, bizomat=bizomat)
         data["users"].append(u)
         _write("users.json", data)
         return public(u)
@@ -596,10 +611,22 @@ def google_user(sub: str, email: str, verified: bool, managed: bool = True) -> d
     An account made by typing this email (sign-up, invite, Keep my work) never proved it owns the address: whoever
     made it may not be the person Google just vouched for. So that person takes the account over: its password is
     cleared and every session, AI app and private AI address of it ends (they can set a new password)."""
+    return _linked_user("google", sub, email, verified, managed)
+
+
+def bizomat_user(sub: str, email: str, verified: bool) -> dict | None:
+    """The account for a BIZOMAT sign-in (bizomat_id.py), by the same rules as Google: already linked to this BIZOMAT
+    account, or the account with the same email when BIZOMAT says the email is confirmed (BIZOMAT confirms every
+    address with a link sent to it, so the person holds that mailbox), which gets linked. None when there is no such
+    account. An account whose typed email was never proven is taken over as for Google."""
+    return _linked_user("bizomat", sub, email, verified, True)
+
+
+def _linked_user(field: str, sub: str, email: str, verified: bool, managed: bool) -> dict | None:
     took = None
     with _lock:
         data = _edit()
-        u = next((x for x in data["users"] if x.get("google") == sub), None)
+        u = next((x for x in data["users"] if x.get(field) == sub), None)
         if u is None and verified:
             u = next((x for x in data["users"] if x["email"] == (email or "").strip().lower()), None)
             if u is not None and not managed and u.get("hash"):
@@ -609,7 +636,7 @@ def google_user(sub: str, email: str, verified: bool, managed: bool = True) -> d
                     u["salt"], u["hash"] = secrets.token_bytes(16).hex(), ""
                     u["mcp_n"] = int(u.get("mcp_n", 0)) + 1
                     took = u["id"]
-                u["google"], u["email_verified"] = sub, True
+                u[field], u["email_verified"] = sub, True
                 _write("users.json", data)
     if took:
         end_sessions(took)
