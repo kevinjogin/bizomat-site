@@ -216,7 +216,9 @@ describe('Scenario A: product, bill of materials, change control and release', (
     expect(byNumber(screw.number).extendedQuantity).toBeCloseTo(8.8);
     // A manufactured part without a released revision is flagged.
     expect(byNumber(housing.number).noRelease).toBe(true);
-    expect(ex.availability).toMatch(/Release 2/);
+    // Release 2: each component's available stock against the build quantity (none in stock here).
+    expect(ex.availability).toMatch(/Available: on hand outside quarantine/);
+    expect(byNumber(screw.number)).toMatchObject({ available: 0, shortage: true });
 
     // 7. Cost roll-up: 2500 + 1200 + (4500 + 2 x 1.05 x 300) + 8 x 1.1 x 10 = 8918 cents; the optional bearing is left out.
     const cost = await viewer.json('GET', erp(co, `/revisions/${pumpA.id}/cost`));
@@ -494,7 +496,8 @@ describe('the supplier master', () => {
     const detail = await viewer.json('GET', erp(co, `/suppliers/${s1.id}`));
     expect(detail.abnNote).toMatch(/not looked up/);
     expect(detail.abnNote).not.toMatch(/verified/i);
-    expect(detail.performance).toEqual({ measured: false, note: 'Measured from purchase orders (Release 2)' });
+    // Release 2: measured from goods receipts; none yet.
+    expect(detail.performance).toMatchObject({ measured: true, receipts: 0, onTimeRate: null, inFullRate: null, avgLeadTimeDays: null });
 
     // Who may act: buyers create, procurement managers approve; nobody else.
     expect((await engineer.req('POST', erp(co, '/suppliers'), { legalName: 'No' })).status).toBe(403);
@@ -680,7 +683,7 @@ describe('isolation and roles', () => {
     ];
     for (const [who, m, path, b, status] of checks) expect((await who.req(m, erp(co, path), b)).status, `${who.name} ${m} ${path}`).toBe(status);
     const rolesView = await owner.json('GET', erp(co, '/roles'));
-    expect(rolesView.roles.map((r: any) => r.value)).toEqual(['erp_admin', 'executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'viewer']);
+    expect(rolesView.roles.map((r: any) => r.value)).toEqual(['erp_admin', 'executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'viewer']);
     expect(rolesView.people.find((x: any) => x.id === viewer.userId)).toMatchObject({ roles: ['viewer'], rolesAreDefault: true });
     const ev = (await owner.json('GET', erp(co, '/events'))).events.find((e: any) => e.action === 'role.changed');
     expect(ev.before).toBeTruthy();
@@ -734,7 +737,7 @@ describe('numbering, lists, reports and CSV', () => {
     expect(lifecycle.stages.find((s: any) => s.value === 'draft').n).toBe(7);
     const sup = await viewer.json('GET', erp(co, '/reports/suppliers'));
     expect(sup.byStatus.find((s: any) => s.value === 'pending').n).toBe(1);
-    expect(sup.performance).toMatch(/Release 2/);
+    expect(sup.performance).toMatch(/goods receipts/);
 
     for (const [path, header] of [
       ['/products?format=csv', 'Number,SKU,Name'],
@@ -782,11 +785,12 @@ describe('the example company', () => {
       ['ECO-0002', 'draft', false],
     ]);
     const suppliers = await ex.json('GET', erp(co, '/suppliers'));
-    expect(suppliers.suppliers.map((s: any) => s.status).sort()).toEqual(['approved', 'pending']);
+    // Release 1's two suppliers, and Release 2's two approved fastener suppliers.
+    expect(suppliers.suppliers.map((s: any) => s.status).sort()).toEqual(['approved', 'approved', 'approved', 'pending']);
     expect(suppliers.suppliers.every((s: any) => s.abn === '')).toBe(true);
     expect((await ex.json('GET', erp(co, '/documents'))).documents[0]).toMatchObject({ latestSource: 'cad_reference' });
     // The example's Finance workspace is the one a supplier may link to.
-    const steel = suppliers.suppliers.find((s: any) => s.status === 'approved');
+    const steel = suppliers.suppliers.find((s: any) => s.legalName === 'Example Steel Supplies');
     const fin = (await ex.json('GET', erp(co, `/suppliers/${steel.id}`))).finance;
     expect(fin.orgs).toHaveLength(1);
     expect(fin.canLink).toBe(true);

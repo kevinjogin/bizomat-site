@@ -37,7 +37,7 @@ export const PRODUCTS: readonly Product[] = [
     fullName: 'BIZOMAT ERP',
     formerly: 'BIZOMAT System',
     tagline: 'One workspace for your company, with every system inside it.',
-    summary: 'Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering, Reports and Administration in one workspace, by company, with one sign-in. Operations modules such as inventory and manufacturing are planned.',
+    summary: 'Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering, Procurement, Inventory, Maintenance, Reports and Administration in one workspace, by company, with one sign-in. Manufacturing and quality are planned.',
     status: 'available',
     url: '/systems/erp/',
     signIn: true,

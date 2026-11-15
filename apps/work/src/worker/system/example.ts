@@ -2,10 +2,10 @@
 // and ensure its demo site only for accounts"). Table: migrations/0019_example_company.sql.
 //
 // Every person gets a company of invented example data of their own, "Acme Studio (example)": a Projects workspace, a
-// CRM organisation, a Finance business workspace, Maintenance records and Products and Engineering and supplier records
-// (ERP Release 1), all named for it and owned by that person alone. It is made the first time they open the ERP (the
-// client asks for it), and again only when they ask after removing it. Example companies made before Release 1 keep
-// what they had: nothing is added to them.
+// CRM organisation, a Finance business workspace, Maintenance records, Products and Engineering and supplier records
+// (ERP Release 1) and purchasing and inventory records (ERP Release 2), all named for it and owned by that person alone.
+// It is made the first time they open the ERP (the client asks for it), and again only when they ask after removing it.
+// Example companies made before a release keep what they had: nothing is added to them.
 //
 // Rules:
 // - Private: only its owner sees it. Nobody can be invited into it, and its tools cannot join a registered company.
@@ -177,11 +177,46 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
     .bind(companyId, companyId)
     .all<{ r2_key: string }>();
   files.results.push(...erpFiles.results);
+  // ERP Release 2 records (migrations/0021_erp_purchasing_inventory.sql) first: they point at Release 1's. The movement
+  // ledger is append-only; erp_purges lets this one whole-company removal through, and is cleared at the end.
+  const r2Files = await db.prepare('SELECT r2_key FROM erp_record_files WHERE company_id = ?').bind(companyId).all<{ r2_key: string }>();
+  files.results.push(...r2Files.results);
+  stmts.push(db.prepare('INSERT INTO erp_purges (company_id, started_at) VALUES (?, ?) ON CONFLICT(company_id) DO NOTHING').bind(companyId, t));
+  for (const table of [
+    'erp_record_files',
+    'erp_integration_events',
+    'erp_done',
+    'erp_count_lines',
+    'erp_counts',
+    'erp_adjustments',
+    'erp_reservations',
+    'erp_cost_layers',
+    'erp_valuation',
+    'erp_stock_moves',
+    'erp_stock',
+    'erp_receipt_lines',
+    'erp_receipts',
+    'erp_po_revisions',
+    'erp_po_lines',
+    'erp_purchase_orders',
+    'erp_quotation_lines',
+    'erp_quotations',
+    'erp_rfq_suppliers',
+    'erp_rfq_lines',
+    'erp_rfqs',
+    'erp_requisition_lines',
+    'erp_requisitions',
+    'erp_product_stock',
+  ]) {
+    stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
+  }
+  stmts.push(db.prepare('UPDATE erp_locations SET parent_id = NULL WHERE company_id = ?').bind(companyId));
+  for (const table of ['erp_locations', 'erp_warehouses', 'erp_settings', 'erp_sequences', 'erp_role_grants']) stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
   for (const table of ['erp_events', 'erp_files', 'erp_document_versions', 'erp_documents', 'erp_product_suppliers', 'erp_supplier_contacts', 'erp_suppliers', 'erp_bom_lines', 'erp_revisions', 'erp_change_request_products', 'erp_change_orders', 'erp_change_requests']) {
     stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
   }
   stmts.push(db.prepare('UPDATE erp_products SET variant_of = NULL WHERE company_id = ?').bind(companyId));
-  for (const table of ['erp_products', 'erp_user_roles', 'erp_counters']) stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
+  for (const table of ['erp_products', 'erp_user_roles', 'erp_counters', 'erp_purges']) stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
   await db.batch(stmts);
   for (const f of files.results) {
     const p = c.env.FILES.delete(f.r2_key).catch(() => null);
@@ -396,6 +431,54 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     const fasteners = await api('Procurement', 'POST', e('/suppliers'), { legalName: 'Example Fasteners', category: 'Fasteners', email: 'sales@fasteners.example.com', paymentTermsDays: 14, leadTimeDays: 5 });
     await api('Procurement', 'PUT', e(`/products/${arm.id}/suppliers/${steel.id}`), { supplierPartNumber: 'PL3-2412', priceCents: 380, leadTimeDays: 10, preferred: true });
     await api('Procurement', 'PUT', e(`/products/${bolt.id}/suppliers/${fasteners.id}`), { supplierPartNumber: 'M8X30-ZP', priceCents: 15, moq: 100, preferred: true });
+
+    // ---------------------------------------------------------------- Purchasing and inventory (ERP Release 2)
+    // A warehouse with a location tree, purchase order approval at or below 2,000 dollars, a requisition, a request for
+    // quotation to two suppliers with both quotations recorded (left open for comparison), and a purchase order for the
+    // bracket arms received into stock. The one-person company exception is recorded where an approval is needed.
+    await api('Inventory', 'PUT', e('/erp-settings'), { costingMethod: 'weighted_average', poApprovalLimitCents: 200_000, adjustmentApprovalCents: 50_000 });
+    const wh = await api('Inventory', 'POST', e('/warehouses'), { code: 'MAIN', name: 'Workshop store', address: '1 Example Street, Exampleville' });
+    const loc = (b: Record<string, unknown>) => api('Inventory', 'POST', e('/locations'), { warehouseId: wh.id, ...b });
+    const store = await loc({ code: 'STORE', name: 'Main store', level: 'store' });
+    const zoneA = await loc({ code: 'A', name: 'Zone A', level: 'zone', parentId: store.id });
+    const rack1 = await loc({ code: 'A1', name: 'Rack A1', level: 'rack', parentId: zoneA.id });
+    const shelf = await loc({ code: 'A1-1', name: 'Shelf 1', level: 'shelf', parentId: rack1.id });
+    const binArms = await loc({ code: 'A1-1-01', name: 'Bin 01', level: 'bin', parentId: shelf.id });
+    await loc({ code: 'A1-1-02', name: 'Bin 02', level: 'bin', parentId: shelf.id });
+    await loc({ code: 'RECV', name: 'Receiving bay', level: 'zone', kind: 'receiving', parentId: store.id });
+    await loc({ code: 'QUAR', name: 'Quarantine cage', level: 'zone', kind: 'quarantine', parentId: store.id });
+    await loc({ code: 'DISP', name: 'Dispatch bay', level: 'zone', kind: 'dispatch', parentId: store.id });
+    await api('Inventory', 'PUT', e(`/products/${arm.id}/stock-settings`), { reorderPoint: 20, minQty: 10, maxQty: 80, defaultLocationId: binArms.id });
+    await api('Inventory', 'PUT', e(`/products/${bolt.id}/stock-settings`), { reorderPoint: 200, minQty: 100, maxQty: 1000 });
+    await api('Inventory', 'PUT', e(`/products/${plug.id}/stock-settings`), { reorderPoint: 200, minQty: 100, maxQty: 1000 });
+    const boltCo = await api('Procurement', 'POST', e('/suppliers'), { legalName: 'Example Bolt Company', category: 'Fasteners', email: 'quotes@bolts.example.com', paymentTermsDays: 30, leadTimeDays: 7 });
+    await api('Procurement', 'POST', e(`/suppliers/${boltCo.id}/status`), { status: 'approved', note: 'Approved for fasteners' });
+    const wholesale = await api('Procurement', 'POST', e('/suppliers'), { legalName: 'Example Hardware Wholesale', category: 'Fasteners', email: 'trade@hardware.example.com', paymentTermsDays: 14, leadTimeDays: 3 });
+    await api('Procurement', 'POST', e(`/suppliers/${wholesale.id}/status`), { status: 'approved', note: 'Approved for fasteners and fixings' });
+    const req = await api('Purchasing', 'POST', e('/requisitions'), {
+      title: 'Fixings for the next bracket batch',
+      requiredDate: d(14),
+      budgetRef: 'Production materials',
+      reason: 'Bolts and wall plugs are below their reorder points.',
+      lines: [
+        { productId: bolt.id, quantity: 500, estUnitCostCents: 16 },
+        { productId: plug.id, quantity: 500, estUnitCostCents: 9 },
+      ],
+      submit: true,
+    });
+    await api('Purchasing', 'POST', e(`/requisitions/${req.id}/approve`), { note: 'Within the production budget' });
+    const rfq = await api('Purchasing', 'POST', e('/rfqs'), { requisitionId: req.id, replyBy: d(5), deliveryAddress: 'Acme Studio, 1 Example Street, Exampleville', supplierIds: [boltCo.id, wholesale.id] });
+    const rfqView = await api('Purchasing', 'GET', e(`/rfqs/${rfq.id}`));
+    const [boltLine, plugLine] = rfqView.lines;
+    await api('Purchasing', 'POST', e(`/rfqs/${rfq.id}/sent`), { supplierId: boltCo.id });
+    await api('Purchasing', 'POST', e(`/rfqs/${rfq.id}/sent`), { supplierId: wholesale.id });
+    await api('Purchasing', 'PUT', e(`/rfqs/${rfq.id}/quotations/${boltCo.id}`), { reference: 'Q-1042', validUntil: d(30), leadTimeDays: 7, freightCents: 2500, paymentTermsDays: 30, lines: [{ rfqLineId: boltLine.id, unitPriceCents: 14 }, { rfqLineId: plugLine.id, unitPriceCents: 8 }] });
+    await api('Purchasing', 'PUT', e(`/rfqs/${rfq.id}/quotations/${wholesale.id}`), { reference: 'WQ-77', validUntil: d(21), leadTimeDays: 3, freightCents: 0, paymentTermsDays: 14, lines: [{ rfqLineId: boltLine.id, unitPriceCents: 18 }, { rfqLineId: plugLine.id, unitPriceCents: 10 }] });
+    const po = await api('Purchasing', 'POST', e('/purchase-orders'), { supplierId: steel.id, requiredDate: d(-2), deliveryAddress: 'Acme Studio, 1 Example Street, Exampleville', lines: [{ productId: arm.id, quantity: 40, unitPriceCents: 380, specification: 'Laser cut from 3 mm mild steel, deburred' }] });
+    await api('Purchasing', 'POST', e(`/purchase-orders/${po.id}/submit`), {});
+    await api('Purchasing', 'POST', e(`/purchase-orders/${po.id}/sent`), {});
+    const poView = await api('Purchasing', 'GET', e(`/purchase-orders/${po.id}`));
+    await api('Purchasing', 'POST', e(`/purchase-orders/${po.id}/receipts`), { receivedDate: d(-3), deliveryRef: 'DN-58811', lines: [{ poLineId: poView.lines[0].id, received: 40, locationId: binArms.id }] });
   });
 }
 

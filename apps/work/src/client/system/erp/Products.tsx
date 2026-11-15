@@ -32,7 +32,7 @@ import {
   type ProductView,
   type Revision,
 } from './api';
-import { CsvLink, DocBadge, ErpFiles, ErpUpload, FilterPanel, History, LifecycleBadge, NotYet, Pager, Props, RevisionBadge, Section, SupplierBadge, options } from './common';
+import { CsvLink, DocBadge, ErpFiles, ErpUpload, FilterPanel, History, LifecycleBadge, Pager, Props, RevisionBadge, Section, SupplierBadge, options } from './common';
 import { ChangeOrderDetail, ChangeRequestDetail, ChangesPage, NewChangeDialog } from './Changes';
 import { DocumentDetail, DocumentsPage, NewDocumentDialog } from './Documents';
 
@@ -578,7 +578,9 @@ function ProductOverview({ companyId, v, refresh }: { companyId: string; v: Prod
 interface RevisionView {
   revision: Revision;
   product: { id: string; number: string; name: string };
-  lines: BomLine[];
+  lines: (BomLine & { available?: number | null })[];
+  /** The person's ERP roles include stock: each line carries its component's available stock. */
+  showsStock?: boolean;
   editable: boolean;
   can: { edit: boolean };
 }
@@ -656,10 +658,10 @@ function BomEditor({ companyId, revisionId, productId }: { companyId: string; re
       ) : (
         <div className="crm-table-scroll">
           <table className="data-table erp-bom responsive">
-            <thead><tr><th>Component</th><th className="num">Quantity</th><th>Unit</th><th className="num">Scrap</th><th>Reference</th><th>Notes</th>{canEdit ? <th><span className="sr-only">Actions</span></th> : null}</tr></thead>
+            <thead><tr><th>Component</th><th className="num">Quantity</th><th>Unit</th><th className="num">Scrap</th><th>Reference</th><th>Notes</th>{q.data.showsStock ? <th className="num">Available</th> : null}{canEdit ? <th><span className="sr-only">Actions</span></th> : null}</tr></thead>
             <tbody>
               {q.data.lines.map((l) => (
-                <BomRow key={l.id} companyId={companyId} line={l} depth={0} open={open} toggle={toggle} actions={canEdit ? (
+                <BomRow key={l.id} companyId={companyId} line={l} depth={0} open={open} toggle={toggle} stock={!!q.data!.showsStock} actions={canEdit ? (
                   <td className="erp-actions">
                     <button className="btn ghost icon sm" aria-label={`Edit ${l.componentNumber}`} onClick={() => setEditing(l)}><Icon name="edit" size={14} /></button>
                     <button className="btn ghost icon sm" aria-label={`Remove ${l.componentNumber}`} onClick={() => void remove(l)}><Icon name="trash" size={14} /></button>
@@ -670,14 +672,14 @@ function BomEditor({ companyId, revisionId, productId }: { companyId: string; re
           </table>
         </div>
       )}
-      <NotYet>Component availability comes with Inventory (Release 2).</NotYet>
+      {q.data.showsStock ? <p className="muted small">Available: each component’s stock on hand outside quarantine, less reservations, in every warehouse. See the explosion for a build quantity and shortages.</p> : null}
       {editing ? <LineDialog companyId={companyId} revisionId={revisionId} productId={productId} line={editing === 'new' ? undefined : editing} onClose={() => setEditing(null)} /> : null}
     </Section>
   );
 }
 
 /** One line, with the component's released structure underneath when expanded (read from its released revision). */
-function BomRow({ companyId, line: l, depth, open, toggle, actions }: { companyId: string; line: BomLine; depth: number; open: Set<string>; toggle: (id: string) => void; actions?: ReactNode }) {
+function BomRow({ companyId, line: l, depth, open, toggle, actions, stock }: { companyId: string; line: BomLine & { available?: number | null }; depth: number; open: Set<string>; toggle: (id: string) => void; actions?: ReactNode; stock?: boolean }) {
   const key = depth ? `${l.id}@${depth}` : l.id;
   const expanded = open.has(key);
   const sub = useQuery({ queryKey: ['erp', companyId, 'revision', l.componentReleasedId], queryFn: () => get<RevisionView>(erpPath(companyId, `/revisions/${l.componentReleasedId}`)), enabled: expanded && !!l.componentReleasedId });
@@ -702,12 +704,13 @@ function BomRow({ companyId, line: l, depth, open, toggle, actions }: { companyI
         <td data-label="Scrap" className="num">{l.scrapPct ? `${l.scrapPct}%` : ''}</td>
         <td data-label="Reference">{l.refDesignator}{l.effectiveFrom || l.effectiveTo ? <div className="muted small">{dateText(l.effectiveFrom) || 'any time'} to {dateText(l.effectiveTo) || 'no end'}</div> : null}</td>
         <td data-label="Notes" className="small">{l.notes}</td>
+        {stock ? <td data-label="Available" className="num">{l.available === null || l.available === undefined ? '' : qty(l.available)}</td> : null}
         {actions ?? null}
       </tr>
       {expanded && sub.data
-        ? sub.data.lines.map((c) => <BomRow key={`${key}/${c.id}`} companyId={companyId} line={c} depth={depth + 1} open={open} toggle={toggle} actions={actions ? <td /> : undefined} />)
+        ? sub.data.lines.map((c) => <BomRow key={`${key}/${c.id}`} companyId={companyId} line={c} depth={depth + 1} open={open} toggle={toggle} stock={stock} actions={actions ? <td /> : undefined} />)
         : null}
-      {expanded && !sub.data && l.componentReleasedId ? <tr className="erp-sub"><td colSpan={7}><Loading /></td></tr> : null}
+      {expanded && !sub.data && l.componentReleasedId ? <tr className="erp-sub"><td colSpan={8}><Loading /></td></tr> : null}
     </>
   );
 }
@@ -796,18 +799,38 @@ interface ExplosionNode {
   altGroup: string;
   refDesignator: string;
   noRelease: boolean;
+  required: number | null;
+  available: number | null;
+  shortage: boolean | null;
 }
 
 function Explosion({ companyId, revisionId }: { companyId: string; revisionId: string }) {
   const [asOf, setAsOf] = useState('');
-  const q = useQuery({ queryKey: ['erp', companyId, 'explosion', revisionId, asOf], queryFn: () => get<{ nodes: ExplosionNode[]; truncated: boolean; availability: string }>(erpPath(companyId, `/revisions/${revisionId}/explosion${asOf ? `?asOf=${asOf}` : ''}`)) });
+  const [build, setBuild] = useState('1');
+  const buildQty = Number(build) > 0 ? Number(build) : 1;
+  const qs = new URLSearchParams();
+  if (asOf) qs.set('asOf', asOf);
+  if (buildQty !== 1) qs.set('quantity', String(buildQty));
+  const query = qs.toString() ? `?${qs}` : '';
+  const q = useQuery({ queryKey: ['erp', companyId, 'explosion', revisionId, asOf, buildQty], queryFn: () => get<{ nodes: ExplosionNode[]; truncated: boolean; availability: string; buildQuantity: number; shortages: number }>(erpPath(companyId, `/revisions/${revisionId}/explosion${query}`)) });
+  const stock = !!q.data?.nodes.some((n) => n.available !== null);
   return (
-    <Section title="Every level" actions={<div className="row wrap"><div className="field"><label htmlFor="erp-asof">In effect on</label><input id="erp-asof" className="input" type="date" value={asOf} onChange={(e) => setAsOf(e.target.value)} /></div><CsvLink companyId={companyId} path={`/revisions/${revisionId}/explosion${asOf ? `?asOf=${asOf}` : ''}`} /></div>}>
-      <p className="muted small">Each component is read at its released revision. Extended quantities include scrap allowances, for one of the top product.</p>
+    <Section
+      title="Every level"
+      actions={
+        <div className="row wrap">
+          <div className="field"><label htmlFor="erp-build">Build quantity</label><input id="erp-build" className="input erp-qty-input" type="number" min="0.001" step="any" inputMode="decimal" value={build} onChange={(e) => setBuild(e.target.value)} /></div>
+          <div className="field"><label htmlFor="erp-asof">In effect on</label><input id="erp-asof" className="input" type="date" value={asOf} onChange={(e) => setAsOf(e.target.value)} /></div>
+          <CsvLink companyId={companyId} path={`/revisions/${revisionId}/explosion${query}`} />
+        </div>
+      }
+    >
+      <p className="muted small">Each component is read at its released revision. Extended quantities include scrap allowances, for one of the top product.{stock ? ` Required: for ${qty(buildQty)}.` : ''}</p>
+      {stock && q.data?.shortages ? <p className="warn-box small"><Icon name="alert" size={14} /> {q.data.shortages} line{q.data.shortages === 1 ? '' : 's'} short for {qty(buildQty)}.</p> : null}
       {q.error ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : !q.data ? <Loading /> : !q.data.nodes.length ? <p className="muted">No lines.</p> : (
         <div className="crm-table-scroll">
           <table className="data-table erp-bom responsive">
-            <thead><tr><th>Level</th><th>Component</th><th>Revision</th><th className="num">Quantity</th><th className="num">Extended</th><th>Unit</th></tr></thead>
+            <thead><tr><th>Level</th><th>Component</th><th>Revision</th><th className="num">Quantity</th><th className="num">Extended</th><th>Unit</th>{stock ? <><th className="num">Required</th><th className="num">Available</th><th>Stock</th></> : null}</tr></thead>
             <tbody>
               {q.data.nodes.map((n) => (
                 <tr key={`${n.path}-${n.lineId}`}>
@@ -823,6 +846,13 @@ function Explosion({ companyId, revisionId }: { companyId: string; revisionId: s
                   <td data-label="Quantity" className="num">{qty(n.quantity)}{n.scrapPct ? <span className="muted small"> +{n.scrapPct}%</span> : null}</td>
                   <td data-label="Extended" className="num">{qty(n.extendedQuantity)}</td>
                   <td data-label="Unit">{n.uom}</td>
+                  {stock ? (
+                    <>
+                      <td data-label="Required" className="num">{n.required === null ? '' : qty(n.required)}</td>
+                      <td data-label="Available" className="num">{n.available === null ? '' : qty(n.available)}</td>
+                      <td data-label="Stock">{n.optional ? <span className="muted small">Optional</span> : n.shortage ? <span className="badge danger">Short</span> : <span className="badge success">Enough</span>}</td>
+                    </>
+                  ) : null}
                 </tr>
               ))}
             </tbody>
@@ -830,7 +860,7 @@ function Explosion({ companyId, revisionId }: { companyId: string; revisionId: s
         </div>
       )}
       {q.data?.truncated ? <p className="warn-box small">The structure is very large: only part of it is shown.</p> : null}
-      <NotYet>{q.data?.availability ?? 'Component availability comes with Inventory (Release 2).'}</NotYet>
+      {q.data?.availability ? <p className="muted small">{q.data.availability}</p> : null}
     </Section>
   );
 }

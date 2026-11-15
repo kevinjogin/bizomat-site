@@ -1,4 +1,4 @@
-// BIZOMAT ERP, Release 1 (Products and Engineering, Procurement): the shapes the API returns (src/worker/erp), the fixed
+// BIZOMAT ERP, Releases 1 and 2 (Products and Engineering, Procurement, Inventory): the shapes the API returns (src/worker/erp), the fixed
 // lists with their plain-language labels, and the data hooks. The server decides what each person may see and do; the
 // screens only show it.
 import { useQuery } from '@tanstack/react-query';
@@ -6,7 +6,7 @@ import { get } from '../../lib/api';
 import { appUrl } from '../../lib/base';
 import { formatMoney } from '../../../shared/crm/money';
 
-export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'viewer';
+export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'warehouse_manager' | 'warehouse_operator' | 'viewer';
 export type Capability =
   | 'products.view'
   | 'products.edit'
@@ -20,7 +20,18 @@ export type Capability =
   | 'suppliers.approve'
   | 'product_suppliers.edit'
   | 'reports.view'
-  | 'roles.manage';
+  | 'roles.manage'
+  | 'purchasing.view'
+  | 'requisitions.raise'
+  | 'requisitions.approve'
+  | 'purchasing.edit'
+  | 'purchasing.approve'
+  | 'receiving.post'
+  | 'inventory.view'
+  | 'inventory.operate'
+  | 'inventory.approve'
+  | 'inventory.setup'
+  | 'settings.manage';
 
 export interface ErpMe {
   company: { id: string; name: string; kind: 'registered' | 'own' | 'demo' };
@@ -59,8 +70,237 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   engineering_approver: 'Engineering approver',
   buyer: 'Buyer',
   procurement_manager: 'Procurement manager',
+  warehouse_manager: 'Warehouse manager',
+  warehouse_operator: 'Warehouse operator',
   viewer: 'Viewer',
 };
+
+// ------------------------------------------------------------------ Release 2: purchasing and inventory
+
+export const REQ_STATUS = { draft: 'Draft', submitted: 'Submitted', approved: 'Approved', rejected: 'Rejected', converted: 'Converted', cancelled: 'Cancelled' } as const;
+export const RFQ_STATUS = { draft: 'Draft', sent: 'Sent', awarded: 'Supplier selected', approved: 'Selection approved', ordered: 'Ordered', cancelled: 'Cancelled' } as const;
+export const PO_STATUS = { draft: 'Draft', awaiting_approval: 'Awaiting approval', approved: 'Approved', sent: 'Sent', partially_received: 'Partly received', received: 'Received', cancelled: 'Cancelled', closed: 'Closed' } as const;
+export const LOCATION_KINDS = { normal: 'Normal', quarantine: 'Quarantine', work_in_progress: 'Work in progress', finished_goods: 'Finished goods', receiving: 'Receiving', dispatch: 'Dispatch' } as const;
+export const LOCATION_LEVELS = { store: 'Store', zone: 'Zone', rack: 'Rack', shelf: 'Shelf', bin: 'Bin' } as const;
+export const COUNT_STATUS = { open: 'Open', submitted: 'Submitted', posted: 'Posted', cancelled: 'Cancelled' } as const;
+export const ADJ_STATUS = { pending: 'Waiting for approval', posted: 'Posted', rejected: 'Rejected' } as const;
+
+export interface RecordFile extends ErpFile {
+  uploadedBy?: string | null;
+}
+
+export interface Line {
+  id: string;
+  position: number;
+  productId: string | null;
+  productNumber: string | null;
+  item: string;
+  specification: string;
+  quantity: number;
+  uom: string;
+  estUnitCostCents?: number | null;
+}
+
+export interface Requisition {
+  id: string;
+  number: string;
+  title: string;
+  requesterId: string | null;
+  requesterName: string | null;
+  departmentId: string | null;
+  departmentName: string | null;
+  requiredDate: string | null;
+  budgetRef: string;
+  reason: string;
+  status: keyof typeof REQ_STATUS;
+  statusLabel: string;
+  estimatedTotalCents: number;
+  currency: string;
+  decidedByName: string | null;
+  decidedAt: number | null;
+  decisionNote: string;
+  sodException: boolean;
+  lineCount?: number;
+  createdAt: number;
+}
+
+export interface Rfq {
+  id: string;
+  number: string;
+  title: string;
+  requisitionId: string | null;
+  requisitionNumber: string | null;
+  requiredDate: string | null;
+  replyBy: string | null;
+  currency: string;
+  deliveryAddress: string;
+  notes: string;
+  status: keyof typeof RFQ_STATUS;
+  statusLabel: string;
+  selectedQuotationId: string | null;
+  selectionReason: string;
+  selectedByName: string | null;
+  approvedByName: string | null;
+  approvedAt: number | null;
+  sodException: boolean;
+  supplierCount?: number;
+  quotationCount?: number;
+  createdByName: string | null;
+  createdAt: number;
+}
+
+export interface PurchaseOrder {
+  id: string;
+  number: string;
+  revision: number;
+  supplierId: string;
+  supplierNumber: string;
+  supplierName: string;
+  status: keyof typeof PO_STATUS;
+  statusLabel: string;
+  requisitionId: string | null;
+  requisitionNumber: string | null;
+  rfqId: string | null;
+  rfqNumber: string | null;
+  orderDate: string;
+  requiredDate: string | null;
+  deliveryAddress: string;
+  paymentTermsDays: number | null;
+  currency: string;
+  taxMode: 'exclusive' | 'inclusive' | 'none';
+  notes: string;
+  terms: string;
+  subtotalCents: number;
+  taxCents: number;
+  totalCents: number;
+  approvalRule: string | null;
+  approvalRuleLabel: string | null;
+  approvalLimitCents: number | null;
+  submittedByName: string | null;
+  approvedByName: string | null;
+  approvedAt: number | null;
+  sodException: boolean;
+  sentAt: number | null;
+  cancelReason: string;
+  createdByName: string | null;
+  createdAt: number;
+}
+
+export interface PoLine {
+  id: string;
+  position: number;
+  productId: string | null;
+  productNumber: string | null;
+  item: string;
+  specification: string;
+  quantity: number;
+  uom: string;
+  unitPriceCents: number;
+  discountBp: number;
+  taxCode: string;
+  taxRateBp: number;
+  netCents: number;
+  taxCents: number;
+  received: number;
+  rejected: number;
+  outstanding: number;
+  requiredDate: string | null;
+}
+
+export interface Receipt {
+  id: string;
+  number: string;
+  poId: string;
+  poNumber: string;
+  supplierId: string;
+  supplierName: string;
+  receivedDate: string;
+  deliveryRef: string;
+  notes: string;
+  onTime: boolean | null;
+  inspectionRequired: boolean;
+  byName: string | null;
+  createdAt: number;
+}
+
+export interface Warehouse {
+  id: string;
+  code: string;
+  name: string;
+  address: string;
+  archived: boolean;
+  locations: number;
+  onHand: number;
+}
+
+export interface Location {
+  id: string;
+  warehouseId: string;
+  warehouseCode: string | null;
+  parentId: string | null;
+  code: string;
+  fullCode: string;
+  name: string;
+  level: keyof typeof LOCATION_LEVELS;
+  levelLabel: string;
+  kind: keyof typeof LOCATION_KINDS;
+  kindLabel: string;
+  archived: boolean;
+  onHand?: number;
+}
+
+export interface StockRow {
+  id: string;
+  productId: string;
+  productNumber?: string;
+  productName?: string;
+  locationId: string;
+  locationCode: string;
+  locationKind: string;
+  locationKindLabel: string;
+  warehouseCode: string;
+  lot: string;
+  serial: string;
+  expiry: string | null;
+  onHand: number;
+  reserved: number;
+  available: number;
+}
+
+export interface Move {
+  id: string;
+  groupId: string;
+  type: string;
+  typeLabel: string;
+  productId: string;
+  productNumber: string;
+  productName: string;
+  locationId: string;
+  locationCode: string;
+  warehouseCode: string;
+  lot: string;
+  serial: string;
+  quantity: number;
+  reserved: number;
+  unitCostCents: number | null;
+  valueCents: number;
+  sourceType: string;
+  sourceId: string | null;
+  reference: string;
+  reason: string;
+  byName: string | null;
+  at: number;
+}
+
+export interface ErpSettings {
+  poApprovalLimitCents: number | null;
+  adjustmentApprovalCents: number | null;
+  allowNegativeStock: boolean;
+  costingMethod: 'weighted_average' | 'fifo' | null;
+  costingLocked: boolean;
+  costingLabel: string;
+  currency: string;
+}
 
 export interface ErpEvent {
   id: string;
@@ -297,6 +537,9 @@ export const erpPath = (companyId: string, path = '') => `/erp/c/${encodeURIComp
 /** The address of an ERP page inside the ERP (router paths, under /erp). */
 export const productsPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/products${path}`;
 export const procurementPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/procurement${path}`;
+export const inventoryPage = (companyId: string, path = '') => `/c/${encodeURIComponent(companyId)}/inventory${path}`;
+/** A file or picture served by the API (QR labels, PDFs), at its address under the app. */
+export const apiHref = (companyId: string, path: string) => appUrl(`/api${erpPath(companyId, path)}`);
 export const reportPage = (companyId: string, key = '') => `/c/${encodeURIComponent(companyId)}/erp-reports${key ? `/${key}` : ''}`;
 /** A CSV download of a list or report (the same address with format=csv). */
 export const csvHref = (companyId: string, path: string) => appUrl(`/api${erpPath(companyId, path)}${path.includes('?') ? '&' : '?'}format=csv`);

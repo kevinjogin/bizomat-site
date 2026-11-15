@@ -23,7 +23,7 @@ const PAGE = erp.guide ?? '/systems/erp/guide/';
 const access = erp.access!;
 const shot = (name: string) => screenshots('erp').find((s) => s.src.endsWith(`/${name}.webp`));
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: erp.name, href: erp.url }, { label: 'User guide', href: PAGE }];
-const description = 'How to use BIZOMAT ERP, step by step: companies, roles, sales, invoicing, projects, products and bills of materials, suppliers, maintenance and reports.';
+const description = 'How to use BIZOMAT ERP, step by step: companies, roles, sales, invoicing, projects, products, purchasing, stock and warehouses, maintenance and reports.';
 
 interface Step { t: string; x: string; st?: FeatureStatus }
 interface Part { id: string; title: string; st: FeatureStatus; lead?: string; steps: Step[]; shot?: string; roles?: boolean }
@@ -171,11 +171,11 @@ const parts: Part[] = [
     id: 'products', title: 'Products, bills of materials and engineering changes', st: 'live',
     lead: 'Products and Engineering in the rail opens the company\'s products, changes, documents and CAD Automation. What each person may do comes from their ERP roles, set in Administration, ERP roles.',
     steps: [
-      { t: 'ERP roles', x: 'In Administration, choose ERP roles and give each person one or more: Engineer, Engineering approver, Buyer, Procurement manager, Executive or Viewer. The company\'s owner and administrators are ERP administrators; everyone else is a viewer until given a role.' },
+      { t: 'ERP roles', x: 'In Administration, choose ERP roles and give each person one or more: Engineer, Engineering approver, Buyer, Procurement manager, Warehouse manager, Warehouse operator, Executive or Viewer. The company\'s owner and administrators are ERP administrators; everyone else is a viewer until given a role.' },
       { t: 'Add a product', x: 'In Products, choose New product. Give its name and type; the number is given for you (PRD-00001) unless you type one. Add its category, unit, costs, price, physical details, lifecycle and effective dates. It starts with revision A as a draft.' },
       { t: 'Add a variant', x: 'On a product, choose New variant and say what sets it apart: size, model, configuration, material, finish or options. The variant is a product of its own.' },
       { t: 'Build the bill of materials', x: 'Open the product\'s Bill of materials and choose Add a line: the component, quantity per one, unit, scrap allowance, reference designators, alternatives and effective dates. A component that would contain the product itself is refused.' },
-      { t: 'See every level', x: 'Structure expands each component\'s released bill of materials. All levels lists every level with extended quantities and exports CSV. Cost roll-up gives the material cost of one and lists any missing costs or other currencies.' },
+      { t: 'See every level', x: 'Structure expands each component\'s released bill of materials, with each component\'s available stock. All levels lists every level with extended quantities; give a build quantity to see what is required, what is available and which lines are short. It exports CSV. Cost roll-up gives the material cost of one and lists any missing costs or other currencies.' },
       { t: 'Request a change', x: 'Choose Request a change on a product, or New change request in Changes. An engineering approver takes it under review and approves or rejects it.' },
       { t: 'Change order', x: 'A change order carries a new revision of each product it changes, with the lines of the released revision to edit. Submit it when the revisions are ready: they lock.' },
       { t: 'Approve and release', x: 'An engineering approver who did not draft the change order approves and releases it. Release makes its revisions released and the earlier ones superseded, in one step. Released revisions cannot change.' },
@@ -184,23 +184,47 @@ const parts: Part[] = [
     ],
   },
   {
-    id: 'procurement', title: 'Suppliers in Procurement', st: 'live',
-    lead: 'Operations, Procurement opens the supplier master. Purchase requisitions, requests for quotation, purchase orders and receiving in the ERP come with Release 2; purchase orders and bills are in Finance today.',
+    id: 'procurement', title: 'Buy in Procurement', st: 'live',
+    lead: 'Procurement (in the side menu, or from Operations) has five tabs: Suppliers, Requisitions, Quotations, Purchase orders and Receipts. An ERP administrator sets the purchase order approval limit in Administration, Purchasing and inventory settings.',
     steps: [
       { t: 'Add a supplier', x: 'Choose New supplier. Give the legal name, ABN, contact details, addresses, payment terms, currency and usual lead time. The ABN is checked for its form only; it is not looked up on the register.' },
       { t: 'Approve it', x: 'A procurement manager who did not add the supplier chooses Approve. Put on hold and Block need a reason. A blocked supplier cannot be added to a product.' },
       { t: 'Contacts and documents', x: 'Add the supplier\'s contacts (one is primary) and documents such as certificates.' },
       { t: 'Who supplies a product', x: 'On a product, Suppliers, choose Add a supplier: their part number, price, lead time, minimum order and whether they are preferred.' },
-      { t: 'Performance', x: 'Supplier performance is measured from purchase orders and receipts, so it comes with Release 2. The supplier page says so and shows no figures.', st: 'planned' },
+      { t: 'Raise a requisition', x: 'In Requisitions, choose New requisition: what you need (a product or a described item), how many, by when, the department, a budget reference and why. Submit it; a procurement manager who did not raise it approves or rejects it.' },
+      { t: 'Ask for quotations', x: 'On an approved requisition, choose Request quotations and tick approved suppliers. Download each supplier\'s PDF, send it from your own email, and choose Record as sent. Sending by email from BIZOMAT with the PDF attached is not built yet.', st: 'live' },
+      { t: 'Compare and choose', x: 'Record each quotation: prices per line, lead time, freight, payment terms, validity and the supplier\'s document. The comparison marks the cheapest and the fastest. Choose Select a supplier and give the reason; a procurement manager who did not select it approves the choice.' },
+      { t: 'Make the purchase order', x: 'Choose Make the purchase order on the request, Make a purchase order from a requisition, or New purchase order. Each line has a price, discount and tax code (the company\'s Finance tax codes when it runs Finance); the PDF is drawn beside the form as you type.' },
+      { t: 'Approval', x: 'Submit the order. At or below the company\'s limit, in its currency, a buyer\'s order is approved at once; above it a procurement manager who did not submit it approves. The order records which rule applied. Then download the PDF, send it, and choose Record as sent.' },
+      { t: 'Amend an order', x: 'Choose Amend on an approved, sent or partly received order and give the reason. The earlier version is kept under Earlier versions; the order goes back to draft and through approval again. What was received cannot be taken off.' },
+      { t: 'Receive goods', x: 'A warehouse manager or operator chooses Receive goods on the order (or uses the warehouse screen on a phone): how many arrived, how many were damaged or rejected and why, where they are put away, and lots, serial numbers and expiry dates when the product is tracked. Accepted goods go into stock at once. Products that need inspection are flagged on the receipt.' },
+      { t: 'The bill', x: 'On a receipt, choose Make a draft bill in Finance. It is made once, for the supplier\'s Finance contact, by someone whose Finance role may create bills. Finance approves and pays it.', st: 'connected' },
+      { t: 'Performance', x: 'Each supplier\'s page shows how often its goods arrived on time and in full, and its average lead time, measured from receipts.' },
     ],
+    shot: 'erp-procurement',
+  },
+  {
+    id: 'inventory', title: 'Stock and warehouses in Inventory', st: 'live',
+    lead: 'Inventory (in the side menu, or from Operations) shows what is where and every movement of it. A warehouse manager sets up warehouses and locations; operators receive, issue, move and count. Every movement is kept and never changed.',
+    steps: [
+      { t: 'Set up a warehouse', x: 'In Warehouses, choose New warehouse, then add its locations as a tree: store, zone, rack, shelf and bin. Mark quarantine, receiving, dispatch, work-in-progress and finished-goods locations. Print QR labels for every location from the warehouse\'s page.' },
+      { t: 'Choose the costing method', x: 'In Administration, Purchasing and inventory settings: weighted average or first in, first out. It is fixed by the first stock movement. Stock never goes below zero unless you allow it there.' },
+      { t: 'Product stock settings', x: 'On a product\'s stock page, choose Stock settings: lot numbers, serial numbers, expiry dates, inspection on receipt, reorder point, minimum, maximum and its usual location.' },
+      { t: 'Move stock', x: 'On a product\'s stock page, choose Act on a location: issue, move, reserve, quarantine, release, return to the supplier or scrap. Customer returns come in from the same page.' },
+      { t: 'The warehouse screen', x: 'Warehouse screen, on a phone: choose Receive, Issue, Move or Count, then type or scan the location and product codes. The camera reads codes where the browser can; typing always works.' },
+      { t: 'Adjust and count', x: 'Adjustments correct stock with a reason; above the company\'s threshold a warehouse manager approves. In Counts, open a stocktake or a cycle count, enter what is on the shelves, submit it, and a warehouse manager who did not count approves: the variances post as movements.' },
+      { t: 'Value and trace', x: 'Valuation shows quantity, unit cost and value per product. Click a lot or serial number to trace it from its supplier, order and receipt to every later move and where it is now.' },
+      { t: 'Finance postings', x: 'Stock value is kept in the ERP. Posting it to Finance\'s ledger is planned: each movement records it as planned, and nothing is posted.', st: 'planned' },
+    ],
+    shot: 'erp-inventory',
   },
   {
     id: 'planned', title: 'What is not built yet', st: 'planned',
-    lead: 'Operations in the rail lists the modules that are designed but not built. Nothing there works yet or keeps data. The first stage of Maintenance, the supplier master and the product and engineering records work today.',
+    lead: 'Operations in the rail shows what waits for you, then lists the modules. Those labelled Planned are designed but not built: they do not work yet or keep data. Procurement, Inventory, the first stage of Maintenance and the product and engineering records work today.',
     steps: [
-      { t: 'Planned modules', x: 'Purchase requisitions, quotations, purchase orders and receiving in the ERP, Inventory and Warehouse, Manufacturing (with routings), Quality and Supply Chain. Each is labelled Planned.', st: 'planned' },
+      { t: 'Planned modules', x: 'Manufacturing (with routings), Quality (with inspection of goods flagged on receipt) and Supply Chain. Each is labelled Planned.', st: 'planned' },
       { t: 'Later in Maintenance', x: 'Preventive maintenance, readings, inspections, prestart checklists, spare parts, scanning, several sites, workload planning, an AI scheduling assistant that only proposes schedules for a person to approve, reliability reporting and offline field work.', st: 'planned' },
-      { t: 'What to use today', x: 'Purchase orders and bills are kept in Finance. Production work can be planned on a board in Projects and Tasks.', st: 'live' },
+      { t: 'What to use today', x: 'Production work can be planned on a board in Projects and Tasks.', st: 'live' },
     ],
     shot: 'erp-operations',
   },
@@ -216,7 +240,8 @@ const questions = [
   { q: 'Does the ERP keep my SOLIDWORKS files?', a: 'No. An engineering document can reference a CAD file by its path on your own computer; the file stays there. Uploaded PDF, DXF and STEP files are kept as attachments.' },
   { q: 'Who can raise a maintenance request?', a: 'Everyone in a registered company: choose Report a fault at the foot of the rail. In your own company, you are its only person. People who were only shared a tool with the company cannot see its maintenance.' },
   { q: 'Can a technician see every work order?', a: 'No. A technician sees the work orders assigned to them. Supervisors and administrators see them all; a requester sees the work order made from their own request.' },
-  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'Procurement\'s supplier master works today. Purchase orders and receiving in the ERP, Inventory and Manufacturing are planned and not built. Maintenance works today for assets, requests and work orders; preventive maintenance is planned.' },
+  { q: 'Can I use Procurement, Inventory or Manufacturing?', a: 'Procurement and Inventory, yes: requisitions, quotations, purchase orders, goods receipts, warehouses, stock, counts and valuation work today. Manufacturing is planned and not built. Maintenance works today for assets, requests and work orders; preventive maintenance is planned.' },
+  { q: 'Can I approve my own purchase order?', a: 'Within the company\'s approval limit a buyer\'s order is approved when submitted. Above it, someone else with the Procurement manager role approves. In your own company, where you are the only person, you may, and the exception is recorded on the order.' },
 ];
 
 const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));

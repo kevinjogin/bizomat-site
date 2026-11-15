@@ -12,24 +12,37 @@
 >   Products and Engineering opens `/erp/products` (the company used last).
 > - **Maintenance** (Asset Management and Maintenance, Stage M1): the asset register, requests and work orders of
 >   each company, at `/erp/c/<company>/maintenance` (`docs/maintenance/README.md`, migration `0018_maintenance.sql`).
-> - **ERP Release 1** (built on the branch `erp-release-1`, not deployed yet; `docs/erp/release-1.md`, status by
->   release in `docs/erp/STATUS.md`, migration `0020_erp_engineering_procurement.sql`, API `/api/erp`):
+> - **ERP Release 1** (live since 14 Nov 2026; `docs/erp/release-1.md`, status by release in `docs/erp/STATUS.md`,
+>   migration `0020_erp_engineering_procurement.sql`, API `/api/erp`):
 >   - Products and Engineering at `/erp/c/<company>/products`: products and variants, multi-level bills of materials,
 >     revisions, change requests and change orders, engineering documents, and the CAD Automation set-up as a tab;
 >   - Procurement's supplier master at `/erp/c/<company>/procurement`, opened from Operations;
 >   - ERP roles at `/erp/c/<company>/erp-roles` (Administration) and six reports at `/erp/c/<company>/erp-reports`
 >     (Reports).
+> - **ERP Release 2** (built on the branch `erp-release-2`, not merged or deployed yet; `docs/erp/release-2.md`,
+>   migration `0021_erp_purchasing_inventory.sql`, the same API):
+>   - Procurement at `/erp/c/<company>/procurement`: suppliers, requisitions, requests for quotation with the
+>     comparison, purchase orders (approval limits, amendments, PDF), goods receipts and one draft bill in Finance per
+>     receipt;
+>   - Inventory at `/erp/c/<company>/inventory`: stock, warehouses and locations with QR labels, movements, adjustments,
+>     counts, valuation, traceability and the warehouse screen for phones; both in the company's side menu and on the
+>     Operations page;
+>   - Purchasing and inventory settings at `/erp/c/<company>/erp-settings` (Administration) and ten more reports at
+>     `/erp/c/<company>/erp-reports`;
+>   - stock value is not posted to Finance's ledger: each posting is recorded as planned (Release 3).
 > - **New ERP pages:**
 >   - My Work: the Projects and Tasks My Work of the workspace used last.
->   - Operations: the planned modules, each labelled Planned, and what is live of Maintenance, Procurement
->     (suppliers) and Products and Engineering records.
+>   - Operations: what waits in the company (approvals, orders to receive, products to reorder, adjustments and counts),
+>     then the modules: Procurement and Inventory live (Release 2), Maintenance and Products and Engineering records
+>     partly live, the rest each labelled Planned.
 >   - Reports: every report of the company's tools, in its own module.
 >   - Administration: company, tool teams and settings, your profile, and the ERP console for platform admins.
 > - **Own companies for everyone:** migration `0017_system_everyone.sql` gives every existing active account its own
 >   company. The maintenance run makes any that are still missing, up to 5,000 a day.
 > - **The public website** describes the software as **Systems** at `/systems/` (`src/config/systems.ts`):
 >   - one page and one user guide per system;
->   - Manufacturing and Operations is planned and has no guide;
+>   - Manufacturing and Operations is mostly planned and has no guide of its own (Procurement, Inventory and
+>     Maintenance are in the ERP's guide);
 >   - the old product pages answer 301 there (`public/_redirects`).
 >
 > The sections below say "System" and `/system`; read them as "ERP" and `/erp`.
@@ -104,6 +117,9 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
   - Products and Engineering and Procurement (ERP Release 1): a shelf bracket kit with a variant and a two-level bill of
     materials released through a change order (the one-person exception recorded), a change request, a draft change
     order, a CAD reference and two suppliers, one approved. Example companies made before Release 1 are not changed.
+  - Purchasing and inventory (ERP Release 2): a warehouse with a location tree, two more approved suppliers, an
+    approved requisition, a request for quotation with two quotations to compare, and a purchase order received into
+    stock. Example companies made before Release 2 are not changed.
 
   Every name is invented, and every address is on example.com. No other accounts are made.
 - **When:** the ERP asks for it on the person's first visit (`POST /api/system/demo`). It takes about 0.5 s on Node
