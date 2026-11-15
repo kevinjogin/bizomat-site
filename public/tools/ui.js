@@ -249,6 +249,14 @@ ${g.limitations?.length ? `<section><h2>Limitations</h2>${list(g.limitations)}</
   }
   function buildTool(t) {
     $('#tool-category').textContent = `${t.category} · BIZOMAT ${collection(t)}`;
+    // With a tool open, the page's own heading (in the hidden intro) is not shown, so the tool's name is the page's
+    // one H1. The page is built with it as an H2, so the static page keeps a single H1.
+    const nameEl = $('#tool-name');
+    if (nameEl.tagName !== 'H1' && typeof nameEl.replaceWith === 'function') {
+      const h1 = document.createElement('h1');
+      h1.id = nameEl.id;
+      nameEl.replaceWith(h1);
+    }
     $('#tool-name').textContent = t.name;
     $('#tool-question').textContent = t.question;
     $('#tool-description').textContent = t.description;

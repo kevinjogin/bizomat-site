@@ -10,7 +10,7 @@
 .card-link { margin-top:auto; padding-top:1.2rem; font-size:.9rem; font-weight:600; }
 .workspace { padding-block:clamp(2rem,4vw,3.5rem) var(--space-section); }
 .workspace-head { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:1.5rem; align-items:start; margin-bottom:1.5rem; }
-.workspace-head h2 { margin:.45rem 0 .75rem; font-size:var(--step-3); }
+.workspace-head :is(h1, h2) { margin:.45rem 0 .75rem; font-size:var(--step-3); }
 .workspace-head p { max-width:760px; color:var(--ink-2); }
 .back-button { white-space:nowrap; }
 .tool-layout { display:grid; grid-template-columns:minmax(0,1fr) minmax(320px,.85fr); gap:clamp(1.5rem,4vw,3rem); align-items:start; }

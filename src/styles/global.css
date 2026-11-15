@@ -150,7 +150,11 @@ a { color: inherit; text-decoration-thickness: 1px; text-underline-offset: 0.2em
 a:hover { color: var(--accent); }
 hr { border: 0; border-top: 1px solid var(--line); margin: 0; }
 ::selection { background: var(--accent-soft); color: var(--ink); }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 3px; }
+/* The focus ring is the accent colour, except on the inverse bands (navy in the light theme, pale in the dark one),
+   where teal is too faint to see (under 3:1): there it takes the band's own text colour (design audit, 15 Nov 2026).
+   A new inverse band sets --focus-ring the same way. */
+:focus-visible { outline: 2px solid var(--focus-ring, var(--accent)); outline-offset: 3px; border-radius: 3px; }
+.cta, .section--inverse, .pp-section--inverse, .home-close, .custom-cta, .price-card { --focus-ring: var(--inverse-ink); }
 button, input, textarea, select { font: inherit; color: inherit; }
 button { cursor: pointer; }
 time { font-variant-numeric: tabular-nums; }
@@ -165,12 +169,12 @@ time { font-variant-numeric: tabular-nums; }
   padding: 0.75rem 1rem; background: var(--ink); color: var(--paper); border-radius: var(--radius); text-decoration: none;
 }
 .skip-link:focus { top: 1rem; color: var(--paper); }
+/* The page and section label above a heading. One look on every page: the brand's .bz-eyebrow (shared/brand/
+   components.css: monospace, teal, upper case). .eyebrow is the older name, kept for the pages that use it. */
 .eyebrow {
   display: inline-flex; align-items: center; gap: 0.55rem;
-  font-size: 0.76rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);
+  font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent);
 }
-.eyebrow::before { content: ''; width: 6px; height: 6px; border-radius: 1px; background: var(--brand-orange); flex: none; }
-.eyebrow--plain::before { display: none; }
 .lead { font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); max-width: 44ch; }
 .serif { font-family: var(--font-serif); }
 .muted { color: var(--muted); }
