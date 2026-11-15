@@ -1,7 +1,8 @@
 // Attachments of procurement records (requisitions, requests for quotation, supplier quotations, purchase orders and
-// goods receipts) and, from Release 3, of routings and manufacturing orders: erp_record_files, in the app's file store
-// with the same checks as every other upload (routes/files.ts validateUpload). A file is served only to people who may
-// see that kind of record in the company (purchasing or manufacturing).
+// goods receipts) and, from Release 3, of routings and manufacturing orders, and from Release 4 of quality records
+// (inspection plans, inspections and the photos of their characteristics, nonconformances, corrective actions'
+// evidence): erp_record_files, in the app's file store with the same checks as every other upload (routes/files.ts
+// validateUpload). A file is served only to people who may see that kind of record in the company.
 
 import { Hono } from 'hono';
 import type { AppEnv } from '../env';
@@ -13,8 +14,9 @@ import { eventStmt, zId } from './util';
 
 export const recordFileRoutes = new Hono<AppEnv>();
 
-export type RecordKind = 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order';
-const KINDS: Record<RecordKind, { table: string; label: string; event: 'requisition' | 'rfq' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order'; parent?: string; view: Capability; number?: string }> = {
+export type RecordKind = 'requisition' | 'rfq' | 'quotation' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order' | 'qc_plan' | 'inspection' | 'inspection_char' | 'ncr' | 'capa';
+type EventKind = 'requisition' | 'rfq' | 'purchase_order' | 'receipt' | 'routing' | 'manufacturing_order' | 'qc_plan' | 'inspection' | 'ncr' | 'capa';
+const KINDS: Record<RecordKind, { table: string; label: string; event: EventKind; parent?: string; view: Capability; number?: string }> = {
   requisition: { table: 'erp_requisitions', label: 'requisition', event: 'requisition', view: 'purchasing.view' },
   rfq: { table: 'erp_rfqs', label: 'request for quotation', event: 'rfq', view: 'purchasing.view' },
   quotation: { table: 'erp_quotations', label: 'quotation', event: 'rfq', parent: 'rfq_id', view: 'purchasing.view' },
@@ -22,7 +24,14 @@ const KINDS: Record<RecordKind, { table: string; label: string; event: 'requisit
   receipt: { table: 'erp_receipts', label: 'goods receipt', event: 'receipt', view: 'purchasing.view' },
   routing: { table: 'erp_routings', label: 'routing revision', event: 'routing', view: 'manufacturing.view', number: 'revision' },
   manufacturing_order: { table: 'erp_mfg_orders', label: 'manufacturing order', event: 'manufacturing_order', view: 'manufacturing.view' },
+  // Release 4: quality
+  qc_plan: { table: 'erp_qc_plans', label: 'inspection plan', event: 'qc_plan', view: 'quality.view', number: "number || ' version ' || version" },
+  inspection: { table: 'erp_qc_inspections', label: 'inspection', event: 'inspection', view: 'quality.view' },
+  inspection_char: { table: 'erp_qc_insp_chars', label: 'characteristic', event: 'inspection', parent: 'inspection_id', view: 'quality.view', number: 'name' },
+  ncr: { table: 'erp_qc_ncrs', label: 'nonconformance', event: 'ncr', view: 'quality.view' },
+  capa: { table: 'erp_qc_capas', label: 'corrective action', event: 'capa', view: 'quality.view' },
 };
+const QUALITY_KINDS: readonly string[] = ['qc_plan', 'inspection', 'inspection_char', 'ncr', 'capa'];
 
 export function recordFileDTO(f: any) {
   return { id: f.id, name: f.name, mime: f.mime, size: f.size, isImage: String(f.mime).startsWith('image/'), uploadedBy: f.uploaded_by, uploadedByName: f.uploader ?? null, createdAt: f.created_at, url: `/api/erp/c/${f.company_id}/record-files/${f.id}` };
@@ -40,7 +49,7 @@ async function parent(db: D1Database, companyId: string, kind: RecordKind, id: s
   const k = KINDS[kind];
   const row = await db.prepare(`SELECT id, ${k.parent ? `${k.parent} AS parent_id,` : ''} ${kind === 'quotation' ? "'' AS number" : `${k.number ?? 'number'} AS number`} FROM ${k.table} WHERE company_id = ? AND id = ?`).bind(companyId, id).first<any>();
   if (!row) throw notFound(k.label[0].toUpperCase() + k.label.slice(1));
-  return { entityId: k.parent ? row.parent_id : row.id, label: kind === 'quotation' ? 'a quotation' : `${k.label} ${row.number}`, event: k.event };
+  return { entityId: (k.parent ? row.parent_id : row.id) as string, label: kind === 'quotation' ? 'a quotation' : `${k.label} ${row.number}`, event: k.event };
 }
 
 recordFileRoutes.post('/c/:company/record-files', async (c) => {
@@ -59,9 +68,24 @@ recordFileRoutes.post('/c/:company/record-files', async (c) => {
   else if (kind === 'receipt') assertCan(a, 'receiving.post');
   else if (kind === 'routing') assertCan(a, 'manufacturing.setup');
   else if (kind === 'manufacturing_order') assertCan(a, 'production.plan');
-  else assertCan(a, 'purchasing.edit');
+  // Release 4: plans by whoever may change them; inspections and their photos by inspectors (while the inspection is
+  // open, for photos of a characteristic); nonconformances by whoever may raise one; a corrective action's evidence by
+  // its responsible person or whoever may propose one
+  else if (kind === 'qc_plan') assertCan(a, 'quality.plan');
+  else if (kind === 'inspection' || kind === 'inspection_char') assertCan(a, 'quality.inspect');
+  else if (kind === 'ncr') assertCan(a, 'quality.raise');
+  else if (kind !== 'capa') assertCan(a, 'purchasing.edit');
   const id0 = zId.parse(String(form!.get('id') ?? ''));
   const p = await parent(c.env.DB, a.companyId, kind, id0);
+  if (kind === 'capa') {
+    const r = await c.env.DB.prepare('SELECT responsible_id, status FROM erp_qc_capas WHERE company_id = ? AND id = ?').bind(a.companyId, id0).first<{ responsible_id: string | null; status: string }>();
+    if (r?.responsible_id !== a.userId) assertCan(a, 'capa.propose');
+    if (r && (r.status === 'closed' || r.status === 'cancelled')) throw new HttpError(409, 'This action is closed: no more evidence can be added');
+  }
+  if (kind === 'inspection_char') {
+    const open = await c.env.DB.prepare("SELECT 1 AS ok FROM erp_qc_inspections WHERE company_id = ? AND id = ? AND status = 'open'").bind(a.companyId, p.entityId).first();
+    if (!open) throw new HttpError(409, 'This inspection is no longer open: photos are added while it is recorded');
+  }
   const { name, type, bytes } = await validateUpload(file);
   const id = newId();
   const key = `erp/${a.companyId}/${kind}/${id0}/${id}`;
@@ -103,8 +127,8 @@ recordFileRoutes.get('/c/:company/record-files/:id', async (c) => {
 
 recordFileRoutes.delete('/c/:company/record-files/:id', async (c) => {
   const { a, f } = await loadRecordFile(c);
-  const manager = f.entity_type === 'routing' || f.entity_type === 'manufacturing_order' ? 'production_manager' : 'procurement_manager';
-  if (f.uploaded_by !== a.userId && !a.roles.includes('erp_admin') && !a.roles.includes(manager)) throw new HttpError(403, `Only the person who added it, a ${manager === 'production_manager' ? 'production' : 'procurement'} manager or an ERP administrator can remove it`);
+  const manager = f.entity_type === 'routing' || f.entity_type === 'manufacturing_order' ? 'production_manager' : QUALITY_KINDS.includes(f.entity_type) ? 'quality_manager' : 'procurement_manager';
+  if (f.uploaded_by !== a.userId && !a.roles.includes('erp_admin') && !a.roles.includes(manager)) throw new HttpError(403, `Only the person who added it, a ${manager.split('_')[0]} manager or an ERP administrator can remove it`);
   const p = await parent(c.env.DB, a.companyId, f.entity_type, f.entity_id);
   const t = now();
   await c.env.DB.batch([

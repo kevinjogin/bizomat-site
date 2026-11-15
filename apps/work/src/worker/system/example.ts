@@ -4,6 +4,7 @@
 // Every person gets a company of invented example data of their own, "Acme Studio (example)": a Projects workspace, a
 // CRM organisation, a Finance business workspace, Maintenance records, Products and Engineering and supplier records
 // (ERP Release 1) and purchasing and inventory records (ERP Release 2), all named for it and owned by that person alone.
+// From ERP Release 4 part A, quality records too (an inspection plan, a failed inspection, an NCR and a corrective action).
 // It is made the first time they open the ERP (the client asks for it), and again only when they ask after removing it.
 // Example companies made before a release keep what they had: nothing is added to them.
 //
@@ -182,6 +183,11 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
   const r2Files = await db.prepare('SELECT r2_key FROM erp_record_files WHERE company_id = ?').bind(companyId).all<{ r2_key: string }>();
   files.results.push(...r2Files.results);
   stmts.push(db.prepare('INSERT INTO erp_purges (company_id, started_at) VALUES (?, ?) ON CONFLICT(company_id) DO NOTHING').bind(companyId, t));
+  // ERP Release 4 part A records (migrations/0023_erp_quality.sql) before Release 3's and 2's: they point at their orders,
+  // receipts, locations and suppliers. Their files are erp_record_files, collected above.
+  for (const table of ['erp_qc_ncr_actions', 'erp_qc_dispositions', 'erp_qc_ncr_inspections', 'erp_qc_capas', 'erp_qc_ncrs', 'erp_qc_readings', 'erp_qc_insp_chars', 'erp_qc_inspections', 'erp_qc_plan_chars', 'erp_qc_plans']) {
+    stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
+  }
   // ERP Release 3 records (migrations/0022_erp_manufacturing.sql) before Release 2's: they point at its reservations,
   // locations and suppliers.
   for (const table of [
@@ -554,6 +560,63 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     await api('Manufacturing', 'POST', e('/mps'), { productId: kit.id, quantity: 60, dueDate: d(21), kind: 'confirmed', reference: 'Harbour Cafe fit-out (example)' });
     await api('Manufacturing', 'POST', e('/mps'), { productId: kit.id, quantity: 40, dueDate: d(35), kind: 'forecast', reference: 'Next month (forecast)' });
     await api('Manufacturing', 'POST', e('/mrp/runs'), {});
+
+    // ---------------------------------------------------------------- Quality (ERP Release 4 part A)
+    // A released incoming inspection plan for the bracket arms, the incoming inspection of the arms received above (one
+    // sample under the minimum thickness, so it failed), a nonconformance with its containment and root cause, and a
+    // corrective action, approved under the recorded one-person exception and in progress. No stock moves: the arms stay
+    // where Releases 2 and 3 put them.
+    const plan = await api('Quality', 'POST', e('/qc-plans'), {
+      name: 'Incoming check of laser-cut bracket arms',
+      kind: 'incoming',
+      productId: arm.id,
+      supplierId: steel.id,
+      description: 'Three arms from every delivery: thickness, length and edges.',
+      characteristics: [
+        { name: 'Plate thickness', kind: 'dimension', unit: 'mm', nominal: 3, tolerance: 0.15, sampleSize: 3, instructions: 'Micrometer, 10 mm from the cut edge.' },
+        { name: 'Arm length', kind: 'dimension', unit: 'mm', nominal: 240, tolerance: 0.5, sampleSize: 3 },
+        { name: 'Edges free of burrs', kind: 'visual', sampleSize: 3 },
+      ],
+    });
+    await api('Quality', 'POST', e(`/qc-plans/${plan.id}/release`), { note: 'Agreed with the supplier' });
+    const armReceipt = (await api('Quality', 'GET', e(`/purchase-orders/${po.id}`))).receipts[0];
+    const armLine = (await api('Quality', 'GET', e(`/receipts/${armReceipt.id}`))).lines[0];
+    const qi = await api('Quality', 'POST', e('/inspections'), { sourceType: 'receipt_line', sourceId: armLine.id });
+    const [thick, length, edges] = (await api('Quality', 'GET', e(`/inspections/${qi.id}`))).characteristics;
+    await api('Quality', 'PUT', e(`/inspections/${qi.id}/readings`), {
+      readings: [
+        { charId: thick.id, sampleNo: 1, value: 3.02 },
+        { charId: thick.id, sampleNo: 2, value: 2.81, note: 'Thin near the bend line' },
+        { charId: thick.id, sampleNo: 3, value: 2.98 },
+        { charId: length.id, sampleNo: 1, value: 240.1 },
+        { charId: length.id, sampleNo: 2, value: 239.8 },
+        { charId: length.id, sampleNo: 3, value: 240.2 },
+        ...[1, 2, 3].map((sampleNo) => ({ charId: edges.id, sampleNo, conforming: true })),
+      ],
+    });
+    await api('Quality', 'POST', e(`/inspections/${qi.id}/complete`), { notes: 'One of three arms under the minimum thickness.' });
+    const ncr = await api('Quality', 'POST', e('/ncrs'), {
+      title: 'Bracket arm under the minimum plate thickness',
+      description: 'One sampled arm measured 2.81 mm against 3.00 ± 0.15 mm. The rest of the delivery may be thin too.',
+      severity: 'major',
+      inspectionIds: [qi.id],
+    });
+    await api('Quality', 'POST', e(`/ncrs/${ncr.id}/contain`), { containment: 'Every arm of this delivery is to be measured before use. The ten reserved for MO-00001 were measured first and are within the limits.' });
+    await api('Quality', 'POST', e(`/ncrs/${ncr.id}/investigate`), {
+      method: 'five_whys',
+      whys: ['The arm was cut from plate rolled under thickness.', 'The supplier checks one sheet per batch.', 'Their plan sets no sample size for thin plate.'],
+      rootCause: 'The supplier samples too few sheets of thin plate.',
+    });
+    const capa = await api('Quality', 'POST', e('/capas'), {
+      kind: 'corrective',
+      ncrId: ncr.id,
+      title: 'Agree a sampling plan for thin plate with Example Steel Supplies',
+      description: 'Ask for three sheets checked per batch, with their thickness readings sent with each delivery.',
+      responsibleId: user.id,
+      dueDate: d(10),
+    });
+    await api('Quality', 'POST', e(`/capas/${capa.id}/approve`), { note: 'Approved' });
+    await api('Quality', 'POST', e(`/capas/${capa.id}/start`), {});
   });
 }
 

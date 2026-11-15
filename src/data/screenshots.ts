@@ -14,7 +14,7 @@ const ALL: readonly Screenshot[] = [
   { src: '/proof-of-work/product/erp-finance.webp', product: 'erp', title: 'BIZOMAT ERP: Finance and Accounting', caption: 'Finance opens inside the ERP, in the company\'s business workspace.' },
   { src: '/proof-of-work/product/erp-projects.webp', product: 'erp', title: 'BIZOMAT ERP: Projects and Tasks', caption: 'A project board inside the ERP: groups, owners, statuses and dates.' },
   { src: '/proof-of-work/product/erp-engineering.webp', product: 'erp', title: 'BIZOMAT ERP: Products and Engineering', caption: 'CAD Automation\'s set-up steps and the computers this person may see.' },
-  { src: '/proof-of-work/product/erp-operations.webp', product: 'erp', title: 'BIZOMAT ERP: Operations', caption: 'What waits for approval, receiving or production, then the operations modules: Procurement, Inventory and Manufacturing live, the others labelled as they stand.' },
+  { src: '/proof-of-work/product/erp-operations.webp', product: 'erp', title: 'BIZOMAT ERP: Operations', caption: 'What waits for approval, receiving, production or inspection, then the operations modules: Procurement, Inventory, Manufacturing and Quality live, the others labelled as they stand.' },
   // ERP Release 2, captured 15 Nov 2026 from a local instance with the example company's invented data.
   { src: '/proof-of-work/product/erp-procurement.webp', product: 'erp', title: 'BIZOMAT ERP: a request for quotation', caption: 'Two suppliers\' quotations side by side, with the cheapest and the fastest marked, ready for a buyer to select one.' },
   { src: '/proof-of-work/product/erp-inventory.webp', product: 'erp', title: 'BIZOMAT ERP: Inventory', caption: 'Stock by product: on hand, reserved, available, on order, reorder points and value.' },
@@ -23,6 +23,10 @@ const ALL: readonly Screenshot[] = [
   // ERP Release 3, captured 15 Nov 2026 from a local instance with the example company's invented data.
   { src: '/proof-of-work/product/erp-manufacturing.webp', product: 'erp', title: 'BIZOMAT ERP: a manufacturing order', caption: 'Materials reserved and issued, and each operation with its output, the inspection point and an outsourced step.' },
   { src: '/proof-of-work/product/erp-shop-floor.webp', product: 'erp', title: 'BIZOMAT ERP: the shop floor', caption: 'The job in progress at a work centre, with its progress, the outstanding inspection and large buttons for the operator.' },
+  // ERP Release 4 part A, captured 15 Nov 2026 from a local instance with the example company's invented data.
+  { src: '/proof-of-work/product/erp-quality.webp', product: 'erp', title: 'BIZOMAT ERP: Quality', caption: 'What waits for inspection, nonconformances and corrective actions, with the counts that need attention.' },
+  { src: '/proof-of-work/product/erp-quality-inspection.webp', product: 'erp', title: 'BIZOMAT ERP: an inspection', caption: 'Readings per characteristic and sample, each compared with its limits: one thickness outside them, so the inspection failed.' },
+  { src: '/proof-of-work/product/erp-quality-ncr.webp', product: 'erp', title: 'BIZOMAT ERP: a nonconformance', caption: 'A nonconformance raised from the failed inspection, with its progress, containment and root cause by five whys.' },
   { src: '/proof-of-work/product/erp-mrp.webp', product: 'erp', title: 'BIZOMAT ERP: planning', caption: 'The master production schedule and MRP’s suggestions to make and buy, with their dates and messages.' },
   { src: '/proof-of-work/product/erp-maintenance.webp', product: 'erp', title: 'BIZOMAT ERP: Maintenance', caption: 'The maintenance overview: requests awaiting approval, open and overdue work orders, your work and the asset register.' },
   { src: '/proof-of-work/product/erp-maintenance-assets.webp', product: 'erp', title: 'BIZOMAT ERP: an asset', caption: 'An asset in its hierarchy, with its details, outstanding work, the assets under it, files and history.' },

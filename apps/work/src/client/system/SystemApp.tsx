@@ -36,6 +36,8 @@ const InventoryArea = lazy(() => import('./erp/Inventory').then((m) => ({ defaul
 const ErpSettingsPage = lazy(() => import('./erp/ErpSettings').then((m) => ({ default: m.ErpSettingsPage })));
 // ERP Release 3: /c/<company>/manufacturing (orders, the shop floor, planning, work centres and routings).
 const ManufacturingArea = lazy(() => import('./erp/Manufacturing').then((m) => ({ default: m.ManufacturingArea })));
+// ERP Release 4 part A: /c/<company>/quality (inspections, nonconformances, corrective actions, inspection plans).
+const QualityArea = lazy(() => import('./erp/Quality').then((m) => ({ default: m.QualityArea })));
 
 /** The ERP's products, engineering and supplier reports (src/client/system/erp/Reports.tsx keeps the same list). */
 const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
@@ -63,6 +65,14 @@ const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
   { key: 'machine-downtime', label: 'Machine downtime', what: 'Downtime by machine and reason.' },
   { key: 'mrp-suggestions', label: 'MRP suggestions', what: 'What to make, buy or expedite.' },
   { key: 'capacity-load', label: 'Capacity load', what: 'Load per work centre per week.' },
+  // Release 4 part A: quality
+  { key: 'inspection-results', label: 'Inspection results', what: 'Completed inspections by result and kind.' },
+  { key: 'rejection-rates', label: 'Rejection rates', what: 'Failed inspections by product and by supplier.' },
+  { key: 'supplier-defects', label: 'Supplier defects', what: 'Refused, failed, NCRs and returns per supplier.' },
+  { key: 'ncr-register', label: 'NCR register', what: 'Nonconformances with their age and disposition.' },
+  { key: 'capa-status', label: 'Corrective actions', what: 'Actions by status, and the overdue ones.' },
+  { key: 'rework', label: 'Rework', what: 'Rework on the shop floor and from nonconformances.' },
+  { key: 'cost-of-poor-quality', label: 'Cost of poor quality', what: 'Scrap value and rework cost.' },
 ];
 
 // ------------------------------------------------------------------ data
@@ -173,6 +183,7 @@ export function SystemRoutes() {
       <Route path="/procurement/*" element={<CompanyRedirect section="procurement" />} />
       <Route path="/inventory/*" element={<CompanyRedirect section="inventory" />} />
       <Route path="/manufacturing/*" element={<CompanyRedirect section="manufacturing" />} />
+      <Route path="/quality/*" element={<CompanyRedirect section="quality" />} />
       <Route path="/operations" element={<Shell><Operations /></Shell>} />
       <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
       <Route path="/administration" element={<Shell><Administration /></Shell>} />
@@ -218,7 +229,7 @@ function MaintenanceRedirect() {
 }
 
 /** /products, /procurement, /inventory and /manufacturing: the same section of the company used last, else the first one. */
-function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' | 'manufacturing' }) {
+function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' | 'manufacturing' | 'quality' }) {
   const location = useLocation();
   const q = useMe();
   if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
@@ -265,6 +276,7 @@ function CompanyArea() {
         <Route path="inventory/*" element={<Suspense fallback={<Loading />}><InventoryArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="erp-settings" element={<Suspense fallback={<Loading />}><ErpSettingsPage companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="manufacturing/*" element={<Suspense fallback={<Loading />}><ManufacturingArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
+        <Route path="quality/*" element={<Suspense fallback={<Loading />}><QualityArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="*" element={<Navigate to="home" replace />} />
       </Routes>
     </Shell>
@@ -305,6 +317,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             <NavLink to={`${base}/procurement`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="inbox" /> Procurement</NavLink>
             <NavLink to={`${base}/inventory`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="layers" /> Inventory</NavLink>
             <NavLink to={`${base}/manufacturing`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Manufacturing</NavLink>
+            <NavLink to={`${base}/quality`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="checkSquare" /> Quality</NavLink>
             <NavLink to={`${base}/maintenance`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="wrench" /> Maintenance</NavLink>
             <NavLink to={`${base}/settings`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Company</NavLink>
           </>
@@ -594,6 +607,13 @@ function CompanyHome({ view }: { view: CompanyView }) {
             <p className="small">{c.kind === 'demo' ? 'An order for ten weldments in progress, and MRP suggestions for a confirmed demand of 60 kits.' : 'Plan from demand with MRP, run the shop floor from a phone, and see estimated against actual cost.'}</p>
           </Link>
         ) : null}
+        {c.role !== 'guest' ? (
+          <Link to={`/c/${c.id}/quality`} className="card card-pad co-tool-card sys-tool-card">
+            <div className="row"><Icon name="checkSquare" /> <strong>Quality</strong></div>
+            <p className="muted small">Inspection plans, inspections from receipt to finished goods, nonconformances and corrective actions.</p>
+            <p className="small">{c.kind === 'demo' ? 'A failed incoming inspection of bracket arms, its nonconformance and a corrective action in progress.' : 'Record inspections on a phone; the result is worked out from the limits.'}</p>
+          </Link>
+        ) : null}
       </div>
       {!view.tools.length && c.role !== 'guest' ? (
         <section className="card card-pad stack">
@@ -820,7 +840,7 @@ const PLANNED: { name: string; icon: string; covers: string; today?: string; bad
     name: 'Inventory and Warehouse',
     icon: 'layers',
     covers: 'Live now: warehouses with a location tree (store, zone, rack, shelf, bin; quarantine, receiving and dispatch); stock by product, location, lot and serial; an append-only movement ledger; issues, transfers, reservations, quarantine, customer and supplier returns, scrap; adjustments with approval; stocktakes and cycle counts; weighted average or FIFO valuation; traceability; QR labels and a warehouse screen for phones.',
-    today: 'Planned: posting stock value to Finance’s ledger (recorded as planned, nothing is posted), and inspection screens for goods flagged on receipt (Quality, Release 4).',
+    today: 'Planned: posting stock value to Finance’s ledger (recorded as planned, nothing is posted). Goods flagged for inspection on receipt are inspected in Quality.',
     badge: 'Live',
     live: { to: '/inventory', label: 'Open Inventory' },
   },
@@ -828,11 +848,18 @@ const PLANNED: { name: string; icon: string; covers: string; today?: string; bad
     name: 'Manufacturing',
     icon: 'settings',
     covers: 'Live now: work centres and machines with a capacity calendar and cost rates; routings with revisions released by an engineering approver who did not draft them; manufacturing orders from a released bill of materials and routing, with materials reserved, issued and returned through Inventory; operations with labour and machine time, output, scrap, rework, downtime and inspection results; finished goods received at actual cost; a shop-floor screen for phones; the master production schedule, MRP with make, buy and expedite suggestions, and rough-cut capacity; estimated against actual cost by element, with variances at close.',
-    today: 'Not yet: posting production value to Finance’s ledger (recorded as planned, nothing is posted), job profitability (needs sales orders, Release 5), full Quality inspections and nonconformances (Release 4), and finite scheduling.',
+    today: 'Not yet: posting production value to Finance’s ledger (recorded as planned, nothing is posted), job profitability (needs sales orders, Release 5), and finite scheduling. Full inspections of operations are in Quality.',
     badge: 'Live',
     live: { to: '/manufacturing', label: 'Open Manufacturing' },
   },
-  { name: 'Quality', icon: 'checkSquare', covers: 'Inspection plans and checklists, inspections, nonconformances and corrective actions.' },
+  {
+    name: 'Quality',
+    icon: 'checkSquare',
+    covers: 'Live now: inspection plans with versions and characteristics (dimensions with limits, attributes, visual checks, samples, photos); inspections of goods receipts, manufacturing operations, finished goods and suppliers, recorded on a phone, with the result worked out from the limits; quarantine and release through Inventory; nonconformance reports with containment, root cause, disposition (use as is, rework, repair, scrap, return to supplier, regrade) and verification; corrective and preventive actions with approval and closure under segregation of duties; seven quality reports.',
+    today: 'Planned: statistical process control, calibration, quality audits, and appraisal and external failure costs. Overdue corrective actions show on the Quality overview, not in My Work.',
+    badge: 'Live',
+    live: { to: '/quality', label: 'Open Quality' },
+  },
   {
     name: 'Asset Management and Maintenance',
     icon: 'wrench',
@@ -855,7 +882,7 @@ function Operations() {
   usePageTitle('Operations');
   return (
     <div className="page crm-page">
-      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. Procurement, Inventory and Manufacturing are live; Products and Engineering records and Asset Management and Maintenance are partly live; Quality and Supply Chain are planned: they are not built yet and keep no data." />
+      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, assets, maintenance and supply chain. Procurement, Inventory, Manufacturing and Quality are live; Products and Engineering records and Asset Management and Maintenance are partly live; Supply Chain is planned: it is not built yet and keeps no data." />
       <OperationsToday />
       <div className="co-tools-grid">
         {PLANNED.map((m) => (
@@ -878,6 +905,8 @@ interface OperationsCounts {
   receipts: { last30Days: number; inspection: number };
   stock: { belowReorder: number; pendingAdjustments: number; openCounts: number; countsToApprove: number; warehouses: number; valueCents: number };
   manufacturing?: { draft: number; released: number; inProgress: number; toClose: number; late: number; inspections: number; suggestions: { make: number; buy: number; expedite: number } };
+  // Release 4 part A
+  quality?: { toInspect: number; openInspections: number; openNcrs: number; ncrsToDisposition: number; capasToApprove: number; overdueCapas: number };
 }
 
 /** What waits in the company used last: approvals, orders to receive, stock to reorder, counts and adjustments. */
@@ -909,6 +938,9 @@ function OperationsToday() {
         {d.manufacturing ? item(d.manufacturing.toClose, 'Manufacturing orders to close', '/manufacturing?status=completed') : null}
         {d.manufacturing ? item(d.manufacturing.inspections, 'Inspections outstanding', '/manufacturing/shop-floor') : null}
         {d.manufacturing ? item(d.manufacturing.suggestions.make + d.manufacturing.suggestions.buy + d.manufacturing.suggestions.expedite, 'MRP suggestions open', '/manufacturing/planning') : null}
+        {d.quality ? item(d.quality.toInspect, 'Waiting for inspection', '/quality') : null}
+        {d.quality ? item(d.quality.ncrsToDisposition, 'Nonconformances to disposition', '/quality/ncrs?status=open') : null}
+        {d.quality ? item(d.quality.overdueCapas, 'Corrective actions overdue', '/quality/capas?overdue=1') : null}
       </div>
     </section>
   );
@@ -933,7 +965,7 @@ function ReportsPage() {
       <p className="muted small">The figures on the <Link to={`/c/${c.id}/home`}>Dashboard</Link> come from these tools.</p>
       {c.role !== 'guest' ? (
         <section className="stack">
-          <h2 className="crm-subhead">Products, engineering, purchasing, stock and manufacturing</h2>
+          <h2 className="crm-subhead">Products, engineering, purchasing, stock, manufacturing and quality</h2>
           <div className="co-tools-grid">
             {ERP_REPORT_LINKS.map((r) => (
               <Link key={r.key} to={`/c/${c.id}/erp-reports/${r.key}`} className="card card-pad co-tool-card sys-tool-card">

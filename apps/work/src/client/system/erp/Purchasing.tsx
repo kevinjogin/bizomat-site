@@ -27,6 +27,7 @@ import {
   procurementPage,
   productsPage,
   qty,
+  qualityPage,
   toCents,
   type ErpEvent,
   type ErpMe,
@@ -1273,11 +1274,21 @@ interface ReceiptView {
   files: RecordFile[];
   history: ErpEvent[];
   inspectionNote: string | null;
+  // Release 4: inspections of this receipt's lines
+  inspections?: { id: string; number: string; status: string; result: string | null; receiptLineId: string | null }[];
+}
+
+/** Release 4: a receipt line's inspection: its result, or a button to start it where the product needs inspection. */
+function LineInspection({ companyId, me, line, found, onStart }: { companyId: string; me: ErpMe; line: ReceiptView['lines'][number]; found?: NonNullable<ReceiptView['inspections']>[number]; onStart: () => void }) {
+  if (found) return <> <Link className={`badge ${found.result === 'failed' ? 'danger' : found.result ? 'success' : 'accent'}`} to={qualityPage(companyId, `/inspections/${found.id}`)}>{found.number}{found.result ? `: ${found.result === 'conditional' ? 'accepted on condition' : found.result}` : ': open'}</Link></>;
+  if (!line.inspectionRequired) return null;
+  return <> <span className="badge warning">Inspect</span>{me.can['quality.inspect'] && line.accepted > 0 ? <> <button type="button" className="btn sm" onClick={onStart}>Start inspection</button></> : null}</>;
 }
 
 export function ReceiptDetail({ companyId, me }: { companyId: string; me: ErpMe }) {
   const { id = '' } = useParams();
   const act = useAct(companyId);
+  const navigate = useNavigate();
   const q = useQuery({ queryKey: ['erp', companyId, 'receipt', id], queryFn: () => get<ReceiptView>(erpPath(companyId, `/receipts/${id}`)), retry: false });
   usePageTitle(q.data ? q.data.receipt.number : 'Goods receipt');
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
@@ -1306,7 +1317,7 @@ export function ReceiptDetail({ companyId, me }: { companyId: string; me: ErpMe 
             <tbody>
               {v.lines.map((l) => (
                 <tr key={l.id}>
-                  <td data-label="Product or item">{l.productId ? <Link to={inventoryPage(companyId, `/stock/${l.productId}`)}><span className="mt-num">{l.productNumber}</span> {l.item}</Link> : l.item}{l.inspectionRequired ? <> <span className="badge warning">Inspect</span></> : null}{l.reason ? <div className="muted small">{l.reason}</div> : null}</td>
+                  <td data-label="Product or item">{l.productId ? <Link to={inventoryPage(companyId, `/stock/${l.productId}`)}><span className="mt-num">{l.productNumber}</span> {l.item}</Link> : l.item}<LineInspection companyId={companyId} me={me} line={l} found={v.inspections?.find((i) => i.receiptLineId === l.id)} onStart={async () => { const res = (await act(() => post<{ id: string }>(erpPath(companyId, '/inspections'), { sourceType: 'receipt_line', sourceId: l.id }), 'Inspection started')) as { id: string } | null; if (res) navigate(qualityPage(companyId, `/inspections/${res.id}`)); }} />{l.reason ? <div className="muted small">{l.reason}</div> : null}</td>
                   <td data-label="Received" className="num">{qty(l.received)} {l.uom}</td>
                   <td data-label="Accepted" className="num">{qty(l.accepted)}</td>
                   <td data-label="Damaged" className="num">{l.damaged ? qty(l.damaged) : ''}</td>

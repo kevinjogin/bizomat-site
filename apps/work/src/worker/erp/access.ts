@@ -23,6 +23,9 @@
 //                         master production schedule, MRP runs and their suggestions (and does an operator's work)
 //   production_operator   runs operations on the shop floor: start, stop, labour and machine time, output, scrap, rework,
 //                         downtime and inspection results; issues materials and receives finished goods
+//   quality_manager       inspection plans (drafts and release), inspections, nonconformance dispositions, verification
+//                         and closure, approval and closure of corrective and preventive actions (Release 4)
+//   quality_inspector     records inspections (readings, photos, results), quarantines failed lots, raises NCRs
 //   viewer                reads products, engineering records, suppliers, purchasing, stock and manufacturing
 // The company's owner and administrators are ERP administrators; other members are viewers until an ERP administrator
 // gives them roles. In a person's own or example company the owner is the ERP administrator.
@@ -30,13 +33,29 @@
 // Segregation of duties: nobody approves a change order they drafted, a supplier they created, a requisition they
 // raised, a purchase order or quotation choice they made, an adjustment they asked for or a count they counted, unless
 // they are the only person in the company (own and example companies, or a registered company of one); that exception is
-// recorded on the record and in the history. Release 3: nobody releases a routing revision they drafted.
+// recorded on the record and in the history. Release 3: nobody releases a routing revision they drafted. Release 4: nobody
+// approves a corrective or preventive action they proposed or are to carry out, or closes one they carried out.
 
 import type { Context } from 'hono';
 import type { AppEnv } from '../env';
 import { HttpError, notFound } from '../lib/util';
 
-export const ERP_ROLES = ['erp_admin', 'executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'viewer'] as const;
+export const ERP_ROLES = [
+  'erp_admin',
+  'executive',
+  'engineer',
+  'engineering_approver',
+  'buyer',
+  'procurement_manager',
+  'warehouse_manager',
+  'warehouse_operator',
+  'production_manager',
+  'production_operator',
+  // Release 4: quality
+  'quality_manager',
+  'quality_inspector',
+  'viewer',
+] as const;
 export type ErpRole = (typeof ERP_ROLES)[number];
 
 export const ROLE_LABELS: Record<ErpRole, string> = {
@@ -50,11 +69,13 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   warehouse_operator: 'Warehouse operator',
   production_manager: 'Production manager',
   production_operator: 'Production operator',
+  quality_manager: 'Quality manager',
+  quality_inspector: 'Quality inspector',
   viewer: 'Viewer',
 };
 
 /** Everyone who may read (every role but the administrator, who may do everything). */
-const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'viewer'] as const;
+const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'quality_manager', 'quality_inspector', 'viewer'] as const;
 
 /** Every action the ERP checks, and the roles that may take it (erp_admin may take every one). */
 export const CAPABILITIES = {
@@ -93,6 +114,15 @@ export const CAPABILITIES = {
   'production.receive': ['production_manager', 'production_operator', 'warehouse_manager', 'warehouse_operator'],
   'mrp.run': ['production_manager'],
   'mrp.buy': ['production_manager', 'buyer', 'procurement_manager'],
+  // Release 4: quality
+  'quality.view': READERS,
+  'quality.plan': ['quality_manager', 'engineer', 'engineering_approver'],
+  'quality.plan_release': ['quality_manager'],
+  'quality.inspect': ['quality_manager', 'quality_inspector'],
+  'quality.raise': ['quality_manager', 'quality_inspector', 'production_manager', 'production_operator', 'warehouse_manager', 'warehouse_operator'],
+  'quality.disposition': ['quality_manager'],
+  'capa.propose': ['quality_manager', 'quality_inspector', 'engineer', 'engineering_approver', 'production_manager', 'warehouse_manager', 'procurement_manager'],
+  'capa.approve': ['quality_manager'],
 } as const satisfies Record<string, readonly ErpRole[]>;
 export type Capability = keyof typeof CAPABILITIES;
 
@@ -148,6 +178,14 @@ const NEEDED: Partial<Record<Capability, string>> = {
   'production.receive': 'Only production and warehouse staff and ERP administrators can receive finished goods',
   'mrp.run': 'Only production managers and ERP administrators can run MRP or turn its suggestions into orders',
   'mrp.buy': 'Only production managers, buyers, procurement managers and ERP administrators can turn a purchase suggestion into a requisition',
+  // Release 4: quality
+  'quality.plan': 'Only quality managers, engineers, engineering approvers and ERP administrators can change inspection plans',
+  'quality.plan_release': 'Only quality managers and ERP administrators can release an inspection plan',
+  'quality.inspect': 'Only quality inspectors, quality managers and ERP administrators can record inspections',
+  'quality.raise': 'Only quality, production and warehouse staff and ERP administrators can raise a nonconformance',
+  'quality.disposition': 'Only quality managers and ERP administrators can decide a disposition, release stock from it, verify or close a nonconformance',
+  'capa.propose': 'Only quality staff, engineers and managers and ERP administrators can propose a corrective or preventive action',
+  'capa.approve': 'Only quality managers and ERP administrators can approve, verify or close a corrective or preventive action',
 };
 
 export function deny(msg = 'You do not have permission to do that'): never {
@@ -252,4 +290,12 @@ export function segregation(a: ErpAccess, authorId: string | null | undefined, w
   if (!authorId || authorId !== a.userId) return false;
   if (a.solo) return true;
   throw new HttpError(403, `You ${what} yourself, so someone else must approve it (segregation of duties)`);
+}
+
+/** Release 4: segregation against several people at once (each with what they did); true when the exception applies. */
+export function segregationOf(a: ErpAccess, parties: [string | null | undefined, string][], decision = 'approve it'): boolean {
+  const hit = parties.find(([id]) => !!id && id === a.userId);
+  if (!hit) return false;
+  if (a.solo) return true;
+  throw new HttpError(403, `You ${hit[1]}, so someone else must ${decision} (segregation of duties)`);
 }
