@@ -11,6 +11,7 @@ import { financeHousekeeping, runFinanceScheduled } from './fin';
 import { recheckPendingAbns } from './company/routes';
 import { generateDue } from './maintenance/pm';
 import { escalateOverdue } from './whs/actions';
+import { runBillingScheduled } from './billing/admin';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -47,6 +48,13 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     results.whs = { overdueEscalated: await escalateOverdue(env, new Date(at).toISOString().slice(0, 10)) };
   } catch (e) {
     results.whs = { error: e instanceof Error ? e.message : 'failed' };
+  }
+  // Billing: Stripe events still to process, seat counts against the members, and records not read from Stripe for a
+  // day (src/worker/billing/admin.ts). Nothing at all while billing is not configured.
+  try {
+    results.billing = await runBillingScheduled(env);
+  } catch (e) {
+    results.billing = { error: e instanceof Error ? e.message.slice(0, 200) : 'failed' };
   }
   // Companies: ABNs not yet looked up on the Australian Business Register (only when ABR_GUID is set), a few a run.
   try {

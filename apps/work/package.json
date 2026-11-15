@@ -35,6 +35,7 @@
     "migrate:dry-run": "node scripts/migrate/dry-run.mjs"
   },
   "dependencies": {
+    "@stripe/stripe-js": "10.3.0",
     "@tanstack/react-query": "^5.105.3",
     "@tiptap/extension-image": "^3.32.2",
     "@tiptap/extension-link": "^3.32.2",
@@ -51,6 +52,7 @@
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "react-router-dom": "^7.18.5",
+    "stripe": "23.1.0",
     "ws": "^8.22.1",
     "zod": "^4.6.7"
   },

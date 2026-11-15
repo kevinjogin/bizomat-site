@@ -42,6 +42,10 @@ import { maintenanceRoutes } from './maintenance';
 import { erpRoutes } from './erp';
 import { whsRoutes } from './whs';
 import { legalAdminRoutes as whsAdminRoutes } from './whs/legal';
+import { billingRoutes } from './billing/routes';
+import { billingWebhookRoutes } from './billing/webhook';
+import { adminBillingRoutes } from './billing/admin';
+import { entitlementGate } from './billing/entitlements';
 
 export const CSP = [
   "default-src 'self'",
@@ -58,6 +62,26 @@ export const CSP = [
   "object-src 'none'",
 ].join('; ');
 
+/**
+ * The billing pages only (/c/<company>/billing): Stripe's embedded Checkout needs Stripe.js from js.stripe.com and its
+ * frames (docs.stripe.com/security/guide). Every other page keeps CSP above. Links into billing load a full page so
+ * this policy applies.
+ */
+export const BILLING_CSP = [
+  "default-src 'self'",
+  "script-src 'self' https://js.stripe.com https://*.js.stripe.com",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  "connect-src 'self' wss: ws: https://api.stripe.com https://checkout.stripe.com https://*.link.com",
+  "frame-src 'self' blob: https://js.stripe.com https://*.js.stripe.com https://hooks.stripe.com https://checkout.stripe.com https://*.link.com",
+  "frame-ancestors 'none'",
+  "base-uri 'self'",
+  "form-action 'self' https://accounts.google.com https://checkout.stripe.com",
+  "object-src 'none'",
+].join('; ');
+export const BILLING_PAGE = /^\/c\/[^/]+\/billing(\/|$)/;
+
 function applySecurityHeaders(headers: Headers, isApi: boolean) {
   headers.set('X-Content-Type-Options', 'nosniff');
   // A PDF shown inside the app (the document preview) may be framed by the same origin; nothing else is framed.
@@ -65,7 +89,7 @@ function applySecurityHeaders(headers: Headers, isApi: boolean) {
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
   // The camera: this origin only, for the ERP's warehouse screen to read QR codes (BarcodeDetector), always after the
   // browser asks the person; typing a code works without it.
-  headers.set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(), payment=()');
+  if (!headers.has('Permissions-Policy')) headers.set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(), payment=()');
   headers.set('Cross-Origin-Opener-Policy', 'same-origin');
   if (!headers.has('Content-Security-Policy')) headers.set('Content-Security-Policy', CSP);
   headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
@@ -152,10 +176,15 @@ export function createApp() {
   app.get('/api/app-carry', carry);
   // Provider callbacks: no session, their own authentication (src/worker/routes/email.ts).
   app.route('/api/email-webhooks', emailWebhookRoutes);
+  // Stripe's webhook: no session, Stripe's signature (src/worker/billing/webhook.ts).
+  app.route('/api/billing/stripe-webhook', billingWebhookRoutes);
 
   // Everything below requires authentication.
   const api = new Hono<AppEnv>();
   api.use('*', requireAuth);
+  // Billing: writes to a registered company's paid tools need an active subscription when enforcement is on (off by
+  // default; src/worker/billing/entitlements.ts). Reads always pass.
+  api.use('*', entitlementGate);
   api.route('/', workspaceRoutes);
   api.route('/', orgRoutes);
   api.route('/', accessRoutes);
@@ -192,6 +221,7 @@ export function createApp() {
   // BIZOMAT WHS, Release 1 (src/worker/whs): hazards, risk assessments, incidents, investigations, regulatory
   // notification records and actions, with the jurisdiction packs.
   api.route('/whs', whsRoutes);
+  api.route('/billing', billingRoutes);
   // Founder admin API: authenticated session + platform-admin role, enforced server-side.
   const admin = new Hono<AppEnv>();
   admin.use('*', requirePlatformAdmin);
@@ -205,6 +235,7 @@ export function createApp() {
   admin.route('/system', adminSystemRoutes);
   // BIZOMAT WHS jurisdiction packs: drafts, review, activation and verification of legal rules (src/worker/whs/legal.ts).
   admin.route('/whs', whsAdminRoutes);
+  admin.route('/billing', adminBillingRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
@@ -251,6 +282,11 @@ export function createApp() {
     // A customer's online document: never indexed, never cached.
     if (tool === FIN_MOUNT && url.pathname.startsWith('/view/')) out.headers.set('X-Robots-Tag', 'noindex, nofollow');
     else if ((out.headers.get('Content-Type') ?? '').includes('text/html')) out.headers.set('Cache-Control', 'no-cache');
+    // A billing page: Stripe's embedded Checkout may load (BILLING_CSP above), and wallets may be offered in its frame.
+    if (BILLING_PAGE.test(url.pathname) && (out.headers.get('Content-Type') ?? '').includes('text/html')) {
+      out.headers.set('Content-Security-Policy', BILLING_CSP);
+      out.headers.set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(), payment=(self "https://js.stripe.com" "https://checkout.stripe.com")');
+    }
     // The client builds its addresses from <base href>: "/" here, "/tasks/" under bizomat.ai (src/worker/mount.ts).
     return withBaseHref(out, c.env.BASE_PATH ?? '');
   });

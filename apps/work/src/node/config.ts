@@ -32,6 +32,18 @@ export interface WorkerVars {
   ABR_GUID?: string;
   /** JSON list of the applications allowed to use BIZOMAT sign-in (src/worker/company/id-provider.ts). */
   BIZOMAT_ID_CLIENTS?: string;
+  // Billing (docs/billing/README.md): passed through when set; src/worker/billing/config.ts checks them.
+  STRIPE_ENVIRONMENT?: string;
+  STRIPE_SECRET_KEY?: string;
+  STRIPE_PUBLISHABLE_KEY?: string;
+  STRIPE_WEBHOOK_SECRET?: string;
+  STRIPE_WEBHOOK_SECRET_PREVIOUS?: string;
+  STRIPE_PRICE_SEAT_MONTHLY?: string;
+  STRIPE_PRICE_SEAT_ANNUAL?: string;
+  STRIPE_PRORATION?: string;
+  STRIPE_AUTOMATIC_TAX?: string;
+  STRIPE_GRACE_DAYS?: string;
+  STRIPE_API_BASE?: string;
 }
 
 /** Email settings copied from the environment into the Worker's env when present. */
@@ -39,6 +51,22 @@ export const EMAIL_VARS = ['EMAIL_PROVIDER', 'BREVO_API_KEY', 'BREVO_WEBHOOK_TOK
 
 /** Company account settings copied from the environment into the Worker's env when present. */
 export const COMPANY_VARS = ['ABR_GUID', 'BIZOMAT_ID_CLIENTS'] as const;
+
+/** Billing settings copied from the environment into the Worker's env when present (src/worker/billing/config.ts checks
+ * them; docs/billing/README.md). On Fly they arrive as WORK_STRIPE_* (infrastructure/fly/entrypoint.sh). */
+export const BILLING_VARS = [
+  'STRIPE_ENVIRONMENT',
+  'STRIPE_SECRET_KEY',
+  'STRIPE_PUBLISHABLE_KEY',
+  'STRIPE_WEBHOOK_SECRET',
+  'STRIPE_WEBHOOK_SECRET_PREVIOUS',
+  'STRIPE_PRICE_SEAT_MONTHLY',
+  'STRIPE_PRICE_SEAT_ANNUAL',
+  'STRIPE_PRORATION',
+  'STRIPE_AUTOMATIC_TAX',
+  'STRIPE_GRACE_DAYS',
+  'STRIPE_API_BASE',
+] as const;
 
 /** An https address with an optional lowercase path, as canonicalRedirect (src/worker/mount.ts) accepts it. */
 const CANONICAL = /^https:\/\/[a-z0-9.-]+(\/[a-z0-9-]+)*\/?$/i;
@@ -99,7 +127,7 @@ export function configFromEnv(env: Record<string, string | undefined> = process.
   if (canonical) vars.CANONICAL_URL = canonical;
   if (env.GOOGLE_CLIENT_ID) vars.GOOGLE_CLIENT_ID = env.GOOGLE_CLIENT_ID;
   if (env.GOOGLE_CLIENT_SECRET) vars.GOOGLE_CLIENT_SECRET = env.GOOGLE_CLIENT_SECRET;
-  for (const k of [...EMAIL_VARS, ...COMPANY_VARS]) {
+  for (const k of [...EMAIL_VARS, ...COMPANY_VARS, ...BILLING_VARS]) {
     const v = env[k]?.trim();
     if (v) vars[k] = v;
   }

@@ -53,6 +53,30 @@ export interface Env {
    * JSON: [{"id":"cad","name":"CAD Automation","secretSha256":"<hex>","redirectUris":["https://bizomat.ai/cad/..."]}].
    */
   BIZOMAT_ID_CLIENTS?: string;
+  /**
+   * Billing (src/worker/billing/config.ts, docs/billing/README.md). Billing is off unless the environment, a key of the
+   * same environment, the publishable key, a webhook signing secret and the monthly per-user price are all set.
+   * "test" or "live". Live only after the owner's explicit approval.
+   */
+  STRIPE_ENVIRONMENT?: string;
+  /** Secret: a restricted key (rk_test_..., recommended) or secret key of the same environment. Server only. */
+  STRIPE_SECRET_KEY?: string;
+  /** pk_test_... or pk_live_...: sent to the billing page so it can show Stripe's embedded Checkout. */
+  STRIPE_PUBLISHABLE_KEY?: string;
+  /** Secret: the webhook destination's signing secret (whsec_...), and the previous one while it is rolled. */
+  STRIPE_WEBHOOK_SECRET?: string;
+  STRIPE_WEBHOOK_SECRET_PREVIOUS?: string;
+  /** The Stripe Price ids of the per-user price (price_...): monthly (required) and annual (optional). */
+  STRIPE_PRICE_SEAT_MONTHLY?: string;
+  STRIPE_PRICE_SEAT_ANNUAL?: string;
+  /** How seat changes are charged: create_prorations (default), always_invoice or none. */
+  STRIPE_PRORATION?: string;
+  /** "on" turns on Stripe Tax: only once BIZOMAT's GST registration is recorded in Stripe. */
+  STRIPE_AUTOMATIC_TAX?: string;
+  /** Days of full access after a failed payment while enforcement is on (default 14). */
+  STRIPE_GRACE_DAYS?: string;
+  /** Development and tests only: a local stand-in for api.stripe.com (refused in production and in live). */
+  STRIPE_API_BASE?: string;
 }
 
 export interface AuthUser {
