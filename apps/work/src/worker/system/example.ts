@@ -6,7 +6,9 @@
 // (ERP Release 1) and purchasing and inventory records (ERP Release 2), all named for it and owned by that person alone.
 // From ERP Release 4 part A, quality records too (an inspection plan, a failed inspection, an NCR and a corrective action),
 // and from Release 5 part A supply chain records (a carrier, a sales order shipped and invoiced, a line made to order, a
-// return).
+// return). From BIZOMAT WHS Release 1, health and safety records (a site in New South Wales, a hazard being controlled,
+// an approved JSA, a near miss and an injury with its investigation, actions, and a regulator notification record marked
+// as example data).
 // It is made the first time they open the ERP (the client asks for it), and again only when they ask after removing it.
 // Example companies made before a release keep what they had: nothing is added to them.
 //
@@ -167,6 +169,47 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
     );
   }
   const files = await db.prepare('SELECT r2_key FROM mt_files WHERE company_id = ?').bind(companyId).all<{ r2_key: string }>();
+  // BIZOMAT WHS (migrations/0026_whs_core.sql) first: its site jurisdictions point at Maintenance's sites. Incidents,
+  // health records, rule checks, notices and the history refuse deletion except for a whole-company removal written to
+  // whs_purges in the same transaction (taken out at the end).
+  try {
+    const whsFiles = await db.prepare('SELECT r2_key FROM whs_files WHERE company_id = ?').bind(companyId).all<{ r2_key: string }>();
+    files.results.push(...whsFiles.results);
+    stmts.push(db.prepare('INSERT INTO whs_purges (company_id, started_at) VALUES (?, ?) ON CONFLICT(company_id) DO NOTHING').bind(companyId, t));
+    for (const table of [
+      'whs_alerts',
+      'whs_comments',
+      'whs_files',
+      'whs_links',
+      'whs_events',
+      'whs_rule_checks',
+      'whs_reg_notices',
+      'whs_inv_statements',
+      'whs_inv_timeline',
+      'whs_inv_team',
+      'whs_investigations',
+      'whs_health',
+      'whs_incident_revisions',
+      'whs_incidents',
+      'whs_actions',
+      'whs_ra_controls',
+      'whs_ra_hazards',
+      'whs_ra_steps',
+      'whs_risk_assessments',
+      'whs_hazards',
+      'whs_site_packs',
+      'whs_hours',
+      'whs_policies',
+      'whs_settings',
+      'whs_matrices',
+      'whs_counters',
+      'whs_purges',
+    ]) {
+      stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
+    }
+  } catch {
+    // before migration 0026 (a test database without it): no WHS records
+  }
   // Maintenance stages M2 and M3 (migrations/0024_maintenance_m2_m3.sql) first: they point at 0018's records.
   for (const table of [
     'mt_insp_results',
@@ -790,6 +833,126 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     const rmaView = await api('Supply chain', 'GET', e(`/rmas/${rma.id}`));
     await api('Supply chain', 'POST', e(`/rmas/${rma.id}/receive`), { lines: [{ lineId: rmaView.lines[0].id, quantity: 1, locationId: quarLoc.id }], note: 'Box crushed; kit to be inspected' });
     await api('Supply chain', 'POST', e(`/rmas/${rma.id}/credit-note`));
+
+    // ---------------------------------------------------------------- Health and Safety (BIZOMAT WHS, Release 1)
+    // The workshop site in New South Wales (its legal pack is not verified, so no deadline is ever computed from it), a
+    // hazard at the press brake rated high with an engineering control assigned, an approved JSA for the lens change of
+    // the laser cutter, a near miss with an overdue preventive action, an injury with its investigation by five whys and
+    // fishbone, its corrective actions, and a regulator notification record that says plainly it is example data: no
+    // regulator was contacted. Twelve months of invented hours worked, so the dashboard can show frequency rates. Every
+    // name is invented; the health record holds nothing but a made-up line. No email is sent.
+    const w = (p: string) => `/api/whs/c/${companyId}${p}`;
+    await api('WHS', 'PUT', w(`/sites/${mtSite.id}/jurisdictions`), { packIds: ['au-nsw'] });
+    await api('WHS', 'PUT', w('/hours'), { entries: Array.from({ length: 12 }, (_, i) => ({ siteId: mtSite.id, month: new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth() - i, 1)).toISOString().slice(0, 7), hours: 1520 })) });
+    const hz = await api('WHS', 'POST', w('/hazards'), {
+      title: 'Open pinch point at the press brake back gauge',
+      category: 'machinery',
+      description: 'The back gauge fingers move without a guard while the setter adjusts them between jobs.',
+      siteId: mtSite.id,
+      location: 'Fabrication bay, press brake',
+      assetId: brake.id,
+      activity: 'Setting up the back gauge between jobs',
+      peopleExposed: 'Press brake setters and operators',
+      consequenceText: 'Crushed or cut fingers',
+      existingControls: 'Setters told to keep hands clear; cut-resistant gloves',
+    });
+    await api('WHS', 'POST', w(`/hazards/${hz.id}/assess`), { likelihood: 3, consequence: 4, note: 'Seen twice this month' });
+    await api('WHS', 'POST', w(`/hazards/${hz.id}/controls`), {
+      proposedControls: 'Fit an interlocked guard over the back gauge; until then, set the gauge only with the machine isolated.',
+      responsibleId: user.id,
+      dueDate: d(14),
+      actions: [
+        { title: 'Fit an interlocked guard over the back gauge', hierarchy: 'engineering', priority: 'high', responsibleId: user.id, dueDate: d(14), evidenceRequired: true, evidenceNote: 'A photo of the guard fitted and the interlock test record' },
+        { title: 'Isolate the press brake before every back gauge adjustment', hierarchy: 'isolation', priority: 'high', responsibleId: user.id, dueDate: d(3) },
+      ],
+    });
+    await api('WHS', 'POST', w(`/hazards/${hz.id}/advance`), { to: 'implementation', note: 'Guard ordered from Example Machines' });
+    const jsa = await api('WHS', 'POST', w('/risk-assessments'), {
+      kind: 'jsa',
+      title: 'Changing the lens of the laser cutter',
+      activity: 'Lens change on the laser cutter',
+      siteId: mtSite.id,
+      assetId: laser.id,
+      responsibleId: user.id,
+      reviewDate: d(180),
+      content: {
+        steps: [
+          { key: 's1', step: 'Isolate and lock out the laser and the chiller' },
+          { key: 's2', step: 'Open the cutting head and remove the lens' },
+          { key: 's3', step: 'Fit the new lens, close the head and test' },
+        ],
+        lines: [
+          { stepKey: 's1', hazard: 'Unexpected start of the laser', harm: 'Burns, eye injury', persons: 'The technician', likelihood: 2, consequence: 5, residualLikelihood: 1, residualConsequence: 5, controls: [{ stage: 'existing', hierarchy: 'isolation', description: 'Lock out the laser and the chiller with a personal lock', effectiveness: 'effective' }, { stage: 'existing', hierarchy: 'administrative', description: 'Try the start button after isolating', effectiveness: 'effective' }] },
+          { stepKey: 's2', hazard: 'Hot optics and sharp edges inside the head', harm: 'Burns and cuts to the hands', persons: 'The technician', likelihood: 3, consequence: 2, residualLikelihood: 2, residualConsequence: 2, controls: [{ stage: 'existing', hierarchy: 'administrative', description: 'Wait 15 minutes for the head to cool', effectiveness: 'effective' }, { stage: 'additional', hierarchy: 'ppe', description: 'Cut-resistant gloves', effectiveness: 'not_assessed' }] },
+          { stepKey: 's3', hazard: 'Stray laser light during the test', harm: 'Eye injury', persons: 'The technician and people nearby', likelihood: 2, consequence: 4, residualLikelihood: 1, residualConsequence: 4, controls: [{ stage: 'existing', hierarchy: 'engineering', description: 'Test with the enclosure doors closed and interlocked', effectiveness: 'effective' }] },
+        ],
+      },
+    });
+    await api('WHS', 'POST', w(`/risk-assessments/${jsa.assessment.id}/submit`), {});
+    await api('WHS', 'POST', w(`/risk-assessments/${jsa.assessment.id}/approve`), { note: 'Checked with the technician on the floor' });
+    const at2 = (offset: number, hour: number) => today.getTime() + offset * DAY + hour * 3_600_000;
+    const near = await api('WHS', 'POST', w('/incidents'), {
+      kind: 'near_miss',
+      title: 'Forklift reversed close to a person in the store',
+      description: 'A forklift reversing out of aisle A passed about a metre from a person walking to the receiving bay. Nobody was hurt.',
+      occurredDate: d(-9),
+      occurredTime: '10:15',
+      occurredAt: at2(-9, 10.25),
+      siteId: mtSite.id,
+      location: 'Workshop store, aisle A',
+      immediateResponse: 'Work stopped in the aisle; the driver and the person were spoken to.',
+      severity: 'minor',
+      outcome: 'none',
+    });
+    await api('WHS', 'POST', w(`/incidents/${near.id}/respond`), { immediateResponse: 'Work stopped in the aisle; the driver and the person were spoken to.' });
+    await api('WHS', 'POST', w(`/incidents/${near.id}/classify`), { kind: 'near_miss', severity: 'moderate', outcome: 'none', investigationRequired: false, note: 'No walkway markings in the store' });
+    await api('WHS', 'POST', w(`/incidents/${near.id}/advance`), { to: 'corrective_action' });
+    const walk = await api('WHS', 'POST', w('/actions'), { sourceType: 'incident', sourceId: near.id, kind: 'preventive', title: 'Mark pedestrian walkways and a crossing in the store', hierarchy: 'isolation', priority: 'high', responsibleId: user.id, dueDate: d(-2) });
+    await api('WHS', 'POST', w(`/actions/${walk.id}/start`), {});
+    const injury = await api('WHS', 'POST', w('/incidents'), {
+      kind: 'injury',
+      title: 'Cut to the hand while handling a bracket arm',
+      description: 'A worker unloading laser-cut bracket arms cut the back of the hand on a sharp edge.',
+      occurredDate: d(-4),
+      occurredTime: '14:30',
+      occurredAt: at2(-4, 14.5),
+      siteId: mtSite.id,
+      location: 'Fabrication bay, laser unloading table',
+      activity: 'Unloading cut parts',
+      peopleInvolved: 'One worker (example)',
+      witnesses: 'Sam Rivers (example)',
+      immediateResponse: 'First aid given; the worker was taken to a clinic for treatment.',
+      firstAid: true,
+      outcome: 'medical_treatment',
+      severity: 'moderate',
+      // invented and minimal: shown only to a health officer (in the example company, its owner)
+      health: { personName: 'Example worker', treatment: 'Example only: wound cleaned and dressed at a clinic.', daysLost: 0 },
+    });
+    await api('WHS', 'POST', w(`/incidents/${injury.id}/respond`), { immediateResponse: 'First aid given; the worker was taken to a clinic for treatment.', firstAid: true, initialNotification: 'Supervisor told in person at 14:35' });
+    await api('WHS', 'POST', w(`/incidents/${injury.id}/classify`), { kind: 'injury', severity: 'moderate', outcome: 'medical_treatment', bodyPart: 'Left hand', injuryNature: 'Laceration', investigationRequired: true });
+    const invView = await api('WHS', 'POST', w(`/incidents/${injury.id}/investigation`), { leadId: user.id, method: 'both', scope: 'How sharp edges reach the unloading table, and why gloves were not worn.' });
+    const inv = invView.investigation;
+    await api('WHS', 'POST', w(`/investigations/${inv.id}/timeline`), { at: `${d(-4)} 14:20`, description: 'Unloading of the bracket arm batch started' });
+    await api('WHS', 'POST', w(`/investigations/${inv.id}/timeline`), { at: `${d(-4)} 14:30`, description: 'The worker cut the back of the left hand on an arm’s edge' });
+    await api('WHS', 'POST', w(`/investigations/${inv.id}/timeline`), { at: `${d(-4)} 14:35`, description: 'First aid given; the supervisor was told' });
+    await api('WHS', 'POST', w(`/investigations/${inv.id}/statements`), { witness: 'Sam Rivers (example)', takenOn: d(-3), statement: 'Invented example statement: I saw the arms come off the table with sharp edges. Gloves were on the shelf by the door.' });
+    await api('WHS', 'PATCH', w(`/investigations/${inv.id}`), {
+      whys: ['The worker cut the hand on an arm’s edge.', 'The edge was sharp.', 'Arms are not deburred before unloading.', 'Deburring was moved to the end of the line last month.', 'Nobody assessed the change to the work.'],
+      fishbone: { methods: ['Deburring moved after unloading'], materials: ['Sharp laser-cut edges'], people: ['Gloves not worn for a short job'], management: ['No review of the change to the work'] },
+      rootCause: 'The work changed without its risk assessment being reviewed, so sharp parts reach the unloading table.',
+      factors: ['A short, rushed job', 'Gloves kept away from the table'],
+      failedControls: [{ control: 'Cut-resistant gloves', hierarchy: 'ppe', why: 'Not worn: kept by the door' }],
+      findings: 'Deburr parts before they are unloaded, and review the unloading task’s risk assessment.',
+    });
+    await api('WHS', 'POST', w(`/investigations/${inv.id}/submit`), {});
+    await api('WHS', 'POST', w(`/investigations/${inv.id}/approve`), { decision: 'approve', note: 'Root cause agreed' });
+    await api('WHS', 'POST', w('/actions'), { sourceType: 'investigation', sourceId: inv.id, kind: 'corrective', title: 'Deburr bracket arms before they leave the laser cell', hierarchy: 'engineering', priority: 'high', responsibleId: user.id, dueDate: d(10), evidenceRequired: true, evidenceNote: 'A photo of the deburred parts at the unloading table' });
+    await api('WHS', 'POST', w('/actions'), { sourceType: 'investigation', sourceId: inv.id, kind: 'preventive', title: 'Keep cut-resistant gloves at the unloading table', hierarchy: 'ppe', priority: 'medium', responsibleId: user.id, dueDate: d(5) });
+    await api('WHS', 'POST', w('/links'), { fromType: 'incident', fromId: injury.id, toType: 'risk_assessment', toId: jsa.assessment.id });
+    // A regulator notification record, to show how one is kept. EXAMPLE DATA: no regulator was contacted.
+    await api('WHS', 'POST', w(`/incidents/${injury.id}/notification/decision`), { packId: 'au-nsw', decision: 'notifiable', reasons: 'Example data: recorded to show how a decision and a submission are kept. In a real case a WHS manager decides from the verified rule and the regulator’s guidance.', responsibleId: user.id });
+    const nv = await api('WHS', 'GET', w(`/incidents/${injury.id}/notification`));
+    await api('WHS', 'POST', w(`/incidents/${injury.id}/notification/${nv.notices[0].id}/submission`), { method: 'online', submittedAt: at2(-4, 16), submittedById: user.id, reference: 'EXAMPLE-0001 (invented)', notes: 'Example data only: no notification was made to any regulator.' });
   });
 }
 

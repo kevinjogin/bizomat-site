@@ -5,7 +5,8 @@
 // fault" button sits at the foot of the rail on every screen. Products and Engineering (ERP Release 1) opens the product
 // master, and Procurement's suppliers open from Operations. Each tool keeps its own navigation beside it; nothing here
 // changes who may see what. The modules that are planned but not built (purchase orders, inventory, manufacturing and the
-// rest) are listed on the Operations page as planned, never as working.
+// rest) are listed on the Operations page as planned, never as working. Health and Safety (BIZOMAT WHS, Release 1) opens
+// the WHS module of the company used last.
 import { lazy, Suspense, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { APP_BASE, SUITE } from '../../lib/base';
@@ -27,7 +28,7 @@ interface Module {
 }
 
 const own = (re: RegExp) => (p: string) => IS_SYSTEM && re.test(p);
-const ERP_PAGES = /^\/(my-work|cad|products|procurement|inventory|manufacturing|quality|maintenance|operations|reports|administration|admin)(\/|$)|^\/c\/[^/]+\/(cad|products|procurement|inventory|manufacturing|quality|erp-roles|erp-settings|erp-reports|settings|maintenance)(\/|$)/;
+const ERP_PAGES = /^\/(my-work|cad|products|procurement|inventory|manufacturing|quality|maintenance|whs|operations|reports|administration|admin)(\/|$)|^\/c\/[^/]+\/(cad|products|procurement|inventory|manufacturing|quality|erp-roles|erp-settings|erp-reports|settings|maintenance|whs)(\/|$)/;
 
 const MODULES: Module[] = [
   { id: 'home', label: 'Dashboard', title: 'Dashboard: your company, its tools and their figures', icon: 'home', to: '/', active: (p) => IS_SYSTEM && !ERP_PAGES.test(p) },
@@ -37,6 +38,7 @@ const MODULES: Module[] = [
   { id: 'tasks', label: 'Projects and Tasks', title: 'Projects and Tasks: boards, timelines, documents and dashboards', icon: 'grid', to: '/tasks/', active: (p) => APP_BASE === '/tasks' && !/\/my-work(\/|$)/.test(p) },
   { id: 'cad', label: 'Products and Engineering', title: 'Products and Engineering: products, bills of materials, revisions, engineering changes, documents and CAD Automation', icon: 'diamond', to: '/products', active: own(/^\/(c\/[^/]+\/)?(cad|products)(\/|$)/) },
   { id: 'maintenance', label: 'Maintenance', title: 'Asset Management and Maintenance', icon: 'wrench', to: '/maintenance', active: own(/^\/(c\/[^/]+\/)?maintenance(\/|$)/) },
+  { id: 'whs', label: 'Health and Safety', title: 'Health and Safety (BIZOMAT WHS): report a hazard or an incident, risk assessments, investigations, regulator notification records and actions', icon: 'shield', to: '/whs', active: own(/^\/(c\/[^/]+\/)?whs(\/|$)/) },
   { id: 'operations', label: 'Operations', title: 'Operations: procurement, inventory, manufacturing, quality and supply chain (live), and what is live of Asset Management and Maintenance', icon: 'layers', to: '/operations', active: own(/^\/(c\/[^/]+\/)?(operations|procurement|inventory|manufacturing|quality|supply-chain)(\/|$)/) },
   { id: 'reports', label: 'Reports', title: 'Reports: every report of your tools in one place', icon: 'chart', to: '/reports', active: own(/^\/reports(\/|$)|^\/c\/[^/]+\/erp-reports(\/|$)/) },
   { id: 'admin', label: 'Administration', title: 'Administration: company, people, departments, tools, ERP roles and permissions', icon: 'settings', to: '/administration', active: (p) => APP_BASE === '/company' || (IS_SYSTEM && /^\/(administration|admin)(\/|$)|^\/c\/[^/]+\/(settings|erp-roles|erp-settings)/.test(p)) },

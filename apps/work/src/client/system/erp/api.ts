@@ -6,7 +6,7 @@ import { get } from '../../lib/api';
 import { appUrl } from '../../lib/base';
 import { formatMoney } from '../../../shared/crm/money';
 
-export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'warehouse_manager' | 'warehouse_operator' | 'production_manager' | 'production_operator' | 'quality_manager' | 'quality_inspector' | 'sales_manager' | 'viewer';
+export type ErpRole = 'erp_admin' | 'executive' | 'engineer' | 'engineering_approver' | 'buyer' | 'procurement_manager' | 'warehouse_manager' | 'warehouse_operator' | 'production_manager' | 'production_operator' | 'quality_manager' | 'quality_inspector' | 'sales_manager' | 'whs_manager' | 'whs_officer' | 'whs_investigator' | 'whs_hsr' | 'health_officer' | 'viewer';
 export type Capability =
   | 'products.view'
   | 'products.edit'
@@ -109,6 +109,12 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   quality_manager: 'Quality manager',
   quality_inspector: 'Quality inspector',
   sales_manager: 'Sales manager',
+  // BIZOMAT WHS, Release 1 (src/worker/whs/access.ts)
+  whs_manager: 'WHS manager',
+  whs_officer: 'WHS officer or supervisor',
+  whs_investigator: 'Incident investigator',
+  whs_hsr: 'Health and safety representative',
+  health_officer: 'Health officer',
   viewer: 'Viewer',
 };
 

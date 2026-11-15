@@ -10,6 +10,7 @@ import { runCrmScheduled } from './crm';
 import { financeHousekeeping, runFinanceScheduled } from './fin';
 import { recheckPendingAbns } from './company/routes';
 import { generateDue } from './maintenance/pm';
+import { escalateOverdue } from './whs/actions';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -40,6 +41,12 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     results.maintenancePm = { made: pm.made.length, skipped: pm.skipped };
   } catch (e) {
     results.maintenancePm = { error: e instanceof Error ? e.message : 'failed' };
+  }
+  // WHS: overdue actions escalated once each, in the app, to the responsible person and the WHS managers.
+  try {
+    results.whs = { overdueEscalated: await escalateOverdue(env, new Date(at).toISOString().slice(0, 10)) };
+  } catch (e) {
+    results.whs = { error: e instanceof Error ? e.message : 'failed' };
   }
   // Companies: ABNs not yet looked up on the Australian Business Register (only when ABR_GUID is set), a few a run.
   try {
