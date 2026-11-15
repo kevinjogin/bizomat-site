@@ -4,13 +4,12 @@ Owner's brief "BIZOMAT ERP — full enterprise functionality implementation" (14
 its acceptance tests pass; nothing is labelled live to look further along than it is. The public statuses are
 `src/data/erp-capabilities.ts` and `src/config/systems.ts`; this file is the engineering view behind them.
 
-Updated 15 Nov 2026. Release 1 was merged and deployed on 14 Nov 2026. Release 2 (purchasing and inventory) is built on
-the branch `erp-release-2` and is not merged or deployed: production does not have it until it is reviewed, merged and
-deployed. Rows marked "Release 2 (not deployed)" are working in that branch, with their tests passing.
+Updated 15 Nov 2026. Release 1 was merged and deployed on 14 Nov 2026, Release 2 (purchasing and inventory) on
+15 Nov 2026 (kevinjogin/bizomat-site#63, deploy run 32, version 85db8c2, migration 0021 applied at start-up).
 
 ## Working
 
-Built, tested and live at `bizomat.ai/erp` unless marked "Release 2 (not deployed)".
+Built, tested and live at `bizomat.ai/erp`.
 
 | Area | What | Evidence |
 | --- | --- | --- |
@@ -26,19 +25,19 @@ Built, tested and live at `bizomat.ai/erp` unless marked "Release 2 (not deploye
 | **Release 1**: Supplier master | Suppliers with approval, hold and block, ABN format check, contacts, documents, products supplied, link to Finance's supplier (refused without a Finance role) | Supplier lifecycle and Finance link tests |
 | **Release 1**: Reports | Product catalogue, lifecycle, bill of materials cost, where-used, revisions and changes, supplier list; drill-down and CSV | Reports and CSV test |
 | **Release 1**: Example company | A kit with a released two-level bill of materials, a draft change order, a CAD reference, two suppliers (one approved) | Example company test |
-| **Release 2 (not deployed)**: Foundations | Warehouse manager and operator roles, the capability matrix for purchasing and inventory, REQ, RFQ, PO, GR, CNT and ADJ numbering, purchasing and inventory settings, attachments on purchasing records | `docs/erp/release-2.md`; `apps/work/test/erp-r2.test.ts` (roles, numbering, isolation) |
-| **Release 2 (not deployed)**: Requisitions | Product or free-text lines, department, required date, budget reference, reason; approval by a procurement manager who did not raise them | Scenario B |
-| **Release 2 (not deployed)**: Requests for quotation and the comparison | Approved suppliers only, a PDF per supplier, sent by hand and recorded, quotations with prices, lead time, freight, terms, validity and documents, cheapest and fastest marked, selection with a reason and its approval | Scenario B |
-| **Release 2 (not deployed)**: Purchase orders | Approved suppliers, from a quotation, a requisition or directly, Finance tax codes, approval limits with the rule recorded, segregation, amendments with their history, PDF with live preview, sent by hand and recorded, cancel and close | Scenario B; approval-limit and amendment tests |
-| **Release 2 (not deployed)**: Goods receipts | Partial receipts, damaged and rejected with reasons, lots, serials, expiry, inspection flag, stock in the same transaction, idempotent, concurrent receipts of the last units refused | Scenario B; concurrency tests (workerd and Node) |
-| **Release 2 (not deployed)**: Supplier performance | On time, in full, lead time and refused quantities from receipts | Scenario B; supplier delivery report |
-| **Release 2 (not deployed)**: Draft bill in Finance | One draft supplier bill per receipt through Finance's own `createDoc`, by someone whose Finance role may create bills; made once under repeated and simultaneous requests | Scenario B; Node test |
-| **Release 2 (not deployed)**: Inventory and warehouse | Warehouses and a location tree, stock by product, location, lot and serial, the append-only ledger, issue, transfer, reservations, quarantine, returns, scrap, adjustments with approval, stocktakes and cycle counts, traceability, never below zero (a concurrent last-unit issue refused) | Scenario C; stock and concurrency tests (workerd and Node) |
-| **Release 2 (not deployed)**: Valuation | Weighted average and FIFO, chosen once and locked, valuation screen and report | Valuation tests (workerd and Node) |
-| **Release 2 (not deployed)**: QR labels and the warehouse screen | QR SVG made on the server, label sheets, the scan lookup, a phone screen to receive, issue, move and count by typed codes, the camera where the browser can read codes | QR reference test; scan lookup test; Chromium run at phone width (typed codes) |
-| **Release 2 (not deployed)**: Availability in bills of materials | Available stock per component, required and shortages for a build quantity | BOM availability test |
-| **Release 2 (not deployed)**: Reports | Purchase commitments, supplier spend, price variance, supplier delivery, stock on hand, valuation, movements, ageing, slow-moving, shortages; filters and CSV | Reports and CSV tests |
-| **Release 2 (not deployed)**: Example company | A warehouse with locations, stock received from a purchase order, a requisition, a request for quotation with two quotations | Example company tests (workerd and Node) |
+| **Release 2**: Foundations | Warehouse manager and operator roles, the capability matrix for purchasing and inventory, REQ, RFQ, PO, GR, CNT and ADJ numbering, purchasing and inventory settings, attachments on purchasing records | `docs/erp/release-2.md`; `apps/work/test/erp-r2.test.ts` (roles, numbering, isolation) |
+| **Release 2**: Requisitions | Product or free-text lines, department, required date, budget reference, reason; approval by a procurement manager who did not raise them | Scenario B |
+| **Release 2**: Requests for quotation and the comparison | Approved suppliers only, a PDF per supplier, sent by hand and recorded, quotations with prices, lead time, freight, terms, validity and documents, cheapest and fastest marked, selection with a reason and its approval | Scenario B |
+| **Release 2**: Purchase orders | Approved suppliers, from a quotation, a requisition or directly, Finance tax codes, approval limits with the rule recorded, segregation, amendments with their history, PDF with live preview, sent by hand and recorded, cancel and close | Scenario B; approval-limit and amendment tests |
+| **Release 2**: Goods receipts | Partial receipts, damaged and rejected with reasons, lots, serials, expiry, inspection flag, stock in the same transaction, idempotent, concurrent receipts of the last units refused | Scenario B; concurrency tests (workerd and Node) |
+| **Release 2**: Supplier performance | On time, in full, lead time and refused quantities from receipts | Scenario B; supplier delivery report |
+| **Release 2**: Draft bill in Finance | One draft supplier bill per receipt through Finance's own `createDoc`, by someone whose Finance role may create bills; made once under repeated and simultaneous requests | Scenario B; Node test |
+| **Release 2**: Inventory and warehouse | Warehouses and a location tree, stock by product, location, lot and serial, the append-only ledger, issue, transfer, reservations, quarantine, returns, scrap, adjustments with approval, stocktakes and cycle counts, traceability, never below zero (a concurrent last-unit issue refused) | Scenario C; stock and concurrency tests (workerd and Node) |
+| **Release 2**: Valuation | Weighted average and FIFO, chosen once and locked, valuation screen and report | Valuation tests (workerd and Node) |
+| **Release 2**: QR labels and the warehouse screen | QR SVG made on the server, label sheets, the scan lookup, a phone screen to receive, issue, move and count by typed codes, the camera where the browser can read codes | QR reference test; scan lookup test; Chromium run at phone width (typed codes) |
+| **Release 2**: Availability in bills of materials | Available stock per component, required and shortages for a build quantity | BOM availability test |
+| **Release 2**: Reports | Purchase commitments, supplier spend, price variance, supplier delivery, stock on hand, valuation, movements, ageing, slow-moving, shortages; filters and CSV | Reports and CSV tests |
+| **Release 2**: Example company | A warehouse with locations, stock received from a purchase order, a requisition, a request for quotation with two quotations | Example company tests (workerd and Node) |
 
 ## In development
 
@@ -69,8 +68,6 @@ product catalogue with the product master.
 
 ## Decisions waiting for the owner
 
-- Merge and deploy Release 2 (branch `erp-release-2`, one additive migration, 0021; the deploy's pre-migration backup
-  covers it).
 - Email of purchase orders and requests for quotation with the PDF attached needs attachments in the email outbox: a
   change to the email service, not built.
 - Stock value postings to Finance: which accounts (inventory, cost of goods, stock adjustments) and when (Release 3).

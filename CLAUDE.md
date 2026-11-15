@@ -45,8 +45,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   with variants, revisions with change requests and change orders (approval and release with segregation of duties),
   multi-level bills of materials, engineering documents (files or CAD references, never claimed to be on the server),
   the supplier master (ABN "format checked", linked to Finance, never copied) and their reports, at
-  `/erp/c/<company>/products` and `/procurement`. **ERP Release 2** (`docs/erp/release-2.md`; built on the branch
-  `erp-release-2`, live only once merged and deployed; migration 0021): requisitions, requests for quotation with the
+  `/erp/c/<company>/products` and `/procurement`. **ERP Release 2** (`docs/erp/release-2.md`; merged and deployed
+  15 Nov 2026; migration 0021): requisitions, requests for quotation with the
   comparison, purchase orders (approval limits, amendments, PDF; emailing the PDF is not built), goods receipts,
   supplier performance and one draft bill in Finance per receipt (through Finance's `createDoc`, never writing `fin_*`
   directly), at `/procurement`; inventory (warehouses and locations, stock by lot and serial, an append-only movement
@@ -66,8 +66,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `/systems/erp/`), BIZOMAT CRM (Customer Management System, `/systems/crm/`), BIZOMAT Finance (Finance Management
   System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
   Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, own sign-in
-  for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`: Maintenance works in the ERP today,
-  Procurement and Inventory once Release 2 is deployed; manufacturing, quality and supply chain are planned). The old product pages
+  for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`: Maintenance, Procurement and Inventory work in the
+  ERP today; manufacturing, quality and supply chain are planned). The old product pages
   (`/work/`, `/cad-automation/`, `/crm-platform/`, `/finance-platform/`, their guides, `/products/`) answer 301 there
   (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."

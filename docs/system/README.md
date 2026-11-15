@@ -19,7 +19,7 @@
 >   - Procurement's supplier master at `/erp/c/<company>/procurement`, opened from Operations;
 >   - ERP roles at `/erp/c/<company>/erp-roles` (Administration) and six reports at `/erp/c/<company>/erp-reports`
 >     (Reports).
-> - **ERP Release 2** (built on the branch `erp-release-2`, not merged or deployed yet; `docs/erp/release-2.md`,
+> - **ERP Release 2** (live since 15 Nov 2026, kevinjogin/bizomat-site#63; `docs/erp/release-2.md`,
 >   migration `0021_erp_purchasing_inventory.sql`, the same API):
 >   - Procurement at `/erp/c/<company>/procurement`: suppliers, requisitions, requests for quotation with the
 >     comparison, purchase orders (approval limits, amendments, PDF), goods receipts and one draft bill in Finance per
