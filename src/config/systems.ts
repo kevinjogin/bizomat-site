@@ -10,7 +10,7 @@ export type SystemStatus = 'available' | 'partial' | 'planned';
 
 export interface SystemInfo {
   /** Slug: /systems/<id>/. */
-  id: 'erp' | 'crm' | 'finance' | 'projects' | 'engineering' | 'manufacturing';
+  id: 'erp' | 'crm' | 'finance' | 'projects' | 'engineering' | 'manufacturing' | 'whs';
   /** What kind of system it is ("Business Management System"). */
   kind: string;
   /** Its product name ("BIZOMAT ERP"). */
@@ -114,6 +114,22 @@ export const SYSTEMS: readonly SystemInfo[] = [
     guide: '/systems/manufacturing/guide/',
     access: { href: `${erp}operations`, label: 'Open Operations', note: 'Opens inside BIZOMAT ERP, in the Operations module: Procurement, Inventory, Manufacturing, Quality, Supply Chain and Maintenance.' },
     module: 'Operations',
+  },
+  {
+    // BIZOMAT WHS, Release 1 (the core): apps/work/src/worker/whs, migration 0026_whs_core.sql, docs/whs/README.md;
+    // apps/work/test/whs-core.test.ts and test-node/whs-core.test.ts. The legal packs are Not verified until a platform
+    // administrator verifies them in the app: nothing here may say the product makes a business meet the law.
+    id: 'whs',
+    kind: 'Work Health & Safety Management System',
+    name: 'BIZOMAT WHS',
+    short: 'WHS',
+    line: 'Manage workplace safety, incidents, hazards, risk assessments, inspections, contractors, training, corrective actions and regulatory compliance from one connected platform.',
+    status: 'partial',
+    statusNote: 'Working today inside BIZOMAT ERP (Release 1): hazard reporting from a phone and the hazard register; risk assessments (JSA, JHA, SWMS and nine more kinds) on the company’s own risk matrix with the hierarchy of controls; incidents and near misses with investigations by five whys and fishbone; the regulator notification record (the decision is made by an authorised person, and the submission is recorded as it was made: BIZOMAT does not submit to regulators); the actions register with evidence; confidential health records seen only by health officers; and jurisdiction packs for Australia’s Commonwealth, states and territories (Victoria under its own OHS laws) with skeleton packs for New Zealand, the United Kingdom, Canada, Singapore and South Africa. Every legal instrument and rule is Not verified until a competent person verifies it against the official source. Planned: inspections and audits, documents and SWMS acknowledgement, permits to work, contractors and visitors, training, chemicals, plant safety, PPE, emergency management, consultation, health surveillance and the compliance register.',
+    url: '/systems/whs/',
+    guide: '/systems/whs/guide/',
+    access: { href: `${erp}whs`, label: 'Open Health and Safety', note: 'Opens inside BIZOMAT ERP, in the Health and Safety module.' },
+    module: 'Health and Safety',
   },
 ] as const;
 

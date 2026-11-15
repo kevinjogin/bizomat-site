@@ -167,6 +167,11 @@ const ROLE_HELP: Record<string, string> = {
   quality_manager: 'Inspection plans and their release, inspections, nonconformance dispositions, verification and closure; approves and closes corrective actions',
   quality_inspector: 'Records inspections with readings and photos, puts failed lots into quarantine, raises nonconformances and proposes corrective actions',
   sales_manager: 'Sales orders: drafts, confirms, amends and closes them, allocates stock, plans shipments, sets up carriers, authorises returns, and asks Finance for the draft invoice and credit note',
+  whs_manager: 'Health and Safety: everything in WHS, its settings, approvals, the notification decision and submission record, and confidential reports; not medical details',
+  whs_officer: 'Health and Safety: assesses hazards, classifies incidents, drafts risk assessments, investigates, raises, verifies and closes actions; never confidential reports or medical details',
+  whs_investigator: 'Health and Safety: investigates incidents: the team, timeline, witness statements, evidence and root cause',
+  whs_hsr: 'Health and Safety: reads the registers and adds consultation comments',
+  health_officer: 'Health and Safety: the only role that reads confidential health information (medical treatment details), and confidential reports',
   viewer: 'Reads products, engineering records, suppliers, purchasing, stock, manufacturing, quality and sales orders',
 };
 

@@ -29,7 +29,7 @@ import https from 'node:https';
 import net from 'node:net';
 import tls from 'node:tls';
 
-const PAGES = ['/', '/systems/', '/systems/erp/', '/systems/erp/guide/', '/systems/crm/', '/systems/crm/guide/', '/systems/finance/', '/systems/finance/guide/', '/systems/projects/', '/systems/projects/guide/', '/systems/engineering/', '/systems/engineering/guide/', '/systems/manufacturing/', '/systems/manufacturing/guide/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
+const PAGES = ['/', '/systems/', '/systems/erp/', '/systems/erp/guide/', '/systems/crm/', '/systems/crm/guide/', '/systems/finance/', '/systems/finance/guide/', '/systems/projects/', '/systems/projects/guide/', '/systems/engineering/', '/systems/engineering/guide/', '/systems/manufacturing/', '/systems/manufacturing/guide/', '/systems/whs/', '/systems/whs/guide/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
 // Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room; the
 // design preview was retired, owner 14 Nov 2026; the product pages became the Systems pages).
 const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/system-preview/', '/systems/erp/'], ['/erp-design-preview/', '/systems/erp/'],

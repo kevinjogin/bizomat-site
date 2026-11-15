@@ -28,6 +28,7 @@ export const EMAIL_TEMPLATES = [
   'company_invitation',
   'company_email',
   'erp_dispatch',
+  'whs_alert',
 ] as const;
 export type EmailTemplate = (typeof EMAIL_TEMPLATES)[number];
 
@@ -169,7 +170,8 @@ export type TemplateData =
   | { template: 'fin_document'; organisation: string; replyEmail?: string | null; kind: 'quote' | 'invoice' | 'credit_note'; number: string; amount: string; dateLabel?: string | null; date?: string | null; url: string; message?: string | null }
   | { template: 'company_invitation'; organisation: string; inviter: string; role: string; tools: string; expires: string; url: string; existingUser: boolean }
   | { template: 'company_email'; organisation: string; email: string; url: string; expires: string }
-  | { template: 'erp_dispatch'; organisation: string; order: string; shipment: string; customerPo?: string | null; carrier?: string | null; service?: string | null; tracking?: string | null; trackingUrl?: string | null; window?: string | null; packages?: string | null };
+  | { template: 'erp_dispatch'; organisation: string; order: string; shipment: string; customerPo?: string | null; carrier?: string | null; service?: string | null; tracking?: string | null; trackingUrl?: string | null; window?: string | null; packages?: string | null }
+  | { template: 'whs_alert'; organisation: string; title: string; body?: string | null; url?: string | null };
 
 function taskRows(d: TaskEmailData): [string, string | null | undefined][] {
   return [
@@ -524,6 +526,18 @@ export function renderEmail(d: TemplateData): RenderedEmail {
         button: { label: 'Confirm the address', url: d.url },
         after: [`The link works once, until ${d.expires}.`, 'If this is not your company, ignore this email: nothing is confirmed without the link.'],
         reason: `You received this email because this address was given as the contact address of ${d.organisation}.`,
+      });
+    case 'whs_alert':
+      // BIZOMAT WHS (src/worker/whs/util.ts alert): a number, a short title and a link, never health details
+      return layout({
+        product: 'WHS',
+        subject: d.title,
+        preheader: clip(d.body, 120),
+        heading: d.title,
+        intro: d.body ? [clip(d.body, 1000)] : [],
+        rows: [['Company', d.organisation || null]],
+        button: d.url ? { label: 'Open in BIZOMAT WHS', url: d.url } : undefined,
+        reason: 'You received this email because you hold a health and safety role in this company in BIZOMAT ERP.',
       });
     case 'notification':
     default: {

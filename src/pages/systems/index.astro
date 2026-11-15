@@ -329,6 +329,53 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     opens: 'Procurement, Inventory, Manufacturing, Quality, Supply Chain and Maintenance open inside BIZOMAT ERP.',
     signIn: 'Your BIZOMAT account, in BIZOMAT ERP',
   },
+  // BIZOMAT WHS, Release 1 (apps/work/src/worker/whs, docs/whs/README.md). The legal packs are Not verified until a
+  // platform administrator verifies them in the app (tests/whs-claims.test.ts keeps this text free of such claims).
+  whs: {
+    description: 'The Health and Safety module of BIZOMAT ERP. Anyone in the company reports a hazard or an incident from a phone; WHS officers and managers assess the risk, investigate, decide on a regulator notification with reasons, and follow each corrective action to a verified close.',
+    who: 'It is designed for businesses with people at work in workshops, on sites and in the field, and for the people who look after their health and safety.',
+    problems: [
+      'Hazards and incidents reported on paper or not at all.',
+      'Risk assessments kept in spreadsheets, never reviewed.',
+      'Corrective actions agreed and then forgotten.',
+      'No record of who decided whether an incident had to be notified, and why.',
+    ],
+    capabilities: [
+      live('Hazard reporting from a phone, with photos, and the hazard register'),
+      live('Risk assessments (JSA, SWMS and ten more kinds) on your own risk matrix, with the hierarchy of controls'),
+      live('Incidents and near misses, investigations by five whys and fishbone'),
+      live('The regulator notification record: a person decides with reasons and records the submission'),
+      live('The actions register, with evidence and verification'),
+      live('Jurisdiction packs for every Australian jurisdiction, all Not verified yet'),
+      planned('Inspections and audits, permits, contractors, training, chemicals, PPE and emergency management'),
+    ],
+    limit: 'Every legal instrument and rule is Not verified until a competent person verifies it against the official source. BIZOMAT does not submit notifications to regulators.',
+    shot: shotOf('erp', 'erp-whs'),
+    benefits: [
+      'Reports made where the hazard is, from a phone.',
+      'Risks rated the same way on one company matrix.',
+      'Actions that cannot be completed without their evidence.',
+      'A history of every change to an incident.',
+    ],
+    connects: [
+      connected('Sites and assets from Maintenance, read only, and hazards linked to work orders.'),
+      connected('Your health and safety actions and investigations in My Work.'),
+      live('Departments and roles from your company in BIZOMAT ERP.'),
+    ],
+    steps: [
+      { t: 'Set it up.', x: 'Give each site its jurisdiction and give people their WHS roles in Administration.' },
+      { t: 'Report.', x: 'Anyone reports a hazard or an incident from a phone.' },
+      { t: 'Assess and investigate.', x: 'Rate the risk, assign controls, and investigate incidents to their root cause.' },
+      { t: 'Act and close.', x: 'Follow each action to its evidence and verification, then close the record.' },
+    ],
+    faqs: [
+      { q: 'Can I use it today?', a: 'Release 1, the core, works inside BIZOMAT ERP under Health and Safety: hazards, risk assessments, incidents, investigations, notification records and actions.' },
+      { q: 'Does it decide whether to notify the regulator?', a: 'No. An authorised person decides, with reasons. A due time is shown only from a rule that is verified and in effect, and BIZOMAT does not submit to regulators.' },
+    ],
+    manages: 'Hazards, risk assessments, incidents, investigations and corrective actions',
+    opens: 'Opens inside BIZOMAT ERP, in Health and Safety.',
+    signIn: 'Your BIZOMAT account, in BIZOMAT ERP',
+  },
 };
 
 const platformFaqs = [

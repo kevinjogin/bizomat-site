@@ -1,0 +1,132 @@
+/* BIZOMAT WHS, Release 1 (src/client/system/whs): on top of crm.css, maintenance.css and erp.css, with the app's tokens
+   only. Reporting is made for a phone: large targets, one column, the report buttons first. Risk levels carry their name
+   in words as well as their shade, so colour is never the only signal. */
+
+.whs-big { min-height: 52px; font-size: 16px; justify-content: center; }
+.whs-report-buttons { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.whs-report-buttons .btn { width: 100%; }
+.whs-report { max-width: 640px; }
+.whs-report .whs-input { min-height: 46px; font-size: 16px; }
+.whs-two { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; }
+.whs-more > summary { cursor: pointer; font-weight: 600; padding: 10px 0; min-height: 44px; display: flex; align-items: center; }
+.whs-more[open] > summary { margin-bottom: 8px; }
+.whs-check { min-height: 44px; display: flex; align-items: center; gap: 8px; }
+.whs-check input { width: 20px; height: 20px; accent-color: var(--accent); }
+.whs-chosen { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.whs-chosen li { min-width: 0; }
+.whs-done { max-width: 640px; }
+
+/* the kinds of incident: large choices */
+.whs-kinds { border: 0; margin: 0; padding: 0; min-width: 0; }
+.whs-kinds legend { font-weight: 600; margin-bottom: 8px; padding: 0; }
+.whs-kind-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.whs-kind { display: flex; align-items: center; gap: 8px; min-height: 48px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); cursor: pointer; font-size: 14px; }
+.whs-kind input { width: 18px; height: 18px; accent-color: var(--accent); flex: none; }
+.whs-kind.active { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; }
+.whs-kind:focus-within { outline: 2px solid var(--focus-color, var(--accent)); outline-offset: 2px; }
+
+.whs-confidential-box { border-left: 3px solid var(--info, var(--accent)); padding: 8px 12px; background: var(--info-soft, var(--surface-2)); border-radius: var(--radius); margin: 0; }
+.whs-health-box { border: 1px dashed var(--border-strong, var(--border)); border-radius: var(--radius); padding: 10px 12px; margin: 0; min-width: 0; }
+.whs-health-box legend { font-weight: 600; font-size: 13px; padding: 0 4px; display: inline-flex; gap: 4px; align-items: center; }
+.whs-confidential { gap: 4px; }
+
+.whs-warning { display: flex; gap: 8px; align-items: flex-start; border-left: 3px solid var(--warning); padding: 8px 12px; background: var(--warning-soft); border-radius: var(--radius); margin: 0; color: var(--text); }
+.whs-warning p { margin: 0; }
+.whs-warning > svg { flex: none; margin-top: 2px; }
+.whs-legal-notice { display: flex; gap: 6px; align-items: flex-start; margin: 0; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface-2); color: var(--text-2); }
+.whs-legal-notice > svg { flex: none; margin-top: 2px; }
+.whs-example { display: flex; gap: 6px; align-items: center; margin: 0; padding: 6px 10px; border-radius: var(--radius); background: var(--info-soft, var(--surface-2)); }
+.whs-actual { display: flex; gap: 6px; align-items: center; margin: 0; }
+
+/* risk levels: a shade by rank and the level's name */
+.whs-risk { color: var(--text); border-left: 3px solid transparent; border-radius: 4px; }
+.whs-risk-1 { background: var(--success-soft); border-left-color: var(--success); }
+.whs-risk-2 { background: var(--warning-soft); border-left-color: var(--warning); }
+.whs-risk-3 { background: color-mix(in srgb, var(--danger) 18%, var(--surface)); border-left-color: color-mix(in srgb, var(--danger) 70%, var(--warning)); }
+.whs-risk-4, .whs-risk-5, .whs-risk-6 { background: color-mix(in srgb, var(--danger) 32%, var(--surface)); border-left-color: var(--danger); }
+.whs-risk-high { font-weight: 700; }
+
+/* the workflow stepper */
+.whs-steps { margin: 0; }
+.whs-subtabs { margin: 0; }
+.whs-step-actions { gap: 8px; }
+
+/* alerts */
+.whs-alerts { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.whs-alert { display: flex; gap: 10px; align-items: flex-start; padding: 8px 10px; border-radius: var(--radius); background: var(--surface-2); border-left: 3px solid var(--accent); min-width: 0; overflow-wrap: anywhere; }
+.whs-alert-serious_incident, .whs-alert-potentially_notifiable { border-left-color: var(--danger); }
+.whs-alert-overdue_action, .whs-alert-notification_due { border-left-color: var(--warning); }
+.whs-alert > svg { flex: none; margin-top: 2px; }
+
+/* the dashboard's charts: thin columns on a hairline baseline, the numbers in a table under them */
+.whs-charts { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+.whs-chart { margin: 0; display: grid; gap: 6px; min-width: 0; }
+.whs-chart-svg { width: 100%; height: auto; display: block; }
+.whs-chart-axis { stroke: var(--border); stroke-width: 1; }
+.whs-chart-bar { fill: var(--accent); }
+.whs-chart-hit { fill: transparent; }
+.whs-chart-hit:hover + .whs-chart-bar, .whs-chart-bar:hover { fill: var(--accent-2, var(--accent)); }
+.whs-chart-value { fill: var(--text); font-size: 12px; font-weight: 600; }
+.whs-chart-month { fill: var(--text-3); font-size: 11px; }
+.whs-table-view > summary { cursor: pointer; font-size: 13px; color: var(--text-2); padding: 6px 0; }
+.whs-trend-table td, .whs-trend-table th { white-space: nowrap; }
+.whs-planned { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; }
+
+/* the heat map and the matrix */
+.whs-heatmap { border-collapse: separate; border-spacing: 2px; min-width: 100%; }
+.whs-heatmap th { font-weight: 600; color: var(--text-2); padding: 4px 6px; text-align: center; vertical-align: bottom; }
+.whs-heatmap th[scope='row'] { text-align: right; white-space: nowrap; }
+.whs-cell { border-radius: 4px; text-align: center; padding: 6px 4px; min-width: 64px; height: 44px; color: var(--text); border-left: 3px solid transparent; }
+.whs-cell-n { display: block; font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.whs-cell-l { display: block; font-size: 11px; color: var(--text-2); }
+.whs-cell-empty .whs-cell-l { opacity: 0.8; }
+.whs-cell-btn { all: unset; cursor: pointer; display: block; width: 100%; height: 100%; font-size: 12px; font-weight: 600; text-align: center; }
+.whs-cell-btn:focus-visible { outline: 2px solid var(--focus-color, var(--accent)); outline-offset: 2px; }
+.whs-levels { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.whs-levels li { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+
+/* risk assessments */
+.whs-ra-steps { margin: 0; padding-left: 20px; display: grid; gap: 14px; }
+.whs-ra-steps > li.whs-no-step { list-style: none; margin-left: -20px; }
+.whs-ra-line { margin: 6px 0 0; gap: 8px; border-left: 4px solid var(--border); }
+.whs-controls { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.whs-controls li { display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; overflow-wrap: anywhere; }
+.whs-h-elimination, .whs-h-substitution { background: var(--success-soft); color: var(--success); }
+.whs-h-isolation, .whs-h-engineering { background: var(--accent-soft); color: var(--accent); }
+.whs-h-administrative, .whs-h-ppe { background: var(--warning-soft); color: var(--warning-text); }
+.whs-action-form { border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin: 0; min-width: 0; display: grid; gap: 8px; }
+.whs-action-form legend { font-weight: 600; font-size: 13px; padding: 0 4px; }
+.whs-control-row { display: grid; grid-template-columns: 130px 200px minmax(0, 1fr) 150px auto; gap: 6px; align-items: center; }
+.whs-edit-steps { margin: 0; padding-left: 20px; display: grid; gap: 6px; }
+.whs-draft-action { padding: 6px 0; border-bottom: 1px solid var(--border); }
+.whs-action-row { gap: 8px; align-items: baseline; }
+
+/* investigations */
+.whs-timeline { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 13px; }
+.whs-fishbone { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-bottom: 8px; }
+.whs-bone { border-top: 3px solid var(--accent); background: var(--surface-2); border-radius: var(--radius); padding: 8px 10px; }
+.whs-bone ul { margin: 4px 0 0; padding-left: 16px; }
+.whs-rule-check { margin: 0; gap: 6px; }
+.whs-checklist label { min-height: 36px; }
+.whs-instrument { margin: 0; gap: 6px; }
+.whs-pack { margin: 0; gap: 4px; }
+.whs-hours-form { gap: 10px; align-items: flex-end; }
+.whs-hours-form .field { margin: 0; }
+
+@media (max-width: 760px) {
+  .whs-two { grid-template-columns: 1fr; }
+  .whs-kind-grid { grid-template-columns: 1fr 1fr; }
+  .whs-control-row { grid-template-columns: 1fr 1fr; }
+  .whs-control-row .input { grid-column: 1 / -1; }
+  .whs-detail .mt-head-actions .btn { flex: 1 1 auto; justify-content: center; }
+  .whs-cell { min-width: 48px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .whs-chart-bar { transition: none; }
+}
+
+/* My Work (pages/MyWork.tsx): the health and safety work assigned to the person, above their board items */
+.whs-my-work { margin-bottom: 14px; overflow: hidden; }
+.whs-my-name { padding: 6px 14px 0; }
+.whs-overdue { color: var(--danger); font-weight: 600; }

@@ -40,6 +40,8 @@ import { companyPublicRoutes, companyRoutes } from './company/routes';
 import { idPublicRoutes } from './company/id-provider';
 import { maintenanceRoutes } from './maintenance';
 import { erpRoutes } from './erp';
+import { whsRoutes } from './whs';
+import { legalAdminRoutes as whsAdminRoutes } from './whs/legal';
 
 export const CSP = [
   "default-src 'self'",
@@ -187,6 +189,9 @@ export function createApp() {
   // BIZOMAT ERP, Release 1 (src/worker/erp): products, variants, revisions and change control, bills of materials,
   // engineering documents and the supplier master.
   api.route('/erp', erpRoutes);
+  // BIZOMAT WHS, Release 1 (src/worker/whs): hazards, risk assessments, incidents, investigations, regulatory
+  // notification records and actions, with the jurisdiction packs.
+  api.route('/whs', whsRoutes);
   // Founder admin API: authenticated session + platform-admin role, enforced server-side.
   const admin = new Hono<AppEnv>();
   admin.use('*', requirePlatformAdmin);
@@ -198,6 +203,8 @@ export function createApp() {
   admin.route('/fin', adminFinRoutes);
   // The System console: every account and company, activity across the tools (src/worker/system/admin.ts).
   admin.route('/system', adminSystemRoutes);
+  // BIZOMAT WHS jurisdiction packs: drafts, review, activation and verification of legal rules (src/worker/whs/legal.ts).
+  admin.route('/whs', whsAdminRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
