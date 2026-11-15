@@ -10,7 +10,7 @@ import { usePageTitle } from '../../lib/hooks';
 import { Icon } from '../../components/ui/Icon';
 import { Loading } from '../../components/ui/ui';
 import { useToast } from '../../components/ui/overlays';
-import { erpPath, inventoryPage, procurementPage, qty, type ErpMe, type Location, type PoLine, type PurchaseOrder, type StockRow } from './api';
+import { erpPath, inventoryPage, procurementPage, qty, supplyPage, type ErpMe, type Location, type PoLine, type PurchaseOrder, type StockRow } from './api';
 
 type Mode = 'receive' | 'issue' | 'move' | 'count';
 const MODES: { value: Mode; label: string; needs: 'receiving.post' | 'inventory.operate' }[] = [
@@ -127,6 +127,8 @@ export function WarehouseScreen({ companyId, me }: { companyId: string; me: ErpM
         ))}
       </div>
       {mode === 'receive' ? <ReceiveMode companyId={companyId} /> : mode === 'count' ? <CountMode companyId={companyId} /> : <MoveMode key={mode} companyId={companyId} mode={mode} />}
+      {/* Release 5: customer shipments are picked, packed and dispatched from their own phone screens */}
+      {me.can['shipping.pick'] || me.can['shipping.dispatch'] ? <Link className="btn erp-big" to={supplyPage(companyId, '/floor')}><Icon name="globe" /> Pick and dispatch customer shipments</Link> : null}
       <p className="muted small">Codes: a location is WAREHOUSE/LOCATION (its QR label reads LOC:WAREHOUSE/LOCATION); a product is its number or SKU. <Link to={inventoryPage(companyId, '/warehouses')}>Print labels</Link> from a warehouse’s page.</p>
     </div>
   );

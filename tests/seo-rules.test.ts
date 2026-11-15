@@ -37,7 +37,8 @@ test('llms.txt lists every system with its page, says what is planned, and claim
   const text = llmsTxt('https://bizomat.ai');
   assert.match(text, /^# BIZOMAT$/m);
   for (const s of SYSTEMS) assert.ok(text.includes(`[${s.name}](https://bizomat.ai${s.url})`), s.name);
-  assert.match(text, /Manufacturing and Operations.*\(Planned\)/);
+  // Manufacturing and Operations is available (ERP Release 5 part A); what is not built inside it is still called planned.
+  assert.match(text, /\[BIZOMAT Manufacturing and Operations\]\([^)]*\): Manufacturing and Operations System\. .*Planned: posting stock, production and maintenance value to Finance’s ledger/);
   assert.match(text, /not a certified tax, payroll or statutory accounting product/);
   for (const banned of [/rating/i, /\breviews?\b/i, /testimonial/i, /\btrusted by\b/i, /\b(our|happy|satisfied) customers\b/i, /\d+ (customers|users|companies)\b/i, /system-preview/]) assert.doesNotMatch(text, banned);
 });

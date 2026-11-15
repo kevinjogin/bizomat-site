@@ -145,6 +145,8 @@ good output, scrap, downtime, inspection, pause, complete. Each report carries i
 
 - **Master production schedule** (`erp_mps_entries`): forecast or confirmed demand for a product, quantity, due date and
   reference; open, closed or cancelled. There are no sales orders before Release 5: confirmed demand is entered here.
+  (Release 5 part A, `docs/erp/release-5-supply-chain.md`: confirmed sales orders are demand of their own; the schedule
+  keeps demand that is not on a sales order.)
 - **MRP** (`planning.ts` `runMrp`), deterministic. Each run is stored (`erp_mrp_runs`) with its inputs (demand, open
   purchase orders, open manufacturing orders, stock, planning data), a line per product (`erp_mrp_lines`) with its
   netting, and its suggestions (`erp_mrp_suggestions`). A new run dismisses the earlier runs' open suggestions.
@@ -191,8 +193,9 @@ Per order, estimated against actual by element:
 
 The elements add up without double counting. Variance = actual less estimated. The costing view also shows the
 estimated cost per unit, the actual cost per good unit, what was taken into stock and what was not. **Job
-profitability is planned**: no revenue can be linked to an order honestly before sales orders (Release 5); a product's
-list price is not revenue.
+profitability** was planned in Release 3: no revenue could be linked to an order honestly before sales orders, and a
+product's list price is not revenue. Release 5 part A adds it for orders made to order from a sales order line: the
+line's value before tax for the quantity made, against the order's actual cost (`docs/erp/release-5-supply-chain.md`).
 
 ## Reports
 
@@ -302,7 +305,7 @@ Release 3 records first (they point at Release 2's reservations and locations).
 ## Known limits
 
 - Stock and production value are not posted to Finance's ledger (above).
-- Job profitability is planned: there are no sales orders.
+- Job profitability came with Release 5 part A (sales orders); before it, it was planned.
 - Scheduling is forward and infinite (no finite capacity, no drag-and-drop board); capacity is rough-cut by week.
 - Work in progress is a cost carried on the order; materials issued leave stock (work-in-progress locations are not
   used for it).

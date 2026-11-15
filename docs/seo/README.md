@@ -43,7 +43,8 @@ UNKNOWN until Search Console or Bing supplies it (the daily, weekly and monthly 
 
 **Every phrase matches what the software does:**
 - Finance never lodges with the ATO, connects to banks or claims certification.
-- Planned modules, such as preventive maintenance, inventory and manufacturing, are called planned.
+- Planned features, such as posting stock and production value to Finance's ledger, the AI scheduling assistant and
+  carrier bookings, are called planned. A module is called live only once it is deployed and checked.
 
 ## Reviews and ratings
 

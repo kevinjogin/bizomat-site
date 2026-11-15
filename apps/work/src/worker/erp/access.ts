@@ -26,6 +26,8 @@
 //   quality_manager       inspection plans (drafts and release), inspections, nonconformance dispositions, verification
 //                         and closure, approval and closure of corrective and preventive actions (Release 4)
 //   quality_inspector     records inspections (readings, photos, results), quarantines failed lots, raises NCRs
+//   sales_manager         sales orders (Release 5): drafts, confirms and amends them, allocates stock, plans shipments,
+//                         authorises returns, asks Finance for the draft invoice and credit note, sets up carriers
 //   viewer                reads products, engineering records, suppliers, purchasing, stock and manufacturing
 // The company's owner and administrators are ERP administrators; other members are viewers until an ERP administrator
 // gives them roles. In a person's own or example company the owner is the ERP administrator.
@@ -35,6 +37,7 @@
 // they are the only person in the company (own and example companies, or a registered company of one); that exception is
 // recorded on the record and in the history. Release 3: nobody releases a routing revision they drafted. Release 4: nobody
 // approves a corrective or preventive action they proposed or are to carry out, or closes one they carried out.
+// Release 5 (supply chain): the warehouse picks, packs and dispatches; sales managers authorise returns.
 
 import type { Context } from 'hono';
 import type { AppEnv } from '../env';
@@ -54,6 +57,8 @@ export const ERP_ROLES = [
   // Release 4: quality
   'quality_manager',
   'quality_inspector',
+  // Release 5: supply chain
+  'sales_manager',
   'viewer',
 ] as const;
 export type ErpRole = (typeof ERP_ROLES)[number];
@@ -71,11 +76,12 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   production_operator: 'Production operator',
   quality_manager: 'Quality manager',
   quality_inspector: 'Quality inspector',
+  sales_manager: 'Sales manager',
   viewer: 'Viewer',
 };
 
 /** Everyone who may read (every role but the administrator, who may do everything). */
-const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'quality_manager', 'quality_inspector', 'viewer'] as const;
+const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'quality_manager', 'quality_inspector', 'sales_manager', 'viewer'] as const;
 
 /** Every action the ERP checks, and the roles that may take it (erp_admin may take every one). */
 export const CAPABILITIES = {
@@ -123,6 +129,20 @@ export const CAPABILITIES = {
   'quality.disposition': ['quality_manager'],
   'capa.propose': ['quality_manager', 'quality_inspector', 'engineer', 'engineering_approver', 'production_manager', 'warehouse_manager', 'procurement_manager'],
   'capa.approve': ['quality_manager'],
+  // Release 5: supply chain and logistics
+  'sales.view': READERS,
+  'sales.edit': ['sales_manager'],
+  'sales.confirm': ['sales_manager'],
+  'sales.allocate': ['sales_manager', 'warehouse_manager', 'warehouse_operator'],
+  'shipping.plan': ['sales_manager', 'warehouse_manager'],
+  'shipping.pick': ['warehouse_manager', 'warehouse_operator'],
+  'shipping.pack': ['warehouse_manager', 'warehouse_operator'],
+  'shipping.dispatch': ['warehouse_manager', 'warehouse_operator'],
+  'shipping.deliver': ['warehouse_manager', 'warehouse_operator', 'sales_manager'],
+  'carriers.setup': ['sales_manager', 'warehouse_manager'],
+  'returns.raise': ['sales_manager', 'warehouse_manager'],
+  'returns.authorise': ['sales_manager'],
+  'returns.receive': ['warehouse_manager', 'warehouse_operator'],
 } as const satisfies Record<string, readonly ErpRole[]>;
 export type Capability = keyof typeof CAPABILITIES;
 
@@ -186,6 +206,19 @@ const NEEDED: Partial<Record<Capability, string>> = {
   'quality.disposition': 'Only quality managers and ERP administrators can decide a disposition, release stock from it, verify or close a nonconformance',
   'capa.propose': 'Only quality staff, engineers and managers and ERP administrators can propose a corrective or preventive action',
   'capa.approve': 'Only quality managers and ERP administrators can approve, verify or close a corrective or preventive action',
+  // Release 5: supply chain and logistics
+  'sales.edit': 'Only sales managers and ERP administrators can change sales orders',
+  'sales.confirm': 'Only sales managers and ERP administrators can confirm, amend, cancel or close a sales order',
+  'sales.allocate': 'Only sales managers, warehouse staff and ERP administrators can allocate stock to a sales order',
+  'shipping.plan': 'Only sales managers, warehouse managers and ERP administrators can plan shipments',
+  'shipping.pick': 'Only warehouse staff and ERP administrators can pick a shipment',
+  'shipping.pack': 'Only warehouse staff and ERP administrators can pack a shipment',
+  'shipping.dispatch': 'Only warehouse staff and ERP administrators can dispatch a shipment',
+  'shipping.deliver': 'Only warehouse staff, sales managers and ERP administrators can confirm a delivery',
+  'carriers.setup': 'Only sales managers, warehouse managers and ERP administrators can change carriers',
+  'returns.raise': 'Only sales managers, warehouse managers and ERP administrators can record a return',
+  'returns.authorise': 'Only sales managers and ERP administrators can authorise or reject a return',
+  'returns.receive': 'Only warehouse staff and ERP administrators can receive a return into stock',
 };
 
 export function deny(msg = 'You do not have permission to do that'): never {

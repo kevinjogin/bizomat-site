@@ -55,19 +55,30 @@
 >   - goods receipts, manufacturing orders, traceability and the supplier page show their inspections and NCRs;
 >   - nothing is written to Finance: scrap and returns under an NCR record their posting as planned, as every stock
 >     movement does.
+> - **ERP Release 5 part A, supply chain and logistics** (built on the branch `erp-release-5-supply-chain`, not
+>   deployed; `docs/erp/release-5-supply-chain.md`, migration `0025_erp_supply_chain.sql`, the same API):
+>   - Supply Chain at `/erp/c/<company>/supply-chain`, in the company's side menu and on the Operations page: the
+>     overview, sales orders (for the company's CRM and Finance customer record, nothing copied), pick and dispatch for
+>     phones, shipments, the delivery schedule, returns and carriers;
+>   - stock allocated through StockOps, lines made to order through a linked manufacturing order with its job
+>     profitability, confirmed orders as demand in MRP, dispatch once (`sales_dispatch`), delivery with proof, an
+>     optional dispatch email, one draft invoice per shipment and one draft credit note per return through Finance's
+>     own code;
+>   - the sales manager role; seven more reports at `/erp/c/<company>/erp-reports`;
+>   - the value of stock sold is not posted to Finance's ledger: each posting is recorded as planned.
 > - **New ERP pages:**
 >   - My Work: the Projects and Tasks My Work of the workspace used last.
->   - Operations: what waits in the company (approvals, orders to receive, products to reorder, adjustments and counts),
->     then the modules: Procurement and Inventory live (Release 2), Maintenance and Products and Engineering records
->     partly live, the rest each labelled Planned.
+>   - Operations: what waits in the company (approvals, orders to receive, products to reorder, adjustments and counts,
+>     production, inspections, shipments and returns), then the modules: Procurement, Inventory, Manufacturing, Quality
+>     and, with Release 5 part A, Supply Chain live; Maintenance and Products and Engineering records partly live.
 >   - Reports: every report of the company's tools, in its own module.
 >   - Administration: company, tool teams and settings, your profile, and the ERP console for platform admins.
 > - **Own companies for everyone:** migration `0017_system_everyone.sql` gives every existing active account its own
 >   company. The maintenance run makes any that are still missing, up to 5,000 a day.
 > - **The public website** describes the software as **Systems** at `/systems/` (`src/config/systems.ts`):
 >   - one page and one user guide per system;
->   - Manufacturing and Operations is mostly planned and has no guide of its own (Procurement, Inventory and
->     Maintenance are in the ERP's guide);
+>   - Manufacturing and Operations is Available once Release 5 part A is deployed (every module works; what is not
+>     built inside them is labelled Planned), with its own guide at `/systems/manufacturing/guide/`;
 >   - the old product pages answer 301 there (`public/_redirects`).
 >
 > The sections below say "System" and `/system`; read them as "ERP" and `/erp`.
@@ -155,6 +166,10 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
   - Quality (ERP Release 4 part A): a released incoming inspection plan for the bracket arms, their
     failed incoming inspection, a nonconformance with containment and root cause, and a corrective action in progress.
     No stock moves. Example companies made before Release 4 are not changed; removing and remaking one adds them.
+  - Supply chain (ERP Release 5 part A): a carrier, a confirmed sales order for Harbour Cafe with six kits from stock
+    and ten weldments made to order (MO-00002), a shipment delivered with its draft invoice in Finance, and a damaged
+    kit returned into quarantine with its draft credit note. No email is sent. Example companies made before Release 5
+    are not changed; removing and remaking one adds them.
 
   Every name is invented, and every address is on example.com. No other accounts are made.
 - **When:** the ERP asks for it on the person's first visit (`POST /api/system/demo`). It takes about 0.5 s on Node

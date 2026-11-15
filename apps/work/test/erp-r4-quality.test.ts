@@ -600,7 +600,8 @@ describe('the example company', () => {
     expect(capas.capas).toMatchObject([{ number: 'CA-00001', status: 'in_progress', approvalSodException: true, ncrNumber: 'NCR-00001' }]);
     // Release 2's and 3's example figures hold: no stock moved.
     const stock = await ex.json('GET', erp(co, '/stock?filter=in_stock'));
-    expect(stock.rows).toMatchObject([{ onHand: 40, reserved: 10, valueCents: 15_200 }]);
+    // Release 5 adds packed kits (shipped, one back in quarantine): the bracket arms are as before.
+    expect(stock.rows.find((r: any) => r.name === 'Bracket arm, laser cut')).toMatchObject({ onHand: 40, reserved: 10, valueCents: 15_200 });
     await ex.json('POST', '/api/system/demo/remove', {});
     for (const table of ['erp_qc_plans', 'erp_qc_plan_chars', 'erp_qc_inspections', 'erp_qc_insp_chars', 'erp_qc_readings', 'erp_qc_ncrs', 'erp_qc_ncr_inspections', 'erp_qc_capas', 'erp_qc_dispositions', 'erp_qc_ncr_actions']) {
       const n = await env.DB.prepare(`SELECT COUNT(*) AS n FROM ${table} WHERE company_id = ?`).bind(co).first<{ n: number }>();
