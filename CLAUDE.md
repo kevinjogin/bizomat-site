@@ -53,7 +53,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   ledger, reservations, returns, quarantine, scrap, adjustments, counts, weighted average or FIFO valuation, QR labels,
   a warehouse screen for phones) at `/erp/c/<company>/inventory`; warehouse manager and operator roles. Stock value is
   **not** posted to Finance's ledger: it is recorded as planned (Release 3); never call it posted. **ERP Release 3**
-  (`docs/erp/release-3.md`; built on the branch `erp-release-3`, live only once merged and deployed; migration 0022):
+  (`docs/erp/release-3.md`; merged and deployed 15 Nov 2026; migration 0022):
   manufacturing at `/erp/c/<company>/manufacturing`: work centres and machines (linked read only to Maintenance assets),
   routings with revisions (released by an engineering approver who did not draft them), manufacturing orders with
   materials issued through StockOps, operations, labour and machine time, output, scrap, rework, downtime, inspection
@@ -76,7 +76,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
   Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, own sign-in
   for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`: Maintenance, Procurement and Inventory work in the
-  ERP today, Manufacturing once Release 3 is deployed; quality and supply chain are planned; the system itself stays
+  ERP today, and Manufacturing since Release 3; quality and supply chain are planned; the system itself stays
   labelled Planned until the owner decides). The old product pages
   (`/work/`, `/cad-automation/`, `/crm-platform/`, `/finance-platform/`, their guides, `/products/`) answer 301 there
   (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.

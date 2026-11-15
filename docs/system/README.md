@@ -30,7 +30,7 @@
 >   - Purchasing and inventory settings at `/erp/c/<company>/erp-settings` (Administration) and ten more reports at
 >     `/erp/c/<company>/erp-reports`;
 >   - stock value is not posted to Finance's ledger: each posting is recorded as planned (Release 3).
-> - **ERP Release 3** (built on the branch `erp-release-3`, not deployed: live only once merged and deployed;
+> - **ERP Release 3** (live since 15 Nov 2026, kevinjogin/bizomat-site#65;
 >   `docs/erp/release-3.md`, migration `0022_erp_manufacturing.sql`, the same API):
 >   - Manufacturing at `/erp/c/<company>/manufacturing`, in the company's side menu and on the Operations page: orders
 >     (materials, operations, time, output, inspections, finished-goods receipts, costs), the shop floor for phones,
@@ -131,7 +131,7 @@ Owner's request: "add example site (Acme) to all users so they can learn and ens
   - Purchasing and inventory (ERP Release 2): a warehouse with a location tree, two more approved suppliers, an
     approved requisition, a request for quotation with two quotations to compare, and a purchase order received into
     stock. Example companies made before Release 2 are not changed.
-  - Manufacturing (ERP Release 3, not deployed): three work centres with two machines linked to the Maintenance
+  - Manufacturing (ERP Release 3): three work centres with two machines linked to the Maintenance
     assets, released routings, a manufacturing order for ten weldments in progress (materials reserved, gusset plates
     issued, laser cutting done with its time, welding started), confirmed and forecast demand for kits, and an MRP run
     with open suggestions. Example companies made before Release 3 are not changed; removing and remaking one adds them.
