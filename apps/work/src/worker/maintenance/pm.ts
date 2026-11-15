@@ -7,6 +7,9 @@
 // technician, instructions, safety, an inspection template, and lead days (time based: made that many days before it is
 // due; meter and condition based: due that many days after it is made). Paused schedules make nothing.
 //
+// A condition-based schedule makes one work order per reading outside its limits, counting only readings taken after its
+// last work order was completed or cancelled.
+//
 // Generation is idempotent: each due occurrence has a key (t:<due date>, m:<due meter total>, c:<reading id>) unique per
 // schedule, and a schedule holds at most one outstanding occurrence (a unique partial index), both written in the same
 // transaction as the work order. Two runs at the same moment (the cron and the button, or two crons) make one work
@@ -307,7 +310,11 @@ export async function generateDue(db: D1Database, o: { companyId?: string; meter
             OR (s.trigger_kind = 'condition' AND m.archived_at IS NULL AND r.id IS NOT NULL
                 AND ((COALESCE(s.cond_below, m.expected_min) IS NOT NULL AND r.value < COALESCE(s.cond_below, m.expected_min))
                   OR (COALESCE(s.cond_above, m.expected_max) IS NOT NULL AND r.value > COALESCE(s.cond_above, m.expected_max)))
-                AND NOT EXISTS (SELECT 1 FROM mt_pm_occurrences x2 WHERE x2.company_id = s.company_id AND x2.schedule_id = s.id AND x2.occurrence_key = 'c:' || r.id))
+                AND NOT EXISTS (SELECT 1 FROM mt_pm_occurrences x2 WHERE x2.company_id = s.company_id AND x2.schedule_id = s.id AND x2.occurrence_key = 'c:' || r.id)
+                -- only a reading taken after the work order of the last occurrence was completed or cancelled: one taken while
+                -- it was open belongs to the fault that work order dealt with
+                AND r.read_at > COALESCE((SELECT MAX(COALESCE(w3.completed_at, w3.cancelled_at, 0)) FROM mt_pm_occurrences x3 JOIN mt_work_orders w3 ON w3.company_id = x3.company_id AND w3.id = x3.work_order_id
+                                           WHERE x3.company_id = s.company_id AND x3.schedule_id = s.id), 0))
           )
         ORDER BY s.next_due_date, s.created_at LIMIT ?`,
     )

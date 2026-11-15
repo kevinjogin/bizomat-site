@@ -164,6 +164,32 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
     );
   }
   const files = await db.prepare('SELECT r2_key FROM mt_files WHERE company_id = ?').bind(companyId).all<{ r2_key: string }>();
+  // Maintenance stages M2 and M3 (migrations/0024_maintenance_m2_m3.sql) first: they point at 0018's records.
+  for (const table of [
+    'mt_insp_results',
+    'mt_wo_inspections',
+    'mt_pm_occurrences',
+    'mt_readings',
+    'mt_prestarts',
+    'mt_pm_schedules',
+    'mt_pm_templates',
+    'mt_asset_prestart',
+    'mt_insp_items',
+    'mt_insp_templates',
+    'mt_meters',
+    'mt_downtime',
+    'mt_labour_costs',
+    'mt_wo_stock',
+    'mt_stores',
+    'mt_technician_trades',
+    'mt_technicians',
+    'mt_trades',
+    'mt_asset_sites',
+    'mt_sites',
+    'mt_done',
+  ]) {
+    stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
+  }
   // Children before parents (migrations/0018_maintenance.sql).
   for (const table of ['mt_events', 'mt_files', 'mt_comments', 'mt_labour', 'mt_wo_parts', 'mt_wo_tasks', 'mt_requests', 'mt_work_orders']) {
     stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
@@ -395,13 +421,13 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     const area = await asset({ number: 'AREA-02', name: 'Fabrication bay', category: 'Area', parentId: site.id, criticality: 'high' });
     const line = await asset({ number: 'LINE-03', name: 'Cutting line', category: 'Line', parentId: area.id, criticality: 'high' });
     const laser = await asset({ number: 'MC-0104', name: 'Laser cutter', category: 'Machine', type: 'CNC laser', manufacturer: 'Example Machines', model: 'LX-3015', serialNumber: 'EX-55210', parentId: line.id, criticality: 'critical', strategy: 'preventive', specs: [{ key: 'Power', value: '6 kW' }, { key: 'Bed size', value: '3000 x 1500 mm' }] });
-    await asset({ number: 'MC-0104-CH', name: 'Chiller unit', category: 'Component', parentId: laser.id, criticality: 'high' });
+    const chiller = await asset({ number: 'MC-0104-CH', name: 'Chiller unit', category: 'Component', parentId: laser.id, criticality: 'high' });
     const brake = await asset({ number: 'MC-0107', name: 'Press brake', category: 'Machine', manufacturer: 'Example Machines', model: 'PB-160', parentId: line.id, criticality: 'high' });
     const comp = await asset({ number: 'UT-0201', name: 'Air compressor', category: 'Utility', parentId: area.id, criticality: 'medium', status: 'under_maintenance' });
     const r1 = await api('Maintenance', 'POST', mt('/requests'), { assetId: laser.id, priority: 'high', description: 'Chiller alarm on the laser cutter: coolant temperature high after twenty minutes of cutting.' });
     await api('Maintenance', 'POST', mt('/requests'), { assetId: brake.id, priority: 'medium', description: 'Back gauge does not return to zero after a job change.' });
     await api('Maintenance', 'POST', mt('/requests'), { assetId: comp.id, priority: 'urgent', description: 'Air compressor tripping the breaker on start-up.' });
-    await api('Maintenance', 'POST', mt(`/requests/${r1.id}/convert`), {
+    const chillerWo = await api('Maintenance', 'POST', mt(`/requests/${r1.id}/convert`), {
       jobType: 'corrective',
       priority: 'high',
       assignedTo: user.id,
@@ -554,6 +580,108 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     await api('Manufacturing', 'POST', e('/mps'), { productId: kit.id, quantity: 60, dueDate: d(21), kind: 'confirmed', reference: 'Harbour Cafe fit-out (example)' });
     await api('Manufacturing', 'POST', e('/mps'), { productId: kit.id, quantity: 40, dueDate: d(35), kind: 'forecast', reference: 'Next month (forecast)' });
     await api('Manufacturing', 'POST', e('/mrp/runs'), {});
+
+    // ---------------------------------------------------------------- Maintenance, stages M2 and M3 (ERP Release 4)
+    // A site holding every asset, trades and a labour rate, a meter with readings and a gauge, an inspection template and
+    // a prestart checklist, a monthly service schedule that made its work order (inspected with a failed item that
+    // raised a request, labour and a part recorded, then completed, so its next due date moved on), a meter-based and a
+    // condition-based schedule, a template for the class of machines, the workshop store as a maintenance store with a
+    // spare part issued to the chiller work order, a breakdown with its downtime, and a passed prestart. Stage 1's
+    // figures stay as they were: seven assets and two open work orders.
+    const mtSite = await api('Maintenance', 'POST', mt('/sites'), { code: 'RIVERSIDE', name: 'Riverside workshop', address: '12 Example Street' });
+    await api('Maintenance', 'PUT', mt(`/assets/${site.id}/site`), { siteId: mtSite.id, includeChildren: true });
+    const fitter = await api('Maintenance', 'POST', mt('/trades'), { name: 'Mechanical fitter', rateCents: 8500 });
+    await api('Maintenance', 'POST', mt('/trades'), { name: 'Electrician', rateCents: 9500 });
+    await api('Maintenance', 'PUT', mt(`/technicians/${user.id}`), { rateCents: 9000, tradeIds: [fitter.id] });
+    const laserHours = await api('Maintenance', 'POST', mt('/meters'), { assetId: laser.id, name: 'Laser hours', unit: 'h' });
+    const coolant = await api('Maintenance', 'POST', mt('/meters'), { assetId: chiller.id, name: 'Coolant temperature', unit: 'C', rising: false, expectedMin: 15, expectedMax: 25 });
+    const at = (offset: number, hour: number) => today.getTime() + offset * DAY + hour * 3_600_000;
+    await api('Maintenance', 'POST', mt(`/meters/${laserHours.id}/readings`), { value: 4120, readAt: at(-14, 8) });
+    await api('Maintenance', 'POST', mt(`/meters/${laserHours.id}/readings`), { value: 4168, readAt: at(-7, 8) });
+    await api('Maintenance', 'POST', mt(`/meters/${coolant.id}/readings`), { value: 19, readAt: at(-7, 9) });
+    await api('Maintenance', 'POST', mt(`/meters/${coolant.id}/readings`), { value: 21, readAt: at(-1, 9) });
+    const inspection = await api('Maintenance', 'POST', mt('/inspection-templates'), {
+      name: 'Laser cutter monthly inspection',
+      description: 'Checked at each monthly service.',
+      failAction: 'request',
+      items: [
+        { label: 'Beam guard interlocks work', kind: 'pass_fail', critical: true },
+        { label: 'Coolant temperature after 30 minutes', kind: 'number', unit: 'C', min: 15, max: 25 },
+        { label: 'Fume extraction filter clean', kind: 'pass_fail' },
+        { label: 'Remarks', kind: 'text', required: false },
+      ],
+    });
+    const prestartList = await api('Maintenance', 'POST', mt('/inspection-templates'), {
+      name: 'Laser cutter daily prestart',
+      failAction: 'request',
+      items: [
+        { label: 'Emergency stop works', kind: 'pass_fail', critical: true },
+        { label: 'Work area clear of offcuts', kind: 'pass_fail' },
+        { label: 'Assist gas pressure', kind: 'number', unit: 'bar', min: 8, max: 12 },
+      ],
+    });
+    await api('Maintenance', 'PUT', mt(`/assets/${laser.id}/prestart`), { templateId: prestartList.id });
+    await api('Maintenance', 'PUT', mt(`/stores/${wh.id}`), { store: true });
+    const spares = await loc({ code: 'MNT', name: 'Maintenance spares', level: 'zone', parentId: store.id });
+    const filter = await prod({ name: 'Chiller filter cartridge', type: 'consumable', category: 'Maintenance spares', standardCostCents: 4500 });
+    const lensKit = await prod({ name: 'Laser lens cleaning kit', type: 'consumable', category: 'Maintenance spares', standardCostCents: 2800 });
+    await api('Inventory', 'POST', e('/adjustments'), { productId: filter.id, locationId: spares.id, quantity: 4, unitCostCents: 4500, reason: 'Opening stock of maintenance spares' });
+    await api('Inventory', 'POST', e('/adjustments'), { productId: lensKit.id, locationId: spares.id, quantity: 6, unitCostCents: 2800, reason: 'Opening stock of maintenance spares' });
+    await api('Maintenance', 'POST', mt(`/work-orders/${chillerWo.workOrder.id}/stock/issue`), { lines: [{ productId: filter.id, locationId: spares.id, quantity: 1 }] });
+    await api('Maintenance', 'PUT', mt(`/work-orders/${chillerWo.workOrder.id}/downtime`), { startedAt: at(-1, 14), endedAt: null, cause: 'Laser stopped on the chiller alarm' });
+    // The monthly service: made by its schedule, inspected, labour and a part recorded, completed.
+    const monthly = await api('Maintenance', 'POST', mt(`/pm/schedules?today=${d(0)}`), {
+      assetId: laser.id,
+      name: 'Monthly laser service',
+      description: 'Clean the lens and the nozzle, check the beam guards and the chiller',
+      triggerKind: 'time',
+      intervalN: 1,
+      intervalUnit: 'month',
+      startDate: d(0),
+      priority: 'medium',
+      tasks: ['Isolate and lock out', 'Clean the lens and the nozzle', 'Check the beam guard interlocks', 'Run for thirty minutes and record the coolant temperature'],
+      parts: [{ part: 'Laser lens cleaning kit', quantity: 1 }],
+      estimatedHours: 1.5,
+      trade: 'Mechanical fitter',
+      assignedTo: user.id,
+      inspectionTemplateId: inspection.id,
+      safety: 'Isolate and lock out the laser before opening any panel.',
+    });
+    const generated = await api('Maintenance', 'POST', mt('/pm/generate'), { today: d(0) });
+    const pmWoId = generated.made.find((m: any) => m.scheduleId === monthly.id)?.workOrderId;
+    if (pmWoId) {
+      const pmWo = await api('Maintenance', 'GET', mt(`/work-orders/${pmWoId}`));
+      const insp = pmWo.inspections[0];
+      const item = (label: string) => insp.items.find((x: any) => x.label.startsWith(label))?.id;
+      await api('Maintenance', 'PUT', mt(`/work-orders/${pmWoId}/inspections/${insp.id}/results`), {
+        results: [
+          { itemId: item('Beam guard'), passed: true },
+          { itemId: item('Coolant temperature'), value: 22 },
+          { itemId: item('Fume extraction'), passed: false, note: 'Filter loaded with dust: replace at the next stop' },
+          { itemId: item('Remarks'), text: 'Lens cleaned; nozzle in good condition.' },
+        ],
+      });
+      await api('Maintenance', 'POST', mt(`/work-orders/${pmWoId}/inspections/${insp.id}/complete`), {});
+      await api('Maintenance', 'POST', mt(`/work-orders/${pmWoId}/labour`), { date: d(0), minutes: 75, note: 'Monthly service' });
+      await api('Maintenance', 'POST', mt(`/work-orders/${pmWoId}/stock/issue`), { lines: [{ productId: lensKit.id, locationId: spares.id, quantity: 1 }] });
+      await api('Maintenance', 'POST', mt(`/work-orders/${pmWoId}/complete`), { notes: 'Service done. The fume extraction filter needs replacing: request raised by the inspection.' });
+    }
+    await api('Maintenance', 'POST', mt('/pm/schedules'), { assetId: laser.id, name: '500-hour laser service', triggerKind: 'meter', meterId: laserHours.id, meterInterval: 500, leadDays: 5, priority: 'high', tasks: ['Replace the nozzle', 'Check the beam alignment'], estimatedHours: 3, assignedTo: user.id });
+    await api('Maintenance', 'POST', mt('/pm/schedules'), { assetId: chiller.id, name: 'Coolant over temperature', triggerKind: 'condition', meterId: coolant.id, condAbove: 25, jobType: 'inspection', priority: 'high', leadDays: 1, tasks: ['Check the coolant level', 'Clean the condenser fins'] });
+    await api('Maintenance', 'POST', mt(`/pm/templates?today=${d(0)}`), { name: 'Quarterly machine safety check', assetCategory: 'Machine', triggerKind: 'time', intervalN: 3, intervalUnit: 'month', basis: 'fixed', startDate: d(10), jobType: 'inspection', tasks: ['Check the guards and the emergency stops', 'Check the warning labels'], estimatedHours: 0.5 });
+    // A breakdown last fortnight, repaired, with its downtime (for the reliability report).
+    const burst = await api('Maintenance', 'POST', mt('/work-orders'), { assetId: brake.id, description: 'Hydraulic hose burst on the press brake', jobType: 'breakdown', priority: 'urgent', assignedTo: user.id, trade: 'Mechanical fitter' });
+    await api('Maintenance', 'PUT', mt(`/work-orders/${burst.id}/downtime`), { startedAt: at(-12, 9), endedAt: at(-12, 12.5), cause: 'Hose burst' });
+    await api('Maintenance', 'POST', mt(`/work-orders/${burst.id}/labour`), { date: d(-12), minutes: 150, note: 'Hose replaced and bled' });
+    await api('Maintenance', 'POST', mt(`/work-orders/${burst.id}/complete`), { notes: 'Hose replaced, system bled and tested.' });
+    // Today's prestart of the laser, passed, with its hours.
+    const ps = await api('Maintenance', 'GET', mt(`/assets/${laser.id}/prestart`));
+    await api('Maintenance', 'POST', mt('/prestarts'), {
+      assetId: laser.id,
+      results: ps.template.items.map((x: any) => (x.kind === 'number' ? { itemId: x.id, value: 10 } : { itemId: x.id, passed: true })),
+      reading: { meterId: laserHours.id, value: 4215 },
+      today: d(0),
+    });
   });
 }
 

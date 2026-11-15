@@ -31,6 +31,16 @@ const zQ = z.number().positive().max(1e9);
 const zKey = z.string().trim().min(8).max(80).optional();
 const line = z.object({ productId: zId, locationId: zId, lot: zText(80).optional(), serial: zText(80).optional(), quantity: zQ });
 
+/** One stock transaction; a once-only key already used (the same request sent twice) answers 409. */
+async function runParts(db: D1Database, stmts: D1PreparedStatement[]) {
+  try {
+    return await runStock(db, stmts);
+  } catch (e) {
+    if (/mt_done/.test(String((e as Error)?.message ?? e))) throw new HttpError(409, 'This was already done: refresh to see it');
+    throw e;
+  }
+}
+
 async function workable(c: any) {
   const a = await requireMt(c, 'technician');
   const db = c.env.DB as D1Database;
@@ -71,7 +81,7 @@ partsRoutes.post('/c/:company/work-orders/:id/stock/issue', async (c) => {
     summary.push(`${x.quantity} ${p.uom} of ${p.number} ${p.name} from ${l.warehouse_code}/${l.code}${key.lot ? ` lot ${key.lot}` : ''}${key.serial ? ` serial ${key.serial}` : ''}`);
   }
   after.push(eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'parts.issued', assetId: w.asset_id, workOrderId: w.id, summary: `Parts issued: ${summary.join('; ')}`.slice(0, 500), after: { groupId: ops.groupId, lines: input.lines }, at: ops.t }));
-  await runStock(db, ops.all(before, after, { type: 'work_order', id: w.id, kind: 'finance.maintenance_posting' }));
+  await runParts(db, ops.all(before, after, { type: 'work_order', id: w.id, kind: 'finance.maintenance_posting' }));
   return c.json({ ok: true, groupId: ops.groupId }, 201);
 });
 
@@ -108,7 +118,7 @@ partsRoutes.post('/c/:company/work-orders/:id/stock/return', async (c) => {
     summary.push(`${x.quantity} ${p.uom} of ${p.number} ${p.name} to ${l.warehouse_code}/${l.code}`);
   }
   after.push(eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'parts.returned', assetId: w.asset_id, workOrderId: w.id, summary: `Parts returned: ${summary.join('; ')}`.slice(0, 500), after: { groupId: ops.groupId, lines: input.lines }, at: ops.t }));
-  await runStock(db, ops.all(before, after, { type: 'work_order', id: w.id, kind: 'finance.maintenance_posting' }));
+  await runParts(db, ops.all(before, after, { type: 'work_order', id: w.id, kind: 'finance.maintenance_posting' }));
   return c.json({ ok: true, groupId: ops.groupId }, 201);
 });
 
