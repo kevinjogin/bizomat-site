@@ -64,8 +64,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   points (full Quality is Release 4) and finished goods at actual cost, a shop-floor screen for phones, the master
   production schedule, MRP (suggestions converted to requisitions and draft orders), rough-cut capacity, job costing by
   element and eight reports; production manager and operator roles. Stock and production value are **not** posted to
-  Finance's ledger: each posting is recorded as planned; never call them posted. Job profitability is planned (no sales
-  orders before Release 5). **ERP Release 4 part A** (`docs/erp/release-4-quality.md`; merged and deployed
+  Finance's ledger: each posting is recorded as planned; never call them posted. Job profitability came with Release 5
+  (no sales orders before it). **ERP Release 4 part A** (`docs/erp/release-4-quality.md`; merged and deployed
   15 Nov 2026; migration 0023): quality at `/erp/c/<company>/quality`:
   inspection plans with versions, inspections of receipts, operations, finished goods and suppliers recorded on a phone
   (the pass or fail worked out on the server from the limits), quarantine and release through StockOps, nonconformance
@@ -73,12 +73,23 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   key, corrective and preventive actions with segregation of duties, traceability and seven reports; quality manager
   and inspector roles. Rework under an NCR is a note, not a manufacturing order; overdue actions show on the Quality
   overview, not in My Work. SPC, calibration and audits are planned.
+  **ERP Release 5 part A** (`docs/erp/release-5-supply-chain.md`; migration 0025; built on the branch
+  `erp-release-5-supply-chain`, live only once merged and deployed): supply chain at `/erp/c/<company>/supply-chain`:
+  sales orders for the company's one customer record (a CRM company and its Finance customer, never copied), priced as
+  Finance prices lines, with amendments and a draft order from a won deal; stock allocated through StockOps (soonest
+  expiry first); make to order through a linked manufacturing order with job profitability; confirmed orders as MRP
+  demand; carriers, shipments with pick lists, packages, dispatch through StockOps (`sales_dispatch`, once), delivery
+  with a photo, document or signature, an optional dispatch email (never for the example company), the delivery
+  schedule; returns authorised by a sales manager and received through StockOps; one draft invoice per shipment and one
+  draft credit note per return through Finance's own code; traceability to the delivery and seven reports; the sales
+  manager role. The value of stock sold is **not** posted to Finance's ledger (recorded as planned); carrier bookings,
+  landed costs and forecasting are planned.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
-  removed (and made again only on request) in Administration. **Operations** beyond Releases 1 to 3 and Release 4's
-  quality (supply chain, stock and production postings to Finance) is **planned, not built**: the Operations page lists it
-  as Planned; never present it as working. The design preview is retired (owner, 14 Nov 2026: no links to previews or demos anywhere): not built into
+  removed (and made again only on request) in Administration. **Operations** beyond Releases 1 to 5 (stock,
+  production and maintenance postings to Finance, carrier systems, landed costs, forecasting) is **planned, not
+  built**: never present it as working. The design preview is retired (owner, 14 Nov 2026: no links to previews or demos anywhere): not built into
   the image, and `/system-preview/` and `/erp-design-preview/` answer 301 to `/systems/erp/`. The platform
   console is `/erp/admin` (platform admins only).
   **Systems** (owner, 14 Nov 2026): the public catalogue of the software at `bizomat.ai/systems/`
@@ -86,9 +97,10 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `/systems/erp/`), BIZOMAT CRM (Customer Management System, `/systems/crm/`), BIZOMAT Finance (Finance Management
   System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
   Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, own sign-in
-  for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`: Maintenance, Procurement and Inventory work in the
-  ERP today, Manufacturing since Release 3, and Quality and Maintenance M2 and M3 since Release 4; supply chain is planned; the system itself stays
-  labelled Planned until the owner decides). The old product pages
+  for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`, guide `/systems/manufacturing/guide/`:
+  Maintenance, Procurement and Inventory work in the ERP today, Manufacturing since Release 3, Quality and Maintenance
+  M2 and M3 since Release 4, and Supply Chain with Release 5 part A; the owner asked for it to turn green once every
+  tool works, so it is Available once Release 5 part A is deployed, with what is not built inside it labelled Planned). The old product pages
   (`/work/`, `/cad-automation/`, `/crm-platform/`, `/finance-platform/`, their guides, `/products/`) answer 301 there
   (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
@@ -236,8 +248,8 @@ Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then 
 ## After any production change
 
 Check the public site, not just the build: `/`, `/systems/` and every system's page and guide (`/systems/erp/`,
-`/systems/crm/`, `/systems/finance/`, `/systems/projects/`, `/systems/engineering/`, each with `guide/`, and
-`/systems/manufacturing/`), that the old product pages answer 301 there, `/resources/`, `/tools/`, `/reados/` (open
+`/systems/crm/`, `/systems/finance/`, `/systems/projects/`, `/systems/engineering/`, `/systems/manufacturing/`, each
+with `guide/`), that the old product pages answer 301 there, `/resources/`, `/tools/`, `/reados/` (open
 without signing in),
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`,
 that `/system-preview/` (the retired design preview) answers 301 to `/systems/erp/`, `/robots.txt` and `/llms.txt`
