@@ -677,12 +677,16 @@ describe('entitlements', () => {
 });
 
 describe('safety', () => {
-  it('never bills an example company, whatever the code passes', async () => {
+  it('never bills an example company: it is not a registered company, so billing does not reach it', async () => {
     const someone = await signup();
-    await env.DB.prepare("INSERT INTO sys_demo (user_id, company_id, name, status, created_at, updated_at) VALUES (?, ?, 'Acme Studio (example)', 'ready', ?, ?)").bind(someone.userId, `demo-${someone.userId}`, Date.now(), Date.now()).run().catch(async () => {
-      await env.DB.prepare("INSERT INTO sys_demo (user_id, company_id, name, status, created_at) VALUES (?, ?, 'Acme Studio (example)', 'ready', ?)").bind(someone.userId, `demo-${someone.userId}`, Date.now()).run();
-    });
-    await expect(env.DB.prepare("INSERT INTO billing_accounts (id, company_id, environment, stripe_customer_id, created_at, updated_at) VALUES ('x', ?, 'test', 'cus_vitestDemo', 1, 1)").bind(`demo-${someone.userId}`).run()).rejects.toThrow(/never billed/);
+    const res = await someone.req('POST', '/api/system/demo', {});
+    expect(res.status).toBe(201);
+    const id = ((await res.json()) as { companyId: string }).companyId;
+    expect((await env.DB.prepare('SELECT company_id FROM sys_demo WHERE user_id = ?').bind(someone.userId).first<{ company_id: string }>())?.company_id).toBe(id);
+    expect((await call(someone, 'GET', `/api/billing/c/${id}`)).status).toBe(404);
+    expect((await call(someone, 'POST', `/api/billing/c/${id}/checkout`, { interval: 'month' })).status).toBe(404);
+    expect(await registeredCompanyOf(env.DB, `erp/c/${id}/products`)).toBeNull();
+    expect((await env.DB.prepare('SELECT COUNT(*) AS n FROM billing_accounts WHERE company_id = ?').bind(id).first<{ n: number }>())!.n).toBe(0);
   });
 
   it('keeps billing history append only', async () => {

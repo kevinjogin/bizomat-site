@@ -2,7 +2,7 @@
 -- active member (a "seat"). Stripe holds the money, the prices and the invoices; these tables are BIZOMAT's own record of
 -- them, filled from Stripe by the webhook and by the server (src/worker/billing/).
 --
--- Additive only: new tables, indexes and triggers, no change to any existing table, so the previous release runs on a
+-- Additive only: new tables, indexes and (UPDATE and DELETE) triggers, no change to any existing table, so the previous release runs on a
 -- database with this migration applied. The company columns name co_companies.id without a foreign key, so removing or
 -- soft-deleting a company never removes its billing history. Every row carries the Stripe environment ('test' or 'live')
 -- so test and live records never mix.
@@ -29,12 +29,9 @@ CREATE TABLE billing_accounts (
   UNIQUE (company_id, environment)
 );
 
--- An example company ("Acme Studio (example)") is never billed, whatever the code passes.
-CREATE TRIGGER billing_accounts_no_example BEFORE INSERT ON billing_accounts
-WHEN EXISTS (SELECT 1 FROM sys_demo WHERE company_id = NEW.company_id)
-BEGIN
-  SELECT RAISE(ABORT, 'example companies are never billed');
-END;
+-- An example company ("Acme Studio (example)") is never billed: billing serves registered companies only, and
+-- src/worker/billing/routes.ts refuses an example company's id before making a customer. (No INSERT trigger: the
+-- Cloudflare move tool, scripts/migrate/to-cloudflare.mjs, writes plain rows and refuses schemas with one.)
 
 -- The company's subscription as Stripe last reported it. quantity is the number of seats Stripe bills; seat_version
 -- counts the seat changes BIZOMAT applied, so two changes can never be applied from the same starting point.
@@ -168,14 +165,8 @@ CREATE TABLE billing_history (
   UNIQUE (kind, ref)
 );
 CREATE INDEX billing_history_company ON billing_history(company_id, environment, created_at DESC);
-CREATE TRIGGER billing_history_no_update BEFORE UPDATE ON billing_history
-BEGIN
-  SELECT RAISE(ABORT, 'billing history is append only');
-END;
-CREATE TRIGGER billing_history_no_delete BEFORE DELETE ON billing_history
-BEGIN
-  SELECT RAISE(ABORT, 'billing history is append only');
-END;
+CREATE TRIGGER billing_history_no_update BEFORE UPDATE ON billing_history BEGIN SELECT RAISE(ABORT, 'billing history is append only'); END;
+CREATE TRIGGER billing_history_no_delete BEFORE DELETE ON billing_history BEGIN SELECT RAISE(ABORT, 'billing history is append only'); END;
 
 -- Free access the founder records for a company (founding customers, complimentary access). ends_at NULL: until the
 -- founder sets a date or revokes it.

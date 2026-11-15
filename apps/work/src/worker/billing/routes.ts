@@ -220,6 +220,8 @@ async function ensureAccount(c: Context<AppEnv>, cfg: BillingOn, a: CompanyAcces
   const db = c.env.DB;
   const existing = await accountOf(db, a.companyId, cfg.environment);
   if (existing) return existing;
+  // Never an example company, whatever reached here (they are not registered companies, so this is a second lock).
+  if (await db.prepare('SELECT 1 FROM sys_demo WHERE company_id = ?').bind(a.companyId).first()) throw new HttpError(409, 'The example company is never billed.', { code: 'EXAMPLE_COMPANY' });
   const co = a.company;
   const customer = checkMode(
     cfg,
