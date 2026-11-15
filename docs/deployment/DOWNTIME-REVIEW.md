@@ -1,5 +1,10 @@
 # Deploy downtime on the Fly app `bizomat`: review and recommendation
 
+> **15 Nov 2026:** the owner approved these recommendations. Recommendations 1, 2, 4 and 5 are built
+> (`.github/workflows/bizomat-deploy.yml`, `.github/scripts/stage-secrets.sh`, `.github/scripts/outage-summary.py`,
+> `infrastructure/fly/Dockerfile` target `runtime-website`, `fly.website.toml`). Recommendation 3 (the router's
+> fallback) changes the router every request passes through, so it follows in its own change with its own tests.
+
 Review of 15 Nov 2026. It covers the owner's question "can deploys be safer without new infrastructure?" Owner's
 decision: keep the existing infrastructure. No new Machine, no larger Machine, no new app or server, no added recurring
 cost. Nothing here has been changed or deployed. These are proposals for the owner to approve one by one.
