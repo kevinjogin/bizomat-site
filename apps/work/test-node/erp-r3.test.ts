@@ -198,7 +198,8 @@ describe('ERP Release 3 on the Node runtime', () => {
     expect(built.status).toBe('ready');
     const e = (p: string) => `/api/erp/c/${built.companyId}${p}`;
     expect((await json(s, 'GET', e('/work-centres'))).workCentres).toHaveLength(3);
-    expect((await json(s, 'GET', e('/mos'))).orders).toMatchObject([{ number: 'MO-00001', status: 'in_progress' }]);
+    // Release 5's example adds a make-to-order MO-00002 for its sales order; Release 3's order is still in progress.
+    expect((await json(s, 'GET', e('/mos'))).orders.find((o: any) => o.number === 'MO-00001')).toMatchObject({ status: 'in_progress' });
     const run = await json(s, 'GET', e('/mrp/runs/latest'));
     expect(run.run.number).toBe('MRP-00001');
     expect(run.suggestions.length).toBeGreaterThan(0);
