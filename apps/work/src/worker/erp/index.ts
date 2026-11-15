@@ -8,7 +8,9 @@
 //   GET  /c/:company/overview                 counts for the Products and Engineering hub
 //   GET  /c/:company/roles, PUT /roles/:user  ERP roles (ERP administrators)
 //   GET  /c/:company/events                   the company's ERP history (ERP administrators and executives)
-//   products.ts, engineering.ts, changes.ts, documents.ts, suppliers.ts, files.ts, reports.ts: the records
+//   GET  /c/:company/operations           counts for the Operations hub (purchasing and inventory)
+//   products.ts, engineering.ts, changes.ts, documents.ts, suppliers.ts, files.ts, reports.ts: the records (Release 1)
+//   settings.ts, procurement.ts, purchasing.ts, record-files.ts, inventory.ts, stock-reports.ts: Release 2
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -23,6 +25,12 @@ import { documentRoutes } from './documents';
 import { supplierRoutes } from './suppliers';
 import { fileRoutes } from './files';
 import { reportRoutes } from './reports';
+import { settingsRoutes } from './settings';
+import { inventoryRoutes } from './inventory';
+import { procurementRoutes } from './procurement';
+import { purchasingRoutes } from './purchasing';
+import { recordFileRoutes } from './record-files';
+import { stockReportRoutes } from './stock-reports';
 
 export const erpRoutes = new Hono<AppEnv>();
 
@@ -65,6 +73,36 @@ erpRoutes.get('/c/:company/overview', async (c) => {
   });
 });
 
+erpRoutes.get('/c/:company/operations', async (c) => {
+  const a = await requireErp(c, 'products.view');
+  const db = c.env.DB;
+  const [req, rfq, po, rec, low, adj, cnt, wh] = await db.batch([
+    db.prepare("SELECT SUM(CASE WHEN status = 'submitted' THEN 1 ELSE 0 END) AS submitted, SUM(CASE WHEN status = 'approved' THEN 1 ELSE 0 END) AS approved, SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS draft FROM erp_requisitions WHERE company_id = ?").bind(a.companyId),
+    db.prepare("SELECT SUM(CASE WHEN status IN ('draft','sent') THEN 1 ELSE 0 END) AS open, SUM(CASE WHEN status = 'awarded' THEN 1 ELSE 0 END) AS awarded FROM erp_rfqs WHERE company_id = ?").bind(a.companyId),
+    db.prepare("SELECT SUM(CASE WHEN status = 'awaiting_approval' THEN 1 ELSE 0 END) AS awaiting, SUM(CASE WHEN status IN ('approved','sent','partially_received') THEN 1 ELSE 0 END) AS to_receive, SUM(CASE WHEN status = 'draft' THEN 1 ELSE 0 END) AS draft FROM erp_purchase_orders WHERE company_id = ?").bind(a.companyId),
+    db.prepare('SELECT COUNT(*) AS n, SUM(CASE WHEN inspection_required = 1 THEN 1 ELSE 0 END) AS inspection FROM erp_receipts WHERE company_id = ? AND created_at >= ?').bind(a.companyId, Date.now() - 30 * 86_400_000),
+    db
+      .prepare(
+        `SELECT COUNT(*) AS n FROM erp_product_stock ps WHERE ps.company_id = ? AND ps.reorder_point IS NOT NULL AND
+           (SELECT COALESCE(SUM(s.on_hand - s.reserved), 0) FROM erp_stock s JOIN erp_locations l ON l.company_id = s.company_id AND l.id = s.location_id WHERE s.company_id = ps.company_id AND s.product_id = ps.product_id AND l.kind <> 'quarantine')
+           + (SELECT COALESCE(SUM(pl.quantity - pl.received_qty), 0) FROM erp_po_lines pl JOIN erp_purchase_orders o ON o.company_id = pl.company_id AND o.id = pl.po_id WHERE pl.company_id = ps.company_id AND pl.product_id = ps.product_id AND o.status IN ('approved','sent','partially_received')) <= ps.reorder_point`,
+      )
+      .bind(a.companyId),
+    db.prepare("SELECT COUNT(*) AS n FROM erp_adjustments WHERE company_id = ? AND status = 'pending'").bind(a.companyId),
+    db.prepare("SELECT SUM(CASE WHEN status = 'open' THEN 1 ELSE 0 END) AS open, SUM(CASE WHEN status = 'submitted' THEN 1 ELSE 0 END) AS submitted FROM erp_counts WHERE company_id = ?").bind(a.companyId),
+    db.prepare('SELECT (SELECT COUNT(*) FROM erp_warehouses WHERE company_id = ?1 AND archived_at IS NULL) AS warehouses, (SELECT COALESCE(SUM(value_cents), 0) FROM erp_valuation WHERE company_id = ?1) AS value').bind(a.companyId),
+  ]);
+  const one = (r: D1Result) => (r.results[0] ?? {}) as Record<string, number | null>;
+  return c.json({
+    requisitions: { draft: one(req).draft ?? 0, submitted: one(req).submitted ?? 0, approved: one(req).approved ?? 0 },
+    rfqs: { open: one(rfq).open ?? 0, awarded: one(rfq).awarded ?? 0 },
+    purchaseOrders: { draft: one(po).draft ?? 0, awaitingApproval: one(po).awaiting ?? 0, toReceive: one(po).to_receive ?? 0 },
+    receipts: { last30Days: one(rec).n ?? 0, inspection: one(rec).inspection ?? 0 },
+    stock: { belowReorder: one(low).n ?? 0, pendingAdjustments: one(adj).n ?? 0, openCounts: one(cnt).open ?? 0, countsToApprove: one(cnt).submitted ?? 0, warehouses: one(wh).warehouses ?? 0, valueCents: one(wh).value ?? 0 },
+    can: capabilities(a),
+  });
+});
+
 // ------------------------------------------------------------------ roles
 
 const ROLE_HELP: Record<string, string> = {
@@ -72,9 +110,11 @@ const ROLE_HELP: Record<string, string> = {
   executive: 'Reads every product, change, document, supplier and report',
   engineer: 'Products, variants, bills of materials, revisions, change requests and draft change orders, documents',
   engineering_approver: 'Approves and releases change orders and approves documents, and does an engineer’s work',
-  buyer: 'Suppliers, their contacts and the prices products are bought at',
-  procurement_manager: 'Approves, holds and blocks suppliers, and does a buyer’s work',
-  viewer: 'Reads products, engineering records and suppliers',
+  buyer: 'Suppliers and their prices, requests for quotation, quotations and purchase orders',
+  procurement_manager: 'Approves requisitions, quotation choices, purchase orders over the limit and suppliers, and does a buyer’s work',
+  warehouse_manager: 'Warehouses and locations, stock settings, approves adjustments and counts, and does an operator’s work',
+  warehouse_operator: 'Receives goods; issues, transfers, reserves, returns, quarantines and counts stock',
+  viewer: 'Reads products, engineering records, suppliers, purchasing and stock',
 };
 
 erpRoutes.get('/c/:company/roles', async (c) => {
@@ -99,8 +139,10 @@ erpRoutes.put('/c/:company/roles/:userId', async (c) => {
   const t = now();
   const db = c.env.DB;
   await db.batch([
+    // Release 2 keeps every role in erp_role_grants (erp_user_roles lists Release 1's roles in a CHECK); both are read.
     db.prepare('DELETE FROM erp_user_roles WHERE company_id = ? AND user_id = ?').bind(a.companyId, target.id),
-    ...roles.map((r) => db.prepare('INSERT INTO erp_user_roles (company_id, user_id, role, set_by, set_at) VALUES (?, ?, ?, ?, ?)').bind(a.companyId, target.id, r, a.userId, t)),
+    db.prepare('DELETE FROM erp_role_grants WHERE company_id = ? AND user_id = ?').bind(a.companyId, target.id),
+    ...roles.map((r) => db.prepare('INSERT INTO erp_role_grants (company_id, user_id, role, set_by, set_at) VALUES (?, ?, ?, ?, ?)').bind(a.companyId, target.id, r, a.userId, t)),
     eventStmt(db, {
       companyId: a.companyId,
       actorId: a.userId,
@@ -133,3 +175,10 @@ erpRoutes.route('/', documentRoutes);
 erpRoutes.route('/', supplierRoutes);
 erpRoutes.route('/', fileRoutes);
 erpRoutes.route('/', reportRoutes);
+// Release 2: purchasing and inventory
+erpRoutes.route('/', settingsRoutes);
+erpRoutes.route('/', procurementRoutes);
+erpRoutes.route('/', purchasingRoutes);
+erpRoutes.route('/', recordFileRoutes);
+erpRoutes.route('/', inventoryRoutes);
+erpRoutes.route('/', stockReportRoutes);

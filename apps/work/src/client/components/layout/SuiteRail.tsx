@@ -27,7 +27,7 @@ interface Module {
 }
 
 const own = (re: RegExp) => (p: string) => IS_SYSTEM && re.test(p);
-const ERP_PAGES = /^\/(my-work|cad|products|procurement|maintenance|operations|reports|administration|admin)(\/|$)|^\/c\/[^/]+\/(cad|products|procurement|erp-roles|erp-reports|settings|maintenance)(\/|$)/;
+const ERP_PAGES = /^\/(my-work|cad|products|procurement|inventory|maintenance|operations|reports|administration|admin)(\/|$)|^\/c\/[^/]+\/(cad|products|procurement|inventory|erp-roles|erp-settings|erp-reports|settings|maintenance)(\/|$)/;
 
 const MODULES: Module[] = [
   { id: 'home', label: 'Dashboard', title: 'Dashboard: your company, its tools and their figures', icon: 'home', to: '/', active: (p) => IS_SYSTEM && !ERP_PAGES.test(p) },
@@ -37,9 +37,9 @@ const MODULES: Module[] = [
   { id: 'tasks', label: 'Projects and Tasks', title: 'Projects and Tasks: boards, timelines, documents and dashboards', icon: 'grid', to: '/tasks/', active: (p) => APP_BASE === '/tasks' && !/\/my-work(\/|$)/.test(p) },
   { id: 'cad', label: 'Products and Engineering', title: 'Products and Engineering: products, bills of materials, revisions, engineering changes, documents and CAD Automation', icon: 'diamond', to: '/products', active: own(/^\/(c\/[^/]+\/)?(cad|products)(\/|$)/) },
   { id: 'maintenance', label: 'Maintenance', title: 'Asset Management and Maintenance', icon: 'wrench', to: '/maintenance', active: own(/^\/(c\/[^/]+\/)?maintenance(\/|$)/) },
-  { id: 'operations', label: 'Operations', title: 'Operations: procurement (suppliers live), inventory, manufacturing, quality and supply chain (planned), and what is live of Asset Management and Maintenance', icon: 'layers', to: '/operations', active: own(/^\/(c\/[^/]+\/)?(operations|procurement)(\/|$)/) },
+  { id: 'operations', label: 'Operations', title: 'Operations: procurement and inventory (live), manufacturing, quality and supply chain (planned), and what is live of Asset Management and Maintenance', icon: 'layers', to: '/operations', active: own(/^\/(c\/[^/]+\/)?(operations|procurement|inventory)(\/|$)/) },
   { id: 'reports', label: 'Reports', title: 'Reports: every report of your tools in one place', icon: 'chart', to: '/reports', active: own(/^\/reports(\/|$)|^\/c\/[^/]+\/erp-reports(\/|$)/) },
-  { id: 'admin', label: 'Administration', title: 'Administration: company, people, departments, tools, ERP roles and permissions', icon: 'settings', to: '/administration', active: (p) => APP_BASE === '/company' || (IS_SYSTEM && /^\/(administration|admin)(\/|$)|^\/c\/[^/]+\/(settings|erp-roles)/.test(p)) },
+  { id: 'admin', label: 'Administration', title: 'Administration: company, people, departments, tools, ERP roles and permissions', icon: 'settings', to: '/administration', active: (p) => APP_BASE === '/company' || (IS_SYSTEM && /^\/(administration|admin)(\/|$)|^\/c\/[^/]+\/(settings|erp-roles|erp-settings)/.test(p)) },
 ];
 
 /** True inside the ERP: the rail is shown and the shell makes room for it (class "in-suite"). */

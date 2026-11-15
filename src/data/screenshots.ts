@@ -14,7 +14,10 @@ const ALL: readonly Screenshot[] = [
   { src: '/proof-of-work/product/erp-finance.webp', product: 'erp', title: 'BIZOMAT ERP: Finance and Accounting', caption: 'Finance opens inside the ERP, in the company\'s business workspace.' },
   { src: '/proof-of-work/product/erp-projects.webp', product: 'erp', title: 'BIZOMAT ERP: Projects and Tasks', caption: 'A project board inside the ERP: groups, owners, statuses and dates.' },
   { src: '/proof-of-work/product/erp-engineering.webp', product: 'erp', title: 'BIZOMAT ERP: Products and Engineering', caption: 'CAD Automation\'s set-up steps and the computers this person may see.' },
-  { src: '/proof-of-work/product/erp-operations.webp', product: 'erp', title: 'BIZOMAT ERP: Operations', caption: 'The operations modules: Asset Management and Maintenance partly live, with what works today, and the others labelled Planned.' },
+  { src: '/proof-of-work/product/erp-operations.webp', product: 'erp', title: 'BIZOMAT ERP: Operations', caption: 'What waits for approval or receiving, then the operations modules: Procurement and Inventory live, Maintenance partly live, the others labelled Planned.' },
+  // ERP Release 2, captured 15 Nov 2026 from a local instance with the example company's invented data.
+  { src: '/proof-of-work/product/erp-procurement.webp', product: 'erp', title: 'BIZOMAT ERP: a request for quotation', caption: 'Two suppliers\' quotations side by side, with the cheapest and the fastest marked, ready for a buyer to select one.' },
+  { src: '/proof-of-work/product/erp-inventory.webp', product: 'erp', title: 'BIZOMAT ERP: Inventory', caption: 'Stock by product: on hand, reserved, available, on order, reorder points and value.' },
   { src: '/proof-of-work/product/erp-reports.webp', product: 'erp', title: 'BIZOMAT ERP: Reports', caption: 'Every report of the company\'s tools in one place; each opens in its module.' },
   { src: '/proof-of-work/product/erp-administration.webp', product: 'erp', title: 'BIZOMAT ERP: Administration', caption: 'The company, each tool\'s team and settings, and your own profile.' },
   { src: '/proof-of-work/product/erp-maintenance.webp', product: 'erp', title: 'BIZOMAT ERP: Maintenance', caption: 'The maintenance overview: requests awaiting approval, open and overdue work orders, your work and the asset register.' },

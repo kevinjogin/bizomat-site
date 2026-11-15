@@ -1,4 +1,4 @@
-// BIZOMAT ERP, Release 1: ERP roles in a company (Administration > ERP roles). An ERP administrator gives each member one
+// BIZOMAT ERP: ERP roles in a company (Administration > ERP roles). An ERP administrator gives each member one
 // or more roles; the company's owner and administrators are always ERP administrators. Everyone else sees their own.
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -28,11 +28,11 @@ export function ErpRolesPage({ companyId, companyName }: { companyId: string; co
   if (!me.data) return <Loading />;
   return (
     <div className="page crm-page">
-      <PageHeader title="ERP roles" subtitle={`Who may do what in ${companyName}'s Products and Engineering and Procurement. The server checks every action against these roles.`} />
+      <PageHeader title="ERP roles" subtitle={`Who may do what in ${companyName}'s Products and Engineering, Procurement and Inventory. The server checks every action against these roles.`} />
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Your roles</h2>
         <p>{me.data.roleLabels.join(', ')}</p>
-        {me.data.solo ? <p className="muted small">You are the only person in this company, so you may approve your own change orders and suppliers. Each time, the exception is recorded.</p> : <p className="muted small">Nobody approves a change order they drafted or a supplier they created: someone else in the company must (segregation of duties).</p>}
+        {me.data.solo ? <p className="muted small">You are the only person in this company, so you may approve your own change orders, suppliers, requisitions, purchase orders, adjustments and counts. Each time, the exception is recorded.</p> : <p className="muted small">Nobody approves what they drafted, created, raised, submitted or counted: someone else in the company must (segregation of duties).</p>}
       </section>
       {admin ? (
         q.error ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : !q.data ? <Loading /> : (

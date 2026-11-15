@@ -1,6 +1,7 @@
-// BIZOMAT ERP, Release 1 reports, inside a company at /erp/c/<company>/erp-reports/<report>: product catalogue,
-// lifecycle, bill of materials cost, where-used, revisions and changes, and suppliers. Each filters, links every row to
-// its record and exports CSV. Figures come only from the company's own records.
+// BIZOMAT ERP reports, inside a company at /erp/c/<company>/erp-reports/<report>. Release 1: product catalogue,
+// lifecycle, bill of materials cost, where-used, revisions and changes, and suppliers. Release 2 (StockReports.tsx):
+// purchasing and stock. Each filters, links every row to its record and exports CSV. Figures come only from the
+// company's own records.
 import type { ReactNode } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -10,7 +11,8 @@ import { ErrorBox, Loading, PageHeader } from '../../components/ui/ui';
 import '../../styles/maintenance.css';
 import '../../styles/erp.css';
 import { ECO_STATUS, LIFECYCLE, PRODUCT_TYPES, SUPPLIER_STATUS, dateText, dayText, erpPath, money, procurementPage, productsPage, reportPage } from './api';
-import { CsvLink, EcoBadge, LifecycleBadge, NotYet, Section, SupplierBadge, options } from './common';
+import { CsvLink, EcoBadge, LifecycleBadge, Section, SupplierBadge, options } from './common';
+import { PriceVariance, PurchaseCommitments, STOCK_REPORTS, Shortages, SlowMoving, StockAgeing, StockMovementsReport, StockOnHand, StockValuationReport, SupplierDelivery, SupplierSpend } from './StockReports';
 
 export const ERP_REPORTS: { key: string; label: string; what: string }[] = [
   { key: 'catalogue', label: 'Product catalogue', what: 'Every product by type and category, with its released revision, costs and suppliers.' },
@@ -24,9 +26,12 @@ export const ERP_REPORTS: { key: string; label: string; what: string }[] = [
 export function ErpReportsArea({ companyId, companyName }: { companyId: string; companyName: string }) {
   return (
     <div className="page crm-page">
-      <PageHeader title="Products, engineering and supplier reports" subtitle={`${companyName}. Each row opens its record; each report exports CSV.`} />
-      <nav className="tabs mt-tabs erp-report-tabs" aria-label="Reports">
+      <PageHeader title="ERP reports" subtitle={`${companyName}: products, engineering, suppliers, purchasing and stock. Each row opens its record; each report exports CSV.`} />
+      <nav className="tabs mt-tabs erp-report-tabs" aria-label="Products and engineering reports">
         {ERP_REPORTS.map((r) => <NavLink key={r.key} to={reportPage(companyId, r.key)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>{r.label}</NavLink>)}
+      </nav>
+      <nav className="tabs mt-tabs erp-report-tabs" aria-label="Purchasing and stock reports">
+        {STOCK_REPORTS.map((r) => <NavLink key={r.key} to={reportPage(companyId, r.key)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>{r.label}</NavLink>)}
       </nav>
       <Routes>
         <Route path="catalogue" element={<Catalogue companyId={companyId} />} />
@@ -35,6 +40,16 @@ export function ErpReportsArea({ companyId, companyName }: { companyId: string; 
         <Route path="where-used" element={<WhereUsedReport companyId={companyId} />} />
         <Route path="changes" element={<Changes companyId={companyId} />} />
         <Route path="suppliers" element={<Suppliers companyId={companyId} />} />
+        <Route path="purchase-commitments" element={<PurchaseCommitments companyId={companyId} />} />
+        <Route path="supplier-spend" element={<SupplierSpend companyId={companyId} />} />
+        <Route path="price-variance" element={<PriceVariance companyId={companyId} />} />
+        <Route path="supplier-delivery" element={<SupplierDelivery companyId={companyId} />} />
+        <Route path="stock-on-hand" element={<StockOnHand companyId={companyId} />} />
+        <Route path="stock-valuation" element={<StockValuationReport companyId={companyId} />} />
+        <Route path="stock-movements" element={<StockMovementsReport companyId={companyId} />} />
+        <Route path="stock-ageing" element={<StockAgeing companyId={companyId} />} />
+        <Route path="slow-moving" element={<SlowMoving companyId={companyId} />} />
+        <Route path="shortages" element={<Shortages companyId={companyId} />} />
         <Route path="*" element={<Navigate to={reportPage(companyId, 'catalogue')} replace />} />
       </Routes>
     </div>
@@ -282,7 +297,7 @@ function Suppliers({ companyId }: { companyId: string }) {
                 </tr>
               ))}
             </Table>
-            <NotYet>Supplier performance: {q.data.performance ?? 'Measured from purchase orders (Release 2)'}.</NotYet>
+            <p className="muted small">Supplier performance: {q.data.performance} <Link to={reportPage(companyId, 'supplier-delivery')}>Supplier delivery performance</Link>.</p>
           </>
         ) : null}
       </Shell>

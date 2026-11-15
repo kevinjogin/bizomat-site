@@ -1,4 +1,4 @@
-// Shared pieces of the ERP's Release 1 modules: fixed lists with their labels, numbering, the history (erp_events),
+// Shared pieces of the ERP's modules (Releases 1 and 2): fixed lists with their labels, numbering, the history (erp_events),
 // list paging, CSV answers and small DTO helpers.
 
 import { z } from 'zod';
@@ -36,11 +36,18 @@ export const NUMBER_RE = /^[A-Za-z0-9][A-Za-z0-9._/-]{0,39}$/;
 // ------------------------------------------------------------------ numbering
 
 const NUMBERING = {
-  product: { table: 'erp_products', prefix: 'PRD-', width: 5 },
-  change_request: { table: 'erp_change_requests', prefix: 'ECR-', width: 4 },
-  change_order: { table: 'erp_change_orders', prefix: 'ECO-', width: 4 },
-  supplier: { table: 'erp_suppliers', prefix: 'SUP-', width: 4 },
-  document: { table: 'erp_documents', prefix: 'DOC-', width: 4 },
+  product: { table: 'erp_products', prefix: 'PRD-', width: 5, counters: 'erp_counters' },
+  change_request: { table: 'erp_change_requests', prefix: 'ECR-', width: 4, counters: 'erp_counters' },
+  change_order: { table: 'erp_change_orders', prefix: 'ECO-', width: 4, counters: 'erp_counters' },
+  supplier: { table: 'erp_suppliers', prefix: 'SUP-', width: 4, counters: 'erp_counters' },
+  document: { table: 'erp_documents', prefix: 'DOC-', width: 4, counters: 'erp_counters' },
+  // Release 2 (counted in erp_sequences: erp_counters lists Release 1's kinds in a CHECK)
+  requisition: { table: 'erp_requisitions', prefix: 'REQ-', width: 5, counters: 'erp_sequences' },
+  rfq: { table: 'erp_rfqs', prefix: 'RFQ-', width: 5, counters: 'erp_sequences' },
+  purchase_order: { table: 'erp_purchase_orders', prefix: 'PO-', width: 5, counters: 'erp_sequences' },
+  receipt: { table: 'erp_receipts', prefix: 'GR-', width: 5, counters: 'erp_sequences' },
+  count: { table: 'erp_counts', prefix: 'CNT-', width: 5, counters: 'erp_sequences' },
+  adjustment: { table: 'erp_adjustments', prefix: 'ADJ-', width: 5, counters: 'erp_sequences' },
 } as const;
 export type NumberKind = keyof typeof NUMBERING;
 
@@ -58,7 +65,7 @@ export async function nextNumber(db: D1Database, companyId: string, kind: Number
     .first<{ m: number | null }>();
   const highest = Math.max(0, Math.min(Number(max?.m ?? 0), 1e12));
   const row = await db
-    .prepare('INSERT INTO erp_counters (company_id, kind, value) VALUES (?1, ?2, ?3 + 1) ON CONFLICT(company_id, kind) DO UPDATE SET value = MAX(erp_counters.value, ?3) + 1 RETURNING value')
+    .prepare(`INSERT INTO ${n.counters} (company_id, kind, value) VALUES (?1, ?2, ?3 + 1) ON CONFLICT(company_id, kind) DO UPDATE SET value = MAX(${n.counters}.value, ?3) + 1 RETURNING value`)
     .bind(companyId, kind, highest)
     .first<{ value: number }>();
   return `${n.prefix}${String(Number(row!.value)).padStart(n.width, '0')}`;
@@ -70,7 +77,28 @@ export interface ErpEvent {
   companyId: string;
   actorId: string | null;
   action: string;
-  entityType: 'product' | 'revision' | 'bom' | 'change_request' | 'change_order' | 'document' | 'supplier' | 'role' | 'file';
+  entityType:
+    | 'product'
+    | 'revision'
+    | 'bom'
+    | 'change_request'
+    | 'change_order'
+    | 'document'
+    | 'supplier'
+    | 'role'
+    | 'file'
+    | 'requisition'
+    | 'rfq'
+    | 'quotation'
+    | 'purchase_order'
+    | 'receipt'
+    | 'warehouse'
+    | 'location'
+    | 'stock'
+    | 'adjustment'
+    | 'count'
+    | 'settings'
+    | 'integration';
   entityId?: string | null;
   productId?: string | null;
   summary: string;

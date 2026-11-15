@@ -61,7 +61,9 @@ function applySecurityHeaders(headers: Headers, isApi: boolean) {
   // A PDF shown inside the app (the document preview) may be framed by the same origin; nothing else is framed.
   if (!headers.has('X-Frame-Options')) headers.set('X-Frame-Options', 'DENY');
   headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
-  headers.set('Permissions-Policy', 'camera=(), microphone=(), geolocation=(), payment=()');
+  // The camera: this origin only, for the ERP's warehouse screen to read QR codes (BarcodeDetector), always after the
+  // browser asks the person; typing a code works without it.
+  headers.set('Permissions-Policy', 'camera=(self), microphone=(), geolocation=(), payment=()');
   headers.set('Cross-Origin-Opener-Policy', 'same-origin');
   if (!headers.has('Content-Security-Policy')) headers.set('Content-Security-Policy', CSP);
   headers.set('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
