@@ -282,6 +282,8 @@ export const PLATFORM_CATALOG: readonly PlatformEntry[] = [
     keywords: 'engine room proof of work evidence demonstration screenshots architecture technical proof how it works tests results test record system diagram engineering record' },
   { id: 'page:founder', title: 'The Engine Room: from the founder', summary: 'Why BIZOMAT exists, from its founder, and the principles it runs on.', url: '/engine-room/#founder', area: P, kind: 'Page',
     keywords: 'about company founder mission team story who principles background' },
+  { id: 'doc:manufacturing-guide', title: 'How to use BIZOMAT Manufacturing and Operations: the user guide', summary: 'Step by step in BIZOMAT ERP: buy in Procurement, keep stock in Inventory, make products and plan with MRP, check quality, look after assets, and sell and ship in Supply Chain.', url: '/systems/manufacturing/guide/', area: P, kind: 'Documentation',
+    keywords: 'erp manufacturing operations guide user guide how to procurement purchase orders inventory stock warehouse mrp production shop floor quality inspections maintenance work orders supply chain sales orders shipments dispatch delivery returns' },
   { id: 'page:privacy', title: 'Privacy policy', summary: 'What BIZOMAT collects, why, where it is kept and your rights.', url: '/privacy/', area: P, kind: 'Page',
     keywords: 'privacy policy personal data data protection retention deletion cookies' },
   { id: 'page:terms', title: 'Terms of use', summary: 'The terms for using the BIZOMAT website and applications.', url: '/terms/', area: P, kind: 'Page',
