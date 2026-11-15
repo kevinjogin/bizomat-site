@@ -51,5 +51,9 @@ export async function handleDownload(request: Request, bucket: DownloadsBucket |
   };
   if (object.httpEtag) headers.ETag = object.httpEtag;
   if (kind.attachment) headers['Content-Disposition'] = `attachment; filename="${name}"`;
-  return new Response(request.method === 'HEAD' ? null : object.body, { status: 200, headers });
+  if (request.method === 'HEAD') {
+    await object.body.cancel().catch(() => {}); // the file is not sent, so let its stream go
+    return new Response(null, { status: 200, headers });
+  }
+  return new Response(object.body, { status: 200, headers });
 }
