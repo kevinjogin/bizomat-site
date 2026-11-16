@@ -90,8 +90,10 @@ describe('invitation emails', () => {
     expect(inv.inviteUrl).not.toContain('www.example.org');
     await processOutbox(env);
     const msg = fake.sent.find((m) => m.to.email === email)!;
-    // The HTML button and its copy-this-address link, and the plain-text part, all carry the same original URL.
-    expect(hrefs(msg.html).filter((h) => h.includes('/invite/'))).toEqual([inv.inviteUrl, inv.inviteUrl]);
+    // The HTML button, the copy-this-address text under it (plain text, never a link) and the plain-text part all carry
+    // the same original URL.
+    expect(hrefs(msg.html).filter((h) => h.includes('/invite/'))).toEqual([inv.inviteUrl]);
+    expect(msg.html).toContain(`word-break:break-all">${inv.inviteUrl}</span>`);
     expect(msg.html).not.toContain('&amp;amp;');
     expect(msg.text).toContain(`Accept invitation: ${inv.inviteUrl}`);
     expect(msg.text).not.toMatch(/%25|www\.example\.org/);
@@ -140,9 +142,45 @@ describe('the Brevo request', () => {
     // Only documented fields of POST /v3/smtp/email (no invented tracking switches).
     const documented = ['sender', 'to', 'replyTo', 'subject', 'htmlContent', 'textContent', 'tags', 'headers'];
     expect(Object.keys(sent!.body).filter((k) => !documented.includes(k))).toEqual([]);
-    expect(hrefs(sent!.body.htmlContent as string).filter((h) => h.includes('/invite/'))).toEqual([url, url]);
+    // The button links to the original URL; the address under it is the same URL as plain text (never a link Brevo
+    // could rewrite).
+    expect(hrefs(sent!.body.htmlContent as string).filter((h) => h.includes('/invite/'))).toEqual([url]);
+    expect(sent!.body.htmlContent as string).toContain(`word-break:break-all">${url}</span>`);
     expect(sent!.body.textContent).toContain(`Accept invitation: ${url}`);
     expect(JSON.stringify(sent!.body)).not.toMatch(/www\.bizomat|r\.www|trackClicks|tracking/i);
+  });
+});
+
+describe('the email confirmation message', () => {
+  // Brevo rewrites every link of a transactional email into a click-tracking redirect, and its API cannot turn that off
+  // for one message (only the "tracking" fields below exist, and none stops the rewrite). So the message carries the
+  // original address twice: as the button's link and as plain text under it, which Brevo never rewrites.
+  const url = verifyEmailUrl(PROD, 'Ab9_-EXAMPLE_TOKEN_0123456789abcdefghijklmn');
+  const r = renderEmail({ template: 'verify_email', name: 'Alex', email: 'alex@example.com', url, expires: '2026-11-17 04:00 UTC' });
+  const textOnly = (html: string) => html.replace(/<a\b[^>]*>[\s\S]*?<\/a>/g, '').replace(/<[^>]+>/g, ' ').replace(/&amp;/g, '&');
+
+  it('links the button straight to https://bizomat.ai/tasks/verify-email with the token, and nothing else to it', () => {
+    expect(url).toBe('https://bizomat.ai/tasks/verify-email?token=Ab9_-EXAMPLE_TOKEN_0123456789abcdefghijklmn');
+    expect(hrefs(r.html).filter((h) => h.includes('verify-email'))).toEqual([url]);
+    expect(hrefs(r.html).every((h) => h === url || h.startsWith('https://bizomat.ai/contact'))).toBe(true);
+  });
+
+  it('writes the same address as plain text under the button, outside any link', () => {
+    expect(textOnly(r.html)).toContain(url);
+    expect(r.html).toContain(`<span style="color:#0a1f33;word-break:break-all">${url}</span>`);
+    expect(r.text).toContain(`Confirm email address: ${url}`);
+  });
+
+  it('asks Brevo for no tracking switch it does not have, and the outbox keeps the message sensitive', async () => {
+    let body: Record<string, unknown> = {};
+    const fakeFetch = (async (_u: string, init: RequestInit) => {
+      body = JSON.parse(String(init.body));
+      return new Response(JSON.stringify({ messageId: '<v@test>' }), { status: 201 });
+    }) as unknown as typeof fetch;
+    await new BrevoProvider('test-key', false, fakeFetch).send({ to: { email: 'alex@example.com' }, from: { email: 'notifications@bizomat.ai', name: 'BIZOMAT' }, subject: r.subject, html: r.html, text: r.text, tags: ['verify_email'], correlationId: 'v1' });
+    expect(body.htmlContent).toBe(r.html);
+    expect(body.textContent).toBe(r.text);
+    expect(JSON.stringify(body)).not.toMatch(/r\.www|trackClicks|contactPixelTrackingConsent/);
   });
 });
 

@@ -90,8 +90,12 @@ function layout(b: Block): RenderedEmail {
         .join('')}</table>`
     : '';
   const quoteHtml = b.quote ? `<div style="margin:16px 0;padding:12px 16px;border-left:3px solid ${MARK};background:#f8fafc;color:#334155;font-size:14px;line-height:1.55;white-space:pre-wrap">${esc(b.quote)}</div>` : '';
+  // The address under the button is plain text, not a link. Brevo rewrites every link of a transactional email into a
+  // click-tracking redirect on its own host (its API has no way to turn that off for one message), so when that host
+  // fails the button fails too. Text is never rewritten: the written address is always the original one, the same as
+  // the button's, and mail apps make it clickable themselves.
   const buttonHtml = b.button
-    ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0"><tr><td style="border-radius:8px;background:${TEAL}"><a href="${esc(b.button.url)}" style="display:inline-block;padding:12px 22px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px">${esc(b.button.label)}</a></td></tr></table><p style="margin:0 0 16px;font-size:12px;color:#64748b;line-height:1.5">If the button does not work, copy this address into your browser:<br><a href="${esc(b.button.url)}" style="color:${TEAL};word-break:break-all">${esc(b.button.url)}</a></p>`
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:22px 0"><tr><td style="border-radius:8px;background:${TEAL}"><a href="${esc(b.button.url)}" style="display:inline-block;padding:12px 22px;font-size:15px;font-weight:600;color:#ffffff;text-decoration:none;border-radius:8px">${esc(b.button.label)}</a></td></tr></table><p style="margin:0 0 16px;font-size:12px;color:#64748b;line-height:1.5">If the button does not work, copy this address into your browser:<br><span style="color:${NAVY};word-break:break-all">${esc(b.button.url)}</span></p>`
     : '';
   const para = (t: string) => `<p style="margin:0 0 12px;font-size:15px;line-height:1.6;color:#1e293b">${esc(t)}</p>`;
   const html = `<!DOCTYPE html>
