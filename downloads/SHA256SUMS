@@ -1,0 +1,5 @@
+# Public downloads at https://bizomat.ai/downloads/<folder>/<file> (src/server/downloads.ts, src/node/bindings.ts).
+# One line per public file: its SHA-256, two spaces, then <folder>/<file> under downloads/. Only listed files are
+# served, and only while their bytes match this list. Anything here is public: never list an installer, a private
+# document or anything with personal data. The CAD installer stays behind sign-in at bizomat.ai/cad/download/solidworks.
+# Add a file with: sha256sum <folder>/<file> >> SHA256SUMS (run inside downloads/), in a pull request.

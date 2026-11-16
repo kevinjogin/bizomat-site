@@ -6,15 +6,16 @@
 //   node dist-server/server.mjs                 PORT (8003), HOST (::), WEB_DIST_DIR (dist), WEB_TRUST_PROXY ("1")
 //
 // Optional: CF_ACCOUNT_ID + CF_AI_TOKEN (Workers AI for AI search; without them search runs on keywords),
-// WEB_DOWNLOADS_R2_ACCESS_KEY_ID + WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY (+ WEB_DOWNLOADS_R2_ACCOUNT_ID, else CF_ACCOUNT_ID)
-// for the public downloads at /downloads/ (without them it answers 404), TURNSTILE_SECRET_KEY, WEB_VERSION.
+// WEB_DOWNLOADS_DIR (default: downloads next to WEB_DIST_DIR; the public downloads at /downloads/), TURNSTILE_SECRET_KEY,
+// WEB_VERSION.
 // GET /healthz answers without touching the Worker.
+import { resolve } from 'node:path';
 import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
 import { Readable } from 'node:stream';
 import { pipeline } from 'node:stream/promises';
 import worker, { type Env } from '../worker.ts';
 import { createAssets } from './assets.ts';
-import { memoryLimiter, r2Downloads, workersAiRest } from './bindings.ts';
+import { folderDownloads, memoryLimiter, workersAiRest } from './bindings.ts';
 
 export interface WebServerOptions {
   port?: number;
@@ -35,20 +36,12 @@ export function buildEnv(distDir: string, settings: Record<string, string | unde
     FORM_LIMITER: memoryLimiter(5, 60),
   };
   if (settings.CF_ACCOUNT_ID && settings.CF_AI_TOKEN) env.AI = workersAiRest(settings.CF_ACCOUNT_ID, settings.CF_AI_TOKEN);
-  // Public downloads (/downloads/, the R2 bucket bizomat-downloads): only with a read-only R2 token (src/node/bindings.ts).
-  const r2Account = settings.WEB_DOWNLOADS_R2_ACCOUNT_ID || settings.CF_ACCOUNT_ID;
-  if (r2Account && settings.WEB_DOWNLOADS_R2_ACCESS_KEY_ID && settings.WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY) {
-    try {
-      env.DOWNLOADS = r2Downloads({
-        accountId: r2Account,
-        accessKeyId: settings.WEB_DOWNLOADS_R2_ACCESS_KEY_ID,
-        secretAccessKey: settings.WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY,
-        bucket: settings.WEB_DOWNLOADS_R2_BUCKET || 'bizomat-downloads',
-      });
-    } catch (err) {
-      // A malformed setting leaves /downloads/ at 404; it never stops the website from starting.
-      console.error(JSON.stringify({ web: 'downloads off', error: String(err).slice(0, 200) }));
-    }
+  // Public downloads (/downloads/): the repository's downloads/ folder, copied into the image next to dist/. A broken
+  // SHA256SUMS leaves /downloads/ at 404; it never stops the website from starting.
+  try {
+    env.DOWNLOADS = folderDownloads(settings.WEB_DOWNLOADS_DIR || resolve(distDir, '..', 'downloads'));
+  } catch (err) {
+    console.error(JSON.stringify({ web: 'downloads off', error: String(err).slice(0, 200) }));
   }
   for (const name of ['TURNSTILE_SECRET_KEY', 'CHAT_MODEL', 'CHAT_FALLBACK_MODEL', 'DISCOVER_MODEL', 'LEARN_MODEL', 'DISCOVER_RATE_LIMIT_MAX', 'LEARN_RATE_LIMIT_MAX', 'RATE_LIMIT_MAX', 'RATE_LIMIT_WINDOW', 'MAIL_PROVIDER', 'RESEND_API_KEY', 'CONTACT_TO', 'CONTACT_FROM', 'STRIPE_WEBHOOK_SECRET']) {
     if (settings[name]) env[name] = settings[name];

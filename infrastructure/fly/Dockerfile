@@ -150,6 +150,8 @@ FROM runtime-common AS runtime-website
 COPY --from=web-build /src/package.json /app/web/package.json
 COPY --from=web-build /src/dist-server /app/web/dist-server
 COPY --from=web-build /src/dist /app/web/dist
+# the public downloads (src/node/bindings.ts folderDownloads): only files listed in downloads/SHA256SUMS are served
+COPY downloads /app/web/downloads
 COPY --from=work-build /src/apps/work/package.json /app/work/package.json
 COPY --from=work-build /src/apps/work/migrations /app/work/migrations
 COPY --from=work-build /src/apps/work/node_modules /app/work/node_modules

@@ -1,130 +1,147 @@
-// Public downloads on the Node website (the Fly web process): the R2 bucket through R2's S3 API (src/node/bindings.ts),
-// served by the same handler as on a Worker (src/server/downloads.ts). R2 is a local stand-in here; no request leaves
-// the machine.
+// Public downloads on the Node website (the Fly web process): the repository's downloads/ folder, copied into the image
+// (src/node/bindings.ts folderDownloads), served by the same handler as on a Worker (src/server/downloads.ts). Only files
+// listed in downloads/SHA256SUMS are served, and only while their bytes match the list. No cloud storage is involved.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { createServer, type IncomingMessage, type ServerResponse } from 'node:http';
-import type { AddressInfo } from 'node:net';
-import { EMPTY_SHA256, r2Downloads, signV4 } from '../src/node/bindings.ts';
+import { createHash } from 'node:crypto';
+import { mkdirSync, mkdtempSync, readFileSync, symlinkSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { folderDownloads, parseSums } from '../src/node/bindings.ts';
+import { handleDownload } from '../src/server/downloads.ts';
 import { buildEnv } from '../src/node/server.ts';
 import worker, { type Env } from '../src/worker.ts';
 
-// Not keys: built at run time, so secret scanners reading this repository see no key-shaped text.
-const join = (...parts: string[]) => parts.join('');
-const ACCOUNT = '0123456789abcdef0123456789abcdef';
-const KEY_ID = join('test', 'downloadkeyid', '0000000000');
-const SECRET = join('test', 'downloadsecret', '00000000000000000000000000000000');
+const sha = (b: Buffer | string) => createHash('sha256').update(b).digest('hex');
+const PDF = Buffer.from('%PDF-1.4\nexample public guide\n%%EOF\n');
+const NOTES = 'Release notes for an example.\n';
 
-test('AWS Signature Version 4: the example from the Amazon S3 documentation (GET Object)', () => {
-  // docs.aws.amazon.com/AmazonS3/latest/API/sig-v4-header-based-auth.html, "Example: GET Object".
-  const headers = signV4('GET', 'examplebucket.s3.amazonaws.com', '/test.txt', { range: 'bytes=0-9' }, {
-    accessKeyId: join('AKIA', 'IOSFODNN7EXAMPLE'),
-    secretAccessKey: join('wJalrXUtnFEMI/K7MDENG/', 'bPxRfiCYEXAMPLEKEY'),
-    region: 'us-east-1',
-    service: 's3',
-  }, new Date('2013-05-24T00:00:00Z'));
-  assert.equal(headers['x-amz-date'], '20130524T000000Z');
-  assert.equal(headers['x-amz-content-sha256'], EMPTY_SHA256);
-  assert.equal(headers.Authorization, `AWS4-HMAC-SHA256 Credential=${join('AKIA', 'IOSFODNN7EXAMPLE')}/20130524/us-east-1/s3/aws4_request, ` +
-    'SignedHeaders=host;range;x-amz-content-sha256;x-amz-date, Signature=f0e8bdb87c964420e857bd35b5d6ed310bd44f0170aba48dd91039c6036bdb41');
-  assert.equal(headers.host, undefined, 'fetch sets Host itself');
-});
-
-const FILES: Record<string, string> = {
-  '/bizomat-downloads/cad/BIZOMAT-CAD-Automation-x64.msi': 'stable msi bytes',
-  '/bizomat-downloads/cad/BIZOMAT-CAD-Automation-0.13.1-x64.msi': 'versioned msi bytes',
-  '/bizomat-downloads/cad/release.json': '{"version":"0.13.1"}',
-};
-
-// A stand-in for R2's S3 API: it checks each request's signature the way R2 does, and answers like GetObject.
-async function withR2(run: (endpoint: string, seen: string[]) => Promise<void>) {
-  const seen: string[] = [];
-  const server = createServer((req: IncomingMessage, res: ServerResponse) => {
-    const path = req.url ?? '';
-    seen.push(`${req.method} ${path}`);
-    const date = String(req.headers['x-amz-date']);
-    const when = new Date(`${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}T${date.slice(9, 11)}:${date.slice(11, 13)}:${date.slice(13, 15)}Z`);
-    const expected = signV4(req.method ?? 'GET', String(req.headers.host), path, {}, { accessKeyId: KEY_ID, secretAccessKey: SECRET, region: 'auto', service: 's3' }, when);
-    if (req.headers.authorization !== expected.Authorization) {
-      res.writeHead(403, { 'content-type': 'application/xml' }).end('<Error><Code>SignatureDoesNotMatch</Code></Error>');
-      return;
-    }
-    const body = FILES[path];
-    if (body === undefined) {
-      res.writeHead(404, { 'content-type': 'application/xml' }).end('<Error><Code>NoSuchKey</Code></Error>');
-      return;
-    }
-    res.writeHead(200, { 'content-type': 'application/octet-stream', 'content-length': Buffer.byteLength(body), etag: `"etag-${body.length}"` }).end(body);
-  });
-  await new Promise<void>((r) => server.listen(0, '127.0.0.1', r));
-  try {
-    await run(`http://127.0.0.1:${(server.address() as AddressInfo).port}`, seen);
-  } finally {
-    server.close();
-  }
+/** A downloads folder like the image's: a listed PDF and text file, an unlisted file, a secret outside, a link out. */
+function folder() {
+  const root = mkdtempSync(join(tmpdir(), 'downloads-'));
+  const dir = join(root, 'downloads');
+  mkdirSync(join(dir, 'guides'), { recursive: true });
+  mkdirSync(join(dir, 'cad'), { recursive: true });
+  writeFileSync(join(dir, 'guides', 'Example-Guide-1.0.0.pdf'), PDF);
+  writeFileSync(join(dir, 'guides', 'notes.txt'), NOTES);
+  writeFileSync(join(dir, 'guides', 'unlisted.txt'), 'not listed\n');
+  writeFileSync(join(dir, 'cad', 'BIZOMAT-CAD-Automation-x64.msi'), 'an installer');
+  writeFileSync(join(root, 'secret.txt'), 'outside the folder\n');
+  symlinkSync(join(root, 'secret.txt'), join(dir, 'guides', 'link.txt'));
+  writeFileSync(
+    join(dir, 'SHA256SUMS'),
+    [
+      '# public downloads',
+      `${sha(PDF)}  guides/Example-Guide-1.0.0.pdf`,
+      `${sha(NOTES)}  guides/notes.txt`,
+      `${sha('outside the folder\n')}  guides/link.txt`,
+      `${sha('an installer')}  cad/BIZOMAT-CAD-Automation-x64.msi`,
+      `${sha('gone')}  guides/missing.txt`,
+      '',
+    ].join('\n'),
+  );
+  return dir;
 }
 
-const envWith = (endpoint: string, secret = SECRET): Env => ({
-  ASSETS: { fetch: async () => new Response('asset') },
-  DOWNLOADS: r2Downloads({ accountId: ACCOUNT, accessKeyId: KEY_ID, secretAccessKey: secret, bucket: 'bizomat-downloads', endpoint }),
+const get = (bucket: ReturnType<typeof folderDownloads>, path: string, method = 'GET') =>
+  handleDownload(new Request(`https://bizomat.ai/downloads/${path}`, { method }), bucket);
+
+test('a listed file is served whole, with its checksum, type and cache headers, and HEAD sends no body', async () => {
+  const bucket = folderDownloads(folder());
+  const res = await get(bucket, 'guides/Example-Guide-1.0.0.pdf');
+  assert.equal(res.status, 200);
+  const body = Buffer.from(await res.arrayBuffer());
+  assert.equal(sha(body), sha(PDF), 'the bytes match SHA256SUMS');
+  assert.equal(res.headers.get('content-type'), 'application/pdf');
+  assert.equal(res.headers.get('content-length'), String(PDF.length));
+  assert.equal(res.headers.get('etag'), `"${sha(PDF).slice(0, 32)}"`);
+  assert.equal(res.headers.get('x-content-type-options'), 'nosniff');
+  assert.match(res.headers.get('cache-control') ?? '', /max-age=31536000, immutable/, 'a versioned name never changes');
+  const sum = await get(bucket, 'guides/Example-Guide-1.0.0.pdf.sha256');
+  assert.equal(sum.status, 200);
+  assert.equal(await sum.text(), `${sha(PDF)}  Example-Guide-1.0.0.pdf\n`);
+  const head = await get(bucket, 'guides/notes.txt', 'HEAD');
+  assert.equal(head.status, 200);
+  assert.equal(head.headers.get('content-length'), String(Buffer.byteLength(NOTES)));
+  assert.equal(await head.text(), '');
+  assert.match((await get(bucket, 'guides/notes.txt')).headers.get('cache-control') ?? '', /max-age=300/);
 });
 
-test('the installer, its checksum and the release record come from R2, signed, with the site headers', async () => {
-  await withR2(async (endpoint, seen) => {
-    const env = envWith(endpoint);
-    const stable = await worker.fetch(new Request('https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi'), env);
-    assert.equal(stable.status, 200);
-    assert.equal(await stable.text(), 'stable msi bytes');
-    assert.equal(stable.headers.get('Content-Type'), 'application/x-msi');
-    assert.equal(stable.headers.get('Content-Length'), String('stable msi bytes'.length));
-    assert.equal(stable.headers.get('Content-Disposition'), 'attachment; filename="BIZOMAT-CAD-Automation-x64.msi"');
-    assert.equal(stable.headers.get('Cache-Control'), 'public, max-age=300');
-    assert.equal(stable.headers.get('ETag'), '"etag-16"');
-
-    const versioned = await worker.fetch(new Request('https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-0.13.1-x64.msi'), env);
-    assert.equal(versioned.status, 200);
-    assert.equal(versioned.headers.get('Cache-Control'), 'public, max-age=31536000, immutable');
-    await versioned.body?.cancel();
-
-    const record = await worker.fetch(new Request('https://bizomat.ai/downloads/cad/release.json'), env);
-    assert.deepEqual(await record.json(), { version: '0.13.1' });
-
-    const head = await worker.fetch(new Request('https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi', { method: 'HEAD' }), env);
-    assert.equal(head.status, 200);
-    assert.equal(head.headers.get('Content-Length'), String('stable msi bytes'.length));
-    assert.equal(await head.text(), '');
-
-    assert.equal((await worker.fetch(new Request('https://bizomat.ai/downloads/cad/missing.msi'), env)).status, 404);
-    // Names the handler refuses never reach R2.
-    assert.equal((await worker.fetch(new Request('https://bizomat.ai/downloads/cad/..%2Fsecret.msi'), env)).status, 404);
-    assert.ok(seen.every((s) => s.startsWith('GET /bizomat-downloads/cad/')), seen.join('\n'));
-  });
-});
-
-test('a refused signature is an error, never a file or a quiet 404', async () => {
-  await withR2(async (endpoint) => {
-    const bucket = envWith(endpoint, join('wrong', 'downloadsecret', '000000000000000000000000000000')).DOWNLOADS!;
-    await assert.rejects(bucket.get('cad/BIZOMAT-CAD-Automation-x64.msi'), /R2 downloads: HTTP 403/);
-  });
-});
-
-test('the Node website has downloads only with an R2 token, and a malformed one never stops it starting', () => {
-  const has = (settings: Record<string, string>) => Boolean((buildEnv('dist', settings) as unknown as { DOWNLOADS?: unknown }).DOWNLOADS);
-  const token = { WEB_DOWNLOADS_R2_ACCESS_KEY_ID: KEY_ID, WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY: SECRET };
-  assert.equal(has({}), false);
-  assert.equal(has(token), false, 'no account id');
-  assert.equal(has({ ...token, CF_ACCOUNT_ID: ACCOUNT }), true, 'the Workers AI account id serves');
-  assert.equal(has({ ...token, WEB_DOWNLOADS_R2_ACCOUNT_ID: ACCOUNT }), true);
-  assert.equal(has({ WEB_DOWNLOADS_R2_ACCESS_KEY_ID: KEY_ID, WEB_DOWNLOADS_R2_ACCOUNT_ID: ACCOUNT }), false, 'no secret');
-  const errors: string[] = [];
-  const original = console.error;
-  console.error = (line: string) => errors.push(line);
-  try {
-    assert.equal(has({ ...token, WEB_DOWNLOADS_R2_ACCOUNT_ID: 'not-an-account' }), false);
-    assert.equal(has({ ...token, WEB_DOWNLOADS_R2_ACCOUNT_ID: ACCOUNT, WEB_DOWNLOADS_R2_BUCKET: 'Bad/Name' }), false);
-  } finally {
-    console.error = original;
+test('missing, unlisted and invalid paths answer 404, and other methods 405', async () => {
+  const bucket = folderDownloads(folder());
+  for (const path of [
+    'guides/missing.txt', // listed, but not in the folder
+    'guides/unlisted.txt', // in the folder, not listed
+    'guides/unlisted.txt.sha256',
+    'guides/nothing.pdf',
+    'guides/../../secret.txt',
+    'guides/%2e%2e/%2e%2e/secret.txt',
+    'guides%2F..%2F..%2Fsecret.txt',
+    'SHA256SUMS',
+    'guides',
+    'a/b/c.txt',
+    '.hidden/x.txt',
+    'guides/notes.exe',
+    'guides/%ZZ.txt',
+  ]) {
+    assert.equal((await get(bucket, path)).status, 404, path);
   }
-  assert.equal(errors.length, 2);
-  for (const line of errors) assert.ok(!line.includes(SECRET) && !line.includes(KEY_ID), 'a value was logged');
+  const post = await get(bucket, 'guides/notes.txt', 'POST');
+  assert.equal(post.status, 405);
+  assert.equal(post.headers.get('allow'), 'GET, HEAD');
+});
+
+test('installers are never public, and a link out of the folder is never followed', async () => {
+  const bucket = folderDownloads(folder());
+  // Listed with the right checksum, but .msi is not a public download kind: the CAD installer stays behind sign-in.
+  assert.equal((await get(bucket, 'cad/BIZOMAT-CAD-Automation-x64.msi')).status, 404);
+  assert.equal((await get(bucket, 'guides/link.txt')).status, 404, 'a symbolic link to a file outside downloads/');
+});
+
+test('a file whose bytes no longer match SHA256SUMS is never sent', async () => {
+  const dir = folder();
+  const bucket = folderDownloads(dir);
+  assert.equal((await get(bucket, 'guides/notes.txt')).status, 200);
+  writeFileSync(join(dir, 'guides', 'notes.txt'), 'Release notes for an example!\n'); // same size, other bytes
+  const res = await get(bucket, 'guides/notes.txt');
+  assert.equal(res.status, 500);
+  assert.equal(res.headers.get('cache-control'), 'no-store');
+  assert.doesNotMatch(await res.text(), /example/);
+});
+
+test('SHA256SUMS must be well formed; without it nothing is served', async () => {
+  assert.deepEqual([...parseSums(`# c\n\n${'a'.repeat(64)}  x/y.txt\n${'b'.repeat(64)} *x/z.pdf\n`).entries()], [
+    ['x/y.txt', 'a'.repeat(64)],
+    ['x/z.pdf', 'b'.repeat(64)],
+  ]);
+  assert.throws(() => parseSums('not a checksum line'));
+  assert.throws(() => parseSums(`${'a'.repeat(64)}  x/y.txt\n${'b'.repeat(64)}  x/y.txt`), /twice/);
+  const empty = folderDownloads(join(mkdtempSync(join(tmpdir(), 'downloads-')), 'none'));
+  assert.deepEqual(empty.listed(), []);
+  assert.equal((await get(empty, 'guides/notes.txt')).status, 404);
+});
+
+test('the Node website serves downloads/ next to its built site, with no setting and no cloud storage', async () => {
+  const dir = folder();
+  const site = join(dir, '..', 'dist');
+  mkdirSync(site, { recursive: true });
+  const env = buildEnv(site, {}) as Env & { DOWNLOADS?: ReturnType<typeof folderDownloads> };
+  assert.ok(env.DOWNLOADS, 'downloads are on without any setting');
+  assert.deepEqual(env.DOWNLOADS!.listed().sort(), ['cad/BIZOMAT-CAD-Automation-x64.msi', 'guides/Example-Guide-1.0.0.pdf', 'guides/link.txt', 'guides/missing.txt', 'guides/notes.txt']);
+  const res = await worker.fetch(new Request('https://bizomat.ai/downloads/guides/notes.txt'), env, { waitUntil() {}, passThroughOnException() {} } as never);
+  assert.equal(res.status, 200);
+  assert.equal(await res.text(), NOTES);
+  // A broken SHA256SUMS never stops the website: downloads are off, the rest works.
+  writeFileSync(join(dir, 'SHA256SUMS'), 'broken');
+  assert.doesNotThrow(() => buildEnv(site, {}));
+});
+
+test("the repository's own downloads/SHA256SUMS is valid, and every listed file is there with its listed checksum", () => {
+  const dir = join(import.meta.dirname, '..', 'downloads');
+  const sums = parseSums(readFileSync(join(dir, 'SHA256SUMS'), 'utf8'));
+  for (const [key, sum] of sums) {
+    assert.match(key, /^[a-z0-9-]{1,40}\/[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/, key);
+    assert.doesNotMatch(key, /\.(msi|exe)$/i, `${key}: installers are never public`);
+    assert.equal(sha(readFileSync(join(dir, ...key.split('/')))), sum, `${key} does not match SHA256SUMS`);
+  }
 });
