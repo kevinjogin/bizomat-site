@@ -6,7 +6,7 @@
 # It deploys fly.website.toml, the configuration production runs today, and only ever targets the app `bizomat`
 # (fixed below). It never touches the app `cados`, DNS or Cloudflare, and never creates an app, volume or IP address.
 # The only secrets it sets are the optional settings named in .github/scripts/stage-secrets.sh, taken from this
-# repository's secrets (BIZOMAT_ID_CLIENT_SECRET, WORK_STRIPE_*, WEB_DOWNLOADS_R2_*), never printed. (fly.toml is the
+# repository's secrets (BIZOMAT_ID_CLIENT_SECRET, WORK_STRIPE_*), never printed. (fly.toml is the
 # earlier single-app plan; it routes /cad inside this app and is not deployed by this workflow.)
 #
 # Repository secret (Settings > Secrets and variables > Actions):
@@ -90,11 +90,10 @@ jobs:
         run: |
           names="$(flyctl secrets list --app "$APP" --json | jq -r '.[] | (.Name // .name)')"
           # WORK_ABR_GUID and WORK_BIZOMAT_ID_CLIENTS: company accounts (docs/company/README.md); WORK_STRIPE_*: billing,
-          # off until all are set (docs/billing/README.md); WEB_DOWNLOADS_R2_*: the public downloads (src/node/bindings.ts)
+          # off until all are set (docs/billing/README.md)
           for s in CF_ACCOUNT_ID CF_AI_TOKEN ANTHROPIC_API_KEY TURNSTILE_SECRET_KEY WORK_GOOGLE_CLIENT_ID WORK_GOOGLE_CLIENT_SECRET \
             WORK_ABR_GUID WORK_BIZOMAT_ID_CLIENTS WORK_STRIPE_ENVIRONMENT WORK_STRIPE_SECRET_KEY WORK_STRIPE_PUBLISHABLE_KEY \
-            WORK_STRIPE_WEBHOOK_SECRET WORK_STRIPE_PRICE_SEAT_MONTHLY WORK_STRIPE_PRICE_SEAT_ANNUAL \
-            WEB_DOWNLOADS_R2_ACCESS_KEY_ID WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY WEB_DOWNLOADS_R2_ACCOUNT_ID; do
+            WORK_STRIPE_WEBHOOK_SECRET WORK_STRIPE_PRICE_SEAT_MONTHLY WORK_STRIPE_PRICE_SEAT_ANNUAL; do
             if grep -qx "$s" <<<"$names"; then
               case "$s" in
                 # Set in fly.website.toml since 15 Nov 2026; a Fly secret of the same name would override it.
@@ -116,9 +115,6 @@ jobs:
           STRIPE_SECRET: ${{ secrets.WORK_STRIPE_SECRET_KEY }}
           STRIPE_PUBLISHABLE: ${{ secrets.WORK_STRIPE_PUBLISHABLE_KEY }}
           STRIPE_WEBHOOK: ${{ secrets.WORK_STRIPE_WEBHOOK_SECRET }}
-          R2_KEY_ID: ${{ secrets.WEB_DOWNLOADS_R2_ACCESS_KEY_ID }}
-          R2_SECRET: ${{ secrets.WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY }}
-          R2_ACCOUNT: ${{ secrets.WEB_DOWNLOADS_R2_ACCOUNT_ID }}
         run: bash .github/scripts/stage-secrets.sh
 
       # A restore point for Project Management's data before the new version starts (a new version can carry database
@@ -265,8 +261,9 @@ jobs:
             400) echo "info: billing is configured in production (the webhook refuses an unsigned delivery: 400); subscriptions open only when the founder opens them in the console" | tee -a "$GITHUB_STEP_SUMMARY" ;;
             *) echo "FAIL the billing webhook gave an unexpected answer"; echo "- FAILED: the billing webhook gave an unexpected answer" >> "$GITHUB_STEP_SUMMARY"; fail=1 ;;
           esac
-          # Public downloads (/downloads/, R2): 200 once the R2 token is set and the installer is published; 404 before.
-          echo "info: the public installer download (/downloads/cad/BIZOMAT-CAD-Automation-x64.msi) answers $(curl -s -o /dev/null -I -w '%{http_code}' --max-time 15 https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi) (200: served from R2; 404: no R2 token yet, or not published)" | tee -a "$GITHUB_STEP_SUMMARY"
+          # Public downloads (/downloads/, the repository's downloads/ folder in the image): an unlisted file is 404, and an
+          # installer is never public.
+          wait_for "an unlisted download answers 404, and the CAD installer is not public (/downloads/)" '[ "$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi)" = 404 ]' || fail=1
           echo "info: bizomat.ai/login -> $(code https://bizomat.ai/login) (301 expected); bizomat.fly.dev/ -> $(code https://bizomat.fly.dev/) (301 expected)" | tee -a "$GITHUB_STEP_SUMMARY"
           exit "$fail"
 

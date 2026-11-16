@@ -8,13 +8,9 @@
 #   WORK_STRIPE_SECRET_KEY       billing (docs/billing/README.md): staged only when WORK_STRIPE_ENVIRONMENT in
 #   WORK_STRIPE_PUBLISHABLE_KEY  fly.website.toml is "live", and only live keys (a test key stops the deploy before
 #   WORK_STRIPE_WEBHOOK_SECRET   anything is staged); otherwise they stay in GitHub and billing stays off
-#   WEB_DOWNLOADS_R2_ACCESS_KEY_ID      the public downloads at bizomat.ai/downloads/ (the R2 bucket bizomat-downloads,
-#   WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY  src/node/bindings.ts): an R2 API token with Object Read only, for that bucket
-#   WEB_DOWNLOADS_R2_ACCOUNT_ID         alone; the two key values go together; the account id is needed only when the
-#                                       Fly secret CF_ACCOUNT_ID is not set
 #
 # Environment: APP, CONFIG, FLY_API_TOKEN, and the secrets above as CAD_CLIENT_SECRET, STRIPE_SECRET,
-# STRIPE_PUBLISHABLE, STRIPE_WEBHOOK, R2_KEY_ID, R2_SECRET, R2_ACCOUNT.
+# STRIPE_PUBLISHABLE, STRIPE_WEBHOOK.
 set -euo pipefail
 : "${APP:?}" "${CONFIG:?}"
 
@@ -60,20 +56,6 @@ if [ -n "${STRIPE_SECRET:-}${STRIPE_PUBLISHABLE:-}${STRIPE_WEBHOOK:-}" ]; then
     lines+=("WORK_STRIPE_WEBHOOK_SECRET=$STRIPE_WEBHOOK")
     summary "Billing: staged WORK_STRIPE_WEBHOOK_SECRET"
   fi
-fi
-
-# Public downloads: both values of the R2 token, or neither (one alone would leave the route half set up).
-if [ -n "${R2_KEY_ID:-}${R2_SECRET:-}" ]; then
-  [ -n "${R2_KEY_ID:-}" ] && [ -n "${R2_SECRET:-}" ] || fail "WEB_DOWNLOADS_R2_ACCESS_KEY_ID and WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY go together: set both or neither."
-  [[ "$R2_KEY_ID" =~ ^[A-Za-z0-9]{16,128}$ ]] || fail "WEB_DOWNLOADS_R2_ACCESS_KEY_ID is not an R2 access key id."
-  [[ "$R2_SECRET" =~ ^[A-Za-z0-9]{16,128}$ ]] || fail "WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY is not an R2 secret access key."
-  lines+=("WEB_DOWNLOADS_R2_ACCESS_KEY_ID=$R2_KEY_ID" "WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY=$R2_SECRET")
-  summary "Downloads: staged WEB_DOWNLOADS_R2_ACCESS_KEY_ID and WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY"
-fi
-if [ -n "${R2_ACCOUNT:-}" ]; then
-  [[ "$R2_ACCOUNT" =~ ^[0-9a-fA-F]{32}$ ]] || fail "WEB_DOWNLOADS_R2_ACCOUNT_ID is not a Cloudflare account id (32 hexadecimal characters)."
-  lines+=("WEB_DOWNLOADS_R2_ACCOUNT_ID=$R2_ACCOUNT")
-  summary "Downloads: staged WEB_DOWNLOADS_R2_ACCOUNT_ID"
 fi
 
 if [ "${#lines[@]}" -eq 0 ]; then

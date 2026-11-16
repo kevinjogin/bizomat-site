@@ -13,9 +13,6 @@ const CAD = 'ab'.repeat(32);
 const STRIPE = fake('rk', 'live', 'stageScriptNotAKey123');
 const PUBLISHABLE = fake('pk', 'live', 'stageScriptNotAKey456');
 const WEBHOOK = fake('whsec', 'stageScriptNotASecret789');
-const R2_KEY = 'stagescriptnotanr2keyid000000000';
-const R2_SECRET = 'stagescriptnotanr2secret'.padEnd(64, '0');
-const ACCOUNT = '0123456789abcdef0123456789abcdef';
 
 function stage(env: Record<string, string>, mode = 'live') {
   const dir = mkdtempSync(join(tmpdir(), 'stage-'));
@@ -32,13 +29,12 @@ function stage(env: Record<string, string>, mode = 'live') {
   return { code: r.status, out: `${r.stdout}${r.stderr}`, names: lines.map((l) => l.split('=')[0]), lines };
 }
 
-const VALUES = [CAD, STRIPE, PUBLISHABLE, WEBHOOK, R2_KEY, R2_SECRET, ACCOUNT];
+const VALUES = [CAD, STRIPE, PUBLISHABLE, WEBHOOK];
 
 test('every setting staged on standard input, by name only in the log', () => {
-  const r = stage({ CAD_CLIENT_SECRET: CAD, STRIPE_SECRET: STRIPE, STRIPE_PUBLISHABLE: PUBLISHABLE, STRIPE_WEBHOOK: WEBHOOK, R2_KEY_ID: R2_KEY, R2_SECRET, R2_ACCOUNT: ACCOUNT });
+  const r = stage({ CAD_CLIENT_SECRET: CAD, STRIPE_SECRET: STRIPE, STRIPE_PUBLISHABLE: PUBLISHABLE, STRIPE_WEBHOOK: WEBHOOK });
   assert.equal(r.code, 0, r.out);
-  assert.deepEqual(r.names, ['WORK_BIZOMAT_ID_CLIENTS', 'WORK_STRIPE_SECRET_KEY', 'WORK_STRIPE_PUBLISHABLE_KEY', 'WORK_STRIPE_WEBHOOK_SECRET',
-    'WEB_DOWNLOADS_R2_ACCESS_KEY_ID', 'WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY', 'WEB_DOWNLOADS_R2_ACCOUNT_ID']);
+  assert.deepEqual(r.names, ['WORK_BIZOMAT_ID_CLIENTS', 'WORK_STRIPE_SECRET_KEY', 'WORK_STRIPE_PUBLISHABLE_KEY', 'WORK_STRIPE_WEBHOOK_SECRET']);
   assert.ok(!r.lines[0].includes(CAD) && r.lines[0].includes('https://bizomat.ai/cad/auth/bizomat/callback'), 'only the hash of the CAD secret');
   for (const v of VALUES) assert.ok(!r.out.includes(v), 'a value was printed');
 });
@@ -47,17 +43,16 @@ test('nothing set stages nothing; billing keys stay in GitHub when billing is no
   const none = stage({});
   assert.equal(none.code, 0);
   assert.deepEqual(none.names, []);
-  const notLive = stage({ STRIPE_SECRET: STRIPE, R2_KEY_ID: R2_KEY, R2_SECRET }, 'test');
+  const notLive = stage({ STRIPE_SECRET: STRIPE }, 'test');
   assert.equal(notLive.code, 0, notLive.out);
-  assert.deepEqual(notLive.names, ['WEB_DOWNLOADS_R2_ACCESS_KEY_ID', 'WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY']);
+  assert.deepEqual(notLive.names, []);
   assert.match(notLive.out, /NOT staged/);
 });
 
 test('a wrong value stops the step before anything is staged, and is not printed', () => {
   for (const env of [
-    { R2_KEY_ID: R2_KEY },
-    { R2_KEY_ID: R2_KEY, R2_SECRET: 'has spaces and = signs' },
-    { R2_ACCOUNT: 'not-an-account' },
+    { STRIPE_PUBLISHABLE: 'not-a-publishable-key' },
+    { STRIPE_WEBHOOK: 'has spaces and = signs' },
     { STRIPE_SECRET: fake('sk', 'test', 'stageScriptNotAKey') },
   ] as Record<string, string>[]) {
     const r = stage(env);

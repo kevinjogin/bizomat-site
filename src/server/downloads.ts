@@ -1,7 +1,8 @@
-// Public downloads on bizomat.ai: https://bizomat.ai/downloads/<folder>/<file>, served from the R2 bucket
-// bizomat-downloads (wrangler.toml [[r2_buckets]] DOWNLOADS). The GitHub repositories, and so their releases, are
-// private, so the SOLIDWORKS installer, its checksum and the update manifest are published here instead
-// (CADOS tools/laptop/cloudflare.ps1 publish installer).
+// Public downloads on bizomat.ai: https://bizomat.ai/downloads/<folder>/<file>. On Fly the files come from the folder
+// downloads/ of this repository, copied into the image (src/node/bindings.ts folderDownloads: only files listed in
+// downloads/SHA256SUMS, each checked against its SHA-256; no cloud storage). Public means public: anything here can be
+// fetched without signing in. The CAD installer is not public: CAD Automation serves it behind sign-in
+// (bizomat.ai/cad/download/solidworks), and installers (.msi, .exe) are never served from here.
 //
 // Only files of the listed kinds, in one folder below /downloads/, are served. A versioned name (one with a version
 // number, e.g. BIZOMAT-CAD-Automation-0.13.0-x64.msi) never changes, so it may be cached for a year; a stable name
@@ -16,7 +17,7 @@ export const DOWNLOADS_PATH = '/downloads/';
 
 const KEY = /^[a-z0-9-]{1,40}\/[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/;
 const TYPES: Record<string, { type: string; attachment: boolean }> = {
-  msi: { type: 'application/x-msi', attachment: true },
+  pdf: { type: 'application/pdf', attachment: false },
   zip: { type: 'application/zip', attachment: true },
   sha256: { type: 'text/plain; charset=utf-8', attachment: false },
   txt: { type: 'text/plain; charset=utf-8', attachment: false },
@@ -40,7 +41,13 @@ export async function handleDownload(request: Request, bucket: DownloadsBucket |
   if (!KEY.test(key) || key.includes('..')) return text(404, 'Not found');
   const kind = TYPES[key.slice(key.lastIndexOf('.') + 1).toLowerCase()];
   if (!kind) return text(404, 'Not found');
-  const object = await bucket.get(key);
+  let object: Awaited<ReturnType<DownloadsBucket['get']>>;
+  try {
+    object = await bucket.get(key);
+  } catch {
+    // A file that fails its checksum (or storage that cannot be read) is never sent.
+    return text(500, 'This file is not available right now');
+  }
   if (!object) return text(404, 'Not found');
   const name = key.slice(key.indexOf('/') + 1);
   const headers: Record<string, string> = {
