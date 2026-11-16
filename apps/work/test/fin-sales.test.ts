@@ -239,7 +239,8 @@ describe('quotes', () => {
     expect(msg.text).toContain('Here is the quote we discussed.');
     expect((await b.a.json('GET', fin(b.ws, `/quotes/${q.id}`))).events.map((e: any) => e.action)).toContain('emailed');
     // An invoice is emailed only once approved, and emailing it never changes what is owed.
-    const inv = await b.a.json('POST', fin(b.ws, '/docs'), { kind: 'invoice', contactId: b.customer, issueDate: '2026-11-02', lines: [{ description: 'Work', unitPrice: 10_000, accountId: b.sales, taxCodeId: b.tax.GST }] });
+    // A due date far ahead, so the link reads 'due' whatever day the test runs (the default terms from 2 Nov ran out on 16 Nov 2026).
+    const inv = await b.a.json('POST', fin(b.ws, '/docs'), { kind: 'invoice', contactId: b.customer, issueDate: '2026-11-02', dueDate: '2099-12-31', lines: [{ description: 'Work', unitPrice: 10_000, accountId: b.sales, taxCodeId: b.tax.GST }] });
     expect((await b.a.req('POST', fin(b.ws, `/docs/${inv.id}/email`), {})).status).toBe(400);
     await b.a.json('POST', fin(b.ws, `/docs/${inv.id}/approve`), {});
     await b.a.json('POST', fin(b.ws, `/docs/${inv.id}/email`), {});
