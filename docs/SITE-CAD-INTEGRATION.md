@@ -106,17 +106,17 @@ repository with its image and entrypoint tests.
 
 ## 6. Installer downloads and updates
 
-- The Windows installer (MSI) is built by the CAD repository (`solidworks.yml`, `installer/`), published as GitHub
-  releases there (`bridge-latest`, `bridge-v<version>`: for the owner; people are never sent to GitHub) and copied for
-  the public to bizomat.ai downloads with `tools/laptop/cloudflare.ps1 publish installer` (R2 bucket
-  `bizomat-downloads`).
-- `https://bizomat.ai/downloads/<folder>/<file>` (public) is `src/server/downloads.ts`. On a Worker it reads the R2
-  binding `DOWNLOADS`; on Fly (today) the website reads the same bucket through R2's S3 API (`src/node/bindings.ts`
-  `r2Downloads`) once the Fly app has an R2 API token with **Object Read only, for the bucket `bizomat-downloads`
-  alone**: `WEB_DOWNLOADS_R2_ACCESS_KEY_ID` and `WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY`, with the account id in
-  `WEB_DOWNLOADS_R2_ACCOUNT_ID` (or the Workers AI `CF_ACCOUNT_ID`). The deploy stages them from repository secrets
-  of the same names (never printed) and reports whether the installer download answers. Without the token the route
-  answers 404 (as on 15 Nov 2026). The web process's `/healthz` says `downloads: true` once it is on.
+- The Windows installer (MSI) is built by the CAD repository (`solidworks.yml`, `installer/`) and published as GitHub
+  releases there (`bridge-latest`, `bridge-v<version>`: for the owner; people are never sent to GitHub). It is **not a
+  public download** (owner, 16 Nov 2026): people get it signed in, from the CAD app (below).
+- `https://bizomat.ai/downloads/<folder>/<file>` (public, no sign-in) is `src/server/downloads.ts`. On Fly it serves the
+  repository's `downloads/` folder, copied into the image (`infrastructure/fly/Dockerfile`, `src/node/bindings.ts`
+  `folderDownloads`): only files listed in `downloads/SHA256SUMS`, each checked against its SHA-256 before it is sent
+  (a file that no longer matches answers 500 and is logged), with `<file>.sha256` answering its checksum. Installers
+  (`.msi`, `.exe`) are never served there. No Cloudflare R2 and no other storage provider (owner, 16 Nov 2026); nothing
+  to set up. To publish a file: add it under `downloads/<folder>/`, append `sha256sum <folder>/<file>` to
+  `downloads/SHA256SUMS` (run inside `downloads/`), merge the pull request (CI checks the list) and deploy. The list is
+  empty today: no file is designated public yet.
 - `/cad/download/solidworks` (signed in) is served by the CAD app: `OPENSKETCH_INSTALLER_URL`, else the file
   `/data/downloads/BIZOMAT-CAD-Automation-x64.msi` on the `cados` volume, else the `msi_url` of `/data/bridge-release.json`,
   else `https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi`. Since 15 Nov 2026 22:45 UTC the volume holds
@@ -126,23 +126,6 @@ repository with its image and entrypoint tests.
   no `bridge-release.json` and `OPENSKETCH_INSTALLER_URL` is not set.
 - The Companion's update manifest is `/v2/bridge/update.json` on the CAD app, signed by the gateway, from
   `/data/bridge-release.json` (absent today, so the Companion offers no update).
-
-### Owner steps to turn the public downloads on (no new cost: R2's free allowance covers a few installers)
-
-1. Cloudflare dashboard > R2 > Manage API tokens > Create API token: permission **Object Read only**, applied to the
-   bucket `bizomat-downloads` only, no expiry or one you will renew. R2 shows an Access Key ID and a Secret Access Key
-   once.
-2. In kevinjogin/bizomat-site > Settings > Secrets and variables > Actions, add `WEB_DOWNLOADS_R2_ACCESS_KEY_ID`,
-   `WEB_DOWNLOADS_R2_SECRET_ACCESS_KEY` and `WEB_DOWNLOADS_R2_ACCOUNT_ID` (the 32-character account id: the part before
-   `.r2.cloudflarestorage.com` in the S3 address R2 shows with the token). The account id is needed because
-   `CF_ACCOUNT_ID` is not a Fly secret on `bizomat` (deploy run 40, 15 Nov 2026). Never paste them anywhere else.
-3. Publish the installer into the bucket from the laptop (`tools/laptop/cloudflare.ps1 publish installer -File <msi>`:
-   the versioned and stable names, their `.sha256` files and `cad/release.json`). A development-signed file
-   (`...-x64-DEV.msi`) needs `-Version 0.13.1`, as the tool reads the version only from `...-<version>-x64.msi`; the tool
-   also expects the laptop's folder layout (`bizomat.ps1 setup`: `CADOS` beside `gocore-website`), and a clone made
-   elsewhere (for example `D:\BIZOMAT\BIZOMAT-CAD`) does not match it. What is in the bucket today could not be read from
-   here (no Cloudflare access in this session): the dashboard's R2 page lists it.
-4. The next website deploy stages the token and applies it; its summary reports the download's answer.
 
 ## 7. Checklist when one side changes
 
