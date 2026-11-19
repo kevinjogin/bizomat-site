@@ -160,6 +160,15 @@ grep -q "secret file GOOGLE_CLIENT_ID skipped: not a regular file" "$tmp/stderr"
 if grep -q "throwaway\|from-the-volume\|not-for-work" "$tmp/stderr"; then bad "a value reached the log"; fi
 ok "work: mapped names, its own Google client, secret files (links and other roles' names refused), volume prepared"
 
+# work: free mode. Billing is locked unless WORK_BIZOMAT_BILLING_LOCK is "false"; an app-wide BIZOMAT_BILLING_LOCK is ignored.
+[ "$(val "$tmp/work.json" BIZOMAT_BILLING_LOCK)" = true ] || bad "billing must be locked by default"
+mkdir -p "$tmp/workvol3" "$tmp/workvol4"
+run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol3:/data" -e BIZOMAT_BILLING_LOCK=false >"$tmp/work3.json"
+[ "$(val "$tmp/work3.json" BIZOMAT_BILLING_LOCK)" = true ] || bad "an app-wide BIZOMAT_BILLING_LOCK must not unlock billing"
+run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol4:/data" -e WORK_BIZOMAT_BILLING_LOCK=false >"$tmp/work4.json"
+[ "$(val "$tmp/work4.json" BIZOMAT_BILLING_LOCK)" = false ] || bad "WORK_BIZOMAT_BILLING_LOCK=false must reach the app"
+ok "work: billing locked unless WORK_BIZOMAT_BILLING_LOCK is false"
+
 # work: the company settings as secret files on its volume, under the names the app reads (they win over Fly secrets)
 as_root 'mkdir -p /t/workvol2/work/.secrets
   printf %s from-the-volume-abr >/t/workvol2/work/.secrets/ABR_GUID

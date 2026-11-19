@@ -77,6 +77,9 @@ export interface Env {
   STRIPE_GRACE_DAYS?: string;
   /** Development and tests only: a local stand-in for api.stripe.com (refused in production and in live). */
   STRIPE_API_BASE?: string;
+  /** Free mode (Stage 1, owner 19 Nov 2026): "true" locks billing. Nobody can subscribe or be restricted for not
+   * paying, whatever the console says; the webhook still records events (src/worker/billing/config.ts billingLocked). */
+  BIZOMAT_BILLING_LOCK?: string;
 }
 
 export interface AuthUser {

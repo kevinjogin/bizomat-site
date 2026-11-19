@@ -15,13 +15,15 @@
 import type { MiddlewareHandler } from 'hono';
 import type { AppEnv, Env } from '../env';
 import { HttpError, now } from '../lib/util';
-import { billingConfig } from './config';
+import { billingConfig, billingLocked } from './config';
 import { currentSubscription, enforcement, type Enforcement } from './store';
 
-export type Decision = { allowed: true; why: 'grant' | 'subscription' | 'grace' | 'not-billed' | 'off' } | { allowed: false; why: 'no-subscription' | 'lapsed' };
+export type Decision = { allowed: true; why: 'grant' | 'subscription' | 'grace' | 'not-billed' | 'off' | 'free' } | { allowed: false; why: 'no-subscription' | 'lapsed' };
 
 /** Whether a registered company has paid access now. */
 export async function companyEntitled(env: Env, companyId: string, at = now()): Promise<Decision> {
+  // Free mode: every company has full access, whatever is stored about subscriptions or enforcement.
+  if (billingLocked(env)) return { allowed: true, why: 'free' };
   const cfg = billingConfig(env);
   if (!cfg.enabled) return { allowed: true, why: 'off' };
   const db = env.DB;
@@ -57,7 +59,9 @@ const PROJECT_TABLES: Record<string, string> = {
 /** The registered company a write under /api goes to, or null when the path is not a paid tool of a registered
  * company (own and example companies, company administration, billing, the console, a person's own settings). */
 export async function registeredCompanyOf(db: D1Database, apiPath: string): Promise<string | null> {
-  const p = apiPath.replace(/^\/+/, '').split('/');
+  // Each segment decoded as the router decodes route parameters, so a percent-encoded id finds the same company the
+  // route then serves (audit S11: an encoded id must not slip past the gate).
+  const p = apiPath.replace(/^\/+/, '').split('/').map(decodeSegment);
   const seg = p[0];
   const id = p[2] ?? '';
   const okId = id.length > 0 && id.length <= 64;
@@ -81,6 +85,14 @@ export async function registeredCompanyOf(db: D1Database, apiPath: string): Prom
   return null;
 }
 
+function decodeSegment(s: string): string {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
+}
+
 async function countShadow(db: D1Database, companyId: string) {
   const day = new Date().toISOString().slice(0, 10);
   await db
@@ -97,6 +109,8 @@ export const PLAN_REQUIRED_MESSAGE =
 export const entitlementGate: MiddlewareHandler<AppEnv> = async (c, next) => {
   const method = c.req.method.toUpperCase();
   if (method === 'GET' || method === 'HEAD' || method === 'OPTIONS') return next();
+  // Free mode: nobody is refused for not paying (the console cannot turn enforcement on either; admin.ts).
+  if (billingLocked(c.env)) return next();
   let mode: Enforcement;
   try {
     mode = await enforcement(c.env.DB);

@@ -1,4 +1,8 @@
-// The BIZOMAT ERP subscription price, one source for every page that names it (/pricing/, the Systems pages).
+// The BIZOMAT ERP subscription price as it stands in Stripe, kept as the record of the live price.
+//
+// Free mode (Stage 1, owner 19 Nov 2026): BIZOMAT is free for every customer. No page shows this price: /pricing/ is
+// withdrawn (301 to /systems/), and billing is locked on the server (BIZOMAT_BILLING_LOCK). The price, the Stripe
+// product and the billing code stay as they are, so tests/pricing.test.ts still checks that production names this id.
 //
 // Read from Stripe's live mode on 15 Nov 2026 (read-only): the owner's product prod_VdED2AiKMDhIgM "BIZOMAT Business
 // Subscription", default price price_1UbyE5Rs74vQph6MdBU51OeG: AUD 10.00 per unit, monthly, licensed, per unit,

@@ -8,7 +8,7 @@
 import type { Context } from 'hono';
 import type { AppEnv, Env } from '../env';
 import { newId, now } from '../lib/util';
-import { billingConfig, redact, type BillingOn } from './config';
+import { billingConfig, billingLocked, redact, type BillingOn } from './config';
 import { currentSubscription, historyStmt, OPEN_STATUSES, SEAT_STATUSES, type SubscriptionRow } from './store';
 import { stripeFor, stripeMessage } from './stripe';
 import { applySubscription } from './sync';
@@ -73,6 +73,8 @@ export type SeatSyncResult =
  * recorded, and the stored quantity is moved on only from the version it was read at.
  */
 export async function syncSeats(env: Env, companyId: string, opts: { reason: string; actorId?: string | null; cfg?: BillingOn }): Promise<SeatSyncResult> {
+  // Free mode: no change is ever sent to Stripe.
+  if (billingLocked(env)) return { status: 'off' };
   const cfg = opts.cfg ?? billingConfig(env);
   if (!cfg.enabled) return { status: 'off' };
   const db = env.DB;
@@ -155,6 +157,7 @@ export function prorationWords(p: BillingOn['proration'], more: boolean): string
 /** After a membership change: bring the companies' seat counts up to date in the background. Never fails the request
  * that changed the membership; the scheduled check catches anything missed. */
 export function requestSeatSync(c: Context<AppEnv>, companyIds: string[], reason: string) {
+  if (billingLocked(c.env)) return;
   const cfg = billingConfig(c.env);
   if (!cfg.enabled || !companyIds.length) return;
   let actorId: string | null = null;

@@ -118,6 +118,18 @@ export function billingConfig(env: BillingEnv): BillingConfig {
   };
 }
 
+/** Free mode (Stage 1, owner 19 Nov 2026: BIZOMAT is free for every customer). BIZOMAT_BILLING_LOCK = "true" is a hard
+ * lock on the server: nobody can start, change or pay for a subscription, nobody is refused for not paying, and the
+ * console cannot open subscriptions or turn enforcement on, whatever is stored. The Stripe settings, code, tables and
+ * webhook stay as they are: signed events are still verified and recorded. On Fly the entrypoint sets it to "true"
+ * unless WORK_BIZOMAT_BILLING_LOCK is "false"; elsewhere (development, tests) it is off unless set. */
+export function billingLocked(env: Pick<Env, 'BIZOMAT_BILLING_LOCK'>): boolean {
+  return (env.BIZOMAT_BILLING_LOCK ?? '').trim().toLowerCase() === 'true';
+}
+
+/** What people are told while billing is locked. */
+export const FREE_MESSAGE = 'BIZOMAT is free for every company. Nothing is charged, and subscriptions are switched off.';
+
 /** Removes anything shaped like a Stripe key, a signing secret or a bearer token from a message before it is stored or
  * shown. Stripe's own error messages can quote part of a key. */
 export function redact(message: string): string {

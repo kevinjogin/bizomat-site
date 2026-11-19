@@ -12,6 +12,8 @@ import '../../styles/billing.css';
 interface Overview {
   config: { enabled: true; environment: 'test' | 'live'; keyKind: 'rk' | 'sk'; webhookSecrets: number; proration: string; automaticTax: boolean; graceDays: number; annualOffered: boolean } | { enabled: false; environment: string | null; reason: string };
   settings: { audience: 'off' | 'admins' | 'everyone'; enforcement: 'off' | 'shadow' | 'on' };
+  /** Free mode: BIZOMAT_BILLING_LOCK is set on the server. */
+  locked?: boolean;
   prices: Record<'month' | 'year', any> | null;
   handledEvents: string[];
   companies: { company_id: string; company: string | null; environment: string; status: string; interval: string | null; quantity: number; billable: number; cancel_at_period_end: number; current_period_end: number | null; synced_at: number }[];
@@ -82,15 +84,16 @@ export function BillingAdmin({ founder }: { founder: boolean }) {
 
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Switches {founder ? '' : '(the founder changes these)'}</h2>
+        {o.locked ? <p className="billing-banner info">Free mode: billing is locked on the server (BIZOMAT_BILLING_LOCK). Nobody can subscribe or be refused for not paying, whatever these switches say, and they cannot be turned on. The Stripe settings and webhook stay as they are.</p> : null}
         <label className="field">
           <span>Who may start a subscription</span>
-          <select value={o.settings.audience} disabled={!founder || busy} onChange={(e) => setSetting('audience', e.target.value)}>
+          <select value={o.settings.audience} disabled={!founder || busy || !!o.locked} onChange={(e) => setSetting('audience', e.target.value)}>
             {Object.entries(AUDIENCE).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
         </label>
         <label className="field">
           <span>Enforcement</span>
-          <select value={o.settings.enforcement} disabled={!founder || busy} onChange={(e) => setSetting('enforcement', e.target.value)}>
+          <select value={o.settings.enforcement} disabled={!founder || busy || !!o.locked} onChange={(e) => setSetting('enforcement', e.target.value)}>
             {Object.entries(ENFORCEMENT).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
           </select>
         </label>

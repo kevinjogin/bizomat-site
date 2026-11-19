@@ -78,6 +78,11 @@ kill_timeout = 15
   # GST exclusive (owner, 15 Nov 2026): Stripe Tax calculates GST at Checkout and on every invoice, from the Australian
   # registration recorded in Stripe Tax and the billing address Checkout collects.
   WORK_STRIPE_AUTOMATIC_TAX = "on"
+  # Free mode (Stage 1, owner 19 Nov 2026): BIZOMAT is free for every customer. Billing is locked on the server
+  # (apps/work/src/worker/billing/config.ts, billingLocked): nobody can subscribe or be refused for not paying, and the
+  # console cannot open subscriptions. The Stripe settings above and the webhook stay as they are. The entrypoint also
+  # locks billing when this line is missing; only "false" here (with the owner's approval) would unlock it.
+  WORK_BIZOMAT_BILLING_LOCK = "true"
   # On SIGTERM the router gives open requests 3 s (it was 10 s), then closes long polls and WebSockets, which reconnect
   # (docs/deployment/DOWNTIME-REVIEW.md, recommendation 5). kill_timeout stays 15 s.
   PROXY_SHUTDOWN_GRACE_MS = "3000"

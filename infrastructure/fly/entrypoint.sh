@@ -252,6 +252,10 @@ case "$ROLE" in
     map WORK_STRIPE_PRORATION STRIPE_PRORATION
     map WORK_STRIPE_AUTOMATIC_TAX STRIPE_AUTOMATIC_TAX
     map WORK_STRIPE_GRACE_DAYS STRIPE_GRACE_DAYS
+    # Free mode (Stage 1, owner 19 Nov 2026): billing is locked unless WORK_BIZOMAT_BILLING_LOCK is "false", so a
+    # configuration that forgets the setting can never open billing. A setting named BIZOMAT_BILLING_LOCK itself is not
+    # read: only this mapping sets it.
+    map WORK_BIZOMAT_BILLING_LOCK BIZOMAT_BILLING_LOCK "true"
     map WORK_VERSION WORK_VERSION "$VERSION"
     ;;
   cad)

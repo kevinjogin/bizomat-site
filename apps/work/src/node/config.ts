@@ -44,6 +44,7 @@ export interface WorkerVars {
   STRIPE_AUTOMATIC_TAX?: string;
   STRIPE_GRACE_DAYS?: string;
   STRIPE_API_BASE?: string;
+  BIZOMAT_BILLING_LOCK?: string;
 }
 
 /** Email settings copied from the environment into the Worker's env when present. */
@@ -66,6 +67,8 @@ export const BILLING_VARS = [
   'STRIPE_AUTOMATIC_TAX',
   'STRIPE_GRACE_DAYS',
   'STRIPE_API_BASE',
+  // free mode: "true" locks billing (on Fly WORK_BIZOMAT_BILLING_LOCK, locked unless set to "false")
+  'BIZOMAT_BILLING_LOCK',
 ] as const;
 
 /** An https address with an optional lowercase path, as canonicalRedirect (src/worker/mount.ts) accepts it. */

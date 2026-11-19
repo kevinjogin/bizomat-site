@@ -13,6 +13,11 @@
 /erp-design-preview /systems/erp/ 301
 /erp-design-preview/* /systems/erp/ 301
 
+# Free mode (Stage 1, owner 19 Nov 2026): BIZOMAT is free for every company, so the pricing page is withdrawn and its
+# address goes to the Systems catalogue. The billing code and Stripe stay in place, locked (BIZOMAT_BILLING_LOCK).
+/pricing /systems/ 301
+/pricing/ /systems/ 301
+
 # Systems (owner, 14 Nov 2026): BIZOMAT's business software is one catalogue at /systems/, each product with its page and
 # guide there; the applications open inside BIZOMAT ERP (/erp/). The product pages moved here, with their in-page parts.
 /products /systems/ 301
