@@ -10,9 +10,16 @@
 //     Content-Security-Policy and in text bodies (HTML, scripts, JSON, CSS, XML) become the preview's own address,
 //     so no link leaves the preview for production;
 //   - Strict-Transport-Security is dropped and X-Robots-Tag: noindex added, so the preview stays out of search;
-//   - with PREVIEW_PASSWORD set, every request needs HTTP Basic sign-in (user "review").
+//   - with a password set, every request needs HTTP Basic sign-in (user "review").
 //
-// Settings: GATE_PORT (default 8090), GATE_UPSTREAM (default http://127.0.0.1:8080), PREVIEW_PASSWORD (optional).
+// The same gate fronts the staging app on Fly (fly.staging.toml, role "gate" of infrastructure/fly/entrypoint.sh,
+// docs/deployment/staging.md): there it listens on every interface, takes its address from GATE_PUBLIC_ORIGIN, and
+// refuses to start without a password.
+//
+// Settings: GATE_PORT (default 8090), GATE_HOST (default 127.0.0.1), GATE_UPSTREAM (default http://127.0.0.1:8080),
+// GATE_PASSWORD or PREVIEW_PASSWORD (optional on this computer; required when GATE_HOST is not a loopback address),
+// GATE_PUBLIC_ORIGIN (optional: the gate's own https address, used instead of the request's Host),
+// GATE_REALM (the sign-in prompt's name).
 // GET /__gate/health answers without sign-in, for the workflow's own checks.
 
 import http from 'node:http';
@@ -20,15 +27,34 @@ import net from 'node:net';
 import { timingSafeEqual } from 'node:crypto';
 
 const PORT = Number(process.env.GATE_PORT || 8090);
+const HOST = process.env.GATE_HOST || '127.0.0.1';
 const UPSTREAM = new URL(process.env.GATE_UPSTREAM || 'http://127.0.0.1:8080');
-const PASSWORD = process.env.PREVIEW_PASSWORD || '';
+const PASSWORD = process.env.GATE_PASSWORD || process.env.PREVIEW_PASSWORD || '';
+const PUBLIC_ORIGIN = pinnedOrigin(process.env.GATE_PUBLIC_ORIGIN);
+const REALM = (process.env.GATE_REALM || 'BIZOMAT review preview').replace(/["\r\n]/g, '');
 const PRODUCTION = 'https://bizomat.ai';
 const MAX_REWRITE_BYTES = 40 * 1024 * 1024;
 const TEXT = /^(text\/(html|javascript|css|plain|xml)|application\/(javascript|json|xml|manifest\+json|ld\+json|rss\+xml|atom\+xml))\b/i;
 const HOP = new Set(['connection', 'keep-alive', 'proxy-connection', 'transfer-encoding', 'upgrade', 'te', 'trailer']);
 
-/** The address the browser used: the tunnel's https host, or the local address in a local check. */
-export function publicOrigin(req) {
+/** GATE_PUBLIC_ORIGIN as an https origin (scheme and host only), or '' when unset. Anything else stops the gate. */
+export function pinnedOrigin(value) {
+  if (!value) return '';
+  const u = new URL(value);
+  if (u.protocol !== 'https:' || u.username || u.password || u.search || u.hash || (u.pathname !== '/' && u.pathname !== '')) {
+    throw new Error(`GATE_PUBLIC_ORIGIN must be https:// and a host only (got ${value})`);
+  }
+  return u.origin;
+}
+
+/** True when the gate listens only on this computer. */
+export function isLoopback(host) {
+  return host === '127.0.0.1' || host === '::1' || host === 'localhost';
+}
+
+/** The address the browser used: the pinned address when set, else the tunnel's https host, or the local address. */
+export function publicOrigin(req, pinned = PUBLIC_ORIGIN) {
+  if (pinned) return pinned;
   const host = String(req.headers['x-forwarded-host'] || req.headers.host || `127.0.0.1:${PORT}`).split(',')[0].trim();
   const proto = String(req.headers['x-forwarded-proto'] || '').split(',')[0].trim() === 'https' ? 'https' : 'http';
   return `${proto}://${host}`;
@@ -48,14 +74,19 @@ export function toProduction(value, origin) {
   return value.startsWith(origin) ? PRODUCTION + value.slice(origin.length) : value;
 }
 
-function authorised(req) {
-  if (!PASSWORD) return true;
-  const m = /^Basic\s+(.+)$/i.exec(String(req.headers.authorization || ''));
+/** HTTP Basic sign-in as "review" with the password; everyone passes when no password is set. */
+export function authorisedBy(header, password) {
+  if (!password) return true;
+  const m = /^Basic\s+(.+)$/i.exec(String(header || ''));
   if (!m) return false;
   const [user, ...rest] = Buffer.from(m[1], 'base64').toString('utf8').split(':');
   const given = Buffer.from(rest.join(':'));
-  const want = Buffer.from(PASSWORD);
+  const want = Buffer.from(password);
   return user === 'review' && given.length === want.length && timingSafeEqual(given, want);
+}
+
+function authorised(req) {
+  return authorisedBy(req.headers.authorization, PASSWORD);
 }
 
 function upstreamHeaders(req, origin) {
@@ -96,7 +127,7 @@ const server = http.createServer((req, res) => {
     return res.end('ok');
   }
   if (!authorised(req)) {
-    res.writeHead(401, { 'www-authenticate': 'Basic realm="BIZOMAT review preview", charset="UTF-8"', 'content-type': 'text/plain' });
+    res.writeHead(401, { 'www-authenticate': `Basic realm="${REALM}", charset="UTF-8"`, 'content-type': 'text/plain' });
     return res.end('This preview needs the review password.');
   }
   const origin = publicOrigin(req);
@@ -137,7 +168,7 @@ const server = http.createServer((req, res) => {
 // WebSockets (live board updates): the same rewriting of the request, then the two connections piped together.
 server.on('upgrade', (req, socket, head) => {
   if (!authorised(req)) {
-    socket.end('HTTP/1.1 401 Unauthorized\r\nWWW-Authenticate: Basic realm="BIZOMAT review preview"\r\nConnection: close\r\n\r\n');
+    socket.end(`HTTP/1.1 401 Unauthorized\r\nWWW-Authenticate: Basic realm="${REALM}"\r\nConnection: close\r\n\r\n`);
     return;
   }
   const origin = publicOrigin(req);
@@ -157,7 +188,19 @@ server.on('upgrade', (req, socket, head) => {
 });
 
 if (import.meta.url === `file://${process.argv[1]}`) {
-  server.listen(PORT, '127.0.0.1', () => {
-    console.log(JSON.stringify({ event: 'gate_listening', port: PORT, upstream: UPSTREAM.origin, password: Boolean(PASSWORD) }));
+  // Fail closed: a gate others can reach must have a password, or staging would be open to anyone.
+  if (!isLoopback(HOST) && !PASSWORD) {
+    console.error(JSON.stringify({ event: 'gate_refused', reason: 'GATE_PASSWORD is required when GATE_HOST is not a loopback address' }));
+    process.exit(1);
+  }
+  server.once('listening', () => {
+    const at = server.address();
+    console.log(JSON.stringify({ event: 'gate_listening', host: at.address, port: at.port, upstream: UPSTREAM.origin, password: Boolean(PASSWORD), origin: PUBLIC_ORIGIN || null }));
   });
+  // '::' (every interface) falls back to 0.0.0.0 where the kernel has no IPv6, as the edge proxy does.
+  server.once('error', (err) => {
+    if (HOST === '::' && (err.code === 'EAFNOSUPPORT' || err.code === 'EADDRNOTAVAIL')) return server.listen(PORT, '0.0.0.0');
+    throw err;
+  });
+  server.listen(PORT, HOST);
 }

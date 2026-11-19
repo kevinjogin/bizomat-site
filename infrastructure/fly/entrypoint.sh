@@ -1,5 +1,5 @@
 #!/bin/bash
-# BIZOMAT platform entrypoint: bizomat-entrypoint <proxy|web|work|cad>
+# BIZOMAT platform entrypoint: bizomat-entrypoint <proxy|web|work|cad|gate>
 #
 # One image runs four roles; each Fly process group starts it with its role (fly.toml [processes]).
 # It runs as root only long enough to:
@@ -42,6 +42,7 @@
 #              (company accounts: the register lookup and BIZOMAT sign-in, docs/company/README.md);
 #              a secret file may also carry any of these app names directly
 #   cad        OPENSKETCH_* ; GOOGLE_CLIENT_ID <- CAD_GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET <- CAD_GOOGLE_CLIENT_SECRET
+#   gate       GATE_* (staging only: the password gate, fly.staging.toml; refused outside an app named *-staging)
 # The prefixed names keep the work and cad Google sign-in clients apart (both apps read GOOGLE_CLIENT_ID).
 # Fixed by this script (not overridable): PORT, HOST, the data and static directories, *_TRUST_PROXY, PATH,
 # HOME, LANG, NODE_ENV.
@@ -61,12 +62,13 @@ usage: bizomat-entrypoint <role>
   web     the website (port 8003)
   work    BIZOMAT Project Management (port 8002, volume /data/work)
   cad     CAD Automation (port 8001, volume /data/cad)
+  gate    staging only: the password gate in front of the proxy (port 8080; infrastructure/preview/gate.mjs)
 EOF
 }
 
 ROLE="${1:-}"
 case "$ROLE" in
-  proxy | web | work | cad) ;;
+  proxy | web | work | cad | gate) ;;
   help | -h | --help | "")
     usage
     exit 64
@@ -84,9 +86,18 @@ if [ -n "${FLY_PROCESS_GROUP:-}" ] && [ "$FLY_PROCESS_GROUP" != "$ROLE" ]; then
   die "this Machine is in process group '$FLY_PROCESS_GROUP' but was asked to run '$ROLE'"
 fi
 
+# The gate is the staging app's front door (fly.staging.toml, docs/deployment/staging.md). It never runs in production:
+# only in a Fly app whose name ends in -staging, or outside Fly (a local test).
+if [ "$ROLE" = gate ]; then
+  case "${FLY_APP_NAME:-}" in
+    "" | *-staging) ;;
+    *) die "the gate role runs only in a staging app (FLY_APP_NAME ending in -staging), not in '${FLY_APP_NAME}'" ;;
+  esac
+fi
+
 DATA=/data
 case "$ROLE" in
-  proxy) RUN_USER=bzproxy ;;
+  proxy | gate) RUN_USER=bzproxy ;;
   web) RUN_USER=bzweb ;;
   work) RUN_USER=bzwork ;;
   cad) RUN_USER=bzcad ;;
@@ -198,6 +209,11 @@ case "$ROLE" in
     EXACT=(UPSTREAM_WEB UPSTREAM_WORK UPSTREAM_CAD BIZOMAT_PREVIEW_ROUTING TASKS_REDIRECT_ORIGIN)
     PREFIXES=(PROXY_)
     pass "${EXACT[@]}"
+    pass_prefix "${PREFIXES[@]}"
+    ;;
+  gate)
+    # GATE_PORT GATE_HOST GATE_UPSTREAM GATE_PASSWORD GATE_PUBLIC_ORIGIN GATE_REALM; nothing of any other role's
+    PREFIXES=(GATE_)
     pass_prefix "${PREFIXES[@]}"
     ;;
   web)
@@ -332,6 +348,17 @@ case "$ROLE" in
     set_var NODE_ENV production
     set_var PATH "$BASE_PATH"
     if [ -z "${OUT[PROXY_HOST]:-}" ]; then set_var PROXY_HOST "$(listen_host)"; fi
+    ;;
+  gate)
+    WORKDIR=/app/gate
+    CMD=(/usr/local/bin/node /app/gate/gate.mjs)
+    [ -f "${CMD[1]}" ] || die "${CMD[1]} is missing from this image"
+    set_var NODE_ENV production
+    set_var PATH "$BASE_PATH"
+    if [ -z "${OUT[GATE_PORT]:-}" ]; then set_var GATE_PORT 8080; fi
+    if [ -z "${OUT[GATE_HOST]:-}" ]; then set_var GATE_HOST "$(listen_host)"; fi
+    # The gate itself refuses to start on a reachable address without GATE_PASSWORD; say why here too.
+    [ -n "${OUT[GATE_PASSWORD]:-}" ] || die "the gate needs GATE_PASSWORD (a Fly secret of the staging app), so staging is never open to everyone"
     ;;
   web)
     WORKDIR=/app/web

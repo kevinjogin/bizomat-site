@@ -36,7 +36,7 @@ APP_ENV=(
   -e WORK_BREVO_API_KEY=throwaway-brevo-key -e WORK_EMAIL_FROM_ADDRESS=notifications@example.test
   -e WORK_ABR_GUID=throwaway-abr-guid -e "WORK_BIZOMAT_ID_CLIENTS=$ID_CLIENTS"
   -e CAD_GOOGLE_CLIENT_ID=cad-id -e CAD_GOOGLE_CLIENT_SECRET=throwaway-cad-secret
-  -e CF_AI_TOKEN=throwaway-web-token -e WEB_EXTRA=web-setting -e PROXY_LOG=0
+  -e CF_AI_TOKEN=throwaway-web-token -e WEB_EXTRA=web-setting -e PROXY_LOG=0 -e GATE_PASSWORD=throwaway-gate-app-wide
   -e GOOGLE_CLIENT_SECRET=ambiguous-app-wide -e LD_PRELOAD=/nope.so -e NODE_OPTIONS=--inspect
   -e FLY_APP_NAME=bizomat-test -e FLY_REGION=syd -e FLY_MACHINE_ID=m123
 )
@@ -110,10 +110,27 @@ run_role proxy /app/proxy/server.mjs >"$tmp/proxy.json"
 [ "$(uid "$tmp/proxy.json")" = 10001 ] || bad "proxy uid"
 for n in UPSTREAM_WEB UPSTREAM_CAD BIZOMAT_PREVIEW_ROUTING PROXY_LOG FLY_APP_NAME PROXY_HOST; do has "$tmp/proxy.json" "$n" || bad "proxy lacks $n"; done
 for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET CF_AI_TOKEN WEB_EXTRA LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY \
-  WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS; do
+  WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS GATE_PASSWORD; do
   if has "$tmp/proxy.json" "$n"; then bad "proxy holds $n"; fi
 done
 ok "proxy: its own settings only, uid 10001"
+
+# gate (staging only): refused in any app not named *-staging and without a password; else its own settings only
+if run_role gate /app/gate/gate.mjs -e FLY_APP_NAME=bizomat -e GATE_PASSWORD=throwaway-gate >/dev/null; then bad "the gate ran in the production app"; fi
+grep -q "runs only in a staging app" "$tmp/stderr" || bad "gate production refusal message"
+if run_role gate /app/gate/gate.mjs -e FLY_APP_NAME=cados -e GATE_PASSWORD=throwaway-gate >/dev/null; then bad "the gate ran in cados"; fi
+if run_role gate /app/gate/gate.mjs -e FLY_APP_NAME=bizomat-staging -e GATE_PASSWORD= >/dev/null; then bad "the gate ran without a password"; fi
+grep -q "needs GATE_PASSWORD" "$tmp/stderr" || bad "gate password refusal message"
+run_role gate /app/gate/gate.mjs -e FLY_APP_NAME=bizomat-staging -e GATE_PASSWORD=throwaway-gate \
+  -e GATE_UPSTREAM=http://proxy:8080 -e GATE_PUBLIC_ORIGIN=https://bizomat-staging.fly.dev >"$tmp/gate.json"
+[ "$(uid "$tmp/gate.json")" = 10001 ] || bad "gate uid"
+for n in GATE_PASSWORD GATE_UPSTREAM GATE_PUBLIC_ORIGIN GATE_PORT GATE_HOST FLY_APP_NAME; do has "$tmp/gate.json" "$n" || bad "gate lacks $n"; done
+[ "$(val "$tmp/gate.json" GATE_PORT)" = 8080 ] || bad "gate port"
+for n in PROXY_LOG UPSTREAM_WEB OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET CF_AI_TOKEN WEB_EXTRA \
+  LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY WORK_ABR_GUID WORK_BIZOMAT_ID_CLIENTS; do
+  if has "$tmp/gate.json" "$n"; then bad "gate holds $n"; fi
+done
+ok "gate: only in a *-staging app and with a password; its own settings only, uid 10001"
 
 # web: its secrets, nothing of cad's or work's
 run_role web /app/web/dist-server/server.mjs >"$tmp/web.json"
@@ -121,7 +138,7 @@ run_role web /app/web/dist-server/server.mjs >"$tmp/web.json"
 [ "$(val "$tmp/web.json" PORT)" = 8003 ] && [ "$(val "$tmp/web.json" WEB_DIST_DIR)" = /app/web/dist ] && [ "$(val "$tmp/web.json" WEB_TRUST_PROXY)" = 1 ] || bad "web fixed settings"
 [ "$(val "$tmp/web.json" CF_AI_TOKEN)" = throwaway-web-token ] && [ "$(val "$tmp/web.json" WEB_EXTRA)" = web-setting ] || bad "web settings"
 for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY \
-  WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS; do
+  WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS GATE_PASSWORD; do
   if has "$tmp/web.json" "$n"; then bad "web holds $n"; fi
 done
 ok "web: PORT 8003, its own secrets only, uid 10002"
@@ -148,7 +165,7 @@ run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol:/data" >"$tmp/work
 [ "$(val "$tmp/work.json" GOOGLE_CLIENT_ID)" = work-id ] || bad "a linked secret file must be skipped"
 [ "$(val "$tmp/work.json" WORK_EXTRA_SECRET)" = from-the-volume ] || bad "secret file not read"
 [ "$(val "$tmp/work.json" WORK_DATA_DIR)" = /data/work ] && [ "$(val "$tmp/work.json" PORT)" = 8002 ] || bad "work fixed settings"
-for n in OPENSKETCH_KEY_SECRET CAD_GOOGLE_CLIENT_SECRET CF_AI_TOKEN LD_PRELOAD NODE_OPTIONS UPSTREAM_CAD; do
+for n in OPENSKETCH_KEY_SECRET CAD_GOOGLE_CLIENT_SECRET CF_AI_TOKEN LD_PRELOAD NODE_OPTIONS UPSTREAM_CAD GATE_PASSWORD; do
   if has "$tmp/work.json" "$n"; then bad "work holds $n"; fi
 done
 [ "$(rstat %u "$tmp/workvol/work")" = 10003 ] && [ "$(rstat %a "$tmp/workvol/work")" = 700 ] || bad "/data/work owner or mode"
@@ -199,7 +216,7 @@ docker run --rm --network none "${APP_ENV[@]}" -e FLY_PROCESS_GROUP=cad -v "$tmp
 pin="$(docker run --rm --entrypoint python3 "$IMAGE" -c 'import json; print(json.load(open("/app/cad/cad-source.json"))["commit"][:7])')"
 [ -n "$pin" ] && [ "$(val "$tmp/cad.json" OPENSKETCH_VERSION)" = "$pin" ] || bad "OPENSKETCH_VERSION must be the CADOS commit of apps/cad ($pin)"
 if grep -q "from-the-cad-volume\|throwaway" "$tmp/stderr"; then bad "a value reached the log"; fi
-for n in WORK_GOOGLE_CLIENT_SECRET CF_AI_TOKEN WORK_APP_URL UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS; do
+for n in WORK_GOOGLE_CLIENT_SECRET CF_AI_TOKEN WORK_APP_URL UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS GATE_PASSWORD; do
   if has "$tmp/cad.json" "$n"; then bad "cad holds $n"; fi
 done
 ok "cad: its own settings, its own Google client, its volume's settings, the CADOS commit as version, uid 10004"

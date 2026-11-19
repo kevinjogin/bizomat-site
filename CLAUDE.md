@@ -235,6 +235,15 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   the volume `work_data` (3 GB); `fly.website.toml` matches it exactly (the `cad` group of the earlier plan never ran
   and was removed). Never add a Machine, a process group or memory without the owner's approval. `fly.toml` and `wrangler.toml` are not deployed; the notes below about the single app
   and Cloudflare describe earlier plans.
+- **Staging (owner, 19 Nov 2026; `docs/deployment/staging.md`):** the Fly app `bizomat-staging` (syd, org `personal`)
+  at https://bizomat-staging.fly.dev, where every release is tested before production. `fly.staging.toml`: the
+  production groups at production's sizes plus `gate` (`infrastructure/preview/gate.mjs`, entrypoint role `gate`,
+  refused outside an app named `*-staging` and without `GATE_PASSWORD`), the only public service: a password (user
+  `review`, repository secret `STAGING_PASSWORD`), noindex, and every bizomat.ai link rewritten to staging. Every
+  upstream names a staging Machine (Fly's private network is shared by the organisation; `check-config.py` refuses a
+  production address). Invented data only, never production data; email to the log; Stripe test mode. Deployed only
+  by `.github/workflows/bizomat-staging.yml` (any branch; token `FLY_STAGING_TOKEN`; automatic rollback when a check
+  fails; `stop` and `start` for cost). Never point staging at production, and never copy production data there.
 - **CAD Automation into `bizomat` (6 Nov 2026; an earlier plan, not carried out: the `cad` group was removed from
   `fly.website.toml` on 9 Nov 2026 and CAD stays in the app `cados`, in ams):** the plan gave `fly.website.toml` a `cad`
   group (performance-1x, 2 GB, volume `cad_data` in syd, cados's settings). The cad role never starts the CAD server on a volume without CAD data (a
