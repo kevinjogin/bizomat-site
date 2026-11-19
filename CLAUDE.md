@@ -95,6 +95,13 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   surveillance and the compliance register are planned. Hours worked by site and month (reasoned, append-only history)
   and LTIFR/TRIFR, which show "Cannot be calculated" when hours are missing, are live since 15 Nov 2026
   (kevinjogin/bizomat-site#77, migration 0028, deploy run 40).
+  **Free mode (owner, 19 Nov 2026, Stage 1): BIZOMAT is free for every customer**, and it supersedes the selling
+  decisions in the next paragraph. Billing is locked on the server (`BIZOMAT_BILLING_LOCK`; production sets
+  `WORK_BIZOMAT_BILLING_LOCK = "true"` and the entrypoint locks it by default): nobody can subscribe or be refused for
+  not paying, and the console cannot open subscriptions or turn enforcement on. `/pricing/` answers 301 to `/systems/`
+  and no page shows a price. Stripe stays intact and untouched (code, product, prices, tables, webhook still recording
+  events); on 19 Nov 2026 Stripe held no customers, subscriptions or charges. Never unlock billing, show a price or
+  add an upgrade prompt without the owner's approval (`docs/billing/README.md`, "Free mode"; `tests/pricing.test.ts`).
   **Billing** (owner's brief of 15 Nov 2026; `docs/billing/README.md`; migration 0027, kevinjogin/bizomat-site#77):
   one Stripe customer and subscription per registered company, charged per active member, monthly, AUD; prices only
   from Stripe Price ids in `WORK_STRIPE_*`; embedded Checkout on the ERP's billing page; signed idempotent webhook; seat
