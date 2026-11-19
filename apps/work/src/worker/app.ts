@@ -45,6 +45,9 @@ import { legalAdminRoutes as whsAdminRoutes } from './whs/legal';
 import { billingRoutes } from './billing/routes';
 import { billingWebhookRoutes } from './billing/webhook';
 import { adminBillingRoutes } from './billing/admin';
+import { platformRoutes } from './platform/routes';
+import { consoleMfaGate } from './platform/security';
+import { moduleGate } from './platform/module-gate';
 import { entitlementGate } from './billing/entitlements';
 
 export const CSP = [
@@ -214,17 +217,22 @@ export function createApp() {
   // BIZOMAT System, every tool in one place by company, at /system (src/worker/system).
   api.route('/system', systemRoutes);
   // BIZOMAT ERP's Asset Management and Maintenance, Stage 1 (src/worker/maintenance): assets, requests, work orders.
+  // Module switches (Admin Control Centre, src/worker/platform): on unless a platform admin switched one off.
+  api.use('/maintenance/c/:company/*', moduleGate('maintenance'));
   api.route('/maintenance', maintenanceRoutes);
   // BIZOMAT ERP, Release 1 (src/worker/erp): products, variants, revisions and change control, bills of materials,
   // engineering documents and the supplier master.
   api.route('/erp', erpRoutes);
   // BIZOMAT WHS, Release 1 (src/worker/whs): hazards, risk assessments, incidents, investigations, regulatory
   // notification records and actions, with the jurisdiction packs.
+  api.use('/whs/c/:company/*', moduleGate('whs'));
   api.route('/whs', whsRoutes);
   api.route('/billing', billingRoutes);
   // Founder admin API: authenticated session + platform-admin role, enforced server-side.
   const admin = new Hono<AppEnv>();
   admin.use('*', requirePlatformAdmin);
+  // Two-factor sign-in: required for every console request once the admin has enrolled (src/worker/platform/security.ts).
+  admin.use('*', consoleMfaGate);
   admin.route('/', adminRoutes);
   admin.route('/', adminEmailRoutes);
   admin.route('/', adminSignupRoutes);
@@ -236,6 +244,8 @@ export function createApp() {
   // BIZOMAT WHS jurisdiction packs: drafts, review, activation and verification of legal rules (src/worker/whs/legal.ts).
   admin.route('/whs', whsAdminRoutes);
   admin.route('/billing', adminBillingRoutes);
+  // The Admin Control Centre: feature flags, the kill switch, rollout stages and two-factor sign-in (Stage 1, R2).
+  admin.route('/platform', platformRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
