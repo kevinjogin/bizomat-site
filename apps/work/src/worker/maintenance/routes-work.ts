@@ -7,7 +7,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now } from '../lib/util';
+import { HttpError, insertCompanyRow, body, newId, notFound, now } from '../lib/util';
 import { assertPerson, deny, isManager, requestScope, requireMt, workOrderScope, type MtAccess } from './access';
 import { SUBTREE_SQL, assetPath } from './routes-assets';
 import { requestDTO, workOrderDTO } from './dto';
@@ -167,7 +167,7 @@ export async function workOrderStatements(db: D1Database, a: MtAccess, input: Wo
         .bind(...keys.map((k) => row[k]), a.companyId, fromRequest.id),
     );
   } else {
-    stmts.push(db.prepare(`INSERT INTO mt_work_orders (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => row[k])));
+    stmts.push(insertCompanyRow(db, 'mt_work_orders', row));
   }
   (input.tasks ?? []).forEach((text, i) => stmts.push(db.prepare('INSERT INTO mt_wo_tasks (id, company_id, work_order_id, position, text, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(newId(), a.companyId, id, i + 1, text, a.userId, t)));
   (input.parts ?? []).forEach((p, i) => stmts.push(db.prepare('INSERT INTO mt_wo_parts (id, company_id, work_order_id, position, part, quantity, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(newId(), a.companyId, id, i + 1, p.part, p.quantity, a.userId, t)));
@@ -482,7 +482,7 @@ async function workable(c: any) {
 workRoutes.post('/c/:company/work-orders/:id/tasks', async (c) => {
   const { a, w, db } = await workable(c);
   const input = await body(c, z.object({ text: zText(500).min(1) }));
-  const pos = await db.prepare('SELECT COALESCE(MAX(position), 0) + 1 AS p FROM mt_wo_tasks WHERE work_order_id = ?').bind(w.id).first<{ p: number }>();
+  const pos = await db.prepare('SELECT COALESCE(MAX(position), 0) + 1 AS p FROM mt_wo_tasks WHERE company_id = ? AND work_order_id = ?').bind(a.companyId, w.id).first<{ p: number }>();
   const id = newId();
   await db.batch([
     db.prepare('INSERT INTO mt_wo_tasks (id, company_id, work_order_id, position, text, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(id, a.companyId, w.id, pos?.p ?? 1, input.text, a.userId, now()),
@@ -499,11 +499,11 @@ workRoutes.patch('/c/:company/work-orders/:id/tasks/:taskId', async (c) => {
   const t = now();
   const stmts: D1PreparedStatement[] = [];
   if (input.done !== undefined && input.done !== !!task.done_at) {
-    stmts.push(db.prepare('UPDATE mt_wo_tasks SET done_at = ?, done_by = ? WHERE id = ?').bind(input.done ? t : null, input.done ? a.userId : null, task.id));
+    stmts.push(db.prepare('UPDATE mt_wo_tasks SET done_at = ?, done_by = ? WHERE company_id = ? AND id = ?').bind(input.done ? t : null, input.done ? a.userId : null, a.companyId, task.id));
     stmts.push(eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: input.done ? 'task.done' : 'task.undone', assetId: w.asset_id, workOrderId: w.id, summary: `${input.done ? 'Ticked' : 'Unticked'}: ${task.text}`, at: t }));
   }
   if (input.text !== undefined && input.text !== task.text) {
-    stmts.push(db.prepare('UPDATE mt_wo_tasks SET text = ? WHERE id = ?').bind(input.text, task.id));
+    stmts.push(db.prepare('UPDATE mt_wo_tasks SET text = ? WHERE company_id = ? AND id = ?').bind(input.text, a.companyId, task.id));
     stmts.push(eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'task.updated', assetId: w.asset_id, workOrderId: w.id, summary: `Task changed: ${input.text}`, before: { text: task.text }, after: { text: input.text }, at: t }));
   }
   if (stmts.length) await db.batch(stmts);
@@ -516,7 +516,7 @@ workRoutes.delete('/c/:company/work-orders/:id/tasks/:taskId', async (c) => {
   const task = await db.prepare('SELECT * FROM mt_wo_tasks WHERE company_id = ? AND work_order_id = ? AND id = ?').bind(a.companyId, w.id, c.req.param('taskId')).first<any>();
   if (!task) throw notFound('Task');
   await db.batch([
-    db.prepare('DELETE FROM mt_wo_tasks WHERE id = ?').bind(task.id),
+    db.prepare('DELETE FROM mt_wo_tasks WHERE company_id = ? AND id = ?').bind(a.companyId, task.id),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'task.removed', assetId: w.asset_id, workOrderId: w.id, summary: `Task removed: ${task.text}`, before: { text: task.text, done: !!task.done_at } }),
   ]);
   return c.json({ ok: true });
@@ -529,7 +529,7 @@ const partSchema = z.object({ part: zText(200).min(1), quantity: z.number().posi
 workRoutes.post('/c/:company/work-orders/:id/parts', async (c) => {
   const { a, w, db } = await workable(c);
   const input = await body(c, partSchema);
-  const pos = await db.prepare('SELECT COALESCE(MAX(position), 0) + 1 AS p FROM mt_wo_parts WHERE work_order_id = ?').bind(w.id).first<{ p: number }>();
+  const pos = await db.prepare('SELECT COALESCE(MAX(position), 0) + 1 AS p FROM mt_wo_parts WHERE company_id = ? AND work_order_id = ?').bind(a.companyId, w.id).first<{ p: number }>();
   const id = newId();
   await db.batch([
     db.prepare('INSERT INTO mt_wo_parts (id, company_id, work_order_id, position, part, quantity, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id, a.companyId, w.id, pos?.p ?? 1, input.part, input.quantity, a.userId, now()),
@@ -545,7 +545,7 @@ workRoutes.patch('/c/:company/work-orders/:id/parts/:partId', async (c) => {
   const input = await body(c, partSchema.partial());
   const next = { part: input.part ?? part.part, quantity: input.quantity ?? part.quantity };
   await db.batch([
-    db.prepare('UPDATE mt_wo_parts SET part = ?, quantity = ? WHERE id = ?').bind(next.part, next.quantity, part.id),
+    db.prepare('UPDATE mt_wo_parts SET part = ?, quantity = ? WHERE company_id = ? AND id = ?').bind(next.part, next.quantity, a.companyId, part.id),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'part.updated', assetId: w.asset_id, workOrderId: w.id, summary: `Part changed: ${next.quantity} × ${next.part}`, before: { part: part.part, quantity: part.quantity }, after: next }),
   ]);
   return c.json({ ok: true });
@@ -556,7 +556,7 @@ workRoutes.delete('/c/:company/work-orders/:id/parts/:partId', async (c) => {
   const part = await db.prepare('SELECT * FROM mt_wo_parts WHERE company_id = ? AND work_order_id = ? AND id = ?').bind(a.companyId, w.id, c.req.param('partId')).first<any>();
   if (!part) throw notFound('Part line');
   await db.batch([
-    db.prepare('DELETE FROM mt_wo_parts WHERE id = ?').bind(part.id),
+    db.prepare('DELETE FROM mt_wo_parts WHERE company_id = ? AND id = ?').bind(a.companyId, part.id),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'part.removed', assetId: w.asset_id, workOrderId: w.id, summary: `Part removed: ${part.quantity} × ${part.part}`, before: { part: part.part, quantity: part.quantity } }),
   ]);
   return c.json({ ok: true });
@@ -566,7 +566,7 @@ workRoutes.delete('/c/:company/work-orders/:id/parts/:partId', async (c) => {
 
 workRoutes.post('/c/:company/work-orders/:id/timer/start', async (c) => {
   const { a, w, db } = await workable(c);
-  const running = await db.prepare('SELECT id FROM mt_labour WHERE work_order_id = ? AND user_id = ? AND ended_at IS NULL').bind(w.id, a.userId).first();
+  const running = await db.prepare('SELECT id FROM mt_labour WHERE company_id = ? AND work_order_id = ? AND user_id = ? AND ended_at IS NULL').bind(a.companyId, w.id, a.userId).first();
   if (running) throw new HttpError(409, 'Your timer is already running on this work order');
   const t = now();
   const id = newId();
@@ -595,12 +595,12 @@ workRoutes.post('/c/:company/work-orders/:id/timer/stop', async (c) => {
   const db = c.env.DB;
   const w = await loadWorkOrder(db, a, c.req.param('id'));
   assertWork(a, w);
-  const run = await db.prepare('SELECT * FROM mt_labour WHERE work_order_id = ? AND user_id = ? AND ended_at IS NULL').bind(w.id, a.userId).first<any>();
+  const run = await db.prepare('SELECT * FROM mt_labour WHERE company_id = ? AND work_order_id = ? AND user_id = ? AND ended_at IS NULL').bind(a.companyId, w.id, a.userId).first<any>();
   if (!run) throw new HttpError(409, 'Your timer is not running on this work order');
   const t = now();
   const minutes = Math.max(0, Math.round((t - run.started_at) / 60000));
   await db.batch([
-    db.prepare('UPDATE mt_labour SET ended_at = ?, minutes = ? WHERE id = ? AND ended_at IS NULL').bind(t, minutes, run.id),
+    db.prepare('UPDATE mt_labour SET ended_at = ?, minutes = ? WHERE company_id = ? AND id = ? AND ended_at IS NULL').bind(t, minutes, a.companyId, run.id),
     priceLabourStmt(db, a.companyId, w.id, { labourId: run.id }, { entry: 'timer', t }),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'labour.recorded', assetId: w.asset_id, workOrderId: w.id, summary: `Timer stopped: ${minutes} min recorded`, after: { minutes }, at: t }),
   ]);

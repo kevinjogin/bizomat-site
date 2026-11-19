@@ -13,7 +13,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now } from '../lib/util';
 import { createCredit } from '../fin/sales';
 import { todayIn } from '../../shared/fin/dates';
 import { assertCan, can, requireErp, type ErpAccess } from './access';
@@ -92,7 +92,7 @@ returnRoutes.get('/c/:company/rmas', async (c) => {
   const a = await requireErp(c, 'sales.view');
   const db = c.env.DB;
   const { limit, offset } = paging(c);
-  const where = ['r.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const qp = (k: string) => c.req.query(k)?.trim();
   const status = qp('status');
@@ -114,10 +114,10 @@ returnRoutes.get('/c/:company/rmas', async (c) => {
     args.push(likeOf(qp('q')!));
   }
   const csv = wantsCsv(c);
-  const rows = await db.prepare(`${RMA_SELECT} WHERE ${where.join(' AND ')} ORDER BY r.created_at DESC, r.rowid DESC LIMIT ? OFFSET ?`).bind(...args, csv ? 20000 : limit, csv ? 0 : offset).all<any>();
+  const rows = await db.prepare(`${RMA_SELECT} WHERE r.company_id = ?${andAll(where)} ORDER BY r.created_at DESC, r.rowid DESC LIMIT ? OFFSET ?`).bind(...args, csv ? 20000 : limit, csv ? 0 : offset).all<any>();
   const list = rows.results.map(rmaDTO);
   if (csv) return csvResponse('returns', [['Number', 'Sales order', 'Shipment', 'Customer', 'Status', 'Reason', 'Details', 'Raised', 'Received', 'Credit note'], ...list.map((r) => [r.number, r.salesOrderNumber, r.shipmentNumber ?? '', r.customerName, r.statusLabel, r.reasonLabel, r.details, new Date(r.createdAt).toISOString().slice(0, 10), r.receivedAt ? new Date(r.receivedAt).toISOString().slice(0, 10) : '', r.creditStatus === 'done' ? 'made' : ''])]);
-  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_rmas r WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>();
+  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_rmas r WHERE r.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>();
   return c.json({ returns: list, total: total?.n ?? 0, limit, offset, statuses: Object.entries(RMA_STATUS).map(([value, l]) => ({ value, label: l })), reasons: Object.entries(RMA_REASONS).map(([value, l]) => ({ value, label: l })), can: { raise: can(a, 'returns.raise') } });
 });
 
@@ -332,11 +332,11 @@ returnRoutes.post('/c/:company/rmas/:id/credit-note', async (c) => {
     .prepare("INSERT INTO erp_integration_events (id, company_id, kind, source_type, source_id, target, idempotency_key, status, attempts, target_org_id, created_by, created_at, updated_at) VALUES (?, ?, 'finance.credit_note', 'rma', ?, 'finance', ?, 'pending', 0, ?, ?, ?, ?) ON CONFLICT(idempotency_key) DO NOTHING")
     .bind(newId(), a.companyId, r.id, key, org.id, a.userId, t, t)
     .run();
-  const ev = (await db.prepare('SELECT * FROM erp_integration_events WHERE idempotency_key = ?').bind(key).first<any>())!;
+  const ev = (await db.prepare('SELECT * FROM erp_integration_events WHERE company_id = ? AND idempotency_key = ?').bind(a.companyId, key).first<any>())!;
   if (ev.status === 'done') return c.json({ creditNoteId: ev.target_ref, existing: true, url: `/erp/finance/o/${ev.target_org_id}/credit-notes/${ev.target_ref}` });
   const claim = await db
-    .prepare("UPDATE erp_integration_events SET attempts = attempts + 1, status = 'pending', updated_at = ? WHERE idempotency_key = ? AND attempts = ? AND status IN ('pending','failed') AND (attempts = 0 OR status = 'failed' OR updated_at < ?)")
-    .bind(t, key, ev.attempts, t - 120_000)
+    .prepare("UPDATE erp_integration_events SET attempts = attempts + 1, status = 'pending', updated_at = ? WHERE company_id = ? AND idempotency_key = ? AND attempts = ? AND status IN ('pending','failed') AND (attempts = 0 OR status = 'failed' OR updated_at < ?)")
+    .bind(t, a.companyId, key, ev.attempts, t - 120_000)
     .run();
   if (!claim.meta.changes) throw new HttpError(409, 'The draft credit note is being made now: refresh in a moment');
   const reference = `${r.number} ${so.number}`;
@@ -369,13 +369,13 @@ returnRoutes.post('/c/:company/rmas/:id/credit-note', async (c) => {
       creditId = made.id;
     }
     await db.batch([
-      db.prepare("UPDATE erp_integration_events SET status = 'done', target_ref = ?, target_org_id = ?, last_error = '', updated_at = ? WHERE idempotency_key = ?").bind(creditId, org.id, now(), key),
+      db.prepare("UPDATE erp_integration_events SET status = 'done', target_ref = ?, target_org_id = ?, last_error = '', updated_at = ? WHERE company_id = ? AND idempotency_key = ?").bind(creditId, org.id, now(), a.companyId, key),
       eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'rma.credit_drafted', entityType: 'rma', entityId: r.id, summary: `Draft credit note made in Finance for ${r.number} (${reference})`, after: { finOrg: org.id, creditNote: creditId }, at: now() }),
     ]);
     return c.json({ creditNoteId: creditId, existing: !!before, url: `/erp/finance/o/${org.id}/credit-notes/${creditId}` }, before ? 200 : 201);
   } catch (e) {
     const msg = e instanceof HttpError ? e.message : 'Finance could not make the credit note';
-    await db.prepare("UPDATE erp_integration_events SET status = 'failed', last_error = ?, updated_at = ? WHERE idempotency_key = ?").bind(msg.slice(0, 200), now(), key).run();
+    await db.prepare("UPDATE erp_integration_events SET status = 'failed', last_error = ?, updated_at = ? WHERE company_id = ? AND idempotency_key = ?").bind(msg.slice(0, 200), now(), a.companyId, key).run();
     throw e;
   }
 });

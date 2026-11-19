@@ -961,12 +961,12 @@ purchasingRoutes.post('/c/:company/receipts/:id/bill', async (c) => {
     .prepare("INSERT INTO erp_integration_events (id, company_id, kind, source_type, source_id, target, idempotency_key, status, attempts, target_org_id, created_by, created_at, updated_at) VALUES (?, ?, 'finance.draft_bill', 'receipt', ?, 'finance', ?, 'pending', 0, ?, ?, ?, ?) ON CONFLICT(idempotency_key) DO NOTHING")
     .bind(newId(), a.companyId, r.id, key, org.id, a.userId, t, t)
     .run();
-  const ev = (await db.prepare('SELECT * FROM erp_integration_events WHERE idempotency_key = ?').bind(key).first<any>())!;
+  const ev = (await db.prepare('SELECT * FROM erp_integration_events WHERE company_id = ? AND idempotency_key = ?').bind(a.companyId, key).first<any>())!;
   if (ev.status === 'done') return c.json({ billId: ev.target_ref, existing: true, url: `/erp/finance/o/${ev.target_org_id}/bills/${ev.target_ref}` });
   // claim it: only one request at a time makes the bill (attempts moves on, compared and set in one statement)
   const claim = await db
-    .prepare("UPDATE erp_integration_events SET attempts = attempts + 1, status = 'pending', updated_at = ? WHERE idempotency_key = ? AND attempts = ? AND status IN ('pending','failed') AND (attempts = 0 OR status = 'failed' OR updated_at < ?)")
-    .bind(t, key, ev.attempts, t - 120_000)
+    .prepare("UPDATE erp_integration_events SET attempts = attempts + 1, status = 'pending', updated_at = ? WHERE company_id = ? AND idempotency_key = ? AND attempts = ? AND status IN ('pending','failed') AND (attempts = 0 OR status = 'failed' OR updated_at < ?)")
+    .bind(t, a.companyId, key, ev.attempts, t - 120_000)
     .run();
   if (!claim.meta.changes) throw new HttpError(409, 'The draft bill is being made now: refresh in a moment');
   const reference = `${r.number} ${o.number}`;
@@ -1012,13 +1012,13 @@ purchasingRoutes.post('/c/:company/receipts/:id/bill', async (c) => {
       billId = made.id;
     }
     await db.batch([
-      db.prepare("UPDATE erp_integration_events SET status = 'done', target_ref = ?, target_org_id = ?, last_error = '', updated_at = ? WHERE idempotency_key = ?").bind(billId, org.id, now(), key),
+      db.prepare("UPDATE erp_integration_events SET status = 'done', target_ref = ?, target_org_id = ?, last_error = '', updated_at = ? WHERE company_id = ? AND idempotency_key = ?").bind(billId, org.id, now(), a.companyId, key),
       eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'receipt.bill_drafted', entityType: 'receipt', entityId: r.id, summary: `Draft bill made in Finance for ${r.number} (${reference})`, after: { finOrg: org.id, bill: billId }, at: now() }),
     ]);
     return c.json({ billId, existing: !!before, url: `/erp/finance/o/${org.id}/bills/${billId}` }, before ? 200 : 201);
   } catch (e) {
     const msg = e instanceof HttpError ? e.message : 'Finance could not make the bill';
-    await db.prepare("UPDATE erp_integration_events SET status = 'failed', last_error = ?, updated_at = ? WHERE idempotency_key = ?").bind(msg.slice(0, 200), now(), key).run();
+    await db.prepare("UPDATE erp_integration_events SET status = 'failed', last_error = ?, updated_at = ? WHERE company_id = ? AND idempotency_key = ?").bind(msg.slice(0, 200), now(), a.companyId, key).run();
     throw e;
   }
 });

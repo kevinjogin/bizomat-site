@@ -114,7 +114,7 @@ adminBillingRoutes.post('/grants/:id/revoke', async (c) => {
   if (!g) throw notFound('Grant');
   const me = c.get('user').id;
   await db.batch([
-    db.prepare('UPDATE billing_grants SET revoked_at = ?, revoked_by = ? WHERE id = ? AND revoked_at IS NULL').bind(now(), me, g.id),
+    db.prepare('UPDATE billing_grants SET revoked_at = ?, revoked_by = ? WHERE company_id = ? AND id = ? AND revoked_at IS NULL').bind(now(), me, g.company_id, g.id),
     auditStmt(db, { actorId: me, action: 'billing.grant_revoked', targetType: 'company', targetId: g.company_id, ip: clientIp(c) }),
   ]);
   return c.json({ ok: true });

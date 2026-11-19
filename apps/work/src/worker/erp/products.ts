@@ -6,7 +6,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now, parseJson } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now, parseJson } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { can, requireErp, type ErpAccess } from './access';
 import {
@@ -201,14 +201,14 @@ export async function productStatements(db: D1Database, a: ErpAccess, input: z.i
   const revId = newId();
   const t = now();
   row.search = searchOf(row);
-  const cols = ['id', 'company_id', 'variant_of', 'created_by', 'created_at', 'updated_at', ...Object.keys(row)];
-  const vals = [id, a.companyId, variantOf, a.userId, t, t, ...Object.values(row)];
+  const cols = ['id', 'variant_of', 'created_by', 'created_at', 'updated_at', ...Object.keys(row)];
+  const vals = [id, variantOf, a.userId, t, t, ...Object.values(row)];
   return {
     id,
     revId,
     number,
     stmts: [
-      db.prepare(`INSERT INTO erp_products (${cols.join(', ')}) VALUES (${cols.map(() => '?').join(', ')})`).bind(...vals),
+      db.prepare(`INSERT INTO erp_products (company_id, ${cols.join(', ')}) VALUES (?, ${cols.map(() => '?').join(', ')})`).bind(a.companyId, ...vals),
       db.prepare("INSERT INTO erp_revisions (id, company_id, product_id, label, status, description, created_by, created_at, updated_at) VALUES (?, ?, ?, 'A', 'draft', 'First revision', ?, ?, ?)").bind(revId, a.companyId, id, a.userId, t, t),
       eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: variantOf ? 'product.variant_created' : 'product.created', entityType: 'product', entityId: id, productId: id, summary: `Product ${number} ${input.name} created${variantOf ? ' as a variant' : ''}`, after: { number, name: input.name, type: input.type }, at: t }),
     ],
@@ -219,7 +219,7 @@ productRoutes.get('/c/:company/products', async (c) => {
   const a = await requireErp(c, 'products.view');
   const db = c.env.DB;
   const q = (k: string) => c.req.query(k) ?? '';
-  const where = ['p.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   where.push(q('archived') === '1' ? 'p.archived_at IS NOT NULL' : 'p.archived_at IS NULL');
   if (q('q')) {
@@ -248,8 +248,8 @@ productRoutes.get('/c/:company/products', async (c) => {
   const csv = wantsCsv(c);
   const { limit, offset } = csv ? { limit: 10000, offset: 0 } : paging(c);
   const [rows, total, cats] = await db.batch([
-    db.prepare(`${SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} ${dir}, p.id LIMIT ? OFFSET ?`).bind(...args, limit, offset),
-    db.prepare(`SELECT COUNT(*) AS n FROM erp_products p WHERE ${where.join(' AND ')}`).bind(...args),
+    db.prepare(`${SELECT} WHERE p.company_id = ?${andAll(where)} ORDER BY ${sort} ${dir}, p.id LIMIT ? OFFSET ?`).bind(...args, limit, offset),
+    db.prepare(`SELECT COUNT(*) AS n FROM erp_products p WHERE p.company_id = ?${andAll(where)}`).bind(...args),
     db.prepare("SELECT DISTINCT category FROM erp_products WHERE company_id = ? AND category <> '' ORDER BY category COLLATE NOCASE LIMIT 200").bind(a.companyId),
   ]);
   const products = (rows.results as any[]).map(productDTO);

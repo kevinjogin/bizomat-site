@@ -21,7 +21,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now, parseJson } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now, parseJson } from '../lib/util';
 import { can, companyPeople, requireErp, type ErpAccess } from './access';
 import { badState, csvResponse, dollars, eventStmt, historyOf, likeOf, nextNumber, paging, searchText, wantsCsv, zDate, zId, zText } from './util';
 import { loadSettings } from './settings';
@@ -445,7 +445,7 @@ productionRoutes.get('/c/:company/mos', async (c) => {
   const a = await requireErp(c, 'manufacturing.view');
   const db = c.env.DB;
   const { limit, offset } = paging(c);
-  const where = ['mo.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const qp = (k: string) => c.req.query(k)?.trim();
   const status = qp('status');
@@ -492,7 +492,7 @@ productionRoutes.get('/c/:company/mos', async (c) => {
   const sorts: Record<string, string> = { required: "COALESCE(mo.required_date, '9999'), mo.number", number: 'mo.number COLLATE NOCASE DESC', priority: "CASE mo.priority WHEN 'urgent' THEN 0 WHEN 'high' THEN 1 WHEN 'normal' THEN 2 ELSE 3 END, COALESCE(mo.required_date, '9999')", newest: 'mo.created_at DESC' };
   const order = sorts[qp('sort') ?? ''] ?? sorts.newest;
   const csv = wantsCsv(c);
-  const rows = await db.prepare(`${MO_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...args, csv ? 10000 : limit, csv ? 0 : offset).all<any>();
+  const rows = await db.prepare(`${MO_SELECT} WHERE mo.company_id = ?${andAll(where)} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...args, csv ? 10000 : limit, csv ? 0 : offset).all<any>();
   const list = rows.results.map(moDTO);
   if (csv) {
     return csvResponse('manufacturing-orders', [
@@ -500,7 +500,7 @@ productionRoutes.get('/c/:company/mos', async (c) => {
       ...list.map((m) => [m.number, m.productNumber, m.productName, m.statusLabel, m.quantity, m.completedQty, m.startDate ?? '', m.requiredDate ?? '', m.finishDate ?? '', m.priorityLabel, m.methodLabel, m.productionTypeLabel, m.customerRef, dollars(m.estimate.total), dollars(m.actualCents), dollars(m.varianceCents), m.late ? 'yes' : '']),
     ]);
   }
-  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_mfg_orders mo WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>();
+  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_mfg_orders mo WHERE mo.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>();
   return c.json({ orders: list, total: total?.n ?? 0, limit, offset, can: { plan: can(a, 'production.plan') } });
 });
 

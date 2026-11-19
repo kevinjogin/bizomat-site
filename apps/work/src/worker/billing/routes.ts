@@ -298,7 +298,7 @@ billingRoutes.post('/c/:company/checkout', async (c) => {
     if (recent) {
       const s = checkMode(cfg, await stripe.checkout.sessions.retrieve(recent.id));
       if (s.status === 'open' && s.client_secret) return c.json({ clientSecret: s.client_secret, sessionId: s.id, reused: true });
-      await db.prepare('UPDATE billing_checkout_sessions SET status = ? WHERE id = ?').bind(s.status ?? 'expired', s.id).run();
+      await db.prepare('UPDATE billing_checkout_sessions SET status = ? WHERE company_id = ? AND id = ?').bind(s.status ?? 'expired', a.companyId, s.id).run();
     }
     // Any other open session for this company is closed, so only one can be completed.
     const others = await db.prepare("SELECT id FROM billing_checkout_sessions WHERE company_id = ? AND environment = ? AND mode = 'subscription' AND status = 'open'").bind(a.companyId, cfg.environment).all<{ id: string }>();
@@ -308,7 +308,7 @@ billingRoutes.post('/c/:company/checkout', async (c) => {
       } catch {
         // already completed or expired: the sync below records which
       }
-      await db.prepare("UPDATE billing_checkout_sessions SET status = 'expired' WHERE id = ? AND status = 'open'").bind(o.id).run();
+      await db.prepare("UPDATE billing_checkout_sessions SET status = 'expired' WHERE company_id = ? AND id = ? AND status = 'open'").bind(a.companyId, o.id).run();
     }
     const session = checkMode(
       cfg,
@@ -446,7 +446,7 @@ billingRoutes.post('/c/:company/interval', async (c) => {
       { items: [{ id: sub.item_id!, price: price.id, quantity }], proration_behavior: cfg.proration, expand: ['default_payment_method'] },
       { idempotencyKey: `interval:${sub.id}:v${sub.seat_version}:${interval}:${quantity}` },
     );
-    await c.env.DB.prepare('UPDATE billing_subscriptions SET seat_version = seat_version + 1 WHERE id = ? AND seat_version = ?').bind(sub.id, sub.seat_version).run();
+    await c.env.DB.prepare('UPDATE billing_subscriptions SET seat_version = seat_version + 1 WHERE company_id = ? AND id = ? AND seat_version = ?').bind(a.companyId, sub.id, sub.seat_version).run();
     const row = await applySubscription(c.env, cfg, updated);
     await historyStmt(c.env.DB, { companyId: a.companyId, environment: cfg.environment, kind: 'subscription.interval_request', summary: `${a.userName} changed billing to ${interval === 'year' ? 'annual' : 'monthly'}.`, ref: `${sub.id}:v${sub.seat_version}:${interval}`, actorId: a.userId }).run();
     return c.json({ ok: true, subscription: subView(row) });

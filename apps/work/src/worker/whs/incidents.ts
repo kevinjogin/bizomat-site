@@ -22,7 +22,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now, parseJson } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now, parseJson } from '../lib/util';
 import { assertPerson, assertWhs, incidentScope, peopleWith, requireWhs, segregation, type WhsAccess } from './access';
 import { actionsOf } from './actions';
 import { checkDTO, evaluateIncident, latestChecks, VERIFY_NOTICE } from './legal';
@@ -256,7 +256,7 @@ incidentRoutes.get('/c/:company/incidents', async (c) => {
   const a = await requireWhs(c);
   const db = c.env.DB;
   const scope = incidentScope(a, 'i');
-  const where = ['i.company_id = ?', scope.sql];
+  const where: string[] = [scope.sql];
   const args: unknown[] = [a.companyId, ...scope.args];
   const add = (sql: string, ...xs: unknown[]) => {
     where.push(sql);
@@ -281,8 +281,8 @@ incidentRoutes.get('/c/:company/incidents', async (c) => {
   const limit = Math.min(Math.max(Number(c.req.query('limit')) || 100, 1), 500);
   const offset = Math.max(Number(c.req.query('offset')) || 0, 0);
   const [rows, total] = await db.batch([
-    db.prepare(`${INCIDENT_SELECT} WHERE ${where.join(' AND ')} ORDER BY i.occurred_date DESC, i.created_at DESC LIMIT ? OFFSET ?`).bind(...args, limit, offset),
-    db.prepare(`SELECT COUNT(*) AS n FROM whs_incidents i WHERE ${where.join(' AND ')}`).bind(...args),
+    db.prepare(`${INCIDENT_SELECT} WHERE i.company_id = ?${andAll(where)} ORDER BY i.occurred_date DESC, i.created_at DESC LIMIT ? OFFSET ?`).bind(...args, limit, offset),
+    db.prepare(`SELECT COUNT(*) AS n FROM whs_incidents i WHERE i.company_id = ?${andAll(where)}`).bind(...args),
   ]);
   const list = (rows.results as any[]).map((i) => incidentDTO(i, a.can.view));
   if (c.req.query('format') === 'csv') {

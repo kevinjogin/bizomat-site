@@ -852,12 +852,12 @@ logisticsRoutes.post('/c/:company/shipments/:id/invoice', async (c) => {
     .prepare("INSERT INTO erp_integration_events (id, company_id, kind, source_type, source_id, target, idempotency_key, status, attempts, target_org_id, created_by, created_at, updated_at) VALUES (?, ?, 'finance.draft_invoice', 'shipment', ?, 'finance', ?, 'pending', 0, ?, ?, ?, ?) ON CONFLICT(idempotency_key) DO NOTHING")
     .bind(newId(), a.companyId, s.id, key, org.id, a.userId, t, t)
     .run();
-  const ev = (await db.prepare('SELECT * FROM erp_integration_events WHERE idempotency_key = ?').bind(key).first<any>())!;
+  const ev = (await db.prepare('SELECT * FROM erp_integration_events WHERE company_id = ? AND idempotency_key = ?').bind(a.companyId, key).first<any>())!;
   if (ev.status === 'done') return c.json({ invoiceId: ev.target_ref, existing: true, url: `/erp/finance/o/${ev.target_org_id}/invoices/${ev.target_ref}` });
   // claim it: only one request at a time makes the invoice (attempts moves on, compared and set in one statement)
   const claim = await db
-    .prepare("UPDATE erp_integration_events SET attempts = attempts + 1, status = 'pending', updated_at = ? WHERE idempotency_key = ? AND attempts = ? AND status IN ('pending','failed') AND (attempts = 0 OR status = 'failed' OR updated_at < ?)")
-    .bind(t, key, ev.attempts, t - 120_000)
+    .prepare("UPDATE erp_integration_events SET attempts = attempts + 1, status = 'pending', updated_at = ? WHERE company_id = ? AND idempotency_key = ? AND attempts = ? AND status IN ('pending','failed') AND (attempts = 0 OR status = 'failed' OR updated_at < ?)")
+    .bind(t, a.companyId, key, ev.attempts, t - 120_000)
     .run();
   if (!claim.meta.changes) throw new HttpError(409, 'The draft invoice is being made now: refresh in a moment');
   const reference = `${s.number} ${so.number}`;
@@ -898,7 +898,7 @@ logisticsRoutes.post('/c/:company/shipments/:id/invoice', async (c) => {
       invoiceId = made.id;
     }
     await db.batch([
-      db.prepare("UPDATE erp_integration_events SET status = 'done', target_ref = ?, target_org_id = ?, last_error = '', updated_at = ? WHERE idempotency_key = ?").bind(invoiceId, org.id, now(), key),
+      db.prepare("UPDATE erp_integration_events SET status = 'done', target_ref = ?, target_org_id = ?, last_error = '', updated_at = ? WHERE company_id = ? AND idempotency_key = ?").bind(invoiceId, org.id, now(), a.companyId, key),
       eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'shipment.invoice_drafted', entityType: 'shipment', entityId: s.id, summary: `Draft invoice made in Finance for ${s.number} (${reference})`, after: { finOrg: org.id, invoice: invoiceId }, at: now() }),
       eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'so.invoice_drafted', entityType: 'sales_order', entityId: so.id, summary: `Draft invoice made in Finance for ${s.number}`, at: now() }),
       soStatusStmt(db, a.companyId, so.id),
@@ -906,7 +906,7 @@ logisticsRoutes.post('/c/:company/shipments/:id/invoice', async (c) => {
     return c.json({ invoiceId, existing: !!before, url: `/erp/finance/o/${org.id}/invoices/${invoiceId}` }, before ? 200 : 201);
   } catch (e) {
     const msg = e instanceof HttpError ? e.message : 'Finance could not make the invoice';
-    await db.prepare("UPDATE erp_integration_events SET status = 'failed', last_error = ?, updated_at = ? WHERE idempotency_key = ?").bind(msg.slice(0, 200), now(), key).run();
+    await db.prepare("UPDATE erp_integration_events SET status = 'failed', last_error = ?, updated_at = ? WHERE company_id = ? AND idempotency_key = ?").bind(msg.slice(0, 200), now(), a.companyId, key).run();
     throw e;
   }
 });

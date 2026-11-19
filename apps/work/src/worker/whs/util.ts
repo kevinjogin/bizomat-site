@@ -515,7 +515,7 @@ export async function alert(env: Env, n: AlertInput, waitUntil?: (p: Promise<unk
         idempotencyKey: `whs:${n.dedupe}:${p.id}`,
         sensitive: true,
       }).catch(() => null);
-      if (r?.queued) await db.prepare('UPDATE whs_alerts SET emailed = 1 WHERE dedupe_key = ?').bind(`${n.dedupe}:${p.id}`.slice(0, 300)).run();
+      if (r?.queued) await db.prepare('UPDATE whs_alerts SET emailed = 1 WHERE company_id = ? AND dedupe_key = ?').bind(n.companyId, `${n.dedupe}:${p.id}`.slice(0, 300)).run();
     }
     await processOutbox(env, { max: 10 }).catch(() => null);
   })();

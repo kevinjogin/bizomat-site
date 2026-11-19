@@ -85,8 +85,8 @@ export async function syncSeats(env: Env, companyId: string, opts: { reason: str
   // A subscription with nobody to bill is left for a person to look at (the owner's account was disabled, say).
   if (count < 1) return { status: 'no-users', count };
   const failures = await db
-    .prepare("SELECT COUNT(*) AS n FROM billing_seat_changes WHERE subscription_id = ? AND status = 'failed' AND idempotency_key LIKE ?")
-    .bind(sub.id, `seats:${sub.id}:v${sub.seat_version}:${count}:%`)
+    .prepare("SELECT COUNT(*) AS n FROM billing_seat_changes WHERE company_id = ? AND subscription_id = ? AND status = 'failed' AND idempotency_key LIKE ?")
+    .bind(companyId, sub.id, `seats:${sub.id}:v${sub.seat_version}:${count}:%`)
     .first<{ n: number }>();
   const key = `seats:${sub.id}:v${sub.seat_version}:${count}:${Number(failures?.n ?? 0)}`;
   const changeId = newId();
@@ -97,7 +97,7 @@ export async function syncSeats(env: Env, companyId: string, opts: { reason: str
     )
     .bind(changeId, companyId, sub.id, sub.quantity, count, reason, cfg.proration, key, opts.actorId ?? null, now())
     .run();
-  const change = await db.prepare('SELECT id, status FROM billing_seat_changes WHERE idempotency_key = ?').bind(key).first<{ id: string; status: string }>();
+  const change = await db.prepare('SELECT id, status FROM billing_seat_changes WHERE company_id = ? AND idempotency_key = ?').bind(companyId, key).first<{ id: string; status: string }>();
   try {
     const updated = await stripeFor(cfg).subscriptions.update(
       sub.id,
@@ -106,12 +106,12 @@ export async function syncSeats(env: Env, companyId: string, opts: { reason: str
     );
     // Move the version on only from the one this change was made from; whoever loses the race just records Stripe's answer.
     const moved = await db
-      .prepare('UPDATE billing_subscriptions SET seat_version = seat_version + 1 WHERE id = ? AND seat_version = ?')
-      .bind(sub.id, sub.seat_version)
+      .prepare('UPDATE billing_subscriptions SET seat_version = seat_version + 1 WHERE company_id = ? AND id = ? AND seat_version = ?')
+      .bind(companyId, sub.id, sub.seat_version)
       .run();
     await applySubscription(env, cfg, updated);
     const t = now();
-    const stmts = [db.prepare("UPDATE billing_seat_changes SET status = 'applied', applied_at = COALESCE(applied_at, ?), error = NULL WHERE id = ?").bind(t, change?.id ?? changeId)];
+    const stmts = [db.prepare("UPDATE billing_seat_changes SET status = 'applied', applied_at = COALESCE(applied_at, ?), error = NULL WHERE company_id = ? AND id = ?").bind(t, companyId, change?.id ?? changeId)];
     if ((moved.meta?.changes ?? 0) > 0) {
       const more = count > sub.quantity;
       stmts.push(
@@ -129,7 +129,7 @@ export async function syncSeats(env: Env, companyId: string, opts: { reason: str
     return (moved.meta?.changes ?? 0) > 0 ? { status: 'applied', from: sub.quantity, to: count } : { status: 'raced', to: count };
   } catch (e) {
     const error = redact(stripeMessage(e));
-    await db.prepare("UPDATE billing_seat_changes SET status = 'failed', error = ? WHERE id = ? AND status = 'pending'").bind(error, change?.id ?? changeId).run();
+    await db.prepare("UPDATE billing_seat_changes SET status = 'failed', error = ? WHERE company_id = ? AND id = ? AND status = 'pending'").bind(error, companyId, change?.id ?? changeId).run();
     return { status: 'failed', from: sub.quantity, to: count, error };
   }
 }

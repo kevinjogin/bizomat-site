@@ -13,7 +13,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv, Env } from '../env';
-import { HttpError, body, newId, notFound, now } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now } from '../lib/util';
 import { actionScope, assertPerson, assertWhs, peopleWith, requireWhs, segregation, type WhsAccess } from './access';
 import {
   ACTION_KINDS,
@@ -163,7 +163,7 @@ actionRoutes.get('/c/:company/actions', async (c) => {
   const db = c.env.DB;
   const today = todayFrom(c.req.query('today'));
   const scope = actionScope(a, 'x');
-  const where = ['x.company_id = ?', scope.sql];
+  const where: string[] = [scope.sql];
   const args: unknown[] = [a.companyId, ...scope.args];
   const status = c.req.query('status');
   if (status === 'open') where.push("x.status IN ('open', 'in_progress')");
@@ -193,8 +193,8 @@ actionRoutes.get('/c/:company/actions', async (c) => {
   const limit = Math.min(Math.max(Number(c.req.query('limit')) || 100, 1), 500);
   const offset = Math.max(Number(c.req.query('offset')) || 0, 0);
   const [rows, total] = await db.batch([
-    db.prepare(`${ACTION_SELECT} WHERE ${where.join(' AND ')} ORDER BY CASE WHEN x.status IN ('open','in_progress') THEN 0 ELSE 1 END, COALESCE(x.due_date, '9999') , x.created_at DESC LIMIT ? OFFSET ?`).bind(...args, limit, offset),
-    db.prepare(`SELECT COUNT(*) AS n FROM whs_actions x WHERE ${where.join(' AND ')}`).bind(...args),
+    db.prepare(`${ACTION_SELECT} WHERE x.company_id = ?${andAll(where)} ORDER BY CASE WHEN x.status IN ('open','in_progress') THEN 0 ELSE 1 END, COALESCE(x.due_date, '9999') , x.created_at DESC LIMIT ? OFFSET ?`).bind(...args, limit, offset),
+    db.prepare(`SELECT COUNT(*) AS n FROM whs_actions x WHERE x.company_id = ?${andAll(where)}`).bind(...args),
   ]);
   const list = await Promise.all((rows.results as any[]).map(async (x) => ({ ...actionDTO({ ...x, source_number: await sourceNumber(db, a.companyId, x.source_type, x.source_id) }, today) })));
   if (c.req.query('format') === 'csv') {

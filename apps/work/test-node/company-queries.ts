@@ -32,7 +32,68 @@ function files(dir: string): string[] {
   });
 }
 
-const LITERAL = /`(?:[^`\\]|\\.)*`|'(?:[^'\\\n]|\\.)*'|"(?:[^"\\\n]|\\.)*"/gs;
+/**
+ * Every string literal in a source file, with where it starts. A template literal is read whole, with its ${...}
+ * expressions and any templates nested in them (so `UPDATE t SET ${cols.map((k) => `${k} = ?`)} WHERE company_id = ?`
+ * is one statement), and comments are skipped.
+ */
+function literals(src: string): { text: string; index: number }[] {
+  const out: { text: string; index: number }[] = [];
+  let i = 0;
+  const template = (start: number): number => {
+    // src[start] is a backtick; returns the index after the closing one.
+    let j = start + 1;
+    while (j < src.length) {
+      const ch = src[j];
+      if (ch === '\\') j += 2;
+      else if (ch === '`') return j + 1;
+      else if (ch === '$' && src[j + 1] === '{') j = expression(j + 2);
+      else j++;
+    }
+    return j;
+  };
+  const expression = (start: number): number => {
+    // Inside ${...}: returns the index after the matching }.
+    let depth = 1;
+    let j = start;
+    while (j < src.length && depth > 0) {
+      const ch = src[j];
+      if (ch === '`') j = template(j);
+      else if (ch === "'" || ch === '"') j = quoted(j);
+      else {
+        if (ch === '{') depth++;
+        else if (ch === '}') depth--;
+        j++;
+      }
+    }
+    return j;
+  };
+  const quoted = (start: number): number => {
+    const q = src[start];
+    let j = start + 1;
+    while (j < src.length && src[j] !== q && src[j] !== '\n') j += src[j] === '\\' ? 2 : 1;
+    return j + 1;
+  };
+  while (i < src.length) {
+    const ch = src[i];
+    if (ch === '/' && src[i + 1] === '/') {
+      const e = src.indexOf('\n', i);
+      i = e < 0 ? src.length : e;
+    } else if (ch === '/' && src[i + 1] === '*') {
+      const e = src.indexOf('*/', i + 2);
+      i = e < 0 ? src.length : e + 2;
+    } else if (ch === '`') {
+      const e = template(i);
+      out.push({ text: src.slice(i, e), index: i });
+      i = e;
+    } else if (ch === "'" || ch === '"') {
+      const e = quoted(i);
+      out.push({ text: src.slice(i, e), index: i });
+      i = e;
+    } else i++;
+  }
+  return out;
+}
 const STATEMENT = /\b(SELECT|UPDATE|INSERT|DELETE)\b/;
 const TABLE = /\b(?:FROM|JOIN|UPDATE|INTO)\s+([a-z_][a-z0-9_]*)\b/gi;
 
@@ -47,11 +108,19 @@ export function unscopedStatements(srcDir: string, tables: Set<string>, base: st
   const out: Unscoped[] = [];
   for (const file of files(srcDir)) {
     const src = readFileSync(file, 'utf8');
-    for (const m of src.matchAll(LITERAL)) {
-      const text = m[0];
+    const all = literals(src);
+    for (const m of all) {
+      const text = m.text;
       if (!STATEMENT.test(text)) continue;
       const touched = [...text.matchAll(TABLE)].map((t) => t[1]).filter((t) => tables.has(t));
       if (!touched.length || text.includes('company_id')) continue;
+      // A shared SELECT fragment (`const SO_SELECT = \`SELECT ... FROM erp_sales_orders o ...\``) with no WHERE of its own
+      // is scoped where it is used: every statement in the file that uses it must name company_id.
+      const named = /const ([A-Z][A-Z0-9_]*) = $/.exec(src.slice(Math.max(0, m.index - 80), m.index));
+      if (named && !/\bWHERE\b/.test(text)) {
+        const uses = all.filter((u) => u !== m && u.text.includes(`\${${named[1]}}`));
+        if (uses.length && uses.every((u) => u.text.includes('company_id'))) continue;
+      }
       const rel = relative(base, file).replace(/\\/g, '/');
       out.push({ key: `${rel} :: ${text.replace(/\s+/g, ' ').slice(0, 120)}`, file: rel, line: src.slice(0, m.index).split('\n').length });
     }

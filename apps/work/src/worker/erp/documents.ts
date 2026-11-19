@@ -10,7 +10,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, newId, notFound, now } from '../lib/util';
+import { HttpError, andAll, newId, notFound, now } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { MAX_FILE_BYTES, safeFileName, validateUpload } from '../routes/files';
 import { can, requireErp, type ErpAccess } from './access';
@@ -179,7 +179,7 @@ async function versionStatements(c: any, a: ErpAccess, docId: string, version: n
 documentRoutes.get('/c/:company/documents', async (c) => {
   const a = await requireErp(c, 'products.view');
   const db = c.env.DB;
-  const where = ['d.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const filters: [string, string, readonly string[] | null][] = [
     ['productId', 'd.product_id', null],
@@ -200,7 +200,7 @@ documentRoutes.get('/c/:company/documents', async (c) => {
     args.push(likeOf(q));
   }
   const { limit, offset } = paging(c);
-  const sql = `${DOC_SELECT} WHERE ${where.join(' AND ')} ORDER BY d.updated_at DESC, d.rowid DESC`;
+  const sql = `${DOC_SELECT} WHERE d.company_id = ?${andAll(where)} ORDER BY d.updated_at DESC, d.rowid DESC`;
   if (wantsCsv(c)) {
     const rows = await db.prepare(`${sql} LIMIT 10000`).bind(...args).all<any>();
     return csvResponse('engineering-documents', [
@@ -208,7 +208,7 @@ documentRoutes.get('/c/:company/documents', async (c) => {
       ...rows.results.map((d) => [d.number, d.title, KIND_LABELS[d.kind as keyof typeof KIND_LABELS], STATUS_LABELS[d.status as keyof typeof STATUS_LABELS], d.product_number, d.revision_label ?? '', d.latest_version ?? '', d.latest_doc_revision ?? '', d.latest_source === 'cad_reference' ? 'CAD reference' : 'File', d.approved_by_name ?? '']),
     ]);
   }
-  const [rows, total] = await Promise.all([db.prepare(`${sql} LIMIT ? OFFSET ?`).bind(...args, limit, offset).all<any>(), db.prepare(`SELECT COUNT(*) AS n FROM erp_documents d WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>()]);
+  const [rows, total] = await Promise.all([db.prepare(`${sql} LIMIT ? OFFSET ?`).bind(...args, limit, offset).all<any>(), db.prepare(`SELECT COUNT(*) AS n FROM erp_documents d WHERE d.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>()]);
   return c.json({ documents: rows.results.map(docDTO), total: total?.n ?? 0 });
 });
 

@@ -7,6 +7,7 @@ import type { AppEnv } from '../env';
 import { can, requireErp } from './access';
 import { LIFECYCLE, PRODUCT_TYPES, SUPPLIER_STATUS, TYPE_LABELS, csvResponse, dollars, likeOf, validDate, wantsCsv } from './util';
 import { rollUp } from './engineering';
+import { andAll } from '../lib/util';
 import { SUPPLIER_LABELS } from './suppliers';
 
 export const reportRoutes = new Hono<AppEnv>();
@@ -17,7 +18,8 @@ const day = (ms: number | null | undefined) => (ms ? new Date(ms).toISOString().
 
 /** The product filters every product report shares: type, lifecycle, category, text; archived products are left out. */
 function productFilter(c: any, alias = 'p') {
-  const where = [`${alias}.company_id = ?`, `${alias}.archived_at IS NULL`];
+  // The company's own condition is written in each statement: `WHERE p.company_id = ?${andAll(f.where)}`.
+  const where = [`${alias}.archived_at IS NULL`];
   const args: unknown[] = [];
   const type = c.req.query('type');
   if (type && (PRODUCT_TYPES as readonly string[]).includes(type)) {
@@ -52,7 +54,7 @@ reportRoutes.get('/c/:company/reports/catalogue', async (c) => {
       `SELECT p.id, p.number, p.sku, p.name, p.type, p.category, p.lifecycle, p.uom, p.standard_cost_cents, p.price_cents, p.currency, p.variant_of,
               (SELECT r.label FROM erp_revisions r WHERE r.company_id = p.company_id AND r.product_id = p.id AND r.status = 'released') AS released,
               (SELECT COUNT(*) FROM erp_product_suppliers x WHERE x.company_id = p.company_id AND x.product_id = p.id) AS suppliers
-         FROM erp_products p WHERE ${f.where.join(' AND ')} ORDER BY p.number COLLATE NOCASE LIMIT 5000`,
+         FROM erp_products p WHERE p.company_id = ?${andAll(f.where)} ORDER BY p.number COLLATE NOCASE LIMIT 5000`,
     )
     .bind(...args)
     .all<any>();
@@ -83,7 +85,7 @@ reportRoutes.get('/c/:company/reports/lifecycle', async (c) => {
   const db = c.env.DB;
   const f = productFilter(c);
   const rows = await db
-    .prepare(`SELECT p.id, p.number, p.name, p.type, p.lifecycle, p.effective_from, p.effective_to, p.updated_at FROM erp_products p WHERE ${f.where.join(' AND ')} ORDER BY p.lifecycle, p.number COLLATE NOCASE LIMIT 5000`)
+    .prepare(`SELECT p.id, p.number, p.name, p.type, p.lifecycle, p.effective_from, p.effective_to, p.updated_at FROM erp_products p WHERE p.company_id = ?${andAll(f.where)} ORDER BY p.lifecycle, p.number COLLATE NOCASE LIMIT 5000`)
     .bind(a.companyId, ...f.args)
     .all<any>();
   // Products whose effective end date falls in the next 90 days (or has passed while still active).
@@ -110,7 +112,7 @@ reportRoutes.get('/c/:company/reports/bom-cost', async (c) => {
     .prepare(
       `SELECT p.id, p.number, p.name, p.type, p.currency, p.standard_cost_cents, p.price_cents, r.id AS revision_id, r.label
          FROM erp_products p JOIN erp_revisions r ON r.company_id = p.company_id AND r.product_id = p.id AND r.status = 'released'
-        WHERE ${f.where.join(' AND ')} AND EXISTS (SELECT 1 FROM erp_bom_lines l WHERE l.company_id = r.company_id AND l.revision_id = r.id)
+        WHERE p.company_id = ?${andAll(f.where)} AND EXISTS (SELECT 1 FROM erp_bom_lines l WHERE l.company_id = r.company_id AND l.revision_id = r.id)
         ORDER BY p.number COLLATE NOCASE LIMIT 201`,
     )
     .bind(a.companyId, ...f.args)
@@ -157,13 +159,13 @@ reportRoutes.get('/c/:company/reports/where-used', async (c) => {
          FROM erp_products p JOIN erp_bom_lines l ON l.company_id = p.company_id AND l.component_id = p.id
          JOIN erp_revisions r ON r.company_id = l.company_id AND r.id = l.revision_id AND r.status IN ('draft','in_change','released')
          JOIN erp_products pp ON pp.company_id = r.company_id AND pp.id = r.product_id
-        WHERE ${f.where.join(' AND ')} GROUP BY p.id ORDER BY released_parents DESC, p.number COLLATE NOCASE LIMIT 2000`,
+        WHERE p.company_id = ?${andAll(f.where)} GROUP BY p.id ORDER BY released_parents DESC, p.number COLLATE NOCASE LIMIT 2000`,
     )
     .bind(a.companyId, ...f.args)
     .all<any>();
   const unused = await db
     .prepare(
-      `SELECT COUNT(*) AS n FROM erp_products p WHERE ${f.where.join(' AND ')} AND p.type IN ('raw_material','component','purchased_item','consumable','manufactured_part','subassembly')
+      `SELECT COUNT(*) AS n FROM erp_products p WHERE p.company_id = ?${andAll(f.where)} AND p.type IN ('raw_material','component','purchased_item','consumable','manufactured_part','subassembly')
           AND NOT EXISTS (SELECT 1 FROM erp_bom_lines l WHERE l.company_id = p.company_id AND l.component_id = p.id)`,
     )
     .bind(a.companyId, ...f.args)

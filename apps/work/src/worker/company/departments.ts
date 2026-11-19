@@ -104,7 +104,7 @@ departmentRoutes.post('/', async (c) => {
     ...memberIds.map((u) => db.prepare('INSERT INTO co_department_members (company_id, department_id, user_id, added_at) VALUES (?, ?, ?, ?)').bind(a.companyId, id, u, t)),
     coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'department.created', targetType: 'department', targetId: id, metadata: { members: memberIds.length }, ip: clientIp(c) }),
   ]);
-  await syncDepartment(db, a.tools, id);
+  await syncDepartment(db, a.tools, a.companyId, id);
   return c.json({ id }, 201);
 });
 
@@ -133,7 +133,7 @@ departmentRoutes.patch('/:id', async (c) => {
     coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'department.updated', targetType: 'department', targetId: id, ip: clientIp(c) }),
   );
   await db.batch(stmts);
-  await syncDepartment(db, a.tools, id);
+  await syncDepartment(db, a.tools, a.companyId, id);
   return c.json({ ok: true });
 });
 
@@ -151,11 +151,11 @@ departmentRoutes.put('/:id/members', async (c) => {
   await assertMembers(db, a.companyId, ids);
   const t = now();
   await db.batch([
-    db.prepare(`DELETE FROM co_department_members WHERE department_id = ?${ids.length ? ` AND user_id NOT IN (${placeholders(ids.length)})` : ''}`).bind(id, ...ids),
+    db.prepare(`DELETE FROM co_department_members WHERE company_id = ? AND department_id = ?${ids.length ? ` AND user_id NOT IN (${placeholders(ids.length)})` : ''}`).bind(a.companyId, id, ...ids),
     ...ids.map((u) => db.prepare('INSERT OR IGNORE INTO co_department_members (company_id, department_id, user_id, added_at) VALUES (?, ?, ?, ?)').bind(a.companyId, id, u, t)),
     coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'department.members_set', targetType: 'department', targetId: id, metadata: { members: ids.length }, ip: clientIp(c) }),
   ]);
-  await syncDepartment(db, a.tools, id);
+  await syncDepartment(db, a.tools, a.companyId, id);
   return c.json({ ok: true, memberIds: ids });
 });
 
@@ -169,10 +169,10 @@ departmentRoutes.post('/:id/archive', async (c) => {
   if (depts.some((x) => x.parent_id === id && !x.archived_at)) throw new HttpError(400, 'Move or archive the departments under it first');
   const t = now();
   await db.batch([
-    db.prepare('UPDATE co_departments SET archived_at = ?, updated_at = ? WHERE id = ?').bind(t, t, id),
+    db.prepare('UPDATE co_departments SET archived_at = ?, updated_at = ? WHERE company_id = ? AND id = ?').bind(t, t, a.companyId, id),
     coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'department.archived', targetType: 'department', targetId: id, ip: clientIp(c) }),
   ]);
-  await syncDepartment(db, a.tools, id);
+  await syncDepartment(db, a.tools, a.companyId, id);
   return c.json({ ok: true });
 });
 
@@ -185,9 +185,9 @@ departmentRoutes.post('/:id/restore', async (c) => {
   if (!d) throw notFound('Department');
   const parentGone = d.parent_id && !depts.some((x) => x.id === d.parent_id && !x.archived_at);
   await db.batch([
-    db.prepare('UPDATE co_departments SET archived_at = NULL, parent_id = ?, updated_at = ? WHERE id = ?').bind(parentGone ? null : d.parent_id, now(), id),
+    db.prepare('UPDATE co_departments SET archived_at = NULL, parent_id = ?, updated_at = ? WHERE company_id = ? AND id = ?').bind(parentGone ? null : d.parent_id, now(), a.companyId, id),
     coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'department.restored', targetType: 'department', targetId: id, ip: clientIp(c) }),
   ]);
-  await syncDepartment(db, a.tools, id);
+  await syncDepartment(db, a.tools, a.companyId, id);
   return c.json({ ok: true });
 });

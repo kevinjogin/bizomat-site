@@ -23,7 +23,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now, parseJson } from '../lib/util';
+import { HttpError, insertCompanyRow, body, newId, notFound, now, parseJson } from '../lib/util';
 import { assertPerson, isManager, requireMt, type MtAccess } from './access';
 import { loadAsset } from './routes-assets';
 import { PRIORITY, eventStmt, likeOf, nextNumber, searchText, validDate, zDate, zId, zText } from './util';
@@ -250,8 +250,7 @@ export async function applyTemplate(db: D1Database, companyId: string, tpl: any,
     // A template's first due date may already have passed: each asset then starts from today.
     if (st.next_due_date && st.next_due_date < today) st.next_due_date = today;
     const row: Record<string, unknown> = { ...def, ...st, id: newId(), company_id: companyId, asset_id: asset.id, template_id: tpl.id, meter_id: meter?.id ?? null, created_by: actorId, created_at: t, updated_at: t };
-    const keys = Object.keys(row);
-    stmts.push(db.prepare(`INSERT OR IGNORE INTO mt_pm_schedules (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => row[k])));
+    stmts.push(insertCompanyRow(db, 'mt_pm_schedules', row, { orIgnore: true }));
     stmts.push(eventStmt(db, { companyId, actorId, action: 'pm.schedule_created', assetId: asset.id, summary: `Preventive maintenance "${tpl.name}" set up from the template for ${tpl.asset_category}`, at: t }));
     made.push(asset.number);
   }
@@ -400,8 +399,7 @@ async function makeOccurrence(db: D1Database, s: any, today: string, actorId: st
     created_at: t,
     updated_at: t,
   };
-  const keys = Object.keys(row);
-  const stmts: D1PreparedStatement[] = [db.prepare(`INSERT INTO mt_work_orders (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => row[k]))];
+  const stmts: D1PreparedStatement[] = [insertCompanyRow(db, 'mt_work_orders', row)];
   parseJson<string[]>(s.tasks_json, []).forEach((text, i) => stmts.push(db.prepare('INSERT INTO mt_wo_tasks (id, company_id, work_order_id, position, text, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(newId(), s.company_id, woId, i + 1, String(text).slice(0, 500), actorId, t)));
   parseJson<{ part: string; quantity: number }[]>(s.parts_json, []).forEach((p, i) => stmts.push(db.prepare('INSERT INTO mt_wo_parts (id, company_id, work_order_id, position, part, quantity, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(newId(), s.company_id, woId, i + 1, String(p.part).slice(0, 200), Number(p.quantity) > 0 ? Number(p.quantity) : 1, actorId, t)));
   if (s.inspection_template_id && !s.insp_archived) {
@@ -565,9 +563,8 @@ pmRoutes.post('/c/:company/pm/schedules', async (c) => {
   const id = newId();
   const t = now();
   const row: Record<string, unknown> = { ...def, ...st, id, company_id: a.companyId, asset_id: asset.id, meter_id: meter?.id ?? null, created_by: a.userId, created_at: t, updated_at: t };
-  const keys = Object.keys(row);
   await db.batch([
-    db.prepare(`INSERT INTO mt_pm_schedules (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => row[k])),
+    insertCompanyRow(db, 'mt_pm_schedules', row),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'pm.schedule_created', assetId: asset.id, summary: `Preventive maintenance "${def.name}" set up (${describeTrigger({ ...def, meter_unit: meter?.unit ?? '' })})`, after: { scheduleId: id, ...defDTO(def), ...st }, at: t }),
   ]);
   return c.json(scheduleDTO(await loadSchedule(db, a.companyId, id)), 201);
@@ -689,9 +686,8 @@ pmRoutes.post('/c/:company/pm/templates', async (c) => {
   const id = newId();
   const t = now();
   const row: Record<string, unknown> = { ...def, id, company_id: a.companyId, asset_category: input.assetCategory, site_id: input.siteId ?? null, meter_name: input.meterName?.trim() ?? '', created_by: a.userId, created_at: t, updated_at: t };
-  const keys = Object.keys(row);
   await db.batch([
-    db.prepare(`INSERT INTO mt_pm_templates (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => row[k])),
+    insertCompanyRow(db, 'mt_pm_templates', row),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'pm.template_created', summary: `Preventive maintenance template "${def.name}" for ${input.assetCategory} created`, after: { templateId: id, ...input }, at: t }),
   ]);
   const tpl = await loadTemplate(db, a.companyId, id);

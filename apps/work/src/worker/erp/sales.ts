@@ -23,7 +23,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now, parseJson } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now, parseJson } from '../lib/util';
 import { docLineAmount } from '../fin/ledger';
 import { hasPerm as finHasPerm, scopeSql as finScopeSql } from '../fin/access';
 import { assertRecord as crmAssertRecord, loadAccess as crmAccess, scopeSql as crmScopeSql, type OrgAccess } from '../crm/access';
@@ -487,7 +487,7 @@ salesRoutes.get('/c/:company/sales-orders', async (c) => {
   const a = await requireErp(c, 'sales.view');
   const db = c.env.DB;
   const { limit, offset } = paging(c);
-  const where = ['o.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const qp = (k: string) => c.req.query(k)?.trim();
   const status = qp('status');
@@ -527,7 +527,7 @@ salesRoutes.get('/c/:company/sales-orders', async (c) => {
   const sorts: Record<string, string> = { newest: 'o.created_at DESC', number: 'o.number COLLATE NOCASE', customer: 'o.customer_name COLLATE NOCASE', due: "COALESCE(o.promised_date, o.requested_date, '9999')", total: 'o.total_cents DESC' };
   const order = sorts[qp('sort') ?? ''] ?? sorts.newest;
   const csv = wantsCsv(c);
-  const rows = await db.prepare(`${SO_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${order}, o.rowid DESC LIMIT ? OFFSET ?`).bind(...args, csv ? 20000 : limit, csv ? 0 : offset).all<any>();
+  const rows = await db.prepare(`${SO_SELECT} WHERE o.company_id = ?${andAll(where)} ORDER BY ${order}, o.rowid DESC LIMIT ? OFFSET ?`).bind(...args, csv ? 20000 : limit, csv ? 0 : offset).all<any>();
   const list = rows.results.map(soDTO);
   if (csv) {
     return csvResponse('sales-orders', [
@@ -535,7 +535,7 @@ salesRoutes.get('/c/:company/sales-orders', async (c) => {
       ...list.map((o) => [o.number, o.customerName, o.contactName, o.statusLabel, o.orderDate, o.requestedDate ?? '', o.promisedDate ?? '', o.customerPo, o.currency, dollars(o.subtotalCents), dollars(o.taxCents), dollars(o.totalCents), o.late ? 'yes' : '']),
     ]);
   }
-  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_sales_orders o WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>();
+  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_sales_orders o WHERE o.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>();
   return c.json({ orders: list, total: total?.n ?? 0, limit, offset, statuses: Object.entries(SO_STATUS).map(([value, l]) => ({ value, label: l })), can: { edit: can(a, 'sales.edit'), confirm: can(a, 'sales.confirm') } });
 });
 

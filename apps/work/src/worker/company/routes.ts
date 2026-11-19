@@ -477,7 +477,7 @@ companyPublicRoutes.post('/confirm-email', async (c) => {
   if (!co || co.email.toLowerCase() !== row.email.toLowerCase()) throw new HttpError(400, 'The company’s contact address has changed since this link was sent.');
   const t = now();
   await c.env.DB.batch([
-    c.env.DB.prepare('UPDATE co_email_confirmations SET used_at = ? WHERE token_hash = ?').bind(t, await sha256Hex(input.token)),
+    c.env.DB.prepare('UPDATE co_email_confirmations SET used_at = ? WHERE company_id = ? AND token_hash = ?').bind(t, co.id, await sha256Hex(input.token)),
     c.env.DB.prepare('UPDATE co_companies SET email_verified_at = ?, updated_at = ? WHERE id = ?').bind(t, t, co.id),
     coAuditStmt(c.env.DB, { companyId: co.id, actorId: null, action: 'company.email_confirmed', ip: clientIp(c) }),
   ]);
@@ -760,7 +760,7 @@ async function removeMember(c: any, a: CompanyAccess, targetId: string, action: 
     coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action, targetType: 'user', targetId, ip: clientIp(c) }),
   ]);
   const { syncDepartment } = await import('./sync');
-  for (const d of depts.results) await syncDepartment(db, a.tools, d.department_id);
+  for (const d of depts.results) await syncDepartment(db, a.tools, a.companyId, d.department_id);
   // One billable user fewer: the subscription's quantity follows (src/worker/billing/seats.ts).
   requestSeatSync(c, [a.companyId], action);
 }
@@ -1059,7 +1059,7 @@ companyRoutes.post('/invitations/:token/accept', async (c) => {
   const live = depts.length ? (await db.prepare(`SELECT id FROM co_departments WHERE company_id = ? AND archived_at IS NULL AND id IN (${placeholders(depts.length)})`).bind(inv.company_id, ...depts).all<{ id: string }>()).results.map((d) => d.id) : [];
   const t = now();
   await db.batch([
-    db.prepare('UPDATE co_invitations SET accepted_at = ?, accepted_by = ? WHERE id = ? AND accepted_at IS NULL').bind(t, user.id, inv.id),
+    db.prepare('UPDATE co_invitations SET accepted_at = ?, accepted_by = ? WHERE company_id = ? AND id = ? AND accepted_at IS NULL').bind(t, user.id, inv.company_id, inv.id),
     db.prepare('INSERT INTO co_members (company_id, user_id, role, title, tasks_role, crm_role, fin_role, invited_by, joined_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(inv.company_id, user.id, inv.role, inv.title, roles.tasks, roles.crm, roles.finance, inv.invited_by, t),
     // The invitation reached this mailbox, so the address is confirmed.
     db.prepare("UPDATE users SET email_verified_via = CASE WHEN email_verified_at IS NULL THEN 'invitation' ELSE email_verified_via END, email_verified_at = COALESCE(email_verified_at, ?) WHERE id = ?").bind(t, user.id),
@@ -1068,7 +1068,7 @@ companyRoutes.post('/invitations/:token/accept', async (c) => {
     coAuditStmt(db, { companyId: inv.company_id, actorId: user.id, action: 'invitation.accepted', targetType: 'invitation', targetId: inv.id, ip: clientIp(c) }),
   ]);
   const { syncDepartment } = await import('./sync');
-  for (const d of live) await syncDepartment(db, tools, d);
+  for (const d of live) await syncDepartment(db, tools, inv.company_id, d);
   requestSeatSync(c, [inv.company_id], 'invitation.accepted');
   return c.json({ companyId: inv.company_id });
 });
@@ -1078,7 +1078,7 @@ companyRoutes.post('/invitations/:token/decline', async (c) => {
   const inv = await inviteByToken(c.env.DB, c.req.param('token'));
   if (!inv || inv.email.toLowerCase() !== user.email.toLowerCase() || inv.accepted_at || inv.revoked_at) throw notFound('Invitation');
   await c.env.DB.batch([
-    c.env.DB.prepare('UPDATE co_invitations SET revoked_at = ? WHERE id = ?').bind(now(), inv.id),
+    c.env.DB.prepare('UPDATE co_invitations SET revoked_at = ? WHERE company_id = ? AND id = ?').bind(now(), inv.company_id, inv.id),
     coAuditStmt(c.env.DB, { companyId: inv.company_id, actorId: user.id, action: 'invitation.declined', targetType: 'invitation', targetId: inv.id, ip: clientIp(c) }),
   ]);
   return c.json({ ok: true });

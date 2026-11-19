@@ -15,7 +15,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now } from '../lib/util';
 import { hasPerm } from '../fin/access';
 import { pdfResponse } from '../fin/render';
 import { can, requireErp, segregation, type ErpAccess } from './access';
@@ -182,7 +182,7 @@ procurementRoutes.get('/c/:company/requisitions', async (c) => {
   const a = await requireErp(c, 'purchasing.view');
   const db = c.env.DB;
   const { limit, offset } = paging(c);
-  const where = ['r.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const status = c.req.query('status');
   if (status === 'open') where.push("r.status IN ('draft','submitted','approved')");
@@ -202,10 +202,10 @@ procurementRoutes.get('/c/:company/requisitions', async (c) => {
   const sorts: Record<string, string> = { number: 'r.number COLLATE NOCASE DESC', required: "COALESCE(r.required_date, '9999')", status: 'r.status, r.created_at DESC', newest: 'r.created_at DESC' };
   const order = sorts[c.req.query('sort') ?? ''] ?? sorts.newest;
   const csv = wantsCsv(c);
-  const rows = await db.prepare(`${REQ_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...args, csv ? 10000 : limit, csv ? 0 : offset).all<any>();
+  const rows = await db.prepare(`${REQ_SELECT} WHERE r.company_id = ?${andAll(where)} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...args, csv ? 10000 : limit, csv ? 0 : offset).all<any>();
   const list = rows.results.map(requisitionDTO);
   if (csv) return csvResponse('requisitions', [['Number', 'Title', 'Status', 'Requested by', 'Department', 'Required', 'Budget', 'Estimated total', 'Currency', 'Lines'], ...list.map((r) => [r.number, r.title, r.statusLabel, r.requesterName ?? '', r.departmentName ?? '', r.requiredDate ?? '', r.budgetRef, dollars(r.estimatedTotalCents), r.currency, r.lineCount ?? ''])]);
-  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_requisitions r WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>();
+  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_requisitions r WHERE r.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>();
   return c.json({ requisitions: list, total: total?.n ?? 0, limit, offset, can: { raise: can(a, 'requisitions.raise'), approve: can(a, 'requisitions.approve') } });
 });
 
@@ -407,7 +407,7 @@ procurementRoutes.get('/c/:company/rfqs', async (c) => {
   const a = await requireErp(c, 'purchasing.view');
   const db = c.env.DB;
   const { limit, offset } = paging(c);
-  const where = ['q.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const status = c.req.query('status');
   if (status === 'open') where.push("q.status IN ('draft','sent','awarded','approved')");
@@ -422,10 +422,10 @@ procurementRoutes.get('/c/:company/rfqs', async (c) => {
   }
   const order = c.req.query('sort') === 'reply' ? "COALESCE(q.reply_by, '9999')" : c.req.query('sort') === 'number' ? 'q.number COLLATE NOCASE DESC' : 'q.created_at DESC';
   const csv = wantsCsv(c);
-  const rows = await db.prepare(`${RFQ_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...args, csv ? 10000 : limit, csv ? 0 : offset).all<any>();
+  const rows = await db.prepare(`${RFQ_SELECT} WHERE q.company_id = ?${andAll(where)} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...args, csv ? 10000 : limit, csv ? 0 : offset).all<any>();
   const list = rows.results.map(rfqDTO);
   if (csv) return csvResponse('requests-for-quotation', [['Number', 'Title', 'Status', 'Requisition', 'Reply by', 'Required', 'Currency', 'Suppliers', 'Quotations'], ...list.map((q) => [q.number, q.title, q.statusLabel, q.requisitionNumber ?? '', q.replyBy ?? '', q.requiredDate ?? '', q.currency, q.supplierCount ?? '', q.quotationCount ?? ''])]);
-  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_rfqs q WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>();
+  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_rfqs q WHERE q.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>();
   return c.json({ rfqs: list, total: total?.n ?? 0, limit, offset, can: { create: can(a, 'purchasing.edit') } });
 });
 
