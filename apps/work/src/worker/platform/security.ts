@@ -22,7 +22,7 @@ import { matchStep, newSecret, otpauthUri, base32Encode } from './totp';
 export const REAUTH_WINDOW_MS = 10 * 60_000;
 const RECOVERY_CODES = 10;
 
-interface MfaRow {
+export interface MfaRow {
   user_id: string;
   secret_enc: string;
   confirmed_at: number | null;
@@ -30,7 +30,7 @@ interface MfaRow {
   recovery_json: string;
 }
 
-async function mfaOf(db: D1Database, userId: string): Promise<MfaRow | null> {
+export async function mfaOf(db: D1Database, userId: string): Promise<MfaRow | null> {
   try {
     return await db.prepare('SELECT user_id, secret_enc, confirmed_at, last_step, recovery_json FROM user_mfa WHERE user_id = ?').bind(userId).first<MfaRow>();
   } catch {
@@ -61,7 +61,7 @@ function newRecoveryCodes(): string[] {
 const normaliseRecovery = (code: string) => String(code ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
 /** Checks a code (or a recovery code, used up when it matches) for a confirmed enrolment. */
-async function checkSecondFactor(env: Env, row: MfaRow, input: { code?: string; recoveryCode?: string }): Promise<'code' | 'recovery' | null> {
+export async function checkSecondFactor(env: Env, row: MfaRow, input: { code?: string; recoveryCode?: string }): Promise<'code' | 'recovery' | null> {
   const db = env.DB;
   if (input.code) {
     const secret = await decryptSecret(env, row.secret_enc);

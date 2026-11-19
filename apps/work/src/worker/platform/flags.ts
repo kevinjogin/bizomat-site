@@ -106,6 +106,15 @@ const BASE: Record<string, FlagDef> = {
     enforcement: false,
     release: 'R7',
   },
+  company_members_v2: {
+    label: 'Company members, roles and ownership transfer',
+    description: 'The Members page and the central permission service: module access, own and team scopes, sensitive fields, suspension, invitations with modules and a message, and ownership transfer the new owner accepts.',
+    values: ONOFF,
+    scopes: ['global', 'stage', 'company'],
+    risk: 'high',
+    enforcement: true,
+    release: 'Members',
+  },
   evidence_scanning: {
     label: 'Malware scan of verification documents',
     description: 'Uploaded verification documents are handed to the ClamAV scanner on CAD Automation’s Machine. Documents can be opened or accepted only after a clean scan, whether this is on or not.',

@@ -3,6 +3,7 @@
 // that workspace's id, and record-level rights come from scopeSql()/assertRecord(), never from the client.
 
 import type { Context } from 'hono';
+import { narrowPerms, toolMemberScope } from '../company/members-access';
 import type { AppEnv } from '../env';
 import { HttpError, notFound, parseJson } from '../lib/util';
 import { FIN_ROLES, resolvePerms, type FinModule, type FinPerms, type FinRole, type RecordModule, type Scope, type WorkspaceKind } from '../../shared/fin/roles';
@@ -44,6 +45,8 @@ export interface FinAccess {
   settings: FinSettings;
   /** GST applies: a business registered for GST. */
   gst: boolean;
+  /** Whose records count as "own": the person, or their team under the company's team scope (members-access.ts). */
+  owners: string[];
 }
 
 async function overridesFor(db: D1Database, orgId: string, role: FinRole): Promise<Record<string, Record<string, unknown>>> {
@@ -62,13 +65,17 @@ export async function loadAccess(db: D1Database, orgId: string, user: { id: stri
     .first<FinOrgRow & { member_role: FinRole }>();
   if (!row || !FIN_ROLES.includes(row.member_role)) throw notFound('Workspace');
   const { member_role: role, ...org } = row;
+  const perms = resolvePerms(role, await overridesFor(db, org.id, role), org.kind);
+  // The company's own and team scopes, where the members work acts (never wider than the Finance role).
+  const member = await toolMemberScope(db, 'finance', org.id, user.id);
   return {
     org,
     orgId: org.id,
     userId: user.id,
     userName: user.name,
     role,
-    perms: resolvePerms(role, await overridesFor(db, org.id, role), org.kind),
+    owners: member?.team ?? [user.id],
+    perms: member ? narrowPerms(perms) : perms,
     settings: finSettings(parseJson(org.settings_json, {}), org.kind),
     gst: org.kind === 'business' && !!org.gst_registered,
   };
@@ -114,7 +121,9 @@ const owner = (rec: Ownable) => rec.created_by ?? rec.uploaded_by ?? null;
 export function inScope(scope: Scope, a: FinAccess, rec: Ownable): boolean {
   if (scope === 'all') return true;
   if (scope === 'none') return false;
-  return owner(rec) === a.userId || rec.claimant_id === a.userId;
+  const who = a.owners ?? [a.userId];
+  const o = owner(rec);
+  return (!!o && who.includes(o)) || (!!rec.claimant_id && who.includes(rec.claimant_id));
 }
 
 export function canRecord(a: FinAccess, module: RecordModule, action: 'view' | 'edit' | 'delete', rec: Ownable): boolean {
@@ -132,7 +141,8 @@ export function scopeSql(a: FinAccess, module: RecordModule, alias: string, owne
   const scope = a.perms[module].view;
   if (scope === 'all') return { sql: '1', args: [] };
   if (scope === 'none') return { sql: '0', args: [] };
-  return { sql: `${alias}.${ownerColumn} = ?`, args: [a.userId] };
+  const who = a.owners?.length ? a.owners : [a.userId];
+  return { sql: `${alias}.${ownerColumn} IN (${who.map(() => '?').join(', ')})`, args: who };
 }
 
 export async function assertMember(db: D1Database, orgId: string, userId: string | null | undefined, label = 'That person') {

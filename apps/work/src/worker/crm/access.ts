@@ -3,6 +3,7 @@
 // that organisation's id, and record-level rights come from scopeSql()/canRecord(), never from the client.
 
 import type { Context } from 'hono';
+import { narrowPerms, toolMemberScope } from '../company/members-access';
 import type { AppEnv } from '../env';
 import { HttpError, notFound, parseJson } from '../lib/util';
 import { type CrmModule, type CrmPerms, type CrmRole, type RecordModule, type Scope, CRM_ROLES, resolvePerms } from '../../shared/crm/roles';
@@ -36,6 +37,8 @@ export interface OrgAccess {
   role: CrmRole;
   perms: CrmPerms;
   settings: OrgSettings;
+  /** Whose records count as "own": the person, or their team under the company's team scope (members-access.ts). */
+  owners: string[];
 }
 
 /** Overrides stored for a role: { module: { action: value } }. */
@@ -55,7 +58,10 @@ export async function loadAccess(db: D1Database, orgId: string, user: { id: stri
     .first<OrgRow & { member_role: CrmRole }>();
   if (!row || !CRM_ROLES.includes(row.member_role)) throw notFound('Organisation');
   const { member_role: role, ...org } = row;
-  return { org, orgId: org.id, userId: user.id, userName: user.name, role, perms: resolvePerms(role, await overridesFor(db, org.id, role)), settings: orgSettings(parseJson(org.settings_json, {})) };
+  const perms = resolvePerms(role, await overridesFor(db, org.id, role));
+  // The company's own and team scopes, where the members work acts (never wider than the CRM role).
+  const member = await toolMemberScope(db, 'crm', org.id, user.id);
+  return { org, orgId: org.id, userId: user.id, userName: user.name, role, perms: member ? narrowPerms(perms) : perms, settings: orgSettings(parseJson(org.settings_json, {})), owners: member?.team ?? [user.id] };
 }
 
 /** The organisation in the route (":org") with the caller's access, cached on the request. */
@@ -95,8 +101,10 @@ export interface Ownable {
 export function inScope(scope: Scope, a: OrgAccess, module: RecordModule, rec: Ownable): boolean {
   if (scope === 'all') return true;
   if (scope === 'none') return false;
-  if (module === 'activities') return rec.assigned_to === a.userId || rec.created_by === a.userId;
-  return rec.owner_id === a.userId || (!rec.owner_id && rec.created_by === a.userId);
+  const who = a.owners ?? [a.userId];
+  const mine = (id: string | null | undefined) => !!id && who.includes(id);
+  if (module === 'activities') return mine(rec.assigned_to) || mine(rec.created_by);
+  return mine(rec.owner_id) || (!rec.owner_id && mine(rec.created_by));
 }
 
 export function canRecord(a: OrgAccess, module: RecordModule, action: 'view' | 'edit' | 'delete', rec: Ownable): boolean {
@@ -117,8 +125,10 @@ export function scopeSql(a: OrgAccess, module: RecordModule, alias: string, acti
   const scope = a.perms[module][action];
   if (scope === 'all') return { sql: '1', args: [] };
   if (scope === 'none') return { sql: '0', args: [] };
-  if (module === 'activities') return { sql: `(${alias}.assigned_to = ? OR ${alias}.created_by = ?)`, args: [a.userId, a.userId] };
-  return { sql: `(${alias}.owner_id = ? OR (${alias}.owner_id IS NULL AND ${alias}.created_by = ?))`, args: [a.userId, a.userId] };
+  const who = a.owners?.length ? a.owners : [a.userId];
+  const list = who.map(() => '?').join(', ');
+  if (module === 'activities') return { sql: `(${alias}.assigned_to IN (${list}) OR ${alias}.created_by IN (${list}))`, args: [...who, ...who] };
+  return { sql: `(${alias}.owner_id IN (${list}) OR (${alias}.owner_id IS NULL AND ${alias}.created_by IN (${list})))`, args: [...who, ...who] };
 }
 
 /** Active member ids of the organisation. */

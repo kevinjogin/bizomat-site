@@ -47,6 +47,8 @@ import { companyProjects, linkRoutes } from './links';
 import { refuseExample } from '../system/example';
 import { syncCompanyStatements } from './identity';
 import { verifyCompany } from './verification';
+import { membersV2 } from './members-access';
+import { accessStmtsFromInvite, invitationDays } from './members-routes';
 
 export const COMPANY_MOUNT = '/company';
 
@@ -633,13 +635,13 @@ const finRole = z.enum(FIN_ROLES).nullable();
 const companyRoleInput = z.enum([...ASSIGNABLE_ROLES, 'member']).transform((r) => (r === 'member' ? 'employee' : r) as (typeof ASSIGNABLE_ROLES)[number]);
 
 /** The preset's tool roles for a company role, for the tools the company runs (decision D9). */
-function presetRoles(role: (typeof ASSIGNABLE_ROLES)[number], tools: Partial<Record<ToolApp, string>>): ToolRoles {
+export function presetRoles(role: (typeof ASSIGNABLE_ROLES)[number], tools: Partial<Record<ToolApp, string>>): ToolRoles {
   const p = ROLE_PRESETS[role];
   return { tasks: tools.tasks ? p.tasks : null, crm: tools.crm ? p.crm : null, finance: tools.finance ? p.finance : null };
 }
 
 /** Only the owner gives anyone a tool's admin role (decision D5; audit S4). */
-function assertToolAdminByOwner(a: CompanyAccess, roles: ToolRoles, before?: ToolRoles) {
+export function assertToolAdminByOwner(a: CompanyAccess, roles: ToolRoles, before?: ToolRoles) {
   if (a.role === 'owner') return;
   for (const app of TOOL_APPS) {
     if (roles[app] === 'admin' && before?.[app] !== 'admin') throw new HttpError(403, 'Only the owner can make someone an administrator of a tool');
@@ -750,13 +752,19 @@ one.patch('/members/:userId', async (c) => {
   return c.json({ ok: true });
 });
 
-async function removeMember(c: any, a: CompanyAccess, targetId: string, action: 'member.removed' | 'member.left') {
+export async function removeMember(c: any, a: CompanyAccess, targetId: string, action: 'member.removed' | 'member.left') {
   const db = c.env.DB as D1Database;
   const depts = await db.prepare('SELECT department_id FROM co_department_members WHERE company_id = ? AND user_id = ?').bind(a.companyId, targetId).all<{ department_id: string }>();
   await db.batch([
     ...memberToolStmts(db, a.tools, targetId, { tasks: null, crm: null, finance: null }, a.userId),
     db.prepare('UPDATE co_departments SET head_id = NULL WHERE company_id = ? AND head_id = ?').bind(a.companyId, targetId),
     db.prepare('DELETE FROM co_members WHERE company_id = ? AND user_id = ?').bind(a.companyId, targetId),
+    // Access ends at once: API tokens limited to this company stop, and the ERP and Maintenance roles go (so being
+    // added again later never brings them back). Tokens for the person's other companies stay.
+    db.prepare("UPDATE api_tokens SET revoked_at = ?, revoked_reason = ? WHERE user_id = ? AND company_id = ? AND revoked_at IS NULL").bind(now(), action === 'member.left' ? 'left the company' : 'removed from the company', targetId, a.companyId),
+    db.prepare('DELETE FROM erp_user_roles WHERE company_id = ? AND user_id = ?').bind(a.companyId, targetId),
+    db.prepare('DELETE FROM erp_role_grants WHERE company_id = ? AND user_id = ?').bind(a.companyId, targetId),
+    db.prepare('DELETE FROM mt_roles WHERE company_id = ? AND user_id = ?').bind(a.companyId, targetId),
     coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action, targetType: 'user', targetId, ip: clientIp(c) }),
   ]);
   const { syncDepartment } = await import('./sync');
@@ -846,6 +854,8 @@ export async function handoverOnDisable(db: D1Database, userId: string, actorId:
 
 one.post('/transfer', async (c) => {
   const a = await requireCompany(c, 'owner');
+  // With the members work on, ownership moves only when the new owner accepts (members-routes.ts, team/transfer).
+  if (await membersV2(c.env.DB, a.companyId)) throw new HttpError(409, 'Use Members, Transfer ownership: the new owner accepts it there.', { code: 'USE_TRANSFER_REQUEST' });
   const input = await body(c, z.object({ userId: z.string().min(1).max(64) }));
   if (input.userId === a.userId) throw new HttpError(400, 'Choose someone else');
   const db = c.env.DB;
@@ -885,7 +895,7 @@ one.post('/support/:id/end', async (c) => {
 
 // ------------------------------------------------------------------ invitations
 
-interface InviteRow {
+export interface InviteRow {
   id: string;
   company_id: string;
   email: string;
@@ -900,6 +910,9 @@ interface InviteRow {
   expires_at: number;
   accepted_at: number | null;
   revoked_at: number | null;
+  /** company_members_v2: modules and scopes, and a personal message (migration 0036). */
+  access_json?: string | null;
+  message?: string | null;
 }
 
 const inviteSchema = z.object({
@@ -914,7 +927,7 @@ const inviteSchema = z.object({
   departmentIds: z.array(z.string().max(64)).max(50).optional().default([]),
 });
 
-function toolsLine(i: { tasks_role: string | null; crm_role: string | null; fin_role: string | null }): string {
+export function toolsLine(i: { tasks_role: string | null; crm_role: string | null; fin_role: string | null }): string {
   const parts = [i.tasks_role ? TOOL_LABELS.tasks : null, i.crm_role ? TOOL_LABELS.crm : null, i.fin_role ? TOOL_LABELS.finance : null].filter(Boolean);
   return parts.length ? parts.join(', ') : 'The company area only (no tools yet)';
 }
@@ -938,7 +951,7 @@ one.get('/invitations', async (c) => {
   );
 });
 
-async function sendInvite(c: any, a: CompanyAccess, inv: InviteRow, token: string) {
+export async function sendInvite(c: any, a: CompanyAccess, inv: InviteRow, token: string) {
   let url: string;
   try {
     url = companyUrl(c.env, `/join/${encodeURIComponent(token)}`);
@@ -949,7 +962,7 @@ async function sendInvite(c: any, a: CompanyAccess, inv: InviteRow, token: strin
   const existing = await c.env.DB.prepare('SELECT 1 FROM users WHERE email = ?').bind(inv.email).first();
   const r = await enqueueEmail(c.env, {
     to: inv.email,
-    data: { template: 'company_invitation', organisation: a.company.name, inviter: a.userName, role: COMPANY_ROLE_LABELS[normRole(inv.role)], tools: toolsLine(inv), expires: new Date(inv.expires_at).toUTCString().replace(/:\d\d GMT$/, ' UTC'), url, existingUser: !!existing },
+    data: { template: 'company_invitation', organisation: a.company.name, inviter: a.userName, role: COMPANY_ROLE_LABELS[normRole(inv.role)], tools: toolsLine(inv), expires: new Date(inv.expires_at).toUTCString().replace(/:\d\d GMT$/, ' UTC'), url, existingUser: !!existing, message: inv.message ?? null },
     idempotencyKey: `co-invite:${inv.id}:${now()}`,
     sensitive: true,
   });
@@ -990,7 +1003,8 @@ one.post('/invitations', async (c) => {
     department_ids: JSON.stringify(depts),
     invited_by: a.userId,
     created_at: t,
-    expires_at: t + 14 * 86_400_000,
+    // 14 days; 7 (a company setting) once the members work is on for the company.
+    expires_at: t + ((await membersV2(db, a.companyId)) ? await invitationDays(db, a.companyId) : 14) * 86_400_000,
     accepted_at: null,
     revoked_at: null,
   };
@@ -1065,6 +1079,8 @@ companyRoutes.post('/invitations/:token/accept', async (c) => {
     db.prepare("UPDATE users SET email_verified_via = CASE WHEN email_verified_at IS NULL THEN 'invitation' ELSE email_verified_via END, email_verified_at = COALESCE(email_verified_at, ?) WHERE id = ?").bind(t, user.id),
     ...memberToolStmts(db, Object.fromEntries(TOOL_APPS.filter((x) => roles[x]).map((x) => [x, tools[x]])) as Partial<Record<ToolApp, string>>, user.id, roles, inv.invited_by),
     ...live.map((d) => db.prepare('INSERT OR IGNORE INTO co_department_members (company_id, department_id, user_id, added_at) VALUES (?, ?, ?, ?)').bind(inv.company_id, d, user.id, t)),
+    // The modules, scopes and sensitive fields chosen at invitation (company_members_v2).
+    ...accessStmtsFromInvite(db, inv.company_id, user.id, inv.access_json, inv.invited_by),
     coAuditStmt(db, { companyId: inv.company_id, actorId: user.id, action: 'invitation.accepted', targetType: 'invitation', targetId: inv.id, ip: clientIp(c) }),
   ]);
   const { syncDepartment } = await import('./sync');

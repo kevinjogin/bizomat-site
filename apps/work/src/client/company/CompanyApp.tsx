@@ -22,6 +22,21 @@ import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
 
 const Overview = lazy(() => import('./Pages').then((m) => ({ default: m.Overview })));
 const People = lazy(() => import('./Pages').then((m) => ({ default: m.People })));
+const Members = lazy(() => import('./Members').then((m) => ({ default: m.Members })));
+const TransferRequests = lazy(() => import('./Members').then((m) => ({ default: m.TransferRequests })));
+
+/** Members (flag company_members_v2) where it is on for the company, else the People page. */
+function PeopleOrMembers() {
+  const view = useCompany().data!;
+  const q = useQuery({
+    queryKey: ['company', view.company.id, 'team-on'],
+    queryFn: () => get(`/company/c/${encodeURIComponent(view.company.id)}/team?pageSize=5`).then(() => true).catch((e) => (e instanceof ApiError && e.status === 404 ? false : Promise.reject(e))),
+    staleTime: 60_000,
+  });
+  if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
+  if (q.data === undefined) return <Loading />;
+  return q.data ? <Members companyId={view.company.id} companyName={view.company.name} /> : <People />;
+}
 const Departments = lazy(() => import('./Pages').then((m) => ({ default: m.Departments })));
 const Tools = lazy(() => import('./Pages').then((m) => ({ default: m.Tools })));
 const Settings = lazy(() => import('./Pages').then((m) => ({ default: m.Settings })));
@@ -66,6 +81,9 @@ function CompanyHome() {
       </header>
       <div className="page crm-page">
         <PageHeader title="Your companies" subtitle="Work as your company: its people, departments and tools, with one sign-in for Project Management, the CRM and Finance." />
+        <Suspense fallback={null}>
+          <TransferRequests />
+        </Suspense>
         {invitations.length ? (
           <section className="card card-pad stack">
             <h2 className="crm-subhead">Invitations for {session?.user.email}</h2>
@@ -143,7 +161,8 @@ function CompanyArea() {
       <Routes>
         <Route path="overview" element={page(<Overview />)} />
         <Route path="departments" element={page(<Departments />)} />
-        <Route path="people" element={page(<People />)} />
+        <Route path="people" element={page(<PeopleOrMembers />)} />
+        <Route path="members" element={page(<PeopleOrMembers />)} />
         <Route path="tools" element={page(<Tools />)} />
         <Route path="projects" element={page(<Projects />)} />
         <Route path="activity" element={page(<Activity />)} />

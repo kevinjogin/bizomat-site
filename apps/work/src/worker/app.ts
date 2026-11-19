@@ -39,7 +39,9 @@ import { crmPublicRoutes, crmRoutes } from './crm';
 import { finPublicRoutes, finRoutes } from './fin';
 import { companyPublicRoutes, companyRoutes } from './company/routes';
 import { companyVerificationRoutes } from './company/verification-routes';
+import { membersRoutes, platformMembersRoutes } from './company/members-routes';
 import { complianceGate } from './compliance/core';
+import { memberAccessGate } from './company/members-gate';
 import { userComplianceRoutes } from './compliance/routes';
 import { idPublicRoutes } from './company/id-provider';
 import { scanRoutes } from './company/scan';
@@ -199,6 +201,8 @@ export function createApp() {
   // enforced on the server (platform/context.ts).
   api.use('*', tokenScopeGate);
   api.use('*', moduleSwitchGate);
+  // Company members (flag company_members_v2, off): suspension, module access, role rules, scope, sensitive fields.
+  api.use('*', memberAccessGate);
   api.use('*', verificationGate);
   // The company rule for people in no registered company (R7; acts only while company_registration_required is on).
   api.use('*', complianceGate);
@@ -234,6 +238,8 @@ export function createApp() {
   api.route('/company', companyRoutes);
   // Verification and requests to join (Stage 1, R6; every part behind a flag that ships off).
   api.route('/company', companyVerificationRoutes);
+  // Company members, roles and ownership transfer (flag company_members_v2, off): company/members-routes.ts.
+  api.route('/company', membersRoutes);
   // BIZOMAT System, every tool in one place by company, at /system (src/worker/system).
   api.route('/system', systemRoutes);
   // BIZOMAT ERP's Asset Management and Maintenance, Stage 1 (src/worker/maintenance): assets, requests, work orders.
@@ -265,6 +271,8 @@ export function createApp() {
   admin.route('/whs', whsAdminRoutes);
   admin.route('/billing', adminBillingRoutes);
   // The Admin Control Centre: feature flags, the kill switch, rollout stages and two-factor sign-in (Stage 1, R2).
+  // A platform admin's recovery transfer of a company's ownership (two-factor sign-in and a fresh password and code).
+  admin.route('/platform/members', platformMembersRoutes);
   admin.route('/platform', platformRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
