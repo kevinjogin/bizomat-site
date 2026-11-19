@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Runs ON a bizomat-staging work Machine (sent there by .github/workflows/bizomat-staging-verify.yml with flyctl, as the
+// Runs ON a bizomat-staging work Machine (sent there by .github/workflows/bizomat-staging.yml (action verify) with flyctl, as the
 // work user): the few changes a verification run makes to staging's own database. Never on production: it refuses a
 // Machine whose FLY_APP_NAME does not end in -staging (the workflow sets it for the exec), and a database that is not
 // /data/work/db.sqlite.

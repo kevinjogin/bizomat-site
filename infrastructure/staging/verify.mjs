@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Staging verification (docs/deployment/staging.md, "Verifying a release"): a tester's walk through bizomat-staging, through
-// the gate, in a real browser. Run by .github/workflows/bizomat-staging-verify.yml, never against production: it refuses
+// the gate, in a real browser. Run by .github/workflows/bizomat-staging.yml (action verify), never against production: it refuses
 // any address that is not a *-staging app, signs up invented accounts and registers an invented company.
 //
 //   node infrastructure/staging/verify.mjs off     the release with every flag off: pages, ERP modules, no new UI
