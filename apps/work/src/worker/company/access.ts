@@ -1,8 +1,14 @@
-// Who may do what in a company account (src/worker/company/routes.ts). Three company roles:
+// Who may do what in a company account (src/worker/company/routes.ts). Five company roles (Stage 1, R5; brief Part 4):
 //
-//   owner   one per company; owns every linked tool; may link and unlink tools, transfer ownership, delete.
-//   admin   manages people (except the owner), departments, invitations and the company's details.
-//   member  sees the company, its departments and people, and opens the tools the company gives them.
+//   owner      one per company; owns every linked tool; may link and unlink tools, transfer ownership, delete.
+//   admin      manages people (except the owner), departments, invitations and the company's details.
+//   manager    \
+//   employee    } see the company, its departments and people, and open the tools the company gives them.
+//   read_only  /
+//
+// Manager, employee and read_only differ in the role each one gets in the company's tools: a preset (ROLE_PRESETS) that
+// sets each tool's role when a person is added, invited or given a new company role, unless roles are chosen for the
+// tools one by one. Each tool keeps its own detail. The role member (before R5) is read as employee.
 //
 // A member's access inside each tool is that tool's own role (co_members.tasks_role, crm_role, fin_role), kept in step
 // with the tool's members table by src/worker/company/sync.ts. Numbers from a tool are shown in the control centre only
@@ -12,7 +18,17 @@ import type { Context } from 'hono';
 import type { AppEnv } from '../env';
 import { HttpError, newId, notFound, now } from '../lib/util';
 
-export type CompanyRole = 'owner' | 'admin' | 'member';
+export type CompanyRole = 'owner' | 'admin' | 'manager' | 'employee' | 'read_only';
+export const COMPANY_ROLES: CompanyRole[] = ['owner', 'admin', 'manager', 'employee', 'read_only'];
+/** The roles a person can be given in a company (the owner is made by registering or a transfer). */
+export const ASSIGNABLE_ROLES = ['admin', 'manager', 'employee', 'read_only'] as const;
+/** The least a route needs: any person in the company, an administrator, or the owner. */
+export type MinRole = 'member' | 'admin' | 'owner';
+
+/** A stored role as a company role (member, from before R5, is employee). */
+export function normRole(r: string): CompanyRole {
+  return r === 'member' ? 'employee' : (COMPANY_ROLES as string[]).includes(r) ? (r as CompanyRole) : 'read_only';
+}
 export type ToolApp = 'tasks' | 'crm' | 'finance';
 export const TOOL_APPS: ToolApp[] = ['tasks', 'crm', 'finance'];
 
@@ -23,7 +39,15 @@ export type TasksRole = (typeof TASKS_ROLES)[number] | 'owner';
 export type CrmRole = (typeof CRM_ROLES)[number] | 'owner';
 export type FinRole = (typeof FIN_ROLES)[number] | 'owner';
 
-export const COMPANY_ROLE_LABELS: Record<CompanyRole, string> = { owner: 'Owner', admin: 'Administrator', member: 'Member' };
+export const COMPANY_ROLE_LABELS: Record<CompanyRole, string> = { owner: 'Owner', admin: 'Administrator', manager: 'Manager', employee: 'Employee', read_only: 'Read-only' };
+
+/** Each company role's role in the company's tools (decision D9), unless the tools' roles are chosen one by one. */
+export const ROLE_PRESETS: Record<Exclude<CompanyRole, 'owner'>, { tasks: (typeof TASKS_ROLES)[number]; crm: (typeof CRM_ROLES)[number]; finance: (typeof FIN_ROLES)[number] }> = {
+  admin: { tasks: 'admin', crm: 'admin', finance: 'admin' },
+  manager: { tasks: 'project_manager', crm: 'manager', finance: 'finance_manager' },
+  employee: { tasks: 'member', crm: 'member', finance: 'contributor' },
+  read_only: { tasks: 'viewer', crm: 'viewer', finance: 'viewer' },
+};
 export const TOOL_LABELS: Record<ToolApp, string> = { tasks: 'Project Management', crm: 'Customer Relationship Management', finance: 'Finance' };
 
 export interface CompanyRow {
@@ -82,7 +106,8 @@ export interface CompanyAccess {
   tools: Partial<Record<ToolApp, string>>;
 }
 
-export const atLeast = (role: CompanyRole, min: CompanyRole) => ({ owner: 3, admin: 2, member: 1 })[role] >= ({ owner: 3, admin: 2, member: 1 })[min];
+const RANK: Record<CompanyRole | 'member', number> = { owner: 3, admin: 2, manager: 1, employee: 1, read_only: 1, member: 1 };
+export const atLeast = (role: CompanyRole, min: MinRole | CompanyRole) => RANK[role] >= RANK[min];
 
 export async function companyTools(db: D1Database, companyId: string): Promise<Partial<Record<ToolApp, string>>> {
   const rows = await db.prepare('SELECT app, ref_id FROM co_tools WHERE company_id = ?').bind(companyId).all<{ app: ToolApp; ref_id: string }>();
@@ -98,11 +123,12 @@ export async function loadAccess(db: D1Database, companyId: string, user: { id: 
   // Someone outside the company cannot tell whether it exists.
   if (!company || !member) throw notFound('Company');
   if (company.suspended_at) throw new HttpError(423, 'This company account is suspended. Contact BIZOMAT support.');
-  return { company, companyId, userId: user.id, userName: user.name, member, role: member.role, tools: await companyTools(db, companyId) };
+  const role = normRole(member.role);
+  return { company, companyId, userId: user.id, userName: user.name, member: { ...member, role }, role, tools: await companyTools(db, companyId) };
 }
 
 /** The company in the route (":company") with the caller's access, cached on the request. */
-export async function requireCompany(c: Context<AppEnv>, min: CompanyRole = 'member'): Promise<CompanyAccess> {
+export async function requireCompany(c: Context<AppEnv>, min: MinRole = 'member'): Promise<CompanyAccess> {
   const cached = (c as any).__coAccess as CompanyAccess | undefined;
   const id = c.req.param('company') ?? '';
   const a = cached && cached.companyId === id ? cached : await loadAccess(c.env.DB, id, c.get('user'));

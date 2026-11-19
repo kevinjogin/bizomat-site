@@ -192,7 +192,7 @@ erpRoutes.put('/c/:company/roles/:userId', async (c) => {
   const people = await companyPeople(c.env.DB, a);
   const target = people.find((p) => p.id === c.req.param('userId'));
   if (!target) throw new HttpError(404, 'Person not found');
-  if (target.companyRole !== 'member') throw new HttpError(400, 'The company’s owner and administrators are always ERP administrators');
+  if (target.companyRole === 'owner' || target.companyRole === 'admin') throw new HttpError(400, 'The company’s owner and administrators are always ERP administrators');
   const roles = [...new Set(input.roles)];
   const t = now();
   const db = c.env.DB;

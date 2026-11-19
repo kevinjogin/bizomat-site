@@ -68,7 +68,7 @@ export type Capability =
 export interface ErpMe {
   company: { id: string; name: string; kind: 'registered' | 'own' | 'demo' };
   user: { id: string; name: string };
-  companyRole: 'owner' | 'admin' | 'member';
+  companyRole: 'owner' | 'admin' | 'manager' | 'employee' | 'read_only';
   roles: ErpRole[];
   roleLabels: string[];
   solo: boolean;

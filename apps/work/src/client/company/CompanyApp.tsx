@@ -13,7 +13,7 @@ import { BrandMark, Icon, ProductLockup } from '../components/ui/Icon';
 import { Avatar, ErrorBox, Loading, PageHeader } from '../components/ui/ui';
 import { Dropdown, MenuItem, MenuSep, useToast } from '../components/ui/overlays';
 import { PlatformFooter } from '../components/layout/PlatformLinks';
-import { COMPANY_ROLE_LABELS, TOOL_APPS, TOOL_ICONS, TOOL_NAMES, abnLabel, lastCompany, rememberCompany, toolHref, useCompany, useMine } from './lib';
+import { COMPANY_ROLE_LABELS, TOOL_APPS, TOOL_ICONS, TOOL_NAMES, abnLabel, isCompanyAdmin, lastCompany, normRole, rememberCompany, toolHref, useCompany, useMine } from './lib';
 import { Register } from './Register';
 import '../styles/crm.css';
 import '../styles/fin.css';
@@ -72,7 +72,7 @@ function CompanyHome() {
             {invitations.map((i) => (
               <div key={i.id} className="row wrap crm-invite-row">
                 <div className="grow">
-                  <strong>{i.company}</strong> as {COMPANY_ROLE_LABELS[i.role as 'admin' | 'member'] ?? i.role}
+                  <strong>{i.company}</strong> as {COMPANY_ROLE_LABELS[normRole(i.role)] ?? i.role}
                   <div className="muted small">{i.inviter ? `From ${i.inviter}. ` : ''}Open the link in the invitation email to accept.</div>
                 </div>
               </div>
@@ -159,7 +159,7 @@ function CompanyShell({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
   const location = useLocation();
   const base = `/c/${view.company.id}`;
-  const admin = view.me.role !== 'member';
+  const admin = isCompanyAdmin(view.me.role);
   useEffect(() => setNavOpen(false), [location.pathname]);
   return (
     <div className={`shell crm-shell co-shell${SUITE_SHELL ? ' in-suite' : ''}${navOpen ? ' nav-open' : ''}`}>

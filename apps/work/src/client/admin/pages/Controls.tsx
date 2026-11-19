@@ -191,6 +191,67 @@ interface Integrity {
   skipped: string[];
 }
 
+interface SupportGrant { id: string; company_id: string; company: string | null; reason: string; starts_at: number; ends_at: number; revoked_at: number | null; admin: string | null }
+
+/** Support access (R5): time-limited, with a reason, logged in the company's own activity and visible to its owner. */
+function SupportCard() {
+  const toast = useToast();
+  const qc = useQueryClient();
+  const q = useAdmin<{ grants: SupportGrant[]; maxHours: number }>('/platform/support', { retry: false });
+  const [f, setF] = useState({ companyId: '', reason: '', hours: '4' });
+  const [view, setView] = useState<{ company: Record<string, unknown> | null; people: { name: string; email: string; role: string; disabled: number }[]; tools: Record<string, string> } | null>(null);
+  const open = (e: React.FormEvent) => {
+    e.preventDefault();
+    post(`/admin/platform/support/${encodeURIComponent(f.companyId.trim())}`, { reason: f.reason, hours: Number(f.hours) })
+      .then(() => { toast('Support access opened. The company sees it.'); setF({ companyId: '', reason: '', hours: '4' }); void qc.invalidateQueries({ queryKey: ['admin'] }); })
+      .catch((err) => toast(errorMessage(err), 'error'));
+  };
+  const look = (companyId: string) => get<typeof view>(`/admin/platform/support/${encodeURIComponent(companyId)}/view`).then(setView).catch((err) => toast(errorMessage(err), 'error'));
+  const end = (companyId: string, id: string) => post(`/admin/platform/support/${encodeURIComponent(companyId)}/grants/${id}/end`, {}).then(() => { toast('Support access ended'); void qc.invalidateQueries({ queryKey: ['admin'] }); }).catch((err) => toast(errorMessage(err), 'error'));
+  const t = Date.now();
+  return (
+    <Card title="Support access" subtitle="Look at one registered company's people, tools and registration, for a few hours, with a reason. The company's owner and administrators see each time and can end it. Never sign in as anyone.">
+      {q.data?.grants.length ? (
+        <TableWrap label="Support access">
+          <thead><tr><th>Company</th><th>Why</th><th>By</th><th>Until</th><th /></tr></thead>
+          <tbody>
+            {q.data.grants.map((g) => {
+              const active = !g.revoked_at && g.ends_at > t;
+              return (
+                <tr key={g.id}>
+                  <td>{g.company ?? g.company_id}</td><td>{g.reason}</td><td>{g.admin ?? 'unknown'}</td><td>{active ? <When ts={g.ends_at} /> : 'Ended'}</td>
+                  <td>{active ? <div className="row"><button className="btn sm" type="button" onClick={() => look(g.company_id)}>View</button><button className="btn sm" type="button" onClick={() => end(g.company_id, g.id)}>End</button></div> : null}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </TableWrap>
+      ) : <Empty>No support access in the last 30 days.</Empty>}
+      <form className="ac-form ac-stack" onSubmit={open}>
+        <div className="ac-grid-2">
+          <Field label="Company id" htmlFor="support-company"><input id="support-company" className="input" value={f.companyId} onChange={(e) => setF({ ...f, companyId: e.target.value })} required /></Field>
+          <Field label="For how long" htmlFor="support-hours">
+            <select id="support-hours" className="select" value={f.hours} onChange={(e) => setF({ ...f, hours: e.target.value })}>
+              {[1, 4, 24, 72].map((h) => <option key={h} value={String(h)}>{h === 1 ? '1 hour' : `${h} hours`}</option>)}
+            </select>
+          </Field>
+        </div>
+        <Field label="Why (the company sees this)" htmlFor="support-reason"><input id="support-reason" className="input" value={f.reason} onChange={(e) => setF({ ...f, reason: e.target.value })} minLength={3} maxLength={500} required /></Field>
+        <div className="row"><button className="btn" type="submit">Open support access</button></div>
+      </form>
+      {view ? (
+        <div className="ac-stack">
+          <p className="small"><strong>{String(view.company?.name ?? '')}</strong> · registration {String(view.company?.registration_status ?? 'unknown')} · tools: {Object.keys(view.tools).join(', ') || 'none'}</p>
+          <TableWrap label="People">
+            <thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead>
+            <tbody>{view.people.map((p) => <tr key={p.email}><td>{p.name}{p.disabled ? ' (disabled)' : ''}</td><td>{p.email}</td><td>{p.role}</td></tr>)}</tbody>
+          </TableWrap>
+        </div>
+      ) : null}
+    </Card>
+  );
+}
+
 /** The integrity check (R4): counts only, read only, run on request. */
 function IntegrityCard() {
   const toast = useToast();
@@ -289,6 +350,7 @@ export default function Controls() {
         </div>
       ))}
       <IntegrityCard />
+      <SupportCard />
       <Card title="Kill switch" subtitle="Every enforcement flag back to its default (off, free, personal workspaces allowed), for everyone, at once.">
         <form className="ac-form ac-stack" onSubmit={pullKill}>
           <Field label="Why" htmlFor="kill-reason">

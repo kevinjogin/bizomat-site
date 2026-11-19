@@ -19,8 +19,11 @@ import { createWorkspaceStmts } from '../routes/helpers';
 import { createOrgStmts as createCrmOrgStmts } from '../crm/routes-orgs';
 import { createOrgStmts as createFinOrgStmts } from '../fin/routes-orgs';
 import {
+  ASSIGNABLE_ROLES,
   COMPANY_ROLE_LABELS,
   CRM_ROLES,
+  ROLE_PRESETS,
+  normRole,
   FIN_ROLES,
   TASKS_ROLES,
   TOOL_APPS,
@@ -265,9 +268,10 @@ companyRoutes.get('/mine', async (c) => {
        JOIN co_companies co ON co.id = i.company_id AND co.deleted_at IS NULL LEFT JOIN users u ON u.id = i.invited_by
        WHERE i.email = ? AND i.accepted_at IS NULL AND i.revoked_at IS NULL AND i.expires_at > ?
          AND NOT EXISTS (SELECT 1 FROM co_members m WHERE m.company_id = i.company_id AND m.user_id = ?)
+         AND EXISTS (SELECT 1 FROM users me WHERE me.id = ? AND me.email_verified_at IS NOT NULL)
        ORDER BY i.created_at DESC LIMIT 20`,
     )
-    .bind(user.email, now(), user.id)
+    .bind(user.email, now(), user.id, user.id)
     .all<{ id: string; role: string; expires_at: number; company: string; inviter: string | null }>();
   // Tools this person owns and no company runs yet (Finance: business workspaces only; personal and household
   // workspaces stay private and are never offered).
@@ -620,6 +624,22 @@ one.delete('/', async (c) => {
 const tasksRole = z.enum(TASKS_ROLES).nullable();
 const crmRole = z.enum(CRM_ROLES).nullable();
 const finRole = z.enum(FIN_ROLES).nullable();
+/** A company role in a request (member, the name before R5, is taken as employee). */
+const companyRoleInput = z.enum([...ASSIGNABLE_ROLES, 'member']).transform((r) => (r === 'member' ? 'employee' : r) as (typeof ASSIGNABLE_ROLES)[number]);
+
+/** The preset's tool roles for a company role, for the tools the company runs (decision D9). */
+function presetRoles(role: (typeof ASSIGNABLE_ROLES)[number], tools: Partial<Record<ToolApp, string>>): ToolRoles {
+  const p = ROLE_PRESETS[role];
+  return { tasks: tools.tasks ? p.tasks : null, crm: tools.crm ? p.crm : null, finance: tools.finance ? p.finance : null };
+}
+
+/** Only the owner gives anyone a tool's admin role (decision D5; audit S4). */
+function assertToolAdminByOwner(a: CompanyAccess, roles: ToolRoles, before?: ToolRoles) {
+  if (a.role === 'owner') return;
+  for (const app of TOOL_APPS) {
+    if (roles[app] === 'admin' && before?.[app] !== 'admin') throw new HttpError(403, 'Only the owner can make someone an administrator of a tool');
+  }
+}
 
 one.get('/members', async (c) => {
   const a = await requireCompany(c);
@@ -663,7 +683,7 @@ one.get('/members', async (c) => {
 /** Adds someone who already works in one of the company's tools to the company, keeping their tool roles. */
 one.post('/members', async (c) => {
   const a = await requireCompany(c, 'admin');
-  const input = await body(c, z.object({ userId: z.string().min(1).max(64), role: z.enum(['admin', 'member']).default('member'), title: z.string().trim().max(100).optional().default('') }));
+  const input = await body(c, z.object({ userId: z.string().min(1).max(64), role: companyRoleInput.default('employee'), title: z.string().trim().max(100).optional().default('') }));
   if (input.role === 'admin' && a.role !== 'owner') throw new HttpError(403, 'Only the owner can add administrators');
   const db = c.env.DB;
   if (await db.prepare('SELECT 1 FROM co_members WHERE company_id = ? AND user_id = ?').bind(a.companyId, input.userId).first()) throw new HttpError(409, 'Already in the company');
@@ -685,24 +705,41 @@ one.patch('/members/:userId', async (c) => {
   const db = c.env.DB;
   const target = await db.prepare('SELECT * FROM co_members WHERE company_id = ? AND user_id = ?').bind(a.companyId, targetId).first<MemberRow>();
   if (!target) throw notFound('Member');
-  const input = await body(c, z.object({ role: z.enum(['admin', 'member']).optional(), title: z.string().trim().max(100).optional(), tasksRole: tasksRole.optional(), crmRole: crmRole.optional(), finRole: finRole.optional() }));
-  if (target.role === 'owner' && (input.role || input.tasksRole !== undefined || input.crmRole !== undefined || input.finRole !== undefined)) throw new HttpError(400, 'The owner has every tool and role. Transfer ownership first.');
+  const input = await body(
+    c,
+    z.object({
+      role: companyRoleInput.optional(),
+      // Set every tool's role from the company role's preset (the tools' roles below then override it).
+      preset: z.boolean().optional(),
+      title: z.string().trim().max(100).optional(),
+      tasksRole: tasksRole.optional(),
+      crmRole: crmRole.optional(),
+      finRole: finRole.optional(),
+    }),
+  );
+  const changesAccess = !!input.role || !!input.preset || input.tasksRole !== undefined || input.crmRole !== undefined || input.finRole !== undefined;
+  if (target.role === 'owner' && changesAccess) throw new HttpError(400, 'The owner has every tool and role. Transfer ownership first.');
+  // Nobody but the owner changes their own role or their roles in the tools (audit S4).
+  if (targetId === a.userId && a.role !== 'owner' && changesAccess) throw new HttpError(403, 'Ask the owner to change your own role');
   if (target.role === 'admin' && a.role !== 'owner' && targetId !== a.userId) throw new HttpError(403, 'Only the owner can change an administrator');
   if (input.role === 'admin' && a.role !== 'owner') throw new HttpError(403, 'Only the owner can make someone an administrator');
+  const newRole = input.role ?? normRole(target.role);
+  const base: ToolRoles = input.preset && newRole !== 'owner' ? presetRoles(newRole, a.tools) : { tasks: target.tasks_role, crm: target.crm_role, finance: target.fin_role };
   const roles: ToolRoles = {
-    tasks: input.tasksRole !== undefined ? input.tasksRole : target.tasks_role,
-    crm: input.crmRole !== undefined ? input.crmRole : target.crm_role,
-    finance: input.finRole !== undefined ? input.finRole : target.fin_role,
+    tasks: input.tasksRole !== undefined ? input.tasksRole : base.tasks,
+    crm: input.crmRole !== undefined ? input.crmRole : base.crm,
+    finance: input.finRole !== undefined ? input.finRole : base.finance,
   };
   for (const app of TOOL_APPS) if (!a.tools[app]) roles[app] = null;
+  assertToolAdminByOwner(a, roles, rolesOf(target));
   const changedTools = TOOL_APPS.filter((app) => roles[app] !== rolesOf(target)[app]);
   const changed: Partial<Record<ToolApp, ToolRoles[ToolApp]>> = {};
   for (const app of changedTools) changed[app] = roles[app];
   await db.batch([
-    db.prepare('UPDATE co_members SET role = ?, title = ?, tasks_role = ?, crm_role = ?, fin_role = ? WHERE company_id = ? AND user_id = ?').bind(input.role ?? target.role, input.title ?? target.title, roles.tasks, roles.crm, roles.finance, a.companyId, targetId),
+    db.prepare('UPDATE co_members SET role = ?, title = ?, tasks_role = ?, crm_role = ?, fin_role = ? WHERE company_id = ? AND user_id = ?').bind(newRole, input.title ?? target.title, roles.tasks, roles.crm, roles.finance, a.companyId, targetId),
     // Only the tools whose role changed are touched.
     ...memberToolStmts(db, Object.fromEntries(changedTools.map((app) => [app, a.tools[app]])) as Partial<Record<ToolApp, string>>, targetId, roles, a.userId),
-    coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'member.updated', targetType: 'user', targetId, metadata: { role: input.role ?? target.role, tools: changed }, ip: clientIp(c) }),
+    coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'member.updated', targetType: 'user', targetId, metadata: { role: newRole, preset: !!input.preset, tools: changed }, ip: clientIp(c) }),
   ]);
   if (changedTools.length) await syncDepartmentsOf(db, a.tools, a.companyId, targetId);
   return c.json({ ok: true });
@@ -743,6 +780,65 @@ one.post('/leave', async (c) => {
 });
 
 /** Hands the company, and every tool it runs, to another member. The old owner stays as an administrator. */
+/**
+ * The statements that hand a company and its tools from one person to an administrator: the old owner becomes an
+ * administrator everywhere, the new one the owner of the company and every tool. Used by the owner's transfer and by
+ * the handover when an owner's account is disabled (handoverOnDisable).
+ */
+export function ownershipTransferStmts(db: D1Database, companyId: string, tools: Partial<Record<ToolApp, string>>, fromUserId: string, toUserId: string, t: number): D1PreparedStatement[] {
+  const stmts: D1PreparedStatement[] = [
+    db.prepare("UPDATE co_members SET role = 'admin', tasks_role = CASE WHEN tasks_role IS NULL THEN NULL ELSE 'admin' END, crm_role = CASE WHEN crm_role IS NULL THEN NULL ELSE 'admin' END, fin_role = CASE WHEN fin_role IS NULL THEN NULL ELSE 'admin' END WHERE company_id = ? AND user_id = ?").bind(companyId, fromUserId),
+    db.prepare('UPDATE co_members SET role = ?, tasks_role = ?, crm_role = ?, fin_role = ? WHERE company_id = ? AND user_id = ?').bind('owner', tools.tasks ? 'owner' : null, tools.crm ? 'owner' : null, tools.finance ? 'owner' : null, companyId, toUserId),
+  ];
+  if (tools.tasks) {
+    stmts.push(
+      db.prepare("UPDATE workspace_members SET role = 'admin' WHERE workspace_id = ? AND user_id = ? AND role = 'owner'").bind(tools.tasks, fromUserId),
+      db.prepare("INSERT INTO workspace_members (workspace_id, user_id, role, joined_at, status) VALUES (?, ?, 'owner', ?, 'active') ON CONFLICT(workspace_id, user_id) DO UPDATE SET role = 'owner', status = 'active'").bind(tools.tasks, toUserId, t),
+    );
+  }
+  for (const [app, table] of [['crm', 'crm_members'], ['finance', 'fin_members']] as const) {
+    const org = tools[app];
+    if (!org) continue;
+    // One owner per organisation: the old owner steps down first.
+    stmts.push(
+      db.prepare(`UPDATE ${table} SET role = 'admin' WHERE org_id = ? AND role = 'owner'`).bind(org),
+      db.prepare(`INSERT INTO ${table} (org_id, user_id, role, joined_at) VALUES (?, ?, 'owner', ?) ON CONFLICT(org_id, user_id) DO UPDATE SET role = 'owner'`).bind(org, toUserId, t),
+    );
+  }
+  return stmts;
+}
+
+/**
+ * When a company owner's account is disabled, each registered company they own passes to its longest-serving active
+ * administrator, so a company always has an owner who can act (brief Part 4). With no active administrator nothing
+ * changes and the company is recorded as needing a platform admin. Every outcome is in co_owner_handovers and in the
+ * company's own audit log. Returns what happened, per company.
+ */
+export async function handoverOnDisable(db: D1Database, userId: string, actorId: string, t = now()): Promise<{ companyId: string; to: string | null }[]> {
+  const owned = await db
+    .prepare("SELECT m.company_id FROM co_members m JOIN co_companies co ON co.id = m.company_id AND co.deleted_at IS NULL WHERE m.user_id = ? AND m.role = 'owner'")
+    .bind(userId)
+    .all<{ company_id: string }>();
+  const out: { companyId: string; to: string | null }[] = [];
+  for (const { company_id: companyId } of owned.results) {
+    const next = await db
+      .prepare("SELECT m.user_id FROM co_members m JOIN users u ON u.id = m.user_id AND u.disabled_at IS NULL WHERE m.company_id = ? AND m.role = 'admin' AND m.user_id <> ? ORDER BY m.joined_at, m.user_id LIMIT 1")
+      .bind(companyId, userId)
+      .first<{ user_id: string }>();
+    const others = await db.prepare('SELECT COUNT(*) AS n FROM co_members WHERE company_id = ? AND user_id <> ?').bind(companyId, userId).first<{ n: number }>();
+    if (!next && !Number(others?.n ?? 0)) continue; // alone in the company: nobody to hand it to, nobody affected
+    const stmts: D1PreparedStatement[] = next ? ownershipTransferStmts(db, companyId, await companyTools(db, companyId), userId, next.user_id, t) : [];
+    stmts.push(
+      db.prepare("INSERT INTO co_owner_handovers (id, company_id, from_user_id, to_user_id, reason, actor_id, created_at) VALUES (?, ?, ?, ?, 'owner_disabled', ?, ?)").bind(newId(), companyId, userId, next?.user_id ?? null, actorId, t),
+      coAuditStmt(db, { companyId, actorId, action: next ? 'company.ownership_handed_over' : 'company.owner_disabled_no_successor', targetType: 'user', targetId: next?.user_id ?? userId, metadata: { from: userId, reason: 'owner_disabled' } }),
+      ...syncCompanyStatements(db, companyId, t),
+    );
+    await db.batch(stmts);
+    out.push({ companyId, to: next?.user_id ?? null });
+  }
+  return out;
+}
+
 one.post('/transfer', async (c) => {
   const a = await requireCompany(c, 'owner');
   const input = await body(c, z.object({ userId: z.string().min(1).max(64) }));
@@ -752,29 +848,33 @@ one.post('/transfer', async (c) => {
   if (!target) throw notFound('Member');
   if (target.role !== 'admin') throw new HttpError(400, 'Make them an administrator first');
   const t = now();
-  const stmts: D1PreparedStatement[] = [
-    db.prepare("UPDATE co_members SET role = 'admin', tasks_role = CASE WHEN tasks_role IS NULL THEN NULL ELSE 'admin' END, crm_role = CASE WHEN crm_role IS NULL THEN NULL ELSE 'admin' END, fin_role = CASE WHEN fin_role IS NULL THEN NULL ELSE 'admin' END WHERE company_id = ? AND user_id = ?").bind(a.companyId, a.userId),
-    db.prepare('UPDATE co_members SET role = ?, tasks_role = ?, crm_role = ?, fin_role = ? WHERE company_id = ? AND user_id = ?').bind('owner', a.tools.tasks ? 'owner' : null, a.tools.crm ? 'owner' : null, a.tools.finance ? 'owner' : null, a.companyId, input.userId),
-  ];
-  if (a.tools.tasks) {
-    stmts.push(
-      db.prepare("UPDATE workspace_members SET role = 'admin' WHERE workspace_id = ? AND user_id = ? AND role = 'owner'").bind(a.tools.tasks, a.userId),
-      db.prepare("INSERT INTO workspace_members (workspace_id, user_id, role, joined_at, status) VALUES (?, ?, 'owner', ?, 'active') ON CONFLICT(workspace_id, user_id) DO UPDATE SET role = 'owner', status = 'active'").bind(a.tools.tasks, input.userId, t),
-    );
-  }
-  for (const [app, table] of [['crm', 'crm_members'], ['finance', 'fin_members']] as const) {
-    const org = a.tools[app];
-    if (!org) continue;
-    // One owner per organisation: the old owner steps down first.
-    stmts.push(
-      db.prepare(`UPDATE ${table} SET role = 'admin' WHERE org_id = ? AND role = 'owner'`).bind(org),
-      db.prepare(`INSERT INTO ${table} (org_id, user_id, role, joined_at) VALUES (?, ?, 'owner', ?) ON CONFLICT(org_id, user_id) DO UPDATE SET role = 'owner'`).bind(org, input.userId, t),
-    );
-  }
+  const stmts = ownershipTransferStmts(db, a.companyId, a.tools, a.userId, input.userId, t);
   stmts.push(coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'company.ownership_transferred', targetType: 'user', targetId: input.userId, ip: clientIp(c) }));
   stmts.push(...syncCompanyStatements(db, a.companyId, t));
   await db.batch(stmts);
   await audit(db, { actorId: a.userId, action: 'company.ownership_transferred', targetType: 'company', targetId: a.companyId, metadata: { to: input.userId }, ip: clientIp(c) });
+  return c.json({ ok: true });
+});
+
+// ------------------------------------------------------------------ support access (R5)
+
+/** BIZOMAT support's access to this company: who, why, until when. The owner and administrators see it and can end it. */
+one.get('/support', async (c) => {
+  const a = await requireCompany(c, 'admin');
+  const rows = await c.env.DB
+    .prepare('SELECT g.id, g.reason, g.starts_at, g.ends_at, g.revoked_at, u.name AS admin FROM support_access_grants g LEFT JOIN users u ON u.id = g.user_id WHERE g.company_id = ? ORDER BY g.created_at DESC LIMIT 50')
+    .bind(a.companyId)
+    .all<{ id: string; reason: string; starts_at: number; ends_at: number; revoked_at: number | null; admin: string | null }>();
+  const t = now();
+  return c.json(rows.results.map((g) => ({ id: g.id, admin: g.admin ?? 'BIZOMAT support', reason: g.reason, startsAt: g.starts_at, endsAt: g.ends_at, endedAt: g.revoked_at, active: !g.revoked_at && g.starts_at <= t && g.ends_at > t })));
+});
+
+one.post('/support/:id/end', async (c) => {
+  const a = await requireCompany(c, 'admin');
+  const t = now();
+  const r = await c.env.DB.prepare('UPDATE support_access_grants SET revoked_at = ?, revoked_by = ? WHERE id = ? AND company_id = ? AND revoked_at IS NULL').bind(t, a.userId, c.req.param('id'), a.companyId).run();
+  if (!r.meta.changes) throw notFound('Support access');
+  await coAuditStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'support.access_ended', targetType: 'support_access', targetId: c.req.param('id'), ip: clientIp(c) }).run();
   return c.json({ ok: true });
 });
 
@@ -784,7 +884,7 @@ interface InviteRow {
   id: string;
   company_id: string;
   email: string;
-  role: 'admin' | 'member';
+  role: 'admin' | 'manager' | 'employee' | 'read_only' | 'member';
   title: string;
   tasks_role: string | null;
   crm_role: string | null;
@@ -799,7 +899,9 @@ interface InviteRow {
 
 const inviteSchema = z.object({
   email: z.string().trim().toLowerCase().email().max(320),
-  role: z.enum(['admin', 'member']).default('member'),
+  role: companyRoleInput.default('employee'),
+  // Every tool's role from the company role's preset (the tools' roles given here override it).
+  preset: z.boolean().optional(),
   title: z.string().trim().max(100).optional().default(''),
   tasksRole: tasksRole.optional().default(null),
   crmRole: crmRole.optional().default(null),
@@ -842,7 +944,7 @@ async function sendInvite(c: any, a: CompanyAccess, inv: InviteRow, token: strin
   const existing = await c.env.DB.prepare('SELECT 1 FROM users WHERE email = ?').bind(inv.email).first();
   const r = await enqueueEmail(c.env, {
     to: inv.email,
-    data: { template: 'company_invitation', organisation: a.company.name, inviter: a.userName, role: COMPANY_ROLE_LABELS[inv.role], tools: toolsLine(inv), expires: new Date(inv.expires_at).toUTCString().replace(/:\d\d GMT$/, ' UTC'), url, existingUser: !!existing },
+    data: { template: 'company_invitation', organisation: a.company.name, inviter: a.userName, role: COMPANY_ROLE_LABELS[normRole(inv.role)], tools: toolsLine(inv), expires: new Date(inv.expires_at).toUTCString().replace(/:\d\d GMT$/, ' UTC'), url, existingUser: !!existing },
     idempotencyKey: `co-invite:${inv.id}:${now()}`,
     sensitive: true,
   });
@@ -864,15 +966,22 @@ one.post('/invitations', async (c) => {
   const depts = input.departmentIds.length ? (await db.prepare(`SELECT id FROM co_departments WHERE company_id = ? AND archived_at IS NULL AND id IN (${placeholders(input.departmentIds.length)})`).bind(a.companyId, ...input.departmentIds).all<{ id: string }>()).results.map((d) => d.id) : [];
   const token = randomToken(32);
   const t = now();
+  const preset = input.preset ? presetRoles(input.role, a.tools) : null;
+  const toolRoles: ToolRoles = {
+    tasks: a.tools.tasks ? (input.tasksRole ?? preset?.tasks ?? null) : null,
+    crm: a.tools.crm ? (input.crmRole ?? preset?.crm ?? null) : null,
+    finance: a.tools.finance ? (input.finRole ?? preset?.finance ?? null) : null,
+  };
+  assertToolAdminByOwner(a, toolRoles);
   const inv: InviteRow = {
     id: newId(),
     company_id: a.companyId,
     email: input.email,
     role: input.role,
     title: input.title,
-    tasks_role: a.tools.tasks ? input.tasksRole : null,
-    crm_role: a.tools.crm ? input.crmRole : null,
-    fin_role: a.tools.finance ? input.finRole : null,
+    tasks_role: toolRoles.tasks,
+    crm_role: toolRoles.crm,
+    fin_role: toolRoles.finance,
     department_ids: JSON.stringify(depts),
     invited_by: a.userId,
     created_at: t,
@@ -921,7 +1030,7 @@ companyPublicRoutes.get('/invitations/:token', async (c) => {
     abnStatus: inv.abn_status,
     inviter: inv.inviter,
     role: inv.role,
-    roleLabel: COMPANY_ROLE_LABELS[inv.role],
+    roleLabel: COMPANY_ROLE_LABELS[normRole(inv.role)],
     tools: toolsLine(inv),
     status,
     // The address is shown only partly: the link may have been forwarded.

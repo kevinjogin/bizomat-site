@@ -11,6 +11,7 @@ import { backfillOwnCompanies } from './system';
 import { companiesOfUser, requestSeatSync } from '../billing/seats';
 import { requireReauth } from '../platform/security';
 import { syncCompanyStatements } from '../company/identity';
+import { handoverOnDisable } from '../company/routes';
 
 export const adminSystemRoutes = new Hono<AppEnv>();
 
@@ -152,9 +153,11 @@ adminSystemRoutes.post('/users/:id/:action{disable|enable}', async (c) => {
   // A disabled account is signed out everywhere at once (sessions and API tokens stop at the next request anyway).
   if (action === 'disable') stmts.push(c.env.DB.prepare("UPDATE sessions SET revoked_at = ?, ended_at = COALESCE(ended_at, ?), end_reason = COALESCE(end_reason, 'revoked') WHERE user_id = ? AND revoked_at IS NULL").bind(t, t, id));
   await c.env.DB.batch(stmts);
+  // The companies a disabled owner owned pass to their longest-serving active administrator (Stage 1, R5).
+  const handovers = action === 'disable' ? await handoverOnDisable(c.env.DB, id, me.id, t) : [];
   // A disabled account is not billed; enabled again, it is (src/worker/billing/seats.ts).
   requestSeatSync(c, await companiesOfUser(c.env.DB, id), action === 'disable' ? 'user.disabled' : 'user.enabled');
-  return c.json({ ok: true });
+  return c.json({ ok: true, handovers });
 });
 
 adminSystemRoutes.post('/companies/:id/:action{suspend|resume}', async (c) => {

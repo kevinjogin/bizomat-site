@@ -71,7 +71,7 @@ interface Preview {
   lines: { description: string; amount: number; quantity: number | null; proration: boolean }[];
 }
 
-const ROLE: Record<string, string> = { owner: 'Owner', admin: 'Administrator', member: 'Member' };
+const ROLE: Record<string, string> = { owner: 'Owner', admin: 'Administrator', manager: 'Manager', employee: 'Employee', read_only: 'Read-only', member: 'Employee' };
 const day = (ms: number | null | undefined) => (ms ? new Date(ms).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
 export function aud(cents: number | null | undefined, currency = 'aud'): string {
   if (typeof cents !== 'number') return '';

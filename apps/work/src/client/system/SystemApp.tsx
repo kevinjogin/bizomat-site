@@ -136,7 +136,7 @@ function WhsCard({ companyId, demo }: { companyId: string; demo: boolean }) {
 // ------------------------------------------------------------------ data
 
 type SysApp = 'tasks' | 'crm' | 'finance';
-type SysRole = 'owner' | 'admin' | 'member' | 'guest';
+type SysRole = 'owner' | 'admin' | 'manager' | 'employee' | 'read_only' | 'member' | 'guest';
 interface CompanyLite {
   id: string;
   /** demo: the person's example company (invented data, only for them). */
@@ -184,7 +184,7 @@ interface CadPerson {
 // The ERP's module names (the tools underneath keep their own names).
 const APP_NAMES: Record<SysApp, string> = { tasks: 'Projects and Tasks', crm: 'Sales and CRM', finance: 'Finance and Accounting' };
 const APP_ICONS: Record<SysApp, string> = { tasks: 'grid', crm: 'briefcase', finance: 'dollar' };
-const ROLE_LABELS: Record<SysRole, string> = { owner: 'Owner', admin: 'Administrator', member: 'Member', guest: 'Shared with you' };
+const ROLE_LABELS: Record<SysRole, string> = { owner: 'Owner', admin: 'Administrator', manager: 'Manager', employee: 'Employee', read_only: 'Read-only', member: 'Employee', guest: 'Shared with you' };
 const CAD = {
   app: 'https://bizomat.ai/cad/',
   assistant: 'https://bizomat.ai/cad/assistant',

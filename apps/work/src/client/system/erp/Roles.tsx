@@ -13,7 +13,7 @@ import { ROLE_LABELS, erpPath, useErpMe, type ErpRole } from './api';
 interface RolesView {
   kind: 'registered' | 'own' | 'demo';
   roles: { value: ErpRole; label: string; help: string }[];
-  people: { id: string; name: string; email: string; companyRole: 'owner' | 'admin' | 'member'; roles: ErpRole[]; rolesAreDefault: boolean }[];
+  people: { id: string; name: string; email: string; companyRole: 'owner' | 'admin' | 'manager' | 'employee' | 'read_only'; roles: ErpRole[]; rolesAreDefault: boolean }[];
 }
 
 export function ErpRolesPage({ companyId, companyName }: { companyId: string; companyName: string }) {
@@ -49,7 +49,7 @@ export function ErpRolesPage({ companyId, companyName }: { companyId: string; co
               <div className="crm-table-scroll">
                 <table className="data-table responsive erp-roles">
                   <thead><tr><th>Person</th><th>Roles</th></tr></thead>
-                  <tbody>{q.data.people.map((p) => <PersonRow key={p.id} companyId={companyId} person={p} roles={q.data!.roles} editable={q.data!.kind === 'registered' && p.companyRole === 'member'} />)}</tbody>
+                  <tbody>{q.data.people.map((p) => <PersonRow key={p.id} companyId={companyId} person={p} roles={q.data!.roles} editable={q.data!.kind === 'registered' && (p.companyRole !== 'owner' && p.companyRole !== 'admin')} />)}</tbody>
                 </table>
               </div>
             </section>
@@ -80,7 +80,7 @@ function PersonRow({ companyId, person, roles, editable }: { companyId: string; 
   };
   return (
     <tr>
-      <td data-label="Person"><strong>{person.name}</strong><div className="muted small">{person.email}</div>{person.companyRole !== 'member' ? <div className="muted small">Company {person.companyRole}: always an ERP administrator</div> : null}</td>
+      <td data-label="Person"><strong>{person.name}</strong><div className="muted small">{person.email}</div>{person.companyRole === 'owner' || person.companyRole === 'admin' ? <div className="muted small">Company {person.companyRole}: always an ERP administrator</div> : null}</td>
       <td data-label="Roles">
         {editable ? (
           <div className="stack">

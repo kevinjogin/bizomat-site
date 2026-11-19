@@ -5,13 +5,25 @@ import { useParams } from 'react-router-dom';
 import { get } from '../lib/api';
 import { toolUrl } from '../lib/base';
 
-export type CompanyRole = 'owner' | 'admin' | 'member';
+export type CompanyRole = 'owner' | 'admin' | 'manager' | 'employee' | 'read_only';
+/** A stored role as a company role (member, the name before R5, is employee). */
+export const normRole = (r: string): CompanyRole => (r === 'member' ? 'employee' : (r as CompanyRole));
+/** Owners and administrators manage the company's people; everyone else sees it. */
+export const isCompanyAdmin = (r: string) => r === 'owner' || r === 'admin';
 export type ToolApp = 'tasks' | 'crm' | 'finance';
 export const TOOL_APPS: ToolApp[] = ['tasks', 'crm', 'finance'];
 
 export const TOOL_NAMES: Record<ToolApp, string> = { tasks: 'Project Management', crm: 'Customer Relationship Management', finance: 'Finance' };
 export const TOOL_ICONS: Record<ToolApp, string> = { tasks: 'grid', crm: 'briefcase', finance: 'dollar' };
-export const COMPANY_ROLE_LABELS: Record<CompanyRole, string> = { owner: 'Owner', admin: 'Administrator', member: 'Member' };
+export const COMPANY_ROLE_LABELS: Record<CompanyRole, string> = { owner: 'Owner', admin: 'Administrator', manager: 'Manager', employee: 'Employee', read_only: 'Read-only' };
+
+/** Each company role's role in the company's tools (the server's ROLE_PRESETS, src/worker/company/access.ts). */
+export const ROLE_PRESETS: Record<Exclude<CompanyRole, 'owner'>, Record<ToolApp, string>> = {
+  admin: { tasks: 'admin', crm: 'admin', finance: 'admin' },
+  manager: { tasks: 'project_manager', crm: 'manager', finance: 'finance_manager' },
+  employee: { tasks: 'member', crm: 'member', finance: 'contributor' },
+  read_only: { tasks: 'viewer', crm: 'viewer', finance: 'viewer' },
+};
 
 /** Each tool's roles, as the tool names them (the owner is set by the company, never chosen here). */
 export const TOOL_ROLES: Record<ToolApp, { id: string; label: string }[]> = {

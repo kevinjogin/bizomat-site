@@ -15,9 +15,12 @@ import {
   TOOL_APPS,
   TOOL_NAMES,
   TOOL_ROLES,
+  ROLE_PRESETS,
   abnLabel,
   co,
   departmentTree,
+  isCompanyAdmin,
+  normRole,
   toolHref,
   toolRoleLabel,
   useCompany,
@@ -75,7 +78,7 @@ export function Overview() {
   const q = useQuery({ queryKey: ['company', view.company.id, 'overview'], queryFn: () => get<OverviewDTO>(co(view.company.id, '/overview')) });
   const members = useMembers(view.company.id);
   const nameOf = (id: string | null) => members.data?.members.find((m) => m.userId === id)?.name ?? '';
-  const admin = view.me.role !== 'member';
+  const admin = isCompanyAdmin(view.me.role);
   const c = view.company;
   const sendLink = async () => {
     try {
@@ -226,7 +229,7 @@ export function People() {
   const toast = useToast();
   const confirm = useConfirm();
   const navigate = useNavigate();
-  const admin = view.me.role !== 'member';
+  const admin = isCompanyAdmin(view.me.role);
   const owner = view.me.role === 'owner';
   const linked = TOOL_APPS.filter((a) => view.tools[a]);
   const refresh = () => qc.invalidateQueries({ queryKey: ['company', id] });
@@ -268,12 +271,15 @@ export function People() {
                       <div className="muted small">{m.email}{m.title ? ` · ${m.title}` : ''}{m.lastActiveAt ? ` · active ${timeAgo(m.lastActiveAt)}` : ''}</div>
                     </td>
                     <td>
-                      {owner && m.role !== 'owner' ? (
-                        <select className="select" aria-label={`Company role of ${m.name}`} value={m.role} onChange={(e) => update(m, { role: e.target.value })}>
-                          <option value="admin">Administrator</option>
-                          <option value="member">Member</option>
+                      {editable ? (
+                        // A new company role sets every tool's role from its preset; the tools' columns can then be changed one by one.
+                        <select className="select" aria-label={`Company role of ${m.name}`} value={normRole(m.role)} onChange={(e) => update(m, { role: e.target.value, preset: true })}>
+                          {owner ? <option value="admin">Administrator</option> : null}
+                          <option value="manager">Manager</option>
+                          <option value="employee">Employee</option>
+                          <option value="read_only">Read-only</option>
                         </select>
-                      ) : COMPANY_ROLE_LABELS[m.role]}
+                      ) : COMPANY_ROLE_LABELS[normRole(m.role)]}
                     </td>
                     {linked.map((a) => (
                       <td key={a}>
@@ -372,7 +378,12 @@ function Invite() {
   const toast = useToast();
   const qc = useQueryClient();
   const invites = useQuery({ queryKey: ['company', id, 'invitations'], queryFn: () => get<{ id: string; email: string; role: string; toolRoles: Record<ToolApp, string | null>; expired: boolean; inviter: string | null; createdAt: number }[]>(co(id, '/invitations')) });
-  const blank = { email: '', role: 'member', title: '', tasksRole: view.tools.tasks ? 'member' : null, crmRole: view.tools.crm ? 'member' : null, finRole: null as string | null, departmentIds: [] as string[] };
+  const blank = { email: '', role: 'employee', title: '', tasksRole: view.tools.tasks ? 'member' : null, crmRole: view.tools.crm ? 'member' : null, finRole: null as string | null, departmentIds: [] as string[] };
+  // Choosing a company role fills in each tool's role from its preset (each can still be changed).
+  const withPreset = (role: string) => {
+    const p = ROLE_PRESETS[role as keyof typeof ROLE_PRESETS];
+    return p ? { role, tasksRole: view.tools.tasks ? p.tasks : null, crmRole: view.tools.crm ? p.crm : null, finRole: view.tools.finance ? p.finance : null } : { role };
+  };
   const [f, setF] = useState(blank);
   const [link, setLink] = useState<string | null>(null);
   const [sent, setSent] = useState(false);
@@ -404,8 +415,10 @@ function Invite() {
           <div className="field"><label htmlFor="inv-title">Job title <span className="muted small">(optional)</span></label><input id="inv-title" className="input" maxLength={100} value={f.title} onChange={(e) => setF({ ...f, title: e.target.value })} /></div>
           <div className="field">
             <label htmlFor="inv-role">Company role</label>
-            <select id="inv-role" className="select" value={f.role} onChange={(e) => setF({ ...f, role: e.target.value })}>
-              <option value="member">Member</option>
+            <select id="inv-role" className="select" value={f.role} onChange={(e) => setF({ ...f, ...withPreset(e.target.value) })}>
+              <option value="manager">Manager</option>
+              <option value="employee">Employee</option>
+              <option value="read_only">Read-only</option>
               {view.me.role === 'owner' ? <option value="admin">Administrator</option> : null}
             </select>
           </div>
@@ -443,7 +456,7 @@ function Invite() {
           {invites.data.map((i) => (
             <div key={i.id} className="row wrap crm-invite-row">
               <div className="grow">
-                <strong>{i.email}</strong> as {COMPANY_ROLE_LABELS[i.role as 'admin' | 'member']}
+                <strong>{i.email}</strong> as {COMPANY_ROLE_LABELS[normRole(i.role)]}
                 <div className="muted small">{TOOL_APPS.filter((a) => i.toolRoles[a]).map((a) => `${TOOL_NAMES[a]}: ${toolRoleLabel(a, i.toolRoles[a])}`).join(' · ') || 'No tools yet'}{i.expired ? ' · expired' : ''}</div>
               </div>
               <button className="btn ghost sm" onClick={async () => { await del(co(id, `/invitations/${i.id}`)).catch((e) => toast(errorMessage(e), 'error')); invites.refetch(); }}>Withdraw</button>
@@ -466,7 +479,7 @@ export function Departments() {
   const members = useMembers(id);
   const qc = useQueryClient();
   const toast = useToast();
-  const admin = view.me.role !== 'member';
+  const admin = isCompanyAdmin(view.me.role);
   const [editing, setEditing] = useState<DepartmentDTO | 'new' | null>(null);
   const refresh = () => qc.invalidateQueries({ queryKey: ['company', id] });
   const nameOf = (u: string | null) => members.data?.members.find((m) => m.userId === u)?.name ?? '';
@@ -523,7 +536,7 @@ function DepartmentForm({ dept, all, onDone, onCancel }: { dept: DepartmentDTO |
   const id = view.company.id;
   const members = useMembers(id);
   const toast = useToast();
-  const manage = view.me.role !== 'member';
+  const manage = isCompanyAdmin(view.me.role);
   const [f, setF] = useState({ name: dept?.name ?? '', description: dept?.description ?? '', parentId: dept?.parentId ?? '', headId: dept?.headId ?? '', memberIds: dept?.memberIds ?? [] });
   const [busy, setBusy] = useState(false);
   const below = new Set<string>();
@@ -662,10 +675,46 @@ export function Tools() {
 
 // ------------------------------------------------------------------ settings
 
+/** BIZOMAT support's access to the company (R5): who, why, until when; the owner and administrators can end it. */
+function SupportAccess({ companyId }: { companyId: string }) {
+  const qc = useQueryClient();
+  const toast = useToast();
+  const q = useQuery({ queryKey: ['company', companyId, 'support'], queryFn: () => get<{ id: string; admin: string; reason: string; startsAt: number; endsAt: number; endedAt: number | null; active: boolean }[]>(co(companyId, '/support')) });
+  const list = q.data ?? [];
+  return (
+    <section className="card card-pad stack">
+      <h2 className="crm-subhead">BIZOMAT support access</h2>
+      <p className="muted small">
+        BIZOMAT support can look at the company's people, tools and registration only when they open access with a reason, for a few hours at most. They never sign in as anyone and never read records. Each time is listed here and in the company's activity.
+      </p>
+      {list.length === 0 ? <p className="small">Support has never opened access to this company.</p> : null}
+      {list.map((g) => (
+        <div key={g.id} className="row">
+          <span className="grow small">
+            <strong>{g.admin}</strong>: {g.reason}
+            <span className="muted"> · {g.active ? `until ${new Date(g.endsAt).toLocaleString()}` : g.endedAt ? `ended ${timeAgo(g.endedAt)}` : `ended ${timeAgo(g.endsAt)}`}</span>
+          </span>
+          {g.active ? (
+            <button className="btn sm" onClick={async () => {
+              try {
+                await post(co(companyId, `/support/${g.id}/end`), {});
+                await qc.invalidateQueries({ queryKey: ['company', companyId, 'support'] });
+                toast('Support access ended');
+              } catch (e) {
+                toast(errorMessage(e), 'error');
+              }
+            }}>End now</button>
+          ) : null}
+        </div>
+      ))}
+    </section>
+  );
+}
+
 export function Settings() {
   const view = useView();
   usePageTitle('Company settings');
-  const admin = view.me.role !== 'member';
+  const admin = isCompanyAdmin(view.me.role);
   const c = view.company;
   const editor = useDetailsEditor(c);
   const qc = useQueryClient();
@@ -728,6 +777,7 @@ export function Settings() {
           <p>{c.email} · {c.phone}{c.website ? ` · ${c.website}` : ''}</p>
         </section>
       )}
+      {admin ? <SupportAccess companyId={c.id} /> : null}
       {view.me.role === 'owner' ? (
         <section className="card card-pad stack">
           <h2 className="crm-subhead">Close the company account</h2>
@@ -777,6 +827,11 @@ const ACTIONS: Record<string, string> = {
   'tool.created': 'added a new tool',
   'tool.linked': 'linked a tool',
   'tool.unlinked': 'unlinked a tool',
+  'support.access_opened': 'BIZOMAT support opened access',
+  'support.viewed': 'BIZOMAT support looked at the company',
+  'support.access_ended': 'support access ended',
+  'company.ownership_handed_over': 'became the owner when the owner’s account was disabled',
+  'company.owner_disabled_no_successor': 'the owner’s account was disabled and nobody could take over',
 };
 
 export function Activity() {

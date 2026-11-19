@@ -400,7 +400,7 @@ describe('billable users', () => {
     expect(await countBillableSeats(env.DB, co.id)).toBe(2);
     const summary = await okJson(await call(owner, 'GET', `/api/billing/c/${co.id}`));
     expect(summary.seats).toMatchObject({ count: 2, pendingInvitations: 1, disabledMembers: 1 });
-    expect(summary.seats.people.map((p: any) => p.role)).toEqual(['owner', 'member']);
+    expect(summary.seats.people.map((p: any) => p.role)).toEqual(['owner', 'employee']);
   });
 
   it('shows billing to the owner and administrators only', async () => {

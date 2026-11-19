@@ -23,7 +23,7 @@ import { syncCompany } from '../company/identity';
 
 export type SysApp = 'tasks' | 'crm' | 'finance';
 export const SYS_APPS: SysApp[] = ['tasks', 'crm', 'finance'];
-export type SysRole = 'owner' | 'admin' | 'member' | 'guest';
+export type SysRole = 'owner' | 'admin' | 'manager' | 'employee' | 'read_only' | 'member' | 'guest';
 /** registered: co_companies; own: the person's own company; demo: their example company (system/example.ts). */
 export type SysKind = 'registered' | 'own' | 'demo';
 

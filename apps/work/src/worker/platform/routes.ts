@@ -21,10 +21,13 @@ import { billingLocked } from '../billing/config';
 import { FLAGS, isFlag, needsConfirmation, resolve, STAGES, type FlagScope } from './flags';
 import { requireMfa, requireReauth, securityRoutes } from './security';
 import { integrityReport } from './integrity';
+import { supportRoutes } from './support';
 
 export const platformRoutes = new Hono<AppEnv>();
 
 platformRoutes.route('/security', securityRoutes);
+// Support access to a company (R5): time-limited, logged in the company's audit, visible to its owner.
+platformRoutes.route('/support', supportRoutes);
 platformRoutes.use('/flags', requireMfa);
 platformRoutes.use('/flags/*', requireMfa);
 platformRoutes.use('/kill-switch', requireMfa);
