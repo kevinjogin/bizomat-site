@@ -1,0 +1,149 @@
+# Verifies a release on staging (bizomat-staging; docs/deployment/staging.md, "Verifying a release"), as a tester would,
+# through the gate, in a real browser: infrastructure/staging/verify.mjs. By hand only. It never touches production: it
+# uses only FLY_STAGING_TOKEN (a deploy token for bizomat-staging) and the staging address.
+#
+#   1. prepare     staging's own sign-up policy accepts invented example.com addresses (email goes to the log there)
+#   2. flags off   every page and every ERP module with the flags off: the release as production will run it
+#   3. flags on    new_ui_enabled and company_members_v2 on in staging only; the website must follow within 150 s
+#   4. flags off   switched off again (always, even when a check failed), and the old look must come back
+#
+# The flags are switched in staging's database by infrastructure/staging/staging-db.mjs, sent to the work Machine with
+# flyctl and run as the work user. Production's flags are changed only in the Control Centre, with the owner's approval.
+name: Verify staging (bizomat-staging)
+
+on:
+  workflow_dispatch:
+    inputs:
+      flags:
+        description: Also switch new_ui_enabled and company_members_v2 on in staging, check, and switch them off again
+        required: true
+        type: choice
+        options: [with-flags, flags-off-only]
+        default: with-flags
+
+permissions:
+  contents: read
+
+# Never at the same time as a staging deploy.
+concurrency:
+  group: bizomat-staging
+  cancel-in-progress: false
+
+env:
+  APP: bizomat-staging
+  STAGING_URL: https://bizomat-staging.fly.dev
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: Check the secret
+        env:
+          HAS_TOKEN: ${{ secrets.FLY_STAGING_TOKEN != '' }}
+        run: |
+          if [ "$HAS_TOKEN" != "true" ]; then
+            echo "::error::Add the repository secret FLY_STAGING_TOKEN (fly tokens create deploy -a bizomat-staging)."
+            exit 1
+          fi
+
+      # The same password the staging deploy gives the gate (bizomat-staging.yml); masked, never printed.
+      - name: The gate password (never printed)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_STAGING_TOKEN }}
+          STAGING_PASSWORD: ${{ secrets.STAGING_PASSWORD }}
+        run: |
+          pw="$STAGING_PASSWORD"
+          if [ -z "$pw" ]; then
+            pw="$(python3 -c 'import hashlib, hmac, os; print(hmac.new(os.environ["FLY_API_TOKEN"].encode(), b"bizomat-staging-gate-v1", hashlib.sha256).hexdigest()[:40])')"
+          fi
+          echo "::add-mask::$pw"
+          echo "GATE_PW=$pw" >> "$GITHUB_ENV"
+
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          persist-credentials: false
+
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4.4.0
+        with:
+          node-version: 22
+
+      - name: A browser (Playwright, the version the website pins)
+        run: |
+          mkdir -p "$RUNNER_TEMP/pw" && cd "$RUNNER_TEMP/pw"
+          npm init -y >/dev/null
+          v="$(node -p "require('$GITHUB_WORKSPACE/package.json').devDependencies?.playwright ?? require('$GITHUB_WORKSPACE/package.json').dependencies?.playwright")"
+          npm i --no-audit --no-fund "playwright@$v" >/dev/null
+          npx playwright install --with-deps --only-shell chromium >/dev/null
+          echo "PW_DIR=$RUNNER_TEMP/pw" >> "$GITHUB_ENV"
+          echo "VERIFY_STATE=$RUNNER_TEMP/verify-state.json" >> "$GITHUB_ENV"
+
+      - name: Staging answers (the gate starts on the first visit)
+        run: |
+          for _ in $(seq 1 30); do
+            [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 10 "$STAGING_URL/__gate/health")" = 200 ] && exit 0
+            sleep 5
+          done
+          echo "::error::Staging does not answer: start it with the staging workflow (action start) or deploy it."
+          exit 1
+
+      - name: The work Machine
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_STAGING_TOKEN }}
+        run: |
+          id="$(flyctl machines list --app "$APP" --json | jq -r '[.[] | select((.config.metadata.fly_process_group // "") == "work") | select(.state == "started")][0].id // empty')"
+          [ -n "$id" ] || { echo "::error::No started work Machine in $APP."; exit 1; }
+          echo "WORK_ID=$id" >> "$GITHUB_ENV"
+          # staging-db MODE: the helper, sent base64 (no quoting problems), run as the work user (uid 10003).
+          cat > "$RUNNER_TEMP/stagingdb.sh" <<'SH'
+          set -euo pipefail
+          mode="$1"
+          b64="$(base64 -w0 infrastructure/staging/staging-db.mjs)"
+          cmd="sh -c 'echo $b64 | base64 -d > /tmp/staging-db.mjs && FLY_APP_NAME=$APP setpriv --reuid=10003 --regid=10003 --clear-groups /usr/local/bin/node /tmp/staging-db.mjs $mode'"
+          out="$(flyctl machine exec "$WORK_ID" "$cmd" --app "$APP" 2>&1 || true)"
+          if ! grep -q '^staging-db {' <<<"$out"; then
+            out="$(flyctl ssh console --app "$APP" --machine "$WORK_ID" -C "$cmd" 2>&1 || true)"
+          fi
+          line="$(grep '^staging-db {' <<<"$out" | tail -1 || true)"
+          if [ -z "$line" ]; then
+            echo "$out" | grep -v -i 'token' | tail -5
+            echo "::error::staging-db $mode did not run on $WORK_ID."
+            exit 1
+          fi
+          echo "- staging database: ${line#staging-db }" | tee -a "$GITHUB_STEP_SUMMARY"
+          SH
+
+      - name: Prepare (staging's sign-up policy accepts example.com)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_STAGING_TOKEN }}
+        run: bash "$RUNNER_TEMP/stagingdb.sh" prepare
+
+      - name: Every flag off
+        run: node infrastructure/staging/verify.mjs off
+
+      - name: Switch the flags on (staging only)
+        id: on
+        if: inputs.flags == 'with-flags'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_STAGING_TOKEN }}
+        run: bash "$RUNNER_TEMP/stagingdb.sh" flags-on
+
+      - name: With the flags on
+        if: inputs.flags == 'with-flags'
+        run: node infrastructure/staging/verify.mjs on
+
+      - name: Switch the flags off again (always)
+        if: always() && steps.on.conclusion != 'skipped' && inputs.flags == 'with-flags'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_STAGING_TOKEN }}
+        run: bash "$RUNNER_TEMP/stagingdb.sh" flags-off
+
+      - name: The old look is back
+        if: always() && steps.on.conclusion == 'success'
+        run: node infrastructure/staging/verify.mjs reset
+
+      - name: Forget the tester
+        if: always()
+        run: rm -f "$RUNNER_TEMP/verify-state.json"
