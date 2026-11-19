@@ -184,7 +184,9 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   checked in CI (`tests/ui-tokens.test.ts`); every rule waits for `html[data-ui="new"]`. The ERP learns the flag from
   `/api/auth/me`; the website's server asks `/tasks/api/ui/public` every minute (`WEB_UPSTREAM_WORK`) and marks pages
   before compressing them. Comfortable or Compact density is saved per account; the UI kit is `/erp/admin/ui-kit`.
-  Illustrations are never converted. Never switch the flag on without the owner's approval.
+  Illustrations are never converted. Never switch the flag on without the owner's approval. Released with Stage 1 and
+  Members on 19 Nov 2026 (kevinjogin/bizomat-site#91, deploy run 42), every new flag off; staging is verified with the
+  staging workflow's action `verify` (`docs/deployment/staging.md`).
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
