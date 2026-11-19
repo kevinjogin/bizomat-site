@@ -120,12 +120,13 @@ authRoutes.post('/signup', async (c) => {
   // An invitation was sent to this address (and its token was presented), so the address counts as confirmed.
   const mustConfirm = !hasInvite && (await verificationActive(c.env, policy));
   const stmts = [
-    c.env.DB.prepare('INSERT INTO users (id, email, name, password_hash, email_verified_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(
+    c.env.DB.prepare('INSERT INTO users (id, email, name, password_hash, email_verified_at, email_verified_via, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(
       userId,
       input.email,
       input.name,
       await hashPassword(input.password),
       hasInvite ? t : null,
+      hasInvite ? 'invitation' : null,
       t,
       t,
     ),
@@ -311,7 +312,7 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
       userId = newId();
       const stmts = [
         // Google verified the address.
-        db.prepare('INSERT INTO users (id, email, name, email_verified_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)').bind(userId, profile.email, profile.name.slice(0, 100), t, t, t),
+        db.prepare("INSERT INTO users (id, email, name, email_verified_at, email_verified_via, created_at, updated_at) VALUES (?, ?, ?, ?, 'google', ?, ?)").bind(userId, profile.email, profile.name.slice(0, 100), t, t, t),
         eventStmt(db, { type: 'user.registered', userId, entityType: 'user', entityId: userId, metadata: { provider: provider.id, invited: !!invited }, at: t }),
       ];
       if (!invited) stmts.push(...createWorkspaceStmts(db, { name: `${profile.name.split(' ')[0]}'s workspace`, ownerId: userId }).stmts);
@@ -323,7 +324,7 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
   if (!user || user.disabled_at) return fail('account_disabled');
   // Google vouches for the address it signed in with: that confirms the account's address when they are the same.
   if (!user.email_verified_at && profile.emailVerified && profile.email.toLowerCase() === user.email.toLowerCase()) {
-    await db.prepare('UPDATE users SET email_verified_at = ?, updated_at = ? WHERE id = ?').bind(t, t, user.id).run();
+    await db.prepare("UPDATE users SET email_verified_at = ?, email_verified_via = 'google', updated_at = ? WHERE id = ?").bind(t, t, user.id).run();
     user = { ...user, email_verified_at: t };
   }
   if (!row.link_user_id && !(await getPlatformRole(db, user.id))) {

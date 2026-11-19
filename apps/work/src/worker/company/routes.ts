@@ -42,6 +42,7 @@ import { overviewRoutes } from './overview';
 import { idAuthorizeRoutes } from './id-provider';
 import { companyProjects, linkRoutes } from './links';
 import { refuseExample } from '../system/example';
+import { syncCompanyStatements } from './identity';
 
 export const COMPANY_MOUNT = '/company';
 
@@ -416,6 +417,8 @@ companyRoutes.post('/companies', async (c) => {
       .prepare("INSERT INTO co_members (company_id, user_id, role, tasks_role, crm_role, fin_role, joined_at) VALUES (?, ?, 'owner', ?, ?, ?, ?)")
       .bind(id, user.id, toolIds.tasks ? 'owner' : null, toolIds.crm ? 'owner' : null, toolIds.finance ? 'owner' : null, t),
     coAuditStmt(db, { companyId: id, actorId: user.id, action: 'company.created', targetType: 'company', targetId: id, metadata: { kind: input.kind, abnStatus: checked.abnStatus, tools: Object.keys(toolIds) }, ip: clientIp(c) }),
+    // The company's row in the registry of every company (Stage 1, R3), in the same transaction.
+    ...syncCompanyStatements(db, id, t),
   );
   await db.batch(stmts);
   // People already in a linked tool keep it; they are listed as "in a tool only" until added to the company.
@@ -541,6 +544,7 @@ one.patch('/', async (c) => {
         a.companyId,
       ),
     coAuditStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'company.updated', targetType: 'company', targetId: a.companyId, metadata: { abnChanged, emailChanged }, ip: clientIp(c) }),
+    ...syncCompanyStatements(c.env.DB, a.companyId, t),
   ]);
   let confirmation: string | null = null;
   if (emailChanged) confirmation = await sendEmailConfirmation(c, a.companyId, input.name, input.email);
@@ -579,7 +583,7 @@ export async function recheckAbn(env: Env, co: CompanyRow): Promise<'active' | '
       .bind(r.status, r.entityName, r.entityType, r.gstFrom, r.state, r.postcode, t, r.entityName, r.entityName, t, co.id)
       .run();
   }
-  await env.DB.batch([coAuditStmt(env.DB, { companyId: co.id, actorId: null, action: 'company.abn_checked', metadata: { result: r.status } })]);
+  await env.DB.batch([coAuditStmt(env.DB, { companyId: co.id, actorId: null, action: 'company.abn_checked', metadata: { result: r.status } }), ...syncCompanyStatements(env.DB, co.id, t)]);
   return r.status;
 }
 
@@ -605,6 +609,7 @@ one.delete('/', async (c) => {
     c.env.DB.prepare('DELETE FROM co_tools WHERE company_id = ?').bind(a.companyId),
     c.env.DB.prepare('UPDATE co_invitations SET revoked_at = ? WHERE company_id = ? AND accepted_at IS NULL AND revoked_at IS NULL').bind(t, a.companyId),
     coAuditStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'company.deleted', ip: clientIp(c) }),
+    ...syncCompanyStatements(c.env.DB, a.companyId, t),
   ]);
   await audit(c.env.DB, { actorId: a.userId, action: 'company.deleted', targetType: 'company', targetId: a.companyId, ip: clientIp(c) });
   return c.json({ ok: true });
@@ -767,6 +772,7 @@ one.post('/transfer', async (c) => {
     );
   }
   stmts.push(coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'company.ownership_transferred', targetType: 'user', targetId: input.userId, ip: clientIp(c) }));
+  stmts.push(...syncCompanyStatements(db, a.companyId, t));
   await db.batch(stmts);
   await audit(db, { actorId: a.userId, action: 'company.ownership_transferred', targetType: 'company', targetId: a.companyId, metadata: { to: input.userId }, ip: clientIp(c) });
   return c.json({ ok: true });
@@ -942,7 +948,7 @@ companyRoutes.post('/invitations/:token/accept', async (c) => {
     db.prepare('UPDATE co_invitations SET accepted_at = ?, accepted_by = ? WHERE id = ? AND accepted_at IS NULL').bind(t, user.id, inv.id),
     db.prepare('INSERT INTO co_members (company_id, user_id, role, title, tasks_role, crm_role, fin_role, invited_by, joined_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(inv.company_id, user.id, inv.role, inv.title, roles.tasks, roles.crm, roles.finance, inv.invited_by, t),
     // The invitation reached this mailbox, so the address is confirmed.
-    db.prepare('UPDATE users SET email_verified_at = COALESCE(email_verified_at, ?) WHERE id = ?').bind(t, user.id),
+    db.prepare("UPDATE users SET email_verified_via = CASE WHEN email_verified_at IS NULL THEN 'invitation' ELSE email_verified_via END, email_verified_at = COALESCE(email_verified_at, ?) WHERE id = ?").bind(t, user.id),
     ...memberToolStmts(db, Object.fromEntries(TOOL_APPS.filter((x) => roles[x]).map((x) => [x, tools[x]])) as Partial<Record<ToolApp, string>>, user.id, roles, inv.invited_by),
     ...live.map((d) => db.prepare('INSERT OR IGNORE INTO co_department_members (company_id, department_id, user_id, added_at) VALUES (?, ?, ?, ?)').bind(inv.company_id, d, user.id, t)),
     coAuditStmt(db, { companyId: inv.company_id, actorId: user.id, action: 'invitation.accepted', targetType: 'invitation', targetId: inv.id, ip: clientIp(c) }),

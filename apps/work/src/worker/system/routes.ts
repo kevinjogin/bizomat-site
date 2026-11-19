@@ -8,6 +8,7 @@ import { getPlatformRole } from '../services/platform-admin';
 import { idClients } from '../company/id-provider';
 import { cadFor, companiesFor, companyFor, toolNumbers } from './system';
 import { buildExample, exampleInfo, exampleOf, removeExample } from './example';
+import { syncCompany } from '../company/identity';
 
 export const systemRoutes = new Hono<AppEnv>();
 
@@ -72,5 +73,6 @@ systemRoutes.patch('/companies/:id', async (c) => {
   if (company.kind !== 'own' || company.role !== 'owner') throw new HttpError(403, 'Only the owner can rename their own company here. A registered company is renamed in the company area.');
   const input = await body(c, z.object({ name: z.string().trim().min(1).max(100) }));
   await c.env.DB.prepare('UPDATE sys_companies SET name = ?, updated_at = ? WHERE id = ? AND owner_id = ?').bind(input.name, now(), company.id, user.id).run();
+  await syncCompany(c.env.DB, company.id);
   return c.json({ ok: true, name: input.name });
 });

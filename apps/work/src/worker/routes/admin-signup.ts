@@ -125,7 +125,7 @@ adminSignupRoutes.post('/users/:id/confirm-email', async (c) => {
   if (!target) throw notFound('User');
   if (target.email_verified_at) return c.json({ ok: true, already: true });
   const t = now();
-  await c.env.DB.prepare('UPDATE users SET email_verified_at = ?, updated_at = ? WHERE id = ?').bind(t, t, id).run();
+  await c.env.DB.prepare("UPDATE users SET email_verified_at = ?, email_verified_via = 'admin', updated_at = ? WHERE id = ?").bind(t, t, id).run();
   await audit(c.env.DB, { actorId: actor.id, action: 'admin.email_confirmed', targetType: 'user', targetId: id, ip: clientIp(c) });
   return c.json({ ok: true, already: false });
 });

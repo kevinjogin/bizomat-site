@@ -10,6 +10,7 @@ import { coAuditStmt } from '../company/access';
 import { backfillOwnCompanies } from './system';
 import { companiesOfUser, requestSeatSync } from '../billing/seats';
 import { requireReauth } from '../platform/security';
+import { syncCompanyStatements } from '../company/identity';
 
 export const adminSystemRoutes = new Hono<AppEnv>();
 
@@ -168,6 +169,7 @@ adminSystemRoutes.post('/companies/:id/:action{suspend|resume}', async (c) => {
   await c.env.DB.batch([
     c.env.DB.prepare('UPDATE co_companies SET suspended_at = ?, updated_at = ? WHERE id = ?').bind(action === 'suspend' ? t : null, t, id),
     coAuditStmt(c.env.DB, { companyId: id, actorId: c.get('user').id, action: action === 'suspend' ? 'company.suspended' : 'company.resumed', ip: clientIp(c) }),
+    ...syncCompanyStatements(c.env.DB, id, t),
   ]);
   return c.json({ ok: true });
 });
