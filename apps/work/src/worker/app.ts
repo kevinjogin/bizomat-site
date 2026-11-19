@@ -277,7 +277,7 @@ export function createApp() {
     // The tool this page is: under the System (/system/crm, ...) the same as at its own address (/crm).
     const tool = appOf(c.env.BASE_PATH ?? '');
     const otherApp = !!c.env.BASE_PATH && c.env.BASE_PATH !== MOUNT;
-    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : []), ...(tool === COMPANY_MOUNT ? ['/confirm-email'] : []), ...(tool === FIN_MOUNT ? ['/view/'] : [])];
+    const publicPaths = ['/login', '/signup', '/reset-password', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : []), ...(tool === COMPANY_MOUNT ? ['/confirm-email'] : []), ...(tool === FIN_MOUNT ? ['/view/'] : [])];
     const isPublic = publicPaths.some((p) => url.pathname === p || url.pathname.startsWith(p)) || /\.[a-z0-9]+$/i.test(url.pathname);
     if (isNavigation) {
       const hasCookie = !!getCookie(c, sessionCookieName(c.env));

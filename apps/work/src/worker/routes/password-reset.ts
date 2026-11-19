@@ -31,7 +31,8 @@ passwordResetRoutes.post('/password-reset', async (c) => {
   const token = randomToken(32);
   const t = now();
   await db.prepare('INSERT INTO password_resets (token_hash, user_id, created_at, expires_at, ip) VALUES (?, ?, ?, ?, ?)').bind(await sha256Hex(token), u.id, t, t + RESET_TTL_MS, clientIp(c)).run();
-  const url = `${appBase(c.env).href}/reset-password#${encodeURIComponent(token)}`;
+  // The ERP is where everyone signs in (bizomat.ai/erp), so the link opens there.
+  const url = `${appBase(c.env).origin}/erp/reset-password#${encodeURIComponent(token)}`;
   await enqueueEmail(c.env, {
     userId: u.id,
     to: u.email,

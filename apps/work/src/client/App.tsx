@@ -72,10 +72,14 @@ function WorkspaceGate({ children }: { children: ReactNode }) {
 
 function RootRedirect() {
   const { session } = useSession();
+  const location = useLocation();
   if (!session) return null;
   const last = lastWorkspace();
   const ws = session.workspaces.find((w) => w.id === last) ?? session.workspaces[0];
-  return ws ? <Navigate to={`/w/${ws.id}/home`} replace /> : <Navigate to="/welcome" replace />;
+  // /settings/<tab> (the account settings, from the ERP's menus and notices) opens that tab in the last workspace.
+  const settings = /^\/settings(\/[a-z-]+)?\/?$/.exec(location.pathname);
+  const to = ws ? (settings ? `/w/${ws.id}/settings${settings[1] ?? '/profile'}${location.hash}` : `/w/${ws.id}/home`) : '/welcome';
+  return <Navigate to={to} replace />;
 }
 
 export function App() {
