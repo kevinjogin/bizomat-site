@@ -176,6 +176,15 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Activity); invitations with modules, scope and a message (7 days); ownership transfer the new owner accepts, and a
   platform admin's recovery transfer with reason and evidence. Removal revokes the person's API tokens for that company
   and clears their ERP and Maintenance roles, flag or not. Never switch the flag on without the owner's approval.
+  **New UI** (owner's UI brief and decisions of 19 Nov 2026; `docs/ui/README.md`; flag `new_ui_enabled`, off): one
+  design system for the website and BIZOMAT ERP: tokens in `shared/brand/ui-tokens.css` (4 px spacing grid, radius,
+  shadows, motion, type scale, buttons 32, 40 and 48 px; copied to the website and the ERP only, never to CAD), the
+  components in `src/styles/ui-new.css` and `apps/work/src/client/styles/ui-new.css`, generated overrides for every
+  existing stylesheet (`scripts/ui/gen-overrides.mjs`) and inline ERP spacing (`scripts/ui/inline-styles.mjs`), both
+  checked in CI (`tests/ui-tokens.test.ts`); every rule waits for `html[data-ui="new"]`. The ERP learns the flag from
+  `/api/auth/me`; the website's server asks `/tasks/api/ui/public` every minute (`WEB_UPSTREAM_WORK`) and marks pages
+  before compressing them. Comfortable or Compact density is saved per account; the UI kit is `/erp/admin/ui-kit`.
+  Illustrations are never converted. Never switch the flag on without the owner's approval.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
