@@ -9,9 +9,10 @@
 #
 # Repository secrets (Settings > Secrets and variables > Actions):
 # - FLY_STAGING_TOKEN: a deploy token for bizomat-staging only (`fly tokens create deploy -a bizomat-staging`).
-# - STAGING_PASSWORD: the gate's password (user "review"), 16 characters or more. Set it without showing it:
-#   `gh secret set STAGING_PASSWORD --repo kevinjogin/bizomat-site` (it asks for the value, hidden).
-#   Each deploy stages it as the Fly secret GATE_PASSWORD; it is never printed.
+# - STAGING_PASSWORD (optional): the gate's password (user "review"), 16 characters or more. Set it without showing it:
+#   `gh secret set STAGING_PASSWORD --repo kevinjogin/bizomat-site` (it asks for the value, hidden). Without it, the
+#   password is derived from FLY_STAGING_TOKEN (read it with `fly ssh console -a bizomat-staging -C "printenv
+#   GATE_PASSWORD"`). Each deploy stages it as the Fly secret GATE_PASSWORD; it is never printed.
 #
 # action:
 # - deploy: the config check, the preflight (the first deploy creates the Machines and the volume: type YES in
@@ -64,9 +65,9 @@ jobs:
             echo "::error::Add the repository secret FLY_STAGING_TOKEN (fly tokens create deploy -a bizomat-staging). Nothing was changed."
             exit 1
           fi
-          if [ "$ACTION" = deploy ]; then
+          if [ "$ACTION" = deploy ] && [ -n "$STAGING_PASSWORD" ]; then
             if [ "${#STAGING_PASSWORD}" -lt 16 ]; then
-              echo "::error::Add the repository secret STAGING_PASSWORD, 16 characters or more (gh secret set STAGING_PASSWORD --repo kevinjogin/bizomat-site). Nothing was changed."
+              echo "::error::STAGING_PASSWORD must be 16 characters or more. Nothing was changed."
               exit 1
             fi
             # One line, no quotes, backslashes or spaces: it travels through flyctl secrets import and HTTP Basic.
@@ -76,6 +77,23 @@ jobs:
               exit 1
             fi
           fi
+
+      # The gate's password: STAGING_PASSWORD when it is set; otherwise one derived from the staging Fly token (the same
+      # on every deploy while the token stays the same; 40 hex characters). Masked in the log and never printed. Read it
+      # with `fly ssh console -a bizomat-staging -C "printenv GATE_PASSWORD"`, or set STAGING_PASSWORD to choose one.
+      - name: The gate password (never printed)
+        if: inputs.action == 'deploy'
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_STAGING_TOKEN }}
+          STAGING_PASSWORD: ${{ secrets.STAGING_PASSWORD }}
+        run: |
+          pw="$STAGING_PASSWORD"
+          if [ -z "$pw" ]; then
+            pw="$(python3 -c 'import hashlib, hmac, os; print(hmac.new(os.environ["FLY_API_TOKEN"].encode(), b"bizomat-staging-gate-v1", hashlib.sha256).hexdigest()[:40])')"
+            echo "- STAGING_PASSWORD is not set: the gate password is derived from the staging Fly token. Read it with \`fly ssh console -a bizomat-staging -C \"printenv GATE_PASSWORD\"\`, or set STAGING_PASSWORD to choose one." >> "$GITHUB_STEP_SUMMARY"
+          fi
+          echo "::add-mask::$pw"
+          echo "GATE_PW=$pw" >> "$GITHUB_ENV"
 
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
@@ -113,10 +131,9 @@ jobs:
         if: inputs.action == 'deploy'
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_STAGING_TOKEN }}
-          STAGING_PASSWORD: ${{ secrets.STAGING_PASSWORD }}
         run: |
-          printf 'GATE_PASSWORD=%s\n' "$STAGING_PASSWORD" | flyctl secrets import --app "$APP" --stage >/dev/null
-          echo "- Gate password staged as GATE_PASSWORD (from STAGING_PASSWORD)" >> "$GITHUB_STEP_SUMMARY"
+          printf 'GATE_PASSWORD=%s\n' "$GATE_PW" | flyctl secrets import --app "$APP" --stage >/dev/null
+          echo "- Gate password staged as GATE_PASSWORD" >> "$GITHUB_STEP_SUMMARY"
 
       # The image that runs now, for the automatic rollback below (none before the first deploy).
       - name: Record the image that runs now
@@ -179,12 +196,10 @@ jobs:
       # Through the gate, as a tester sees staging. Each check waits up to 90 s (the gate starts on the first visit).
       - name: Checks through the gate
         if: inputs.action == 'deploy'
-        env:
-          STAGING_PASSWORD: ${{ secrets.STAGING_PASSWORD }}
         run: |
           # The sign-in header from a private file (curl -H @file): the password is never on a command line or printed.
           auth="$(mktemp)"; chmod 600 "$auth"
-          printf 'Authorization: Basic %s\n' "$(printf 'review:%s' "$STAGING_PASSWORD" | base64 -w0)" > "$auth"
+          printf 'Authorization: Basic %s\n' "$(printf 'review:%s' "$GATE_PW" | base64 -w0)" > "$auth"
           code() { curl -s -o /dev/null -w '%{http_code}' --max-time 15 "$@"; }
           fail=0
           check() { # description, expected code, curl arguments...
