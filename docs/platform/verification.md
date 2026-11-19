@@ -12,8 +12,9 @@ requests to join, registration outside Australia); migration `0033_verification.
 | `registry_verification_enabled` (everyone or a country) | Checks with the country's register: at registration, when the number or legal name changes, and on request |
 | `scheduled_reverification` (everyone) | The 15-minute run checks companies that are due: first checks, and every 30 days after |
 | `verification_enforcement` (everyone, stage, country or company) | An unverified registered company keeps its company area (details, people, verification) and support; its tools and ERP answer 403 `VERIFICATION_REQUIRED` to its people |
-| `international_registration` (everyone or a country) | Registration outside Australia (`POST /api/company/companies/international`) |
+| `international_registration` (everyone or a country) | Registration outside Australia: the registration page offers the countries where it is on (`GET /api/company/registration-options`), with the country's own numbers and legal structures, and posts to `POST /api/company/companies/international` |
 | `join_requests` (everyone or a country) | "Request to join" a company that already exists |
+| `evidence_scanning` (everyone) | Uploaded documents are handed to the malware scanner. Off: they wait, and none can be opened or accepted |
 
 ## Countries (brief 5.2)
 
@@ -56,13 +57,40 @@ why. A company never sets its own status: only the service and a platform admin'
 
 - The owner or an administrator uploads documents (Company settings, Verification): PDF, PNG or JPEG only, up to
   10 MB, checked by their first bytes, kept privately under `evidence/<company>/` in the app's file storage, and
-  downloaded by platform admins only as attachments. **Not yet scanned for malware** (decision D7): scanning comes
-  before manual review is switched on for customers.
+  downloaded by platform admins only as attachments, and only after a clean malware scan (below).
 - They can ask for a manual review, with a note.
 - Platform admins (Control Centre, Verification; two-factor sign-in) see totals by status, the review queue, recent
   changes, the last and next check, the registers' health, and can check a company now. A decision (approve, reject,
   ask for more information, or any status as an override) needs a reason and a fresh password and code, and is
   recorded with the old and new status and the time.
+
+## Malware scan (owner, 19 Nov 2026)
+
+Every uploaded document is scanned with ClamAV before anyone may open or accept it (`src/worker/company/scan.ts`).
+Until then a platform admin's download and any decision that accepts it answer 409 `NOT_SCANNED`, whether the flag is
+on or not; rejecting a document needs no scan.
+
+- **Where it runs.** ClamAV needs about 1 GB while it scans (measured with ClamAV 1.5.4 and the full signature set:
+  1,000 MB at its peak, about 12 s a file; the daily set alone 660 MB). This app's Machines have 512 MB, so the owner
+  chose the one existing Machine with room: CAD Automation's (`cados`, 2 GB, Amsterdam). No Machine was added or
+  resized. The scanner is `opensketch/evidencescan.py` in kevinjogin/bizomat-cad.
+- **How.** The scanner asks this app; nothing calls out. `POST /company/api/id/scan/next` with CAD's BIZOMAT client
+  credentials (HTTP Basic, client `cad`, the same as the CAD status report: no new secret) answers 204, or one
+  document's bytes with its id and SHA-256; it is "scanning" until a verdict comes, or for 15 minutes. `POST
+  /company/api/id/scan/result` takes clean, infected (with the signature) or error, and refuses a verdict on bytes
+  whose SHA-256 differs from the upload. Other clients get 403, a wrong secret 401.
+- **Verdicts.** Clean: the document can be opened and accepted. Infected: the file is deleted from storage at once,
+  the document is marked refused, and the company is asked for a clean copy (company and platform audit). Error: back
+  in the queue; after five attempts "could not be scanned" (the company uploads another copy). Files over ClamAV's
+  limits and encrypted documents count as infected.
+- **On the scanner's Machine.** One document at a time, only while 1,300 MB are free (CAD work comes first), at the
+  lowest CPU priority; written to a private temporary folder, scanned and deleted at once; never kept or logged.
+  Signatures are fetched from ClamAV's own servers every 6 hours to the Machine's disk.
+- **Screens.** The company's Verification card says each document's scan; the Control Centre's Verification card
+  shows the scanner's queue (waiting, clean, refused, could not be scanned) and its last verdict.
+- **Before switching it on.** Deploy CAD Automation with the scanner (its own repository's deploy), then switch on
+  `evidence_scanning`. The documents travel from Sydney to the scanner in Amsterdam over HTTPS and are not kept there:
+  the privacy notice should say so before customers upload documents (the owner's decision).
 
 ## Request to join (brief 5.4)
 
@@ -84,8 +112,5 @@ No register is scraped.
 
 ## Not built yet
 
-- The registration form outside Australia: the API exists behind its flag; the screen comes before the flag is
-  switched on.
 - "Request to join" from the Australian registration form: the API exists; the form still says to ask the owner.
-- Malware scanning of uploaded documents (decision D7).
 - The country table is code, reviewed with every change; it is not edited in the console.

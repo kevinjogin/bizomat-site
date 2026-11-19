@@ -145,7 +145,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   limited to one company (optionally some applications, or reading), expire in 90 days by default and end at a
   password change or security reset; the module switches act for every module; realtime re-checks access at every
   event; an integrity check in the Control Centre; and `test-node/company-queries.test.ts` fails on any new SQL
-  statement on a company table without `company_id` (the list of older ones may only shrink).
+  statement on a company table without `company_id` (the older ones were all scoped on 19 Nov 2026; the cross-company
+  ones are listed with their reasons).
   **Company roles** (Stage 1, R5, 19 Nov 2026; `docs/platform/roles.md`; migration 0032): owner, admin, manager,
   employee (formerly member) and read_only, each a preset of tool roles that can be changed tool by tool; only the owner
   makes administrators of the company or a tool, and nobody but the owner changes their own role; a disabled owner's
@@ -157,13 +158,24 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `verification_enforcement`, `international_registration`, `join_requests`). The nine statuses live in the company
   registry and change only through the service (ABN Lookup, Companies House) or a platform admin's decision with a
   reason; a register that cannot be reached is never a failure; similar names go to manual review; evidence is PDF or
-  image only and not yet malware-scanned. Never call a company verified unless its status says so.
+  image only, and nobody can open or accept a document before ClamAV has scanned it clean (`company/scan.ts`, migration
+  0035; flag `evidence_scanning`, off): the scanner runs on CAD Automation's 2 GB Machine (`opensketch/evidencescan.py`,
+  owner's choice, 19 Nov 2026: no Machine added) and fetches documents with CAD's BIZOMAT client credentials.
+  Registration outside Australia offers only the countries where its flag is on. Never call a company verified unless
+  its status says so.
   **Existing users, exports and deletion** (Stage 1, R7, 19 Nov 2026; `docs/platform/compliance.md`; migration 0034):
   the classification report, the individual accounts policy (acts only while `company_registration_required` is on),
   notices only from a list a platform admin approved, deadlines that start at a recorded delivery, suspension that
   leaves registration, invitations, support and export open, personal and company exports (ZIP, 7-day link, audited),
   and deletion only after a recorded legal review, a final warning and a reviewed batch, never from a public address.
   Self-service password reset is behind `self_service_password_reset` (off). The audit log is append only.
+  **Company members, roles and ownership transfer** (owner's brief of 19 Nov 2026; `docs/platform/members.md`; migration
+  0036; flag `company_members_v2`, off): one permission service (`company/members-access.ts`) and its gate
+  (`members-gate.ts`) for membership, suspension, module access, all/team/own scope and sensitive fields, applied
+  before each module's own checks (both must pass; never wider); the Members page (Members, Invitations, Roles & Access,
+  Activity); invitations with modules, scope and a message (7 days); ownership transfer the new owner accepts, and a
+  platform admin's recovery transfer with reason and evidence. Removal revokes the person's API tokens for that company
+  and clears their ERP and Maintenance roles, flag or not. Never switch the flag on without the owner's approval.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is

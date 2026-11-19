@@ -55,10 +55,21 @@ company, and the company registry's drift. Counts only, never names or content.
 
 `test-node/company-queries.test.ts` reads the schema for every table with a `company_id` column (not the CRM's, where
 `company_id` is a CRM company) and scans the server code: every SQL statement on such a table must name `company_id`.
-The 110 statements that were there when the check began are listed in
-`test-node/fixtures/company-queries-baseline.json`; they have not each been reviewed. Many are lookups by id after the
-record was found within the company, or build their conditions in code. A new statement without `company_id` fails
-the test, and a fixed one must be taken off the list, so the list only shrinks.
+The statements that were there when the check began were scoped by their company on 19 Nov 2026 (owner's request),
+and the list of unscoped ones (`statements` in `test-node/fixtures/company-queries-baseline.json`) is empty:
+
+- a statement that found its row within the company also names it when it changes or reads it again
+  (`WHERE company_id = ? AND id = ?`, with the company already known);
+- a list built in code writes its company condition in the statement itself: `WHERE x.company_id = ?${andAll(where)}`
+  (the SQL it produces is unchanged);
+- a row built from an object is inserted through `insertCompanyRow`, which refuses a row without its company;
+- a shared SELECT fragment (`const SO_SELECT = ...`) counts as scoped only when every statement using it names
+  `company_id`.
+
+A new statement without `company_id` fails the test. `platformWide` lists the statements that must read across
+companies, each with its reason: the platform console's totals, the billing sweep and Stripe webhook, the check that a
+tool belongs to no company yet, a public link found by its token, the malware scanner's queue and platform
+jurisdiction packs.
 
 ## Audit fixes in R4
 

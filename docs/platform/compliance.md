@@ -90,6 +90,4 @@ during the grace period (access back, the deadline extended, the warning cleared
 
 ## Not built yet
 
-- Stronger password hashing (S7): PBKDF2 stays at 100,000 iterations, the most Cloudflare Workers allow, so the database
-  stays portable.
 - Reminder and notice texts are in English only.
