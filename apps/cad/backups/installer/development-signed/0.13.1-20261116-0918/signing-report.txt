@@ -1,0 +1,26 @@
+﻿BIZOMAT CAD Automation for SOLIDWORKS: signing report
+Result: all signatures verified
+Made: 2026-11-15T22:18:01Z
+Version: 0.13.1   Commit: 65450938c4cb01b44200d9e72b3019ac1b802f71 (with local changes)
+MSI: BIZOMAT-CAD-Automation-0.13.1-x64-DEV.msi
+MSI SHA-256: cc8f04ecb1ee20fdcc96261ea100ef48fa03850db454f29908b032aa10c7d1a2
+Certificate: CN=BIZOMAT Development, thumbprint CB6DBE7431F93403751B1BFE72B6C514D5E23F69, valid 2026-11-16 to 2028-11-16, self-signed
+SignTool: C:\Program Files (x86)\Windows Kits\10\bin\10.0.28000.0\x64\signtool.exe 4.00 (WinBuild.160101.0800)
+Digest: SHA-256   Timestamp: http://timestamp.digicert.com (RFC 3161, sha256)
+MSI contents: checked: the files in the MSI are the signed ones
+
+Files:
+  ok    package\OpenSketch.Sw.dll (before packaging)  sha256 facf31ff8a413a09f4645101c6370a70187c6fc48f63455901f54de2f3bc2621, Valid, timestamped True
+  ok    package\KEVOS.Companion.exe (before packaging)  sha256 87dfde225e94d145384e08045efc9f2320fc06be22f41e73e9c0633d870ce043, Valid, timestamped True
+  ok    package\OpenSketchSW.exe (before packaging)  sha256 5b9ad42c1d7f24fd87c71aa9ec3c319556fd8750c03bfd8b297ff5faf31e5499, Valid, timestamped True
+  ok    BIZOMAT-CAD-Automation-0.13.1-x64-DEV.msi  sha256 cc8f04ecb1ee20fdcc96261ea100ef48fa03850db454f29908b032aa10c7d1a2, Valid, timestamped True
+  ok    BIZOMAT-CAD-Automation-0.13.1-x64-DEV.msi > OpenSketch.Sw.dll  sha256 facf31ff8a413a09f4645101c6370a70187c6fc48f63455901f54de2f3bc2621, Valid, timestamped True
+  ok    BIZOMAT-CAD-Automation-0.13.1-x64-DEV.msi > KEVOS.Companion.exe  sha256 87dfde225e94d145384e08045efc9f2320fc06be22f41e73e9c0633d870ce043, Valid, timestamped True
+  ok    BIZOMAT-CAD-Automation-0.13.1-x64-DEV.msi > OpenSketchSW.exe  sha256 5b9ad42c1d7f24fd87c71aa9ec3c319556fd8750c03bfd8b297ff5faf31e5499, Valid, timestamped True
+
+Checksums:
+  ok    BIZOMAT-CAD-Automation-0.13.1-x64-DEV.msi
+  ok    BIZOMAT-CAD-Automation-x64.msi
+  ok    CADOS-for-SOLIDWORKS-x64.msi
+
+Self-signed development certificate: verified on this computer because it trusts the certificate. Other computers do not trust it.

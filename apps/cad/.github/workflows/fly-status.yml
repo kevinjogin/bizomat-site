@@ -1,6 +1,9 @@
 # Reads the Fly app's state, so it can be checked from GitHub (Actions > Fly status > Run workflow): the app, its
-# machines, volumes, secret names (never values), releases, recent logs and what /healthz answers.
-# Changes nothing. Needs the repository secret FLY_CADOS_TOKEN (Fly: the app > Tokens > a deploy token).
+# machines, volumes, secret names (never values), releases, recent logs, what /healthz answers and, last, whether a
+# repository is connected to the app in Fly as its deployment source (.github/scripts/fly-deploy-source.sh). The run
+# fails when Fly reports one, or when that cannot be read: Fly would then build and deploy pushes itself, around
+# deploy.yml (disconnected by the owner on 16 Nov 2026). Changes nothing, disconnects nothing and deploys nothing.
+# Needs the repository secret FLY_CADOS_TOKEN (Fly: the app > Tokens > a deploy token).
 name: Fly status
 
 on:
@@ -26,6 +29,10 @@ jobs:
             exit 1
           fi
 
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          persist-credentials: false
+
       - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
 
       - name: App, machines, volumes, secrets, releases
@@ -41,6 +48,15 @@ jobs:
           done
           true
 
+      # Where "Download for SOLIDWORKS" (/download/solidworks) sends people: an installer the operator put on the volume,
+      # else the published release record's msi_url (opensketch/server.py, installer_url). Names, sizes and the record
+      # only: it holds a version, an address and a checksum, nothing secret.
+      - name: Installer and release record on the volume (read only)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
+        run: |
+          flyctl ssh console --app "$APP" -C "sh -c 'echo === /data/downloads; ls -la /data/downloads 2>&1; sha256sum /data/downloads/*.msi 2>&1; echo === /data/bridge-release.json; head -c 2000 /data/bridge-release.json 2>&1; echo; echo === OPENSKETCH_INSTALLER_URL; printenv OPENSKETCH_INSTALLER_URL || echo not set'" || true
+
       - name: Recent logs
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
@@ -53,3 +69,10 @@ jobs:
             curl -sS --max-time 60 -o /tmp/body -w "HTTP %{http_code} in %{time_total}s\n" "https://$APP.fly.dev$path" || true
             head -c 600 /tmp/body 2>/dev/null; echo
           done
+
+      # Last, so a connected repository fails the run after everything above has been read. One read-only query; the
+      # token reaches curl on standard input; only plain fields are printed (never the raw answer).
+      - name: Is a repository connected to cados in Fly? (read only; fails if one is)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
+        run: bash .github/scripts/fly-deploy-source.sh

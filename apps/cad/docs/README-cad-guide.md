@@ -108,9 +108,13 @@ The image also builds the add-in, so the home page can offer it for download.
 
 ### Fly.io
 
-`fly.toml` and `.github/workflows/deploy.yml` deploy it on every push to `main` once the tests pass. Set the
-repository secret `FLY_API_TOKEN` (optionally `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` for Sign in with Google), and the repository variable `FLY_APP` to your app's name. For your
-own domain, add a certificate in the Fly dashboard and set the variable `PUBLIC_URL`.
+`fly.toml` and `.github/workflows/deploy.yml` deploy it from GitHub Actions, the single deployment authority: on a
+push to `main` that changes the image's files, the tests and a smoke test of the built image pass, then that image is
+deployed and checked. Never connect a GitHub repository to the app in Fly's dashboard (Fly would then build and deploy
+pushes itself, untested); production's was disconnected on 16 Nov 2026, and `fly-status.yml` fails if one is connected
+again. The workflow deploys the app `cados` (fixed in the workflow) with the repository secret `FLY_CADOS_TOKEN`, a
+deploy token for that app (optionally `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` for Sign in with Google); its
+public address is set in the workflow and `fly.toml`. The top-level README.md, section 9, has the steps.
 
 ### Settings
 

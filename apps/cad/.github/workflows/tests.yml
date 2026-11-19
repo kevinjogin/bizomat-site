@@ -7,8 +7,9 @@
 name: Tests
 
 on:
+  # Every pull request, docs-only ones included: the ruleset on main (.github/rulesets/main.json) requires these checks,
+  # and a required check that never runs would block the merge. Actions minutes are free for this public repository.
   pull_request:
-    paths-ignore: ["docs/**", "*.md"]
   push:
     branches-ignore: [main]
     paths-ignore: ["docs/**", "*.md"]

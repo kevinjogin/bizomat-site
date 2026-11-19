@@ -1,7 +1,7 @@
 {
   "repository": "kevinjogin/bizomat-cad",
-  "commit": "17fc4625d8b5dda3e8f883333c2bcbee85edc8f4",
-  "tree": "8a5aaa77fa511c7cfa6cfceda8a509ef5f9189ec",
-  "subject": "Companion: post pause and resume at once, not after the held long poll (#7) [skip ci]",
+  "commit": "e62dce20263490d2236b70e3292f0da398a1c002",
+  "tree": "4e31ad0d89d979920b112dd5c2a11f70efead287",
+  "subject": "Merge pull request #18 from kevinjogin/claude/jolly-cray-b85yew",
   "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
 }

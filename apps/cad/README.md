@@ -222,11 +222,12 @@ On Windows: `installer-test.yml` builds the MSI, signs it with a throwaway certi
 
 ## 9. Fly.io deployment
 
-**Production is the Fly app `cados`, one Machine, deployed from `main` with `fly.toml`.** Since 9 Nov 2026 (the
-owner's choice) **every merge to `main` deploys automatically**, after the tests and the preflight pass, unless the
-change only touches `docs/`, root `*.md` files or `backups/`. Keep `main` releasable. To merge without deploying, put
-`[skip ci]` in the merge commit's message (for example `gh pr merge <n> --merge --subject "... [skip ci]"`). No other
-branch, tag or schedule deploys.
+**Production is the Fly app `cados`, one Machine, deployed from `main` by GitHub Actions only** (`deploy.yml`; the
+owner's decision of 16 Nov 2026). A merge to `main` that changes what the image is built from (`Dockerfile`,
+`.dockerignore`, `requirements.txt`, `opensketch/`, `solidworks/` but not its tests) or `fly.toml` deploys, once the
+tests and the image's smoke test pass. Docs, workflows, scripts, tests, the installer and backups reach `main` without
+restarting production. Keep `main` releasable. A merge commit whose message contains `[skip ci]` is not deployed. No
+other branch, tag or schedule deploys, and Fly never builds or deploys anything by itself.
 
 **One-time setup**
 
@@ -234,31 +235,54 @@ branch, tag or schedule deploys.
    repository secret `FLY_CADOS_TOKEN`.
 2. Settings > Actions > General: allow Actions (they were turned off for the move, so that copying the branches
    started no workflow).
-3. **One deploy source.** The `cados` app has no GitHub repository attached in Fly (Fly dashboard > `cados` >
-   Settings shows "Attach existing repository", checked 9 Nov 2026; it used to build every push to
-   `jogkev-creator/CADOS` `main`). Keep it that way: never attach a repository there, because deploys go through the
-   workflow below, with its preflight.
+3. **One deploy source.** No GitHub repository may be connected to the `cados` app in Fly (Fly dashboard > `cados` >
+   Settings). One was on 15 and 16 Nov 2026: Fly then built and deployed every push to `main` itself, untested, as
+   version `dev`. **The owner disconnected it on 16 Nov 2026**, and Fly's API confirmed it before and after the merge
+   of pull request #13 (`hasDeploymentSource: false`, `deploymentSource: null`; that merge made no release). GitHub
+   Actions is now the single deployment authority: never connect one again. `fly-status.yml` checks this on every run
+   and fails when Fly reports a deployment source; the deploy workflow warns when production reports `dev` and reports
+   any release it did not make.
 
-**Deploy**: automatically on a merge to `main`, or by hand: Actions > **Deploy to Fly.io (cados)** > Run workflow on
-`main`, `confirm` = `DEPLOY` (to redeploy, or to deploy a docs-only change). Either way it:
+**Deploy**: automatically on such a merge, or by hand: Actions > **Deploy to Fly.io (cados)** > Run workflow on
+`main`, `action` = `deploy`, `confirm` = `DEPLOY` (to redeploy, or after a change the paths leave out). It:
 
-1. runs the tests (`tests.yml`); only a deploy by hand can skip them (`skip_tests`);
+1. runs the tests (`tests.yml`) and, beside them, **builds the image once** on the runner (`OPENSKETCH_VERSION` = the
+   commit's first 7 characters), **smoke-tests it as a container** (`.github/scripts/image-smoke.sh`: the version, MCP
+   refusing a request without a token, the OAuth metadata, the product page, the installer download behind sign-in, an
+   old host's redirect, the add-in package) and pushes it to `registry.fly.io/cados:sha-<commit>`. Only a deploy by
+   hand can skip the tests (`skip_tests`); the smoke test always runs;
 2. runs the **preflight** (`.github/scripts/fly-preflight.py`): reads the live Machine and compares it with
    `fly.toml`. It stops, deploying nothing, when the deploy would add or remove a Machine or change its size, memory or
    region. Only a deploy by hand can let a deliberate change through (`allow_machine_change` = `YES`);
-3. passes the optional secrets to Fly;
-4. deploys: `flyctl deploy --app cados --config fly.toml --remote-only --ha=false --build-arg
-   OPENSKETCH_VERSION=<commit> --env OPENSKETCH_PUBLIC_URL=https://bizomat.ai/cad` (the one Machine is replaced in
-   place; CAD MCP is offline for about 15-90 s; add-ins and Companions reconnect by themselves);
-5. checks that `https://cados.fly.dev/healthz` reports the new version within 3 minutes.
+3. records the image the Machine runs now and passes the optional secrets to Fly;
+4. deploys **that exact image**, without building: `flyctl deploy --app cados --config fly.toml --image
+   registry.fly.io/cados:sha-<commit> --ha=false` (the one Machine is updated in place with its volume; CAD MCP is
+   offline for about 15 s; add-ins and Companions reconnect by themselves);
+5. **core checks** (`.github/scripts/cados-checks.sh core`): `https://cados.fly.dev/healthz` reports the commit within 3
+   minutes, the Machine runs the pushed image digest, MCP answers 401 with a Bearer challenge, the OAuth metadata
+   answers. If one fails, it **deploys the recorded image again** (automatic rollback) and the run fails;
+6. checks through bizomat.ai (the app's page, the installer download behind sign-in, the OAuth metadata of `/cad/mcp`)
+   and Sign in with BIZOMAT; a failure there fails the run without a rollback (the website may be the cause);
+7. reports any release it did not make (Fly building by itself).
+
+One deploy at a time (concurrency `deploy-cados`): a running deploy always finishes, and of the runs waiting behind it
+only the newest is kept. A re-run of a commit that is already live deploys nothing. Two more modes by hand:
+`action` = `rollback` with `image` = `sha-<commit>` (or a `deployment-<id>` from `flyctl releases -a cados --image`)
+deploys an image already in the registry, no build; `action` = `build-only`, on any branch, builds, smoke-tests and
+pushes `check-<commit>-<run>` and deploys nothing. The laptop's `bizomat.ps1 deploy cad` starts this workflow with the
+GitHub CLI; it never deploys from the laptop.
 
 **`fly.toml` matches production** (9 Nov 2026): the preflight passes for it, so a deploy ships new code onto the same
 Machine in `ams`. A change to the Machine (size, memory or region) is a decision of its own: change `fly.toml` in a
 pull request, then deploy with `allow_machine_change` = `YES`. (Each CAD worker process uses about 400 MB; with less
 than 2 GB set `OPENSKETCH_CAD_WORKERS = "0"`.)
 
-`fly-status.yml` (by hand) prints the Machines, volumes, secret names, releases, logs and `/healthz` and changes
-nothing. `domain.yml` (by hand) gives the app an extra host on a Cloudflare domain. Neither touches `bizomat`.
+`fly-status.yml` (by hand) prints the Machines, volumes, secret names, releases, logs and `/healthz`, then checks
+that no repository is connected to `cados` in Fly (`.github/scripts/fly-deploy-source.sh`: one read-only query to
+Fly's API with the deploy token, which reaches curl on standard input; only plain fields are printed). It passes with
+no deployment source, fails with an error naming what is connected, and fails without claiming anything when Fly's
+answer cannot be read. It changes, disconnects and deploys nothing. `domain.yml` (by hand) gives the app an extra host
+on a Cloudflare domain. Neither touches `bizomat`.
 
 ## 10. The add-in, the installer and releases
 
@@ -291,23 +315,41 @@ nothing. `domain.yml` (by hand) gives the app an extra host on a Cloudflare doma
 | `tests.yml` Tests | pull request, push to a branch other than `main`, by hand, called by the deploy | `pytest` (main and slow), `npm test`, the Cloudflare Worker's check |
 | `solidworks.yml` SOLIDWORKS add-in | push of `solidworks/`, `installer/` or itself (any branch), tags, pull request, by hand | Add-in build and tests; the MSI on Windows; releases on `main` and on tags |
 | `installer-test.yml` Installer test | pull request and push (not `main`) touching the installer, by hand | Builds, test-signs, installs and removes the MSI on Windows |
-| `deploy.yml` Deploy to Fly.io (cados) | push to `main` (not docs-only), by hand (`DEPLOY`) | Tests, preflight, deploy to `cados` (section 9) |
-| `fly-status.yml` | by hand | Read-only status of `cados` |
+| `deploy.yml` Deploy to Fly.io (cados) | push to `main` changing the image's files or `fly.toml`; by hand (deploy, rollback, build-only) | Tests and one image build with a smoke test, then preflight, deploy of that image, checks and automatic rollback (section 9) |
+| `fly-status.yml` Fly status | by hand | Read-only status of `cados`; fails if a repository is connected to it in Fly |
 | `domain.yml` | by hand | An extra host for `cados` on a Cloudflare domain |
 | `live-tls.yml` Live TLS | daily 07:41 Sydney, by hand | Checks the certificates of the public addresses (read-only) |
+
+**Ruleset for main** (`.github/rulesets/main.json`, kept in step with `tests.yml` by `tests/test_ruleset.py`): a
+pull request is required, with the four `tests.yml` checks passing (pytest main and worker processes, npm test, the
+Cloudflare Worker; reported by GitHub Actions only); force pushes and deleting `main` are blocked; nobody bypasses it.
+No approval is required, because GitHub does not let an account approve its own pull request. `tests.yml` runs on every
+pull request, docs-only ones included, so the required checks always report. The owner applies it (it needs admin
+access) from a checkout of `main`:
+`gh api -X POST repos/kevinjogin/bizomat-cad/rulesets --input .github/rulesets/main.json` (or Settings > Rules >
+Rulesets > New ruleset > Import a ruleset, with the same file). To change it later: `gh api -X PUT
+repos/kevinjogin/bizomat-cad/rulesets/<id> --input .github/rulesets/main.json` (`gh api
+repos/kevinjogin/bizomat-cad/rulesets` lists the id). To check it: `gh api repos/kevinjogin/bizomat-cad/rules/branches/main
+--jq '.[].type'` lists `deletion`, `non_fast_forward`, `pull_request` and `required_status_checks`.
 
 Windows jobs count double against GitHub Free's monthly minutes for private repositories. When the minutes run out
 every job fails at once with a billing message (seen on 7-8 Nov 2026).
 
 ## 12. Recovery and maintenance
 
-- **A bad release:** `flyctl releases -a cados --image`, then `flyctl deploy -a cados --image <the previous image>
-  --ha=false`.
+- **A bad release:** a deploy whose core checks fail rolls itself back. To go back by hand: Actions > Deploy to Fly.io
+  (cados) > Run workflow, `action` = `rollback`, `image` = `sha-<the earlier commit>` (or a `deployment-<id>` from
+  `flyctl releases -a cados --image`), `confirm` = `DEPLOY`. From a computer, in an emergency: `flyctl deploy -a cados
+  --image registry.fly.io/cados:<that tag> --ha=false`.
 - **Data:** the volume `opensketch_data` holds accounts, OAuth grants, the bridge signing key and `bridge.sqlite`.
   Take a snapshot before risky work (Fly dashboard > `cados` > Volumes > Snapshot). To restore, make a new volume from
   a snapshot and move the Machine onto it; never delete the old volume until the restored one is checked. Losing the
   bridge signing key means every computer must pair again.
 - **Logs and state:** `flyctl status -a cados`, `flyctl logs -a cados`, or Actions > `fly-status.yml`.
+- **Fly deploying by itself:** when `fly-status.yml` reports a deployment source, or a deploy reports a release it did
+  not make (or production reports version `dev`), disconnect the repository by hand: Fly dashboard > `cados` >
+  Settings. Nothing in this repository disconnects it. Then run `fly-status.yml` again: it passes once Fly reports
+  `hasDeploymentSource: false` and `deploymentSource: null`.
 - **Owner password:** there is no reset page. The owner resets other people on Admin, and their own password with
   `python -m opensketch --reset-password EMAIL` on the server (`fly ssh console -a cados`).
 - **A stuck server:** the supervisor restarts it after 120 s without a health answer. A Machine restart:

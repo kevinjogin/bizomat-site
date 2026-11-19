@@ -8,7 +8,7 @@
     .\bizomat.ps1 setup            clone CADOS, gocore-website and PMO next to this file, or bring them up to date
     .\bizomat.ps1 status           each folder's state, GitHub's checks and what is live
     .\bizomat.ps1 deploy website   the BIZOMAT website: Fly app bizomat (the website and the router behind bizomat.ai)
-    .\bizomat.ps1 deploy cad       CAD Automation: Fly app cados (bizomat.ai/cad)
+    .\bizomat.ps1 deploy cad       CAD Automation: starts GitHub Actions' deploy of cados (bizomat.ai/cad); never from here
     .\bizomat.ps1 deploy tasks     Project Management: Cloudflare Worker workos-platform-preview (work.kevos.com)
     .\bizomat.ps1 secrets website  the website's Workers AI access on Fly (the assistant and AI search): asks for
                                    the Cloudflare account ID and token, checks them, saves them on Fly
@@ -241,7 +241,8 @@ function Invoke-Setup {
     Write-Title "Setting up $Root"
     Assert-Tool 'git' 'Install Git for Windows from https://git-scm.com/download/win, then open a new PowerShell window.'
     Assert-Node
-    if (-not (Test-Tool 'fly')) { Write-Host '  note  flyctl is not installed (needed for: deploy cad). Install: iwr https://fly.io/install.ps1 -useb | iex' -ForegroundColor Yellow }
+    if (-not (Test-Tool 'fly')) { Write-Host '  note  flyctl is not installed (needed for: deploy website). Install: iwr https://fly.io/install.ps1 -useb | iex' -ForegroundColor Yellow }
+    if (-not (Test-Tool 'gh')) { Write-Host '  note  the GitHub CLI is not installed (deploy cad starts GitHub Actions with it). Install: winget install --id GitHub.cli -e, then gh auth login' -ForegroundColor Yellow }
     foreach ($r in $Repos) {
         $dir = Join-Path $Root $r
         if (Test-Path -LiteralPath (Join-Path $dir '.git')) {
@@ -361,31 +362,31 @@ function Deploy-Website {
 }
 
 function Deploy-Cad {
-    Write-Title 'CAD Automation: Fly app cados (bizomat.ai/cad)'
-    Assert-Tool 'fly' 'Install flyctl: iwr https://fly.io/install.ps1 -useb | iex  then: fly auth login'
-    $c = Get-DeployCommit 'CADOS'
-    Show-Commit $c
-    $checks = Get-Checks 'CADOS' $c.Commit
-    Write-Host "GitHub's checks on $($c.Short): $checks"
-    if ($checks -ne 'passed' -and -not $SkipChecks) {
-        Stop-Here "CAD Automation's tests run on GitHub (they need the CAD libraries and SOLIDWORKS stand-ins). Deploy once they pass."
+    # Since 16 Nov 2026 production CAD is deployed only by GitHub Actions (deploy.yml in kevinjogin/bizomat-cad): it
+    # tests main, builds one image, smoke-tests it, deploys that exact image, checks it, and rolls back by itself when a
+    # core check fails. This command starts that workflow and follows it; it never deploys from this computer.
+    Write-Title 'CAD Automation: Fly app cados (bizomat.ai/cad), through GitHub Actions'
+    $repo = 'kevinjogin/bizomat-cad'
+    $page = "https://github.com/$repo/actions/workflows/deploy.yml"
+    if (-not (Test-Tool 'gh')) {
+        Write-Host '  The GitHub CLI (gh) is not installed, so start the deploy on GitHub:' -ForegroundColor Yellow
+        Write-Host "    $page"
+        Write-Host '    Run workflow > branch main > action: deploy > confirm: DEPLOY > Run workflow'
+        Write-Host '  Or install it (winget install --id GitHub.cli -e), sign in (gh auth login) and run this again.'
+        if (-not $DryRun) { Start-Process $page }
+        return
     }
-    if (-not (Confirm-Deploy 'CAD Automation (bizomat.ai/cad)')) { return }
-    # The same command GitHub's deploy workflow uses: built on Fly's machines, one Machine, the commit as its version.
-    Invoke-Step 'fly' @('deploy', '--app', 'cados', '--remote-only', '--ha=false', '--build-arg', "OPENSKETCH_VERSION=$($c.Short)", '--env', 'OPENSKETCH_PUBLIC_URL=https://bizomat.ai/cad') $c.Dir
-    Write-Title 'Live checks'
-    $want = $c.Short
-    [void](Wait-Until { (Get-Json 'https://cados.fly.dev/healthz').version -eq $want } 180)
-    $ok = Invoke-Checks @(
-        @{ What = "the CAD app runs $want (cados.fly.dev/healthz)"; Test = { (Get-Json 'https://cados.fly.dev/healthz').version -eq $want } },
-        @{ What = 'bizomat.ai/cad/ answers'; Test = { (Get-Code 'https://bizomat.ai/cad/') -eq 200 } },
-        @{ What = 'the old address sends pages to bizomat.ai/cad (cados.kevos.com/docs: 301)'; Test = { (Get-Code 'https://cados.kevos.com/docs') -eq 301 } },
-        @{ What = 'connectors made with cados.kevos.com keep their address'; Test = { (Get-Json 'https://cados.kevos.com/.well-known/oauth-protected-resource/mcp').resource -eq 'https://cados.kevos.com/mcp' } }
-    )
-    $result = if ($ok) { 'ok' } else { 'deployed; live checks failed' }
-    Write-DeployLog 'cad' $c $result
-    if (-not $ok) { Stop-Here "A live check failed. Logs: fly logs -a cados. To go back: fly releases -a cados --image, then fly deploy -a cados --image <the previous image>." }
-    Write-Host 'Done.' -ForegroundColor Green
+    $checks = Get-Output 'gh' @('run', 'list', '--repo', $repo, '--workflow', 'deploy.yml', '--limit', '3', '--json', 'status,conclusion,displayTitle,headSha,event')
+    if ($checks) { Write-Host "  The last deploy runs: $checks" -ForegroundColor DarkGray }
+    if (-not (Confirm-Deploy 'CAD Automation (bizomat.ai/cad) from main, through GitHub Actions')) { return }
+    Invoke-Step 'gh' @('workflow', 'run', 'deploy.yml', '--repo', $repo, '--ref', 'main', '-f', 'action=deploy', '-f', 'confirm=DEPLOY')
+    Start-Sleep -Seconds 8
+    $id = Get-Output 'gh' @('run', 'list', '--repo', $repo, '--workflow', 'deploy.yml', '--event', 'workflow_dispatch', '--limit', '1', '--json', 'databaseId', '--jq', '.[0].databaseId')
+    if (-not $id) { Write-Host "  Started. Follow it at $page"; return }
+    Write-Host "  Started: https://github.com/$repo/actions/runs/$("$id".Trim())"
+    # gh run watch exits non-zero when the run fails; Invoke-Step then stops with that message.
+    Invoke-Step 'gh' @('run', 'watch', "$id".Trim(), '--repo', $repo, '--exit-status')
+    Write-Host 'Done: GitHub Actions deployed and checked it (the run summary has the version and the image).' -ForegroundColor Green
 }
 
 function Deploy-Tasks {

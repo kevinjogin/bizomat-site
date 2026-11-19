@@ -1,0 +1,11 @@
+﻿{
+    "published_at":  "2026-11-15T22:19:34.935Z",
+    "version":  "0.13.1",
+    "msi_url":  "https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-0.13.1-x64-DEV.msi",
+    "sha256":  "sha256:cc8f04ecb1ee20fdcc96261ea100ef48fa03850db454f29908b032aa10c7d1a2",
+    "notes":  "BIZOMAT CAD Automation for SOLIDWORKS 0.13.1",
+    "signer_thumbprints":  [
+                               "CB6DBE7431F93403751B1BFE72B6C514D5E23F69"
+                           ],
+    "size":  1323008
+}

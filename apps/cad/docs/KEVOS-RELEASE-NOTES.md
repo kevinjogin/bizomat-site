@@ -1,5 +1,16 @@
 # BIZOMAT CAD Automation for SOLIDWORKS release notes (CADOS for SOLIDWORKS in 0.12, KEVOS Bridge up to 0.11)
 
+## 0.13.1 (BIZOMAT CAD Automation for SOLIDWORKS)
+
+- Pause and resume take effect at once. The Companion now tells CAD Automation as soon as you pause or resume it,
+  instead of after its next check-in, which could take up to 25 seconds. Before, the AI's commands could be refused as
+  paused for that long after you resumed.
+- Install it over 0.13.0 or any earlier version: it upgrades in place, and the computer stays paired with its settings
+  kept. CI installs 0.13.0, upgrades it to this version and checks both (`.github/scripts/test-upgrade.ps1`).
+- Download for SOLIDWORKS gives the development-signed build since 15 Nov 2026. Only BIZOMAT's development computer
+  trusts its certificate, so on other computers Windows shows an unknown publisher until the installer is signed with
+  a commercial certificate.
+
 ## 0.13.0 (BIZOMAT CAD Automation for SOLIDWORKS)
 
 - New names, in BIZOMAT's style: the add-in is **BIZOMAT CAD Automation** (Tools > Add-Ins, the **BIZOMAT** tab, menu

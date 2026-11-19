@@ -1,0 +1,167 @@
+# Puts one checked installer on the cados volume as /data/downloads/BIZOMAT-CAD-Automation-x64.msi: the file that
+# "Download for SOLIDWORKS" (bizomat.ai/cad/download/solidworks, signed in) serves and whose SHA-256
+# /download/solidworks.sha256 gives (opensketch/server.py local_installer, read from the file at each download).
+#
+# Run by hand (Actions > Installer on the CAD volume > Run workflow, confirm = PLACE). The installer is a backup
+# committed under backups/installer/ on a branch or tag of this repository. It is checked on the runner (SHA-256, MSI
+# product and version, the signing certificate's thumbprint, or that it carries no signature when the signer is
+# "unsigned"), fetched by the Machine from that exact commit, checked again there, and swapped in with one rename; the
+# file it replaces is kept beside it as previous-<time>-<sha>.msi. No deploy, no restart, no new Machine or volume.
+# First used on 15 Nov 2026 for the development-signed 0.13.1 (run 43770267108, from the branch this file was made on),
+# because flyctl on the owner's PC could not open an SSH tunnel (403). Needs the repository secret FLY_CADOS_TOKEN.
+name: Installer on the CAD volume
+
+on:
+  workflow_dispatch:
+    inputs:
+      source_ref:
+        description: Branch or tag holding the installer backup (e.g. installer-0.13.1-dev)
+        required: true
+      source_path:
+        description: Path of the .msi under backups/installer/
+        required: true
+      sha256:
+        description: The installer's SHA-256 (64 hex characters, from its signing report)
+        required: true
+      version:
+        description: Its ProductVersion (e.g. 0.13.1)
+        required: true
+      signer:
+        description: SHA-1 thumbprint of the signing certificate (40 hex characters), or "unsigned"
+        required: true
+      confirm:
+        description: Type PLACE to replace the installer people download
+        required: true
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: installer-volume
+  cancel-in-progress: false
+
+# The inputs reach the steps as environment variables only, never inside a script, and are checked first.
+env:
+  APP: cados
+  SOURCE_REF: ${{ inputs.source_ref }}
+  SOURCE_PATH: ${{ inputs.source_path }}
+  EXPECTED_SHA256: ${{ inputs.sha256 }}
+  EXPECTED_VERSION: ${{ inputs.version }}
+  EXPECTED_SIGNER: ${{ inputs.signer }}
+  CONFIRM: ${{ inputs.confirm }}
+
+jobs:
+  place:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check setup and inputs
+        env:
+          HAS_TOKEN: ${{ secrets.FLY_CADOS_TOKEN != '' }}
+        run: |
+          fail() { echo "::error::$1"; exit 1; }
+          [ "$HAS_TOKEN" = "true" ] || fail "Add the repository secret FLY_CADOS_TOKEN."
+          [ "$CONFIRM" = "PLACE" ] || fail "Type PLACE in confirm to replace the installer people download."
+          [[ "$SOURCE_REF" =~ ^[A-Za-z0-9][A-Za-z0-9._/-]{0,99}$ ]] || fail "source_ref is not a branch or tag name."
+          [[ "$SOURCE_PATH" =~ ^backups/installer/[A-Za-z0-9._/-]+\.msi$ && "$SOURCE_PATH" != *..* ]] || fail "source_path must be an .msi under backups/installer/."
+          [[ "$EXPECTED_SHA256" =~ ^[0-9a-f]{64}$ ]] || fail "sha256 must be 64 lower-case hexadecimal characters."
+          [[ "$EXPECTED_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || fail "version must look like 0.13.1."
+          [[ "$EXPECTED_SIGNER" =~ ^[0-9A-F]{40}$ || "$EXPECTED_SIGNER" = unsigned ]] || fail "signer must be a 40-character upper-case thumbprint, or unsigned."
+
+      - name: Is the installer on GitHub yet?
+        run: |
+          # Re-run this workflow once the branch is pushed: a re-run fetches SOURCE_REF afresh.
+          if ! git ls-remote --exit-code --heads "https://github.com/kevinjogin/bizomat-cad.git" "$SOURCE_REF" > /dev/null; then
+            echo "::error::The branch $SOURCE_REF is not on GitHub yet. Push it from the computer that signed the installer, then re-run this workflow."
+            exit 1
+          fi
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          path: tools
+
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          ref: ${{ env.SOURCE_REF }}
+          path: source
+
+      - name: Check the installer on the runner
+        run: |
+          f="source/$SOURCE_PATH"
+          [ -f "$f" ] || { echo "::error::$SOURCE_PATH is not on $SOURCE_REF"; exit 1; }
+          sum="$(sha256sum "$f" | cut -d' ' -f1)"
+          [ "$sum" = "$EXPECTED_SHA256" ] || { echo "::error::SHA-256 is $sum, not $EXPECTED_SHA256"; exit 1; }
+          sudo apt-get install -y -qq msitools osslsigncode > /dev/null
+          product="$(msiinfo export "$f" Property | awk -F'\t' '$1=="ProductName"{print $2}' | tr -d '\r')"
+          version="$(msiinfo export "$f" Property | awk -F'\t' '$1=="ProductVersion"{print $2}' | tr -d '\r')"
+          [ "$product" = "BIZOMAT CAD Automation for SOLIDWORKS" ] || { echo "::error::product is '$product'"; exit 1; }
+          [ "$version" = "$EXPECTED_VERSION" ] || { echo "::error::version is $version, not $EXPECTED_VERSION"; exit 1; }
+          if [ "$EXPECTED_SIGNER" = unsigned ]; then
+            if bash tools/.github/scripts/msi-signer.sh "$f" > /dev/null 2>&1; then echo "::error::the installer is signed, but signer says unsigned"; exit 1; fi
+            signed_by="no signature (unsigned, as asked)"
+          else
+            signers="$(bash tools/.github/scripts/msi-signer.sh "$f")"
+            echo "$signers"
+            grep -q "^$EXPECTED_SIGNER " <<<"$signers" || { echo "::error::not signed by $EXPECTED_SIGNER"; exit 1; }
+            signed_by="signed by \`$EXPECTED_SIGNER\` ($(grep "^$EXPECTED_SIGNER " <<<"$signers" | head -1 | sed 's/^[0-9A-F]* subject=//'))"
+          fi
+          commit="$(git -C source rev-parse HEAD)"
+          echo "COMMIT=$commit" >> "$GITHUB_ENV"
+          {
+            echo "### Installer checked on the runner"
+            echo "- $product $version, $(stat -c %s "$f") bytes, SHA-256 \`$sum\`"
+            echo "- $signed_by"
+            echo "- from \`$SOURCE_REF\` at \`$commit\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: superfly/flyctl-actions/setup-flyctl@ed8efb33836e8b2096c7fd3ba1c8afe303ebbff1 # v1.6
+
+      - name: Put it on the volume (checked again on the Machine)
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
+        run: |
+          url="https://raw.githubusercontent.com/kevinjogin/bizomat-cad/$COMMIT/$SOURCE_PATH"
+          # The script runs on the Machine; it is sent base64-encoded so no quoting reaches the remote shell.
+          cat > place.sh <<'SH'
+          set -eu
+          mkdir -p /data/downloads
+          cd /data/downloads
+          python3 - "@URL@" incoming.msi <<'PY'
+          import sys, httpx
+          url, out = sys.argv[1], sys.argv[2]
+          with httpx.stream("GET", url, follow_redirects=True, timeout=60) as r:
+              r.raise_for_status()
+              with open(out, "wb") as f:
+                  for chunk in r.iter_bytes():
+                      f.write(chunk)
+          PY
+          got="$(sha256sum incoming.msi | cut -d' ' -f1)"
+          if [ "$got" != "@SHA@" ]; then rm -f incoming.msi; echo "MISMATCH sha256=$got"; exit 1; fi
+          if [ -f BIZOMAT-CAD-Automation-x64.msi ]; then
+            old="$(sha256sum BIZOMAT-CAD-Automation-x64.msi | cut -d' ' -f1)"
+            if [ "$old" = "@SHA@" ]; then rm -f incoming.msi; echo "ALREADY sha256=$old"; ls -la; exit 0; fi
+            cp -p BIZOMAT-CAD-Automation-x64.msi "previous-$(date -u +%Y%m%dT%H%M%SZ)-$(printf %.12s "$old").msi"
+          fi
+          mv -f incoming.msi BIZOMAT-CAD-Automation-x64.msi
+          echo "PLACED sha256=$(sha256sum BIZOMAT-CAD-Automation-x64.msi | cut -d' ' -f1)"
+          ls -la
+          SH
+          sed -i -e "s|@URL@|$url|" -e "s|@SHA@|$EXPECTED_SHA256|g" place.sh
+          b64="$(base64 -w0 place.sh)"
+          flyctl ssh console --app "$APP" -C "sh -c 'echo $b64 | base64 -d > /tmp/place-installer.sh && sh /tmp/place-installer.sh'" | tee out.txt || true
+          grep -Eq "^(PLACED|ALREADY) sha256=$EXPECTED_SHA256" out.txt || { echo "::error::the Machine did not confirm the new installer"; exit 1; }
+
+      - name: Check what the volume now serves
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_CADOS_TOKEN }}
+        run: |
+          flyctl ssh console --app "$APP" -C "sha256sum /data/downloads/BIZOMAT-CAD-Automation-x64.msi" | tee now.txt
+          grep -q "^$EXPECTED_SHA256 " now.txt || { echo "::error::the volume does not hold the new installer"; exit 1; }
+          health="$(curl -fsS --max-time 20 "https://$APP.fly.dev/healthz")"
+          echo "healthz: $health"
+          {
+            echo "### On the volume"
+            echo "- /data/downloads/BIZOMAT-CAD-Automation-x64.msi: SHA-256 \`$EXPECTED_SHA256\` (served by Download for SOLIDWORKS, signed in)"
+            echo "- the server was not restarted: /healthz $health"
+          } >> "$GITHUB_STEP_SUMMARY"

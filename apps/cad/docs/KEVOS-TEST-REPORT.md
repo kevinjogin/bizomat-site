@@ -74,6 +74,20 @@ passed, 9 npm passed.
     files untouched.
 11. Signed build: publish `bridge-release.json`, check the update prompt and that an altered MSI is refused.
 
+### First run on a real SOLIDWORKS (15 Nov 2026, the owner's PC)
+
+SOLIDWORKS 2022 SP5 (30.5.0), Windows 10 Pro, add-in and Companion 0.13.1 (the CI build, installed over 0.13.0),
+driven remotely through the gateway and the Companion from an AI app. Test files only, in
+`Documents\OpenSketch\selftest`, deleted afterwards; the person's own open document was not touched.
+
+| Item | Result |
+|---|---|
+| 1 Install | Upgrade in place from 0.13.0: the Companion came back online, same device, still paired. Clean VM, pairing and sign-out not tested. |
+| 2 Add-in in SOLIDWORKS | Loaded and connected through the Companion (add-in 0.13.1). Untick and tick in Tools > Add-Ins: reported working by the owner. Tab, menu and task pane not checked remotely. |
+| 3 Self test, part, assembly, drawing | `sw_selftest` did not finish: the AI app ends a tool call after 60 s and the stage stops with it, after its first step (that step was right: 24,000 mm3). Done step by step instead, all as predicted: a part (sketch, extrude, hole: 39,497.345 mm3; fillets: 39,282.743 mm3), a batch rolled back after a failing step, a global variable, save, STEP export, an assembly (two mates, no interference), a drawing (A3, 2:1, 4 views, 18 dimensions) and its PDF. |
+| 4 Confirmation | A delete was not done without the person's approval (Deny or the 2-minute timeout; which one was not seen). Allow once not tested. |
+| 5 to 11 | Not tested, apart from pause and resume (reported working by the owner) and the add-in's reconnection in item 2. |
+
 ## 5. Security tests (automated)
 
 Forged command signature; command typed as a cancel; command for another computer; expired command; replayed command

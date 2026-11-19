@@ -46,10 +46,12 @@ VERSION = _commit()
 async def lifespan(_app):
     _warm_owner()  # CAD runs in worker processes, one per person (cadworker.py): start the owner's now
     _erp_status("start")  # reports to BIZOMAT ERP when its client secret is set (erpstatus.py), in its own thread
+    _evidence_scan("start")  # scans BIZOMAT ERP's verification documents with ClamAV (evidencescan.py), its own thread
     try:
         async with mcp_server.lifespan_context():
             yield
     finally:
+        _evidence_scan("stop")
         _erp_status("stop")
         cadworker.shutdown()
 
@@ -60,6 +62,14 @@ def _erp_status(what: str) -> None:
         erpstatus.start() if what == "start" else erpstatus.stop()
     except Exception as e:  # a report to the ERP is never a reason for the server not to run
         print(f"OpenSketch ERP status: could not {what} ({type(e).__name__})", flush=True)
+
+
+def _evidence_scan(what: str) -> None:
+    try:
+        from . import evidencescan
+        evidencescan.start() if what == "start" else evidencescan.stop()
+    except Exception as e:  # the scanner is never a reason for the server not to run
+        print(f"OpenSketch evidence scan: could not {what} ({type(e).__name__})", flush=True)
 
 
 def _warm_owner() -> None:
@@ -559,9 +569,9 @@ def api_admin_people(request: Request):
         devs = devicebridge.list_devices({"id": u["id"]})
         people.append(dict(u, computers=len(devs), online=sum(1 for d in devs if d["online"]),
                            apps=[g["name"] for g in mcpauth.grants_for(u["id"])]))
-    from . import erpstatus
+    from . import erpstatus, evidencescan
     return {"people": people, "invites": accounts.list_invites(), "settings": accounts.settings(), "min_password": accounts.MIN_PASSWORD,
-            "erp": erpstatus.status()}
+            "erp": erpstatus.status(), "evidence_scan": evidencescan.status()}
 
 
 
