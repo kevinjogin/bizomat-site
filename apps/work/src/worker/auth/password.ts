@@ -1,7 +1,32 @@
-// PBKDF2-SHA256 password hashing via WebCrypto (Workers cap: 100k iterations).
+// Password hashing. The Node server (production, on Fly) registers a stronger hasher at start-up: scrypt, memory-hard,
+// at OWASP's recommended cost (audit S7; src/node/password.ts). Everywhere else (Cloudflare Workers, which cap PBKDF2 at
+// 100,000 iterations, and the Workers test runtime) PBKDF2-SHA256 is used. A stored hash names its scheme, so both are
+// read, and a PBKDF2 hash is replaced with the stronger one when its owner next signs in (needsRehash).
 import { timingSafeEqual } from '../lib/util';
 
 const ITERATIONS = 100_000;
+
+export interface StrongHasher {
+  /** The scheme its hashes start with, e.g. "scrypt". */
+  scheme: string;
+  hash(password: string): Promise<string>;
+  verify(password: string, stored: string): Promise<boolean>;
+  /** Whether a hash of this scheme was made with weaker settings than today's. */
+  outdated(stored: string): boolean;
+}
+
+let strong: StrongHasher | null = null;
+/** The Node server registers its hasher here (src/node/runtime.ts). */
+export function setStrongHasher(h: StrongHasher | null) {
+  strong = h;
+}
+
+/** Whether a stored hash should be replaced at the next successful sign-in. */
+export function needsRehash(stored: string | null): boolean {
+  if (!stored || !strong) return false;
+  const scheme = stored.split('$')[0];
+  return scheme !== strong.scheme || strong.outdated(stored);
+}
 
 function b64(bytes: ArrayBuffer | Uint8Array): string {
   const u = bytes instanceof Uint8Array ? bytes : new Uint8Array(bytes);
@@ -25,6 +50,7 @@ async function derive(password: string, salt: Uint8Array<ArrayBuffer>, iteration
 }
 
 export async function hashPassword(password: string): Promise<string> {
+  if (strong) return strong.hash(password.normalize('NFKC'));
   const salt = new Uint8Array(16);
   crypto.getRandomValues(salt);
   const hash = await derive(password, salt, ITERATIONS);
@@ -34,9 +60,11 @@ export async function hashPassword(password: string): Promise<string> {
 export async function verifyPassword(password: string, stored: string | null): Promise<boolean> {
   if (!stored) {
     // Spend comparable time to avoid user-enumeration timing differences.
-    await derive(password, new Uint8Array(16), ITERATIONS);
+    if (strong) await strong.hash(password.normalize('NFKC'));
+    else await derive(password, new Uint8Array(16), ITERATIONS);
     return false;
   }
+  if (strong && stored.startsWith(`${strong.scheme}$`)) return strong.verify(password.normalize('NFKC'), stored);
   const [scheme, iter, salt, hash] = stored.split('$');
   if (scheme !== 'pbkdf2' || !iter || !salt || !hash) return false;
   const actual = await derive(password, unb64(salt), Number(iter));

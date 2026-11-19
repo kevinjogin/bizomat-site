@@ -5,7 +5,7 @@ import type { AppConfigDTO } from '../../shared/types';
 import { PRODUCT } from '../../shared/brand';
 import type { AppEnv } from '../env';
 import { HttpError, body, clientIp, newId, now, randomToken, sha256Hex } from '../lib/util';
-import { hashPassword, passwordProblems, verifyPassword } from '../auth/password';
+import { hashPassword, needsRehash, passwordProblems, verifyPassword } from '../auth/password';
 import { rateLimit, resetRateLimit } from '../auth/rate-limit';
 import { checkOrigin, createSession, destroySession, isSecureEnv, requireAuth, resolveAuth } from '../auth/session';
 // Inside the System (/system/tasks, ...) a provider returns to the tool's own address, the one registered with it.
@@ -173,6 +173,10 @@ authRoutes.post('/login', async (c) => {
     throw new HttpError(401, 'Invalid email or password');
   }
   await c.env.DB.prepare('UPDATE users SET failed_logins = 0, locked_until = NULL WHERE id = ?').bind(user.id).run();
+  // A hash from before the stronger hashing (audit S7) is replaced now that the password is known to be right.
+  if (needsRehash(user.password_hash ?? null)) {
+    await c.env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ? AND password_hash = ?').bind(await hashPassword(input.password), user.id, user.password_hash).run();
+  }
   await resetRateLimit(c.env.DB, `login:email:${input.email}`);
   // Only after the password is right, so these answers never reveal whether an account exists. Platform admins are
   // never refused here, so a policy change cannot lock the founder out.

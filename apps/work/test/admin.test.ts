@@ -125,7 +125,7 @@ describe('account recovery by the founder', () => {
     const row = await env.DB.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'admin.password_reset' AND target_id = ? AND actor_id = ?").bind(target.userId, f.userId).first<{ n: number }>();
     expect(row!.n).toBe(1);
     const hash = await env.DB.prepare('SELECT password_hash FROM users WHERE id = ?').bind(target.userId).first<{ password_hash: string }>();
-    expect(hash!.password_hash).toMatch(/^pbkdf2\$100000\$/);
+    expect(hash!.password_hash).toMatch(/^(pbkdf2\$100000|scrypt\$\d+\$8\$3)\$/);
   });
 });
 
@@ -241,7 +241,7 @@ describe('tracking', () => {
     const mine = loggedIn.sessions.find((s: any) => s.userId === u.userId);
     expect(mine.status).toBe('idle');
     expect(mine).not.toHaveProperty('ip');
-    expect(JSON.stringify(loggedIn)).not.toMatch(/token_hash|csrf|pbkdf2|password_hash/i);
+    expect(JSON.stringify(loggedIn)).not.toMatch(/token_hash|csrf|pbkdf2|scrypt\$|password_hash/i);
   });
 
   it('logout ends the session but keeps it as history through maintenance', async () => {
@@ -310,7 +310,7 @@ describe('dashboard accuracy', () => {
     expect(detail.projects[0].name).toBe('Counted board');
     expect(detail.sessions.length).toBeGreaterThanOrEqual(1);
     const text = JSON.stringify(detail);
-    expect(text).not.toMatch(/password_hash|token_hash|csrf_token|pbkdf2/);
+    expect(text).not.toMatch(/password_hash|token_hash|csrf_token|pbkdf2|scrypt\$/);
     // Viewing a user's details is audited.
     const aud = await env.DB.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'admin.user_viewed' AND target_id = ?").bind(u.userId).first<{ n: number }>();
     expect(aud!.n).toBe(1);
@@ -346,7 +346,7 @@ describe('exports and health', () => {
     const text = await res.text();
     expect(text.split('\r\n')[0]).toContain('email');
     expect(text).toContain(`'=HYPERLINK`);
-    expect(text).not.toMatch(/pbkdf2|token_hash/);
+    expect(text).not.toMatch(/pbkdf2|scrypt\$|token_hash/);
     const s = await f.req('GET', '/api/admin/export/summary.csv?range=7d');
     expect((await s.text()).split('\r\n')[0]).toBe('date_utc,registrations,daily_active_users,projects_created,tasks_created,tasks_completed,anonymous_page_views');
   });

@@ -17,7 +17,7 @@ describe('authentication', () => {
   it('stores passwords hashed, never in plain text', async () => {
     const c = await signup();
     const row = await env.DB.prepare('SELECT password_hash FROM users WHERE id = ?').bind(c.userId).first<{ password_hash: string }>();
-    expect(row!.password_hash).toMatch(/^pbkdf2\$100000\$/);
+    expect(row!.password_hash).toMatch(/^(pbkdf2\$100000|scrypt\$\d+\$8\$3)\$/);
     expect(row!.password_hash).not.toContain(PASSWORD);
     const sess = await env.DB.prepare('SELECT token_hash FROM sessions WHERE user_id = ?').bind(c.userId).first<{ token_hash: string }>();
     expect(c.cookie).not.toContain(sess!.token_hash);
