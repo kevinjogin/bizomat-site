@@ -182,6 +182,55 @@ function FlagCard({ f, founder, onChanged, run }: { f: Flag; founder: boolean; o
   );
 }
 
+interface Integrity {
+  checkedAt: number;
+  registry: { missing: number; mismatched: number; orphaned: number };
+  toolsOfDeletedCompanies: number;
+  tablesChecked: number;
+  unknownCompany: Record<string, number>;
+  skipped: string[];
+}
+
+/** The integrity check (R4): counts only, read only, run on request. */
+function IntegrityCard() {
+  const toast = useToast();
+  const [report, setReport] = useState<Integrity | null>(null);
+  const [busy, setBusy] = useState(false);
+  const check = () => {
+    setBusy(true);
+    get<Integrity>('/admin/platform/integrity')
+      .then(setReport)
+      .catch((err) => toast(errorMessage(err), 'error'))
+      .finally(() => setBusy(false));
+  };
+  const unknown = report ? Object.entries(report.unknownCompany) : [];
+  const drift = report ? report.registry.missing + report.registry.mismatched + report.registry.orphaned : 0;
+  return (
+    <Card title="Integrity check" subtitle="Records that point at a company that does not exist, tools of deleted companies, and the company registry against each company's own table. Counts only.">
+      <div className="row"><button className="btn" type="button" onClick={check} disabled={busy}>{busy ? 'Checking' : 'Run the check'}</button></div>
+      {report ? (
+        <div className="ac-stack">
+          <p className="small">
+            {report.tablesChecked} tables checked <When ts={report.checkedAt} />.{' '}
+            {drift === 0 && unknown.length === 0 && report.toolsOfDeletedCompanies === 0 ? 'Nothing out of place.' : 'Some records need a look.'}
+          </p>
+          <p className="small">
+            Company registry: {report.registry.missing} missing, {report.registry.mismatched} out of step, {report.registry.orphaned} without their company (the 15-minute run repairs these).
+            Tools still linked to a deleted company: {report.toolsOfDeletedCompanies}.
+          </p>
+          {unknown.length ? (
+            <TableWrap label="Records whose company does not exist">
+              <thead><tr><th>Table</th><th>Records</th></tr></thead>
+              <tbody>{unknown.map(([t, n]) => <tr key={t}><td><code>{t}</code></td><td>{n}</td></tr>)}</tbody>
+            </TableWrap>
+          ) : null}
+          {report.skipped.length ? <p className="muted small">Not read: {report.skipped.join(', ')}</p> : null}
+        </div>
+      ) : null}
+    </Card>
+  );
+}
+
 export default function Controls() {
   const q = useAdmin<FlagsResp>('/platform/flags', { retry: false });
   const rollout = useAdmin<{ companies: { company_id: string; company: string | null; stage: string; reason: string; updated_at: number; updated_by: string | null }[] }>('/platform/rollout', { retry: false });
@@ -239,6 +288,7 @@ export default function Controls() {
           {d.flags.filter(g.test).map((f) => <FlagCard key={f.key} f={f} founder={founder} onChanged={refresh} run={run} />)}
         </div>
       ))}
+      <IntegrityCard />
       <Card title="Kill switch" subtitle="Every enforcement flag back to its default (off, free, personal workspaces allowed), for everyone, at once.">
         <form className="ac-form ac-stack" onSubmit={pullKill}>
           <Field label="Why" htmlFor="kill-reason">

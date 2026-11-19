@@ -25,7 +25,7 @@ import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, body, newId, notFound, now, parseJson } from '../lib/util';
 import { docLineAmount } from '../fin/ledger';
-import { hasPerm as finHasPerm } from '../fin/access';
+import { hasPerm as finHasPerm, scopeSql as finScopeSql } from '../fin/access';
 import { assertRecord as crmAssertRecord, loadAccess as crmAccess, scopeSql as crmScopeSql, type OrgAccess } from '../crm/access';
 import { splitTax } from '../../shared/fin/tax';
 import { companyTools } from '../company/access';
@@ -428,13 +428,21 @@ salesRoutes.get('/c/:company/sales-order-options', async (c) => {
       continue;
     }
     const scope = crmScopeSql(ca, 'companies', 'co');
+    // Contacts follow the person's own rights in the CRM, as companies do (audit L3: a custom role limited to its own
+    // contacts saw every contact of a company here).
+    const contactScope = crmScopeSql(ca, 'contacts', 'ct');
     const rows = await db
       .prepare(`SELECT co.id, co.name, co.email, co.address, co.city, co.region, co.postcode, co.country FROM crm_companies co WHERE co.org_id = ? AND co.deleted_at IS NULL ${q ? 'AND lower(co.name) LIKE ?' : ''} AND ${scope.sql} ORDER BY co.name COLLATE NOCASE LIMIT 100`)
       .bind(o.id, ...(q ? [likeOf(q)] : []), ...scope.args)
       .all<any>();
     const companies = [];
     for (const r of rows.results) {
-      const contacts = (await db.prepare('SELECT id, first_name, last_name, email FROM crm_contacts WHERE org_id = ? AND company_id = ? AND deleted_at IS NULL ORDER BY first_name LIMIT 20').bind(o.id, r.id).all<any>()).results;
+      const contacts = (
+        await db
+          .prepare(`SELECT ct.id, ct.first_name, ct.last_name, ct.email FROM crm_contacts ct WHERE ct.org_id = ? AND ct.company_id = ? AND ct.deleted_at IS NULL AND ${contactScope.sql} ORDER BY ct.first_name LIMIT 20`)
+          .bind(o.id, r.id, ...contactScope.args)
+          .all<any>()
+      ).results;
       companies.push({
         id: r.id,
         name: r.name,
@@ -446,8 +454,14 @@ salesRoutes.get('/c/:company/sales-order-options', async (c) => {
     }
     crm.push({ orgId: o.id, name: o.name, access: true, companies });
   }
+  const finScope = fa ? finScopeSql(fa, 'contacts', 'fc') : { sql: '0', args: [] };
   const finContacts = fa && finHasPerm(fa, 'contacts', 'view')
-    ? (await db.prepare(`SELECT id, name, email, address FROM fin_contacts WHERE org_id = ? AND kind IN ('customer','both') AND archived_at IS NULL ${q ? 'AND lower(name) LIKE ?' : ''} ORDER BY name COLLATE NOCASE LIMIT 100`).bind(fin!.id, ...(q ? [likeOf(q)] : [])).all<any>()).results
+    ? (
+        await db
+          .prepare(`SELECT fc.id, fc.name, fc.email, fc.address FROM fin_contacts fc WHERE fc.org_id = ? AND fc.kind IN ('customer','both') AND fc.archived_at IS NULL ${q ? 'AND lower(fc.name) LIKE ?' : ''} AND ${finScope.sql} ORDER BY fc.name COLLATE NOCASE LIMIT 100`)
+          .bind(fin!.id, ...(q ? [likeOf(q)] : []), ...finScope.args)
+          .all<any>()
+      ).results
     : [];
   const options = await salesTaxOptions(db, fin?.id ?? null);
   const settings = await loadSettings(db, a.companyId);

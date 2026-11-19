@@ -48,6 +48,7 @@ import { adminBillingRoutes } from './billing/admin';
 import { platformRoutes } from './platform/routes';
 import { consoleMfaGate } from './platform/security';
 import { moduleGate } from './platform/module-gate';
+import { moduleSwitchGate, tokenScopeGate } from './platform/context';
 import { entitlementGate } from './billing/entitlements';
 
 export const CSP = [
@@ -185,6 +186,10 @@ export function createApp() {
   // Everything below requires authentication.
   const api = new Hono<AppEnv>();
   api.use('*', requireAuth);
+  // Company context (Stage 1, R4): an API token limited to one company stays in it, and every module's switch is
+  // enforced on the server (platform/context.ts).
+  api.use('*', tokenScopeGate);
+  api.use('*', moduleSwitchGate);
   // Billing: writes to a registered company's paid tools need an active subscription when enforcement is on (off by
   // default; src/worker/billing/entitlements.ts). Reads always pass.
   api.use('*', entitlementGate);

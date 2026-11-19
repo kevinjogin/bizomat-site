@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
 import { sanitizeDoc, docText } from '../src/worker/routes/documents';
 import { addMember, createBoard, signup } from './helpers';
@@ -141,5 +142,16 @@ describe('documents', () => {
     expect((await c.req('GET', att.url)).status).toBe(200);
     const stranger = await signup();
     expect((await stranger.req('GET', att.url)).status).toBe(404);
+  });
+
+  it('keeps the documents of a deleted workspace closed to its members (audit E1)', async () => {
+    const owner = await signup('Del Owner');
+    const member = await signup('Del Member');
+    await addMember(owner, member, 'member');
+    const d = await owner.json('POST', `/api/workspaces/${owner.workspaceId}/documents`, { title: 'Plan' });
+    expect((await member.req('GET', `/api/documents/${d.id}`)).status).toBe(200);
+    await env.DB.prepare('UPDATE workspaces SET deleted_at = ? WHERE id = ?').bind(Date.now(), owner.workspaceId).run();
+    expect((await member.req('GET', `/api/documents/${d.id}`)).status).toBe(404);
+    expect((await owner.req('PATCH', `/api/documents/${d.id}`, { title: 'Changed' })).status).toBe(404);
   });
 });

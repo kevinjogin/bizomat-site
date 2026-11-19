@@ -302,7 +302,7 @@ async function detail(db: D1Database, a: WhsAccess, id: string, today: string) {
     ...body2,
     revisions: revisions.results.map((x) => ({ id: x.id, revision: x.revision, status: x.status, statusLabel: WHS_KIND_LABEL(RA_STATUS, x.status), trigger: WHS_KIND_LABEL(REVIEW_TRIGGERS, x.review_trigger), reason: x.review_reason, approvedAt: x.approved_at, createdAt: x.created_at })),
     actions: await actionsOf(db, a, 'risk_assessment', r.id, today),
-    links: await linksOf(db, a.companyId, 'risk_assessment', r.id),
+    links: await linksOf(db, a, 'risk_assessment', r.id),
     files: await filesOf(db, a.companyId, 'risk_assessment', r.id),
     comments: await commentsOf(db, a.companyId, 'risk_assessment', r.id),
     history: await historyOf(db, a.companyId, 'risk_assessment', r.id),

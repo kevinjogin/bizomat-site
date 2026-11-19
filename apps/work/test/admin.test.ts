@@ -49,7 +49,8 @@ describe('admin authorization', () => {
 
   it('does not accept API tokens for admin access', async () => {
     const f = await makeFounder();
-    const tok = await f.json('POST', '/api/me/tokens', { name: 'ci' });
+    const own = (await f.json('GET', '/api/system/me')).companies.find((c: any) => c.kind === 'own');
+    const tok = await f.json('POST', '/api/me/tokens', { name: 'ci', companyId: own.id });
     const res = await raw('GET', '/api/admin/overview', { headers: { Authorization: `Bearer ${tok.token}` } });
     expect(res.status).toBe(404);
   });
@@ -152,13 +153,15 @@ describe('forced new password and security reset', () => {
     expect((await (await again.req('GET', '/api/auth/me')).json<any>()).user.passwordResetRequired).toBe(false);
   });
 
-  it('a flagged account can still sign out, and its personal API tokens are refused too', async () => {
+  it('a flagged account can still sign out, and its personal API tokens end (audit S5)', async () => {
     const f = await makeFounder();
     const target = await signup('Token Holder');
-    const tok = await (await target.req('POST', '/api/me/tokens', { name: 'script' })).json<any>();
+    const own = (await target.json('GET', '/api/system/me')).companies.find((c: any) => c.kind === 'own');
+    const tok = await (await target.req('POST', '/api/me/tokens', { name: 'script', companyId: own.id })).json<any>();
     expect((await f.req('POST', `/api/admin/users/${target.userId}/password`, { password: TEMP })).status).toBe(200);
-    const viaToken = await raw('GET', '/api/workspaces', { headers: { Authorization: `Bearer ${tok.token}` } });
-    expect(viaToken.status).toBe(403);
+    const viaToken = await raw('GET', `/api/workspaces/${target.workspaceId}`, { headers: { Authorization: `Bearer ${tok.token}` } });
+    expect(viaToken.status).toBe(401);
+    expect(await env.DB.prepare('SELECT revoked_reason FROM api_tokens WHERE id = ?').bind(tok.id).first<any>()).toEqual({ revoked_reason: 'password_reset' });
     const s = await login(target.email, TEMP);
     expect((await s.req('POST', '/api/auth/logout')).status).toBe(200);
   });
@@ -171,10 +174,17 @@ describe('forced new password and security reset', () => {
     expect((await f.req('POST', '/api/admin/admins', { email: admin.email })).status).toBe(201);
     expect((await admin.req('POST', '/api/admin/security-reset', { requirePasswordReset: true })).status).toBe(403);
     expect((await a.req('POST', '/api/admin/security-reset', {})).status).toBe(404);
+    const ownOf = async (c: Client) => (await c.json('GET', '/api/system/me')).companies.find((x: any) => x.kind === 'own').id;
+    const aToken = await a.json('POST', '/api/me/tokens', { name: 'a script', companyId: await ownOf(a) });
+    const fToken = await f.json('POST', '/api/me/tokens', { name: 'founder script', companyId: await ownOf(f) });
     const r = await f.req('POST', '/api/admin/security-reset', { requirePasswordReset: true });
     expect(r.status).toBe(200);
     const out = await r.json<any>();
     expect(out.sessionsEnded).toBeGreaterThanOrEqual(3);
+    // Every API token ends too, but the founder's own (audit S5).
+    expect(out.tokensRevoked).toBeGreaterThanOrEqual(1);
+    expect((await raw('GET', `/api/workspaces/${a.workspaceId}`, { headers: { Authorization: `Bearer ${aToken.token}` } })).status).toBe(401);
+    expect((await env.DB.prepare('SELECT revoked_at FROM api_tokens WHERE id = ?').bind(fToken.id).first<any>()).revoked_at).toBeNull();
     expect(out.accountsToChoosePassword).toBeGreaterThanOrEqual(3);
     expect((await a.req('GET', '/api/auth/me')).status).toBe(401);
     expect((await b.req('GET', '/api/auth/me')).status).toBe(401);

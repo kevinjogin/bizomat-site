@@ -453,7 +453,7 @@ describe('starting a subscription', () => {
     const member = await join(owner, co.id);
     await setSetting('audience', 'everyone');
     expect((await call(member, 'POST', `/api/billing/c/${co.id}/checkout`, { interval: 'month' })).status).toBe(403);
-    const token = await owner.json('POST', '/api/me/tokens', { name: 'billing test' });
+    const token = await owner.json('POST', '/api/me/tokens', { name: 'billing test', companyId: co.id });
     expect(token.token).toMatch(/^wos_/);
     const viaToken = await call(null, 'POST', `/api/billing/c/${co.id}/checkout`, { interval: 'month' }, {}, { Authorization: `Bearer ${token.token}` });
     expect(viaToken.status).toBe(403);

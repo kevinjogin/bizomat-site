@@ -206,7 +206,7 @@ hazardRoutes.get('/c/:company/hazards/:id', async (c) => {
     hazard: hazardDTO(h, m, a, today),
     matrix: full ? (m ?? (await currentMatrix(db, a.companyId, a.userId)).matrix) : null,
     actions,
-    links: full ? await linksOf(db, a.companyId, 'hazard', h.id) : [],
+    links: full ? await linksOf(db, a, 'hazard', h.id) : [],
     files: await filesOf(db, a.companyId, 'hazard', h.id),
     comments: full ? await commentsOf(db, a.companyId, 'hazard', h.id) : [],
     history: full ? await historyOf(db, a.companyId, 'hazard', h.id) : [],
@@ -415,5 +415,5 @@ hazardRoutes.post('/c/:company/links', async (c) => {
       eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'link.added', entityType: input.fromType, entityId: input.fromId, summary: `Linked to a ${input.toType.replace('_', ' ')}`, after: { type: input.toType, id: input.toId }, at: t }),
     ]);
   }
-  return c.json({ links: await linksOf(db, a.companyId, input.fromType, input.fromId) });
+  return c.json({ links: await linksOf(db, a, input.fromType, input.fromId) });
 });

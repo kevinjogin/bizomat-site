@@ -288,7 +288,7 @@ export async function startServer(config: NodeConfig, options: ServerOptions = {
           sockets.add(ws);
           ws.on('pong', () => alive.add(ws));
           ws.on('close', () => sockets.delete(ws));
-          runtime.hub.attach(ticket.room, ws);
+          runtime.hub.attach(ticket.room, ws, ticket.userId);
         });
         return;
       }

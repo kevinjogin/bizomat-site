@@ -345,6 +345,21 @@ describe('BIZOMAT WHS: the brief’s acceptance tests', () => {
     expect((await t.manager.req('GET', w(t.co, `/hazards/${ch.id}`))).status).toBe(200);
   });
 
+  it('a confidential record linked to an open one shows only to the people who may open it (audit L2)', async () => {
+    const t = await team('L2');
+    const conf = await t.worker.json('POST', w(t.co, '/incidents'), { kind: 'psychosocial', title: 'Repeated shouting by a team leader', occurredDate: day(0), confidential: true });
+    const open = await t.officer.json('POST', w(t.co, '/hazards'), { title: 'Noisy dispatch area', category: 'noise' });
+    const linked = await t.manager.json('POST', w(t.co, '/links'), { fromType: 'hazard', fromId: open.id, toType: 'incident', toId: conf.id });
+    expect(linked.links.map((l: any) => l.id)).toContain(conf.id);
+    for (const who of [t.officer, t.hsr, t.exec]) {
+      const hz = await who.json('GET', w(t.co, `/hazards/${open.id}`));
+      expect(hz.hazard?.links ?? hz.links ?? [], who.name).not.toContainEqual(expect.objectContaining({ id: conf.id }));
+      expect(JSON.stringify(hz), who.name).not.toContain('Repeated shouting');
+    }
+    const forManager = await t.manager.json('GET', w(t.co, `/hazards/${open.id}`));
+    expect(JSON.stringify(forManager)).toContain('Repeated shouting');
+  });
+
   it('Test 13: other companies get 404 for every WHS record and route, and the sites of a company are kept apart', async () => {
     const t = await team('T13');
     const other = await signup('T13 Outsider');

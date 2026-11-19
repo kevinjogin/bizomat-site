@@ -9,6 +9,7 @@ import { enqueueEmail, processOutbox } from '../services/email/outbox';
 import { emailConfig } from '../services/email/provider';
 import { emailEnv } from '../services/email/settings';
 import type { Env } from '../env';
+import { hazardScope, incidentScope, raScope, type WhsAccess } from './access';
 
 export { zDate, zText, zId, validDate, likeOf, searchText, todayFrom } from '../maintenance/util';
 
@@ -424,8 +425,13 @@ export function linkStmt(db: D1Database, companyId: string, a: [string, string],
   return db.prepare('INSERT OR IGNORE INTO whs_links (company_id, a_type, a_id, b_type, b_id, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(companyId, a[0], a[1], b[0], b[1], actorId, t);
 }
 
-/** The records linked to one record, both ways, with their numbers and titles (only records of the same company). */
-export async function linksOf(db: D1Database, companyId: string, type: string, id: string) {
+/**
+ * The records linked to one record, both ways, with their numbers and titles (only records of the same company). A
+ * linked hazard, incident or risk assessment the person may not open (a confidential one, for someone who does not read
+ * confidential records) is left out altogether: its number, title and status, and that it exists (audit L2).
+ */
+export async function linksOf(db: D1Database, a: WhsAccess, type: string, id: string) {
+  const companyId = a.companyId;
   const rows = await db
     .prepare(
       `SELECT b_type AS type, b_id AS id FROM whs_links WHERE company_id = ?1 AND a_type = ?2 AND a_id = ?3
@@ -435,18 +441,19 @@ export async function linksOf(db: D1Database, companyId: string, type: string, i
     .all<{ type: string; id: string }>();
   const out: { type: string; typeLabel: string; id: string; number: string; title: string; status: string }[] = [];
   for (const r of rows.results) {
+    const scoped = (sql: string, scope: { sql: string; args: unknown[] }) => ({ sql: `${sql} AND ${scope.sql}`, args: scope.args });
     const q =
       r.type === 'hazard'
-        ? 'SELECT number, title, status FROM whs_hazards WHERE company_id = ? AND id = ?'
+        ? scoped('SELECT number, title, status FROM whs_hazards x WHERE x.company_id = ? AND x.id = ?', hazardScope(a, 'x'))
         : r.type === 'incident'
-          ? 'SELECT number, title, status FROM whs_incidents WHERE company_id = ? AND id = ?'
+          ? scoped('SELECT number, title, status FROM whs_incidents x WHERE x.company_id = ? AND x.id = ?', incidentScope(a, 'x'))
           : r.type === 'risk_assessment'
-            ? "SELECT number || ' rev ' || revision AS number, title, status FROM whs_risk_assessments WHERE company_id = ? AND id = ?"
+            ? scoped("SELECT number || ' rev ' || revision AS number, title, status FROM whs_risk_assessments x WHERE x.company_id = ? AND x.id = ?", raScope(a, 'x'))
             : r.type === 'work_order'
-              ? 'SELECT number, description AS title, status FROM mt_work_orders WHERE company_id = ? AND id = ?'
+              ? { sql: 'SELECT number, description AS title, status FROM mt_work_orders WHERE company_id = ? AND id = ?', args: [] as unknown[] }
               : null;
     if (!q) continue;
-    const x = await db.prepare(q).bind(companyId, r.id).first<{ number: string; title: string; status: string }>();
+    const x = await db.prepare(q.sql).bind(companyId, r.id, ...q.args).first<{ number: string; title: string; status: string }>();
     if (x) out.push({ type: r.type, typeLabel: WHS_KIND_LABEL(LINK_TYPES, r.type), id: r.id, number: x.number, title: String(x.title).slice(0, 200), status: x.status });
   }
   return out;

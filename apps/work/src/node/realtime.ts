@@ -68,6 +68,8 @@ class HubId {
 
 export class BoardHub {
   readonly #rooms = new Map<string, Set<WebSocket>>();
+  /** The person each socket belongs to (from the route's ticket), for the access check at every event (audit E2). */
+  readonly #users = new WeakMap<WebSocket, string>();
   readonly namespace: DurableObjectNamespace;
 
   constructor() {
@@ -89,8 +91,14 @@ export class BoardHub {
 
   async #fetch(room: string, request: Request): Promise<Response> {
     const url = new URL(request.url);
+    if (url.pathname === '/users' && request.method === 'GET') {
+      const users = new Set<string>();
+      for (const ws of this.#rooms.get(room) ?? []) users.add(this.#users.get(ws) ?? 'unknown');
+      return new Response(JSON.stringify({ users: [...users] }), { headers: { 'Content-Type': 'application/json' } });
+    }
     if (url.pathname === '/broadcast' && request.method === 'POST') {
-      const delivered = this.broadcast(room, await request.text());
+      const h = request.headers.get('X-Allowed-Users');
+      const delivered = this.broadcast(room, await request.text(), h === null ? null : new Set(h.split(',').filter(Boolean)));
       return new Response(JSON.stringify({ delivered }), { headers: { 'Content-Type': 'application/json' } });
     }
     if (request.headers.get('Upgrade') === 'websocket') {
@@ -99,11 +107,12 @@ export class BoardHub {
     return new Response('Not found', { status: 404 });
   }
 
-  /** Adds an upgraded socket to a board's room. */
-  attach(room: string, ws: WebSocket): void {
+  /** Adds an upgraded socket to a board's room, for the person the route authorised. */
+  attach(room: string, ws: WebSocket, userId = 'unknown'): void {
     let sockets = this.#rooms.get(room);
     if (!sockets) this.#rooms.set(room, (sockets = new Set()));
     sockets.add(ws);
+    this.#users.set(ws, userId);
     ws.on('message', (data, isBinary) => {
       try {
         if (!isBinary && data.toString() === 'ping') ws.send('pong');
@@ -121,13 +130,17 @@ export class BoardHub {
     ws.on('error', remove);
   }
 
-  /** Sends the payload to every socket of the room; returns how many sockets the room has (as the Durable Object does). */
-  broadcast(room: string, payload: string): number {
+  /**
+   * Sends the payload to every socket of the room whose person is still allowed (all of them when allowed is null), and
+   * closes the others with 4403; returns how many sockets the room has (as the Durable Object does).
+   */
+  broadcast(room: string, payload: string, allowed: Set<string> | null = null): number {
     const sockets = this.#rooms.get(room);
     if (!sockets) return 0;
     for (const ws of sockets) {
       try {
-        if (ws.readyState === ws.OPEN) ws.send(payload);
+        if (allowed && !allowed.has(this.#users.get(ws) ?? 'unknown')) ws.close(4403, 'Access to this board has ended');
+        else if (ws.readyState === ws.OPEN) ws.send(payload);
       } catch {
         /* socket already closed */
       }

@@ -14,6 +14,8 @@ import { dailyActivityStmt, trackEvent } from '../services/analytics';
 import { columnDTO, itemDTO, type ColumnRow } from '../services/mappers';
 import { accessibleBoardIds, requireWorkspace, type ItemRow } from '../services/permissions';
 import { userDTO, type UserRow } from './helpers';
+import { companiesFor } from '../system/system';
+import { TOKEN_APPS } from '../platform/context';
 
 export const meRoutes = new Hono<AppEnv>();
 
@@ -60,8 +62,9 @@ meRoutes.post('/me/password', async (c) => {
   const session = c.get('session');
   await c.env.DB.batch([
     c.env.DB.prepare('UPDATE users SET password_hash = ?, password_reset_required = 0, updated_at = ? WHERE id = ?').bind(await hashPassword(input.newPassword), now(), user.id),
-    // Revoke every other session after a password change.
+    // Revoke every other session after a password change, and every API token (audit S5).
     c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'password_change' WHERE user_id = ?2 AND id != ?3 AND revoked_at IS NULL").bind(now(), user.id, session?.id ?? ''),
+    c.env.DB.prepare("UPDATE api_tokens SET revoked_at = ?1, revoked_reason = 'password_change' WHERE user_id = ?2 AND revoked_at IS NULL").bind(now(), user.id),
   ]);
   await audit(c.env.DB, { actorId: user.id, action: 'auth.password_changed', ip: clientIp(c) });
   await trackEvent(c.env.DB, { type: 'settings.changed', userId: user.id, entityType: 'user', entityId: user.id, metadata: { section: 'password' } });
@@ -110,27 +113,60 @@ meRoutes.delete('/me/identities/:id', async (c) => {
 
 // ------------------------------------------------------------- API tokens
 
+// Since R4 (audit E3 and S5) a new token is limited to one company, optionally to some of its applications and to
+// reading, and expires (90 days unless another period up to a year is chosen). Tokens made before keep acting as their
+// person. Every token ends when its person changes their password, an administrator sets it, or a security reset runs.
+export const TOKEN_DEFAULT_DAYS = 90;
+
 meRoutes.get('/me/tokens', async (c) => {
-  const rows = await c.env.DB.prepare('SELECT id, name, prefix, last_used_at, expires_at, created_at FROM api_tokens WHERE user_id = ? AND revoked_at IS NULL ORDER BY created_at DESC').bind(c.get('user').id).all();
-  return c.json(rows.results);
+  const user = c.get('user');
+  const rows = await c.env.DB
+    .prepare('SELECT id, name, prefix, last_used_at, expires_at, created_at, company_id, apps_json, read_only FROM api_tokens WHERE user_id = ? AND revoked_at IS NULL ORDER BY created_at DESC')
+    .bind(user.id)
+    .all<{ id: string; name: string; prefix: string; last_used_at: number | null; expires_at: number | null; created_at: number; company_id: string | null; apps_json: string | null; read_only: number }>();
+  const names = new Map((await companiesFor(c.env.DB, user)).map((co) => [co.id, co.name]));
+  return c.json(
+    rows.results.map(({ apps_json, read_only, company_id, ...r }) => ({
+      ...r,
+      company_id,
+      companyName: company_id ? (names.get(company_id) ?? 'A company you are no longer in') : null,
+      apps: apps_json ? parseJson<string[]>(apps_json, []) : null,
+      readOnly: !!read_only,
+    })),
+  );
 });
 
 meRoutes.post('/me/tokens', async (c) => {
   const user = c.get('user');
   if (c.get('authKind') !== 'session') throw new HttpError(403, 'API tokens can only be created from an interactive session');
-  const input = await body(c, z.object({ name: z.string().trim().min(1).max(100), expiresInDays: z.number().int().min(1).max(365).optional() }));
+  const input = await body(
+    c,
+    z.object({
+      name: z.string().trim().min(1).max(100),
+      companyId: z.string().min(1).max(64),
+      apps: z.array(z.enum(TOKEN_APPS)).min(1).max(TOKEN_APPS.length).optional(),
+      readOnly: z.boolean().optional(),
+      expiresInDays: z.number().int().min(1).max(365).optional(),
+    }),
+  );
+  // Only a company the person is in (or that shares a tool with them): the token never gives more than they have.
+  const company = (await companiesFor(c.env.DB, user)).find((co) => co.id === input.companyId);
+  if (!company) throw badRequest('Choose one of your companies');
   const token = `wos_${randomToken(32)}`;
   const id = newId();
-  await c.env.DB.prepare('INSERT INTO api_tokens (id, user_id, name, token_hash, prefix, expires_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)')
-    .bind(id, user.id, input.name, await sha256Hex(token), token.slice(0, 10), input.expiresInDays ? now() + input.expiresInDays * 86_400_000 : null, now())
+  const t = now();
+  const apps = input.apps ? [...new Set(input.apps)] : null;
+  await c.env.DB.prepare('INSERT INTO api_tokens (id, user_id, name, token_hash, prefix, expires_at, created_at, company_id, apps_json, read_only) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id, user.id, input.name, await sha256Hex(token), token.slice(0, 10), t + (input.expiresInDays ?? TOKEN_DEFAULT_DAYS) * 86_400_000, t, company.id, apps ? JSON.stringify(apps) : null, input.readOnly ? 1 : 0)
     .run();
-  await audit(c.env.DB, { actorId: user.id, action: 'api_token.created', targetId: id, ip: clientIp(c) });
-  return c.json({ id, name: input.name, token }, 201);
+  await audit(c.env.DB, { actorId: user.id, action: 'api_token.created', targetId: id, metadata: { companyId: company.id, apps, readOnly: !!input.readOnly }, ip: clientIp(c) });
+  return c.json({ id, name: input.name, token, companyId: company.id, apps, readOnly: !!input.readOnly }, 201);
 });
 
 meRoutes.delete('/me/tokens/:id', async (c) => {
-  const r = await c.env.DB.prepare('UPDATE api_tokens SET revoked_at = ? WHERE id = ? AND user_id = ?').bind(now(), c.req.param('id'), c.get('user').id).run();
+  const r = await c.env.DB.prepare("UPDATE api_tokens SET revoked_at = ?, revoked_reason = 'person' WHERE id = ? AND user_id = ? AND revoked_at IS NULL").bind(now(), c.req.param('id'), c.get('user').id).run();
   if (!r.meta.changes) throw notFound('Token');
+  await audit(c.env.DB, { actorId: c.get('user').id, action: 'api_token.revoked', targetId: c.req.param('id'), ip: clientIp(c) });
   return c.json({ ok: true });
 });
 

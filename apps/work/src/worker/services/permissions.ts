@@ -190,6 +190,7 @@ export async function requireDocument(db: D1Database, docId: string, userId: str
   const row = await db
     .prepare(
       `SELECT d.*, m.role AS ws_role, dm.role AS doc_role FROM documents d
+       JOIN workspaces w ON w.id = d.workspace_id AND w.deleted_at IS NULL
        JOIN workspace_members m ON m.workspace_id = d.workspace_id AND m.user_id = ?1 AND m.status = 'active'
        LEFT JOIN document_members dm ON dm.document_id = d.id AND dm.user_id = ?1
        WHERE d.id = ?2`,

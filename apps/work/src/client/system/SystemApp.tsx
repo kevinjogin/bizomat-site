@@ -419,13 +419,20 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
 function CompanySwitcher({ current }: { current?: string }) {
   const me = useMe().data;
   const navigate = useNavigate();
+  const qc = useQueryClient();
+  // Switching company (brief 3.4): every cached record of the old company goes, so nothing of it shows in the new one;
+  // leaving its pages closes their live connections and open forms. Only the list of companies is kept.
+  const switchTo = (id: string) => {
+    if (id !== current) qc.removeQueries({ predicate: (q) => !(q.queryKey[0] === 'system' && q.queryKey[1] === 'me') });
+    navigate(`/c/${id}/home`);
+  };
   const list = me?.companies ?? [];
   const active = list.find((c) => c.id === current);
   const yours = list.filter((c) => c.role !== 'guest' && c.kind !== 'demo');
   const shared = list.filter((c) => c.role === 'guest');
   const examples = list.filter((c) => c.kind === 'demo');
   const item = (c: CompanyLite, close: () => void) => (
-    <MenuItem key={c.id} active={c.id === current} onClick={() => { close(); navigate(`/c/${c.id}/home`); }}>
+    <MenuItem key={c.id} active={c.id === current} onClick={() => { close(); switchTo(c.id); }}>
       <span className="grow ellipsis">{c.name}</span>
       <span className="muted small">{c.role === 'guest' ? `${c.toolCount} ${c.toolCount === 1 ? 'tool' : 'tools'}` : c.kind === 'demo' ? 'Example' : c.kind === 'own' ? 'Own' : ROLE_LABELS[c.role]}</span>
     </MenuItem>

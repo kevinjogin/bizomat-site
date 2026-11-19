@@ -259,6 +259,25 @@ describe('Node server: realtime', () => {
     await new Promise((r) => setTimeout(r, 100));
     expect(server.runtime.hub.connections).toBe(0);
   });
+
+  it('closes the socket of a person removed from the workspace at the next event, and keeps sending to the others (audit E2)', async () => {
+    const a = (await connect(`/api/live/boards/${boardId}`, { Origin: server.url, Cookie: owner.cookie })) as WebSocket;
+    const b = (await connect(`/api/live/boards/${boardId}`, { Origin: server.url, Cookie: member.cookie })) as WebSocket;
+    const closed = new Promise<number>((resolve) => b.once('close', (code) => resolve(code)));
+    let memberGotEvent = false;
+    b.on('message', (m) => {
+      if (m.toString() !== 'pong') memberGotEvent = true;
+    });
+    await api(owner, 'DELETE', `/api/workspaces/${owner.workspaceId}/members/${member.userId}`);
+    const got = nextMessage(a);
+    await api(owner, 'POST', `/api/boards/${boardId}/items`, { name: 'After removal' });
+    expect(JSON.parse(await got)).toMatchObject({ boardId, actorId: owner.userId });
+    expect(await closed).toBe(4403);
+    expect(memberGotEvent).toBe(false);
+    a.close();
+    await new Promise((r) => setTimeout(r, 100));
+    expect(server.runtime.hub.connections).toBe(0);
+  });
 });
 
 describe('Node server: under /tasks, as the platform proxy sends bizomat.ai/tasks', () => {

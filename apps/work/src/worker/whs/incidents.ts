@@ -356,7 +356,7 @@ async function detail(db: D1Database, a: WhsAccess, id: string, today: string) {
     incident: incidentDTO(i, full),
     investigation: inv ? await investigationDTO(db, a, inv, onTeam) : null,
     actions: full ? [...(await actionsOf(db, a, 'incident', i.id, today)), ...(inv ? await actionsOf(db, a, 'investigation', inv.id, today) : [])] : [],
-    links: full ? await linksOf(db, a.companyId, 'incident', i.id) : [],
+    links: full ? await linksOf(db, a, 'incident', i.id) : [],
     files: await filesOf(db, a.companyId, 'incident', i.id),
     comments: full ? await commentsOf(db, a.companyId, 'incident', i.id) : [],
     history: full ? await historyOf(db, a.companyId, 'incident', i.id) : [],

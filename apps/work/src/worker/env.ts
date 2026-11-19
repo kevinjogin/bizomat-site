@@ -102,6 +102,8 @@ export type AppVariables = {
   session: SessionInfo | null;
   authKind: 'session' | 'token';
   platformRole?: 'founder' | 'admin';
+  /** An API token's limits (platform/context.ts); null for sessions and for tokens made before R4. */
+  tokenScope?: { companyId: string | null; apps: ('tasks' | 'crm' | 'finance' | 'erp' | 'company')[] | null; readOnly: boolean } | null;
 };
 
 export type AppEnv = { Bindings: Env; Variables: AppVariables };

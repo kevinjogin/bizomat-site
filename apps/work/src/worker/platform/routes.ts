@@ -20,6 +20,7 @@ import { auditStmt } from '../services/audit';
 import { billingLocked } from '../billing/config';
 import { FLAGS, isFlag, needsConfirmation, resolve, STAGES, type FlagScope } from './flags';
 import { requireMfa, requireReauth, securityRoutes } from './security';
+import { integrityReport } from './integrity';
 
 export const platformRoutes = new Hono<AppEnv>();
 
@@ -29,6 +30,7 @@ platformRoutes.use('/flags/*', requireMfa);
 platformRoutes.use('/kill-switch', requireMfa);
 platformRoutes.use('/rollout', requireMfa);
 platformRoutes.use('/rollout/*', requireMfa);
+platformRoutes.use('/integrity', requireMfa);
 
 interface FlagRow {
   key: string;
@@ -193,6 +195,9 @@ platformRoutes.post('/kill-switch', async (c) => {
   await db.batch(stmts);
   return c.json({ ok: true, cleared: rows.length, flags: keys });
 });
+
+// Integrity check (R4): counts only. Read only, for any platform admin with a verified session.
+platformRoutes.get('/integrity', async (c) => c.json(await integrityReport(c.env.DB)));
 
 platformRoutes.get('/rollout', async (c) => {
   const rows = await c.env.DB

@@ -56,6 +56,28 @@ describe('the ledger', () => {
     void acc;
   });
 
+  it('refuses contacts and tracking from another workspace, and tracking of the wrong kind, with a clear message (audit E4)', async () => {
+    const { a, ws, bank, office } = await business('Refs Owner');
+    const other = await business('Refs Other');
+    const theirContact = await other.a.json('POST', fin(other.ws, '/contacts'), { name: 'Their Customer', kind: 'customer' });
+    const theirDept = await other.a.json('POST', fin(other.ws, '/tracking'), { kind: 'department', name: 'Their dept' });
+    const project = await a.json('POST', fin(ws, '/tracking'), { kind: 'project', name: 'Fit-out' });
+    const dept = await a.json('POST', fin(ws, '/tracking'), { kind: 'department', name: 'Workshop' });
+    const journal = (line: Record<string, unknown>) => ({ date: '2026-08-12', memo: 'Check', lines: [{ accountId: office, debit: 1000, credit: 0, ...line }, { accountId: bank, debit: 0, credit: 1000 }] });
+    const refused = async (path: string, payload: unknown, message: RegExp) => {
+      const res = await a.req('POST', fin(ws, path), payload);
+      expect(res.status).toBe(400);
+      expect(((await res.json()) as any).error).toMatch(message);
+    };
+    await refused('/journals', journal({ contactId: theirContact.id }), /contacts from this workspace/);
+    await refused('/journals', journal({ departmentId: theirDept.id }), /from this workspace/);
+    await refused('/journals', journal({ departmentId: project.id }), /not a department/);
+    await refused('/transactions', { kind: 'spend', accountId: bank, date: '2026-08-12', taxMode: 'none', lines: [{ accountId: office, amount: 500, projectId: dept.id }] }, /not a project/);
+    await refused('/rules', { matchText: 'acme', accountId: office, contactId: theirContact.id }, /contacts from this workspace/);
+    // Its own, of the right kind, are taken.
+    expect((await a.req('POST', fin(ws, '/journals'), journal({ departmentId: dept.id, projectId: project.id }))).status).toBe(201);
+  });
+
   it('refuses at the database level to change or delete a posted journal, or to post an unbalanced one', async () => {
     const { a, ws, bank, office } = await business('Trigger Owner');
     const t = await a.json('POST', fin(ws, '/transactions'), { kind: 'spend', accountId: bank, date: '2026-10-01', taxMode: 'none', lines: [{ accountId: office, amount: 1000 }] });

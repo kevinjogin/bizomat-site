@@ -284,3 +284,21 @@ describe('scheduled job alerts', () => {
     expect(r).toHaveProperty('dueNotifications');
   });
 });
+
+describe('integrity check (R4)', () => {
+  it('counts records whose company is not in the registry, for platform admins with two-factor sign-in', async () => {
+    const a = await enrolled('admin');
+    const stranger = await signup('Not An Admin');
+    expect((await stranger.req('GET', '/api/admin/platform/integrity')).status).toBe(404);
+    const before = await a.c.json('GET', '/api/admin/platform/integrity');
+    expect(before.tablesChecked).toBeGreaterThan(100);
+    expect(before.skipped).toEqual([]);
+    expect(before.registry).toEqual({ missing: 0, mismatched: 0, orphaned: 0 });
+    // ERP settings of a company that does not exist (erp_settings has no foreign key to a company).
+    await env.DB.prepare("INSERT INTO erp_settings (company_id, updated_at) VALUES ('ghost-co-integrity', 1)").run();
+    const after = await a.c.json('GET', '/api/admin/platform/integrity');
+    expect(after.unknownCompany.erp_settings).toBe((before.unknownCompany.erp_settings ?? 0) + 1);
+    expect(JSON.stringify(after)).not.toContain('ghost-co-integrity');
+    await env.DB.prepare("DELETE FROM erp_settings WHERE company_id = 'ghost-co-integrity'").run();
+  });
+});

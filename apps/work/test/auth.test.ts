@@ -114,12 +114,13 @@ describe('authentication', () => {
 
   it('API tokens authenticate and revoked tokens fail', async () => {
     const c = await signup();
-    const t = await c.json('POST', '/api/me/tokens', { name: 'ci' });
+    const own = (await c.json('GET', '/api/system/me')).companies.find((x: any) => x.kind === 'own');
+    const t = await c.json('POST', '/api/me/tokens', { name: 'ci', companyId: own.id });
     expect(t.token).toMatch(/^wos_/);
     const list = await c.json('GET', '/api/me/tokens');
     expect(JSON.stringify(list)).not.toContain(t.token);
     expect(JSON.stringify(list)).not.toContain('token_hash');
-    const ok = await raw('GET', '/api/workspaces', { headers: { Authorization: `Bearer ${t.token}` } });
+    const ok = await raw('GET', `/api/workspaces/${c.workspaceId}`, { headers: { Authorization: `Bearer ${t.token}` } });
     expect(ok.status).toBe(200);
     // Bearer requests do not need CSRF tokens.
     const post = await raw('POST', `/api/workspaces/${c.workspaceId}/boards`, { body: { name: 'via api' }, headers: { Authorization: `Bearer ${t.token}`, Origin: '' } });
@@ -128,7 +129,7 @@ describe('authentication', () => {
     const mint = await raw('POST', '/api/me/tokens', { body: { name: 'x' }, headers: { Authorization: `Bearer ${t.token}` } });
     expect(mint.status).toBe(403);
     await c.json('DELETE', `/api/me/tokens/${t.id}`);
-    const revoked = await raw('GET', '/api/workspaces', { headers: { Authorization: `Bearer ${t.token}` } });
+    const revoked = await raw('GET', `/api/workspaces/${c.workspaceId}`, { headers: { Authorization: `Bearer ${t.token}` } });
     expect(revoked.status).toBe(401);
     const garbage = await raw('GET', '/api/workspaces', { headers: { Authorization: 'Bearer wos_garbage' } });
     expect(garbage.status).toBe(401);
