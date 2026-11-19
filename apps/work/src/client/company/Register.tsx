@@ -13,7 +13,7 @@ import { useToast } from '../components/ui/overlays';
 import { ProductLockup } from '../components/ui/Icon';
 import { STATES, TOOL_APPS, TOOL_NAMES, useMine, type AbnStatus, type CompanyDTO, type ToolApp } from './lib';
 import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
-import { InternationalForm, useRegistrationOptions } from './RegisterInternational';
+import { InternationalForm, countryOpen, useRegistrationOptions } from './RegisterInternational';
 
 export interface Details {
   kind: 'business' | 'individual';
@@ -229,14 +229,14 @@ export function Register() {
           subtitle="BIZOMAT works as a company: your people, departments, projects, customers and money in one account, with one sign-in. If you work for yourself, register in your own name."
         />
         {options.data?.international ? (
-          <div className="card card-pad stack">
+          <div className="card card-pad stack crm-start-form co-register-form">
             <div className="crm-form-grid">
               <div className="field">
                 <label htmlFor="co-country">Country of registration</label>
                 <select id="co-country" className="select" value={country} onChange={(e) => setCountry(e.target.value)}>
                   <option value="AU">Australia</option>
-                  {options.data.countries.filter((c) => c.code !== 'AU').map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
-                  <option value="OTHER">Another country</option>
+                  {options.data.countries.filter((c) => c.code !== 'AU' && countryOpen(options.data!, c.code)).map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
+                  {options.data.internationalCountries === null ? <option value="OTHER">Another country</option> : null}
                 </select>
               </div>
               {country === 'OTHER' ? (
@@ -249,7 +249,7 @@ export function Register() {
           </div>
         ) : null}
         {chosen !== 'AU' && options.data?.international ? (
-          /^[A-Z]{2}$/.test(chosen) ? <InternationalForm key={chosen} country={chosen} options={options.data} email={session?.user.email ?? ''} /> : <p className="muted small">Type the two-letter country code.</p>
+          !/^[A-Z]{2}$/.test(chosen) ? <p className="muted small">Type the two-letter country code.</p> : countryOpen(options.data, chosen) ? <InternationalForm key={chosen} country={chosen} options={options.data} email={session?.user.email ?? ''} /> : <p className="muted small">Registration for this country is not open yet.</p>
         ) : (
         <form className="card card-pad stack crm-start-form co-register-form" onSubmit={submit} noValidate>
           <DetailsFields d={d} set={set} result={result} />

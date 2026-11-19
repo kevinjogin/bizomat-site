@@ -19,7 +19,17 @@ export interface CountryOption {
 export interface RegistrationOptions {
   countries: CountryOption[];
   international: boolean;
+  /** The countries where registration is on; null: every country apart from internationalOff. */
+  internationalCountries: string[] | null;
+  internationalOff: string[];
   joinRequests: boolean;
+}
+
+/** Whether a company of this country can register here (Australia always can). */
+export function countryOpen(o: RegistrationOptions, code: string): boolean {
+  if (code === 'AU') return true;
+  if (!o.international || o.internationalOff.includes(code)) return false;
+  return o.internationalCountries === null || o.internationalCountries.includes(code);
 }
 
 export const useRegistrationOptions = () => useQuery({ queryKey: ['company', 'registration-options'], queryFn: () => get<RegistrationOptions>('/company/registration-options'), staleTime: 5 * 60_000 });
@@ -134,7 +144,7 @@ export function InternationalForm({ country, options, email }: { country: string
       ) : null}
       <div className="row">
         <button className="btn primary" type="submit" disabled={busy || !f.name.trim() || !f.legalName.trim()}>{busy ? 'Registering…' : 'Register company'}</button>
-        <span className="muted small">Registering is free. The registration number is sent only to the official register of {rule.name}, where one is used.</span>
+        <span className="muted small">Registering is free. The registration number is sent only to the country’s official register, where one is used.</span>
       </div>
     </form>
   );

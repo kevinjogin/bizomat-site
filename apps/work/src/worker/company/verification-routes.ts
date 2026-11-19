@@ -104,7 +104,20 @@ companyVerificationRoutes.post('/c/:company/verification/evidence', async (c) =>
 
 companyVerificationRoutes.get('/registration-options', async (c) => {
   const db = c.env.DB;
-  return c.json({ countries: countryOptions(), international: await flagOn(db, 'international_registration'), joinRequests: await flagOn(db, 'join_requests') });
+  // International registration may be on for everyone or for some countries only (a country scope in the Control
+  // Centre): the page offers the countries where it is on. The server checks the country again on registration.
+  const everyone = await flagOn(db, 'international_registration');
+  const scoped = await db.prepare("SELECT scope_id, value FROM feature_flags WHERE key = 'international_registration' AND scope = 'country'").all<{ scope_id: string; value: string }>();
+  const on = scoped.results.filter((r) => r.value === 'on').map((r) => r.scope_id);
+  const off = scoped.results.filter((r) => r.value !== 'on').map((r) => r.scope_id);
+  return c.json({
+    countries: countryOptions(),
+    international: everyone || on.length > 0,
+    // null: every country apart from those switched off
+    internationalCountries: everyone ? null : on,
+    internationalOff: off,
+    joinRequests: await flagOn(db, 'join_requests'),
+  });
 });
 
 companyVerificationRoutes.post('/join-requests', async (c) => {

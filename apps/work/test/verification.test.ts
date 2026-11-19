@@ -261,7 +261,12 @@ describe('request to join and registration outside Australia', () => {
     const crn = `${10000000 + Math.floor(Math.random() * 89999999)}`;
     const form = { country: 'GB', name: 'Thames Tools', legalName: 'Thames Tools Limited', structure: 'limited_company', registrationType: 'CRN', registrationNumber: crn, email: uniqueEmail('uk'), phone: '+44 20 7946 0000', addressLine1: '1 Example Road', city: 'London', postcode: 'SW1A 1AA' };
     expect((await owner.req('POST', '/api/company/companies/international', form)).status).toBe(403);
+    const closed = (await (await owner.req('GET', '/api/company/registration-options')).json()) as any;
+    expect(closed.international).toBe(false);
     await flag('international_registration', 'country', 'GB');
+    // On for one country: the page offers that country only.
+    const open = (await (await owner.req('GET', '/api/company/registration-options')).json()) as any;
+    expect(open).toMatchObject({ international: true, internationalCountries: ['GB'], internationalOff: [] });
     await flag('registry_verification_enabled', 'country', 'GB');
     setCompaniesHouseFetchForTests(async (url) => (url.endsWith(`/company/${crn}`) ? Response.json({ company_name: 'THAMES TOOLS LIMITED', company_status: 'active' }) : new Response('', { status: 404 })));
     const res = await call(owner, 'POST', '/api/company/companies/international', form, { COMPANIES_HOUSE_API_KEY: 'test-key' });
