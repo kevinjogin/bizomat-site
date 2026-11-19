@@ -257,7 +257,8 @@ jobs:
           wait_for "the retired design preview answers 301 to the ERP page (/system-preview/)" '[ "$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 15 https://bizomat.ai/system-preview/)" = "301 https://bizomat.ai/systems/erp/" ]' || fail=1
           wait_for "the public Systems pages answer (/systems/: 200)" '[ "$(code https://bizomat.ai/systems/)" = 200 ]' || fail=1
           wait_for "Resources stay public (/resources/: 200, no sign-in)" '[ "$(code https://bizomat.ai/resources/)" = 200 ]' || fail=1
-          wait_for "the pricing page answers (/pricing/: 200)" '[ "$(code https://bizomat.ai/pricing/)" = 200 ]' || fail=1
+          # Free mode (owner, 19 Nov 2026; docs/billing/README.md): no page shows a price, and /pricing/ answers 301 there.
+          wait_for "free mode: the pricing page answers 301 to /systems/" '[ "$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 15 https://bizomat.ai/pricing/)" = "301 https://bizomat.ai/systems/" ]' || fail=1
           # Billing (docs/billing/README.md): an unsigned webhook delivery says only whether billing is configured (503:
           # off; 400: on, the signature refused). Nothing is processed and nothing is charged.
           case "$(code https://bizomat.ai/erp/api/billing/stripe-webhook "{}")" in
