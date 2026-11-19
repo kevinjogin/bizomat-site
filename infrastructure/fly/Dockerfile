@@ -103,6 +103,8 @@ RUN set -eu; \
 
 # proxy, entrypoint, cad's holding page and the restore scripts (infrastructure/migrate, run with fly ssh console)
 COPY infrastructure/proxy/package.json infrastructure/proxy/*.mjs /app/proxy/
+# the staging app's password gate (role "gate": refused outside an app named *-staging; docs/deployment/staging.md)
+COPY infrastructure/preview/gate.mjs /app/gate/gate.mjs
 COPY infrastructure/migrate /usr/local/lib/bizomat/migrate
 COPY infrastructure/fly/cad-holding.py /usr/local/lib/bizomat/cad-holding.py
 COPY infrastructure/fly/entrypoint.sh /usr/local/bin/bizomat-entrypoint
