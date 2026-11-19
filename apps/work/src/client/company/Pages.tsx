@@ -783,6 +783,9 @@ function VerificationCard({ companyId }: { companyId: string }) {
           <input type="file" accept="application/pdf,image/png,image/jpeg" className="sr-only" onChange={upload} disabled={busy} />
         </label>
       </div>
+      <p className="muted small">
+        Documents are kept privately for BIZOMAT’s review. Before anyone can open one, a copy is scanned for malware on BIZOMAT’s server in Amsterdam, the Netherlands, and deleted there straight after. See the <a href="/privacy/">Privacy Policy</a>.
+      </p>
       {v.status !== 'verified' ? (
         <form className="row" onSubmit={(e) => { e.preventDefault(); void act(() => post(co(companyId, '/verification/review'), { note }), 'Manual review asked for'); setNote(''); }}>
           <input className="input grow" aria-label="Why a manual review" placeholder="Why a manual review is needed" value={note} onChange={(e) => setNote(e.target.value)} minLength={3} maxLength={1000} required />

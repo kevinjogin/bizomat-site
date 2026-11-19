@@ -20,6 +20,8 @@ const retention: [string, string][] = [
   ['CAD Automation command record (tool, app, time, status, result; details only as a fingerprint)', 'With your account'],
   ['Files uploaded to CAD Automation for import', 'Deleted once imported, or after 30 minutes'],
   ['Files exported from SOLIDWORKS through CAD Automation', 'Download link valid for one hour, then deleted'],
+  ['Company registration documents uploaded for verification', 'With the company’s verification record, until the company or its account is closed; deleted at once if the malware scan finds a problem'],
+  ['Copy of a registration document sent for the malware scan (Amsterdam)', 'Deleted straight after the scan, within minutes'],
 ];
 ---
 
@@ -28,7 +30,7 @@ const retention: [string, string][] = [
   path="/privacy/"
   scene="privacy"
   description="How BIZOMAT handles personal information across the website, Resources, AI search, Project Management and CAD Automation: what is collected, why, where it is kept, for how long, and your rights."
-  updated={new Date('2026-11-05')}
+  updated={new Date('2026-11-19')}
 >
   <p>
     This policy explains what personal information BIZOMAT collects, why, who else processes it, where it is kept and for how long, and what you can ask us to do. It covers the BIZOMAT website (including Resources and AI search) and the two BIZOMAT applications, Project Management and CAD Automation. We aim to handle personal information in line with the Australian Privacy Principles in the <em>Privacy Act 1988</em> (Cth).
@@ -61,6 +63,12 @@ const retention: [string, string][] = [
     <li><strong>Usage and sessions:</strong> sign-in and sign-out times, last activity, and the general type of device, browser and operating system. While the app is open and in use, your browser sends a small "still active" signal about once a minute, with no content. We record product events such as "created a project", never what the project says.</li>
     <li><strong>Security:</strong> the IP address used to sign in and failed sign-in attempts, to protect your account. IP addresses are deleted after 30 days.</li>
   </ul>
+  <h3>When your company is verified</h3>
+  <ul>
+    <li><strong>Registration documents:</strong> if the owner or an administrator of a company uploads documents for a manual review of its registration (PDF, PNG or JPEG), they are kept privately with the company's verification record and opened only by BIZOMAT's platform administrators.</li>
+    <li><strong>Malware scan:</strong> before anyone can open or accept a document, a copy is sent over an encrypted connection to BIZOMAT's server in Amsterdam, the Netherlands, where it is scanned for malware with ClamAV and deleted straight after the scan. Nothing from the document is kept there. A document found infected is deleted at once and the company is asked for a clean copy.</li>
+  </ul>
+
   <h3>When you use CAD Automation</h3>
   <ul>
     <li><strong>Account details:</strong> your name, email address and a one-way hash of your password, or the ID of the Google account you sign in with.</li>
@@ -93,7 +101,7 @@ const retention: [string, string][] = [
   <h2>Service providers</h2>
   <p>These providers process information for BIZOMAT, each under its own terms. Some may process data outside Australia.</p>
   <ul>
-    <li><strong>Fly.io:</strong> hosts the BIZOMAT platform and its applications, in its Sydney, Australia region.</li>
+    <li><strong>Fly.io:</strong> hosts the BIZOMAT platform and Project Management in its Sydney, Australia region, and CAD Automation, including the malware scan of company registration documents, in its Amsterdam, the Netherlands region.</li>
     <li><strong>Cloudflare:</strong> DNS for BIZOMAT's domains, the AI model used by AI search (Workers AI), the spam check on some forms (Turnstile), and, while the move to the BIZOMAT platform is completed, hosting of parts of the website and Project Management on its global network.</li>
     <li><strong>Web3Forms and hCaptcha:</strong> deliver contact and assessment form messages to BIZOMAT and check for spam. hCaptcha loads only when you use a form.</li>
     <li><strong>Proton:</strong> the meeting booking page, if you choose to book a meeting.</li>
@@ -104,7 +112,7 @@ const retention: [string, string][] = [
 
   <h2>Where information is kept</h2>
   <p>
-    CAD Automation stores its data on servers in Sydney, Australia. Project Management moves to the same Sydney servers with the BIZOMAT platform; until that move is complete, its data is stored on Cloudflare's network (Workers, D1 and R2), which may be outside Australia. Information handled by the other providers above may be processed in other countries, including the United States.
+    The BIZOMAT platform and Project Management run on servers in Sydney, Australia. CAD Automation stores its data on servers in Amsterdam, the Netherlands, and company registration documents are sent there only for their malware scan, then deleted there. Project Management moves to the same Sydney servers with the BIZOMAT platform; until that move is complete, its data is stored on Cloudflare's network (Workers, D1 and R2), which may be outside Australia. Information handled by the other providers above may be processed in other countries, including the United States.
   </p>
 
   <h2>Security</h2>

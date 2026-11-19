@@ -12,6 +12,8 @@ const RETENTION: [string, string][] = [
   ['IP address of a sign-in session (security and abuse prevention)', '30 days'],
   ['Anonymous page-view counts for signed-out visitors (totals only)', 'Kept as product history'],
   ['Technical error records (no personal content)', '90 days'],
+  ['Company registration documents uploaded for verification', 'With the company’s verification record; deleted at once if the malware scan finds a problem'],
+  ['Copy of a registration document sent for its malware scan (BIZOMAT’s server in Amsterdam, the Netherlands)', 'Deleted straight after the scan'],
 ];
 
 export default function Privacy() {
