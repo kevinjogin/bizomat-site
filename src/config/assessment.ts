@@ -10,16 +10,18 @@ export const ASSESSMENT = {
   name: 'BIZOMAT Engineering Problem Assessment',
   shortName: 'Engineering Problem Assessment',
   path: '/assessment/',
-  /** Fixed fee in whole Australian dollars. */
+  /** Fixed fee in whole Australian dollars. Not shown anywhere while prices are withdrawn (owner, 19 Nov 2026: "remove
+   * all pricings for now"); kept for the optional payment check (src/server/assessment/stripe.ts). */
   price: 195,
   currency: 'AUD',
-  priceLabel: 'A$195',
-  priceCaption: 'Fixed-price remote assessment',
+  /** What the pages show instead of an amount while prices are withdrawn (owner, 19 Nov 2026). */
+  priceLabel: 'Fee on request',
+  priceCaption: 'Fixed-scope remote assessment',
   /**
    * OWNER-APPROVAL: GST registration has not been verified. Until it is, the site keeps its standing
    * wording and the payment request states the exact amount payable before anything is paid.
    */
-  gstNote: 'GST applies where applicable. The exact amount payable is confirmed in writing before you pay.',
+  gstNote: 'The fee is confirmed in writing before anything is paid. GST applies where applicable.',
   meetingMinutes: 30,
   heroTitle: 'Engineering problems. <em>Clear next steps.</em>',
   heroLines: [
@@ -30,17 +32,17 @@ export const ASSESSMENT = {
   ],
   description: [
     'Not every manufacturing or mechanical design problem requires a major consulting engagement.',
-    'BIZOMAT provides a practical, fixed-price remote assessment to help businesses understand a defined problem, review potential improvement options and identify the next step.',
+    'BIZOMAT provides a practical, fixed-scope remote assessment to help businesses understand a defined problem, review potential improvement options and identify the next step.',
   ],
   summary:
-    'A fixed-price remote review of one defined engineering or manufacturing problem: a 30-minute technical discussion, a preliminary review of the information you supply, up to three improvement options and a one-page written recommendation.',
+    'A fixed-scope remote review of one defined engineering or manufacturing problem: a 30-minute technical discussion, a preliminary review of the information you supply, up to three improvement options and a one-page written recommendation.',
   seo: {
     title: 'Engineering Problem Assessment Australia',
     description:
-      'A focused engineering or manufacturing problem assessment from BIZOMAT. A$195 for a defined remote technical review with practical written recommendations.',
+      'A focused engineering or manufacturing problem assessment from BIZOMAT: a defined remote technical review of one problem, with practical written recommendations.',
   },
   successMessage:
-    'Your assessment enquiry has been received. BIZOMAT will review the information and confirm whether the problem is suitable for the fixed-price assessment.',
+    'Your assessment enquiry has been received. BIZOMAT will review the information and confirm whether the problem is suitable for the assessment, and the fee, in writing.',
 } as const;
 
 export interface Inclusion {
@@ -195,7 +197,7 @@ export const JOURNEY: readonly JourneyPhase[] = [
     steps: [
       { number: '04', actor: 'BIZOMAT', title: 'Suitability check', text: 'BIZOMAT checks technical and commercial suitability and may ask for more information.' },
       { number: '05', actor: 'BIZOMAT', title: 'Scope confirmed', text: 'BIZOMAT confirms the scope in writing and sends payment instructions.' },
-      { number: '06', actor: 'You', title: 'Payment', text: 'You pay A$195 using the payment instructions provided.' },
+      { number: '06', actor: 'You', title: 'Payment', text: 'You pay the fee confirmed in writing, using the payment instructions provided.' },
       { number: '07', actor: 'BIZOMAT', title: 'Payment verified', text: 'BIZOMAT verifies the payment before anything is booked.' },
     ],
   },
@@ -218,7 +220,7 @@ export const JOURNEY: readonly JourneyPhase[] = [
 
 /** Commercial conditions shown before any enquiry or payment. OWNER-APPROVAL: rescheduling and refund wording. */
 export const CONDITIONS: readonly { title: string; text: string }[] = [
-  { title: 'One defined problem', text: 'The A$195 assessment covers one defined problem only. Related or additional problems need a separate assessment or a quote.' },
+  { title: 'One defined problem', text: 'The assessment covers one defined problem only. Related or additional problems need a separate assessment or a quote.' },
   { title: 'A preliminary desktop assessment', text: 'It is a remote, preliminary engineering assessment based on the information you supply and the discussion. Findings depend on that information and are not a guarantee of a solution.' },
   { title: 'Payment after approval', text: 'Nothing is paid through this website. BIZOMAT requests payment only after confirming in writing that the problem is suitable and the scope is agreed. The fee is payable in full before the meeting is booked.' },
   { title: 'Rescheduling', text: 'You can reschedule the meeting at no cost by giving at least one business day’s notice.' },
@@ -286,14 +288,11 @@ export const STATUSES = [
 ] as const;
 
 /** Downloadable assets in public/assessment/ (generated by scripts/assessment/). */
+// The brochure, sample report PDF, QR card, social image and banner showed the fee; they were withdrawn with the prices
+// (owner, 19 Nov 2026) and their addresses answer 301 to /assessment/ (public/_redirects).
 export const ASSETS = {
-  brochure: '/assessment/kevos-engineering-problem-assessment-brochure.pdf',
-  sampleReport: '/assessment/kevos-sample-assessment-report.pdf',
   qrSvg: '/assessment/kevos-assessment-qr.svg',
   qrPng: '/assessment/kevos-assessment-qr.png',
-  qrCard: '/assessment/kevos-assessment-qr-card.pdf',
-  social: '/assessment/kevos-assessment-social.png',
-  banner: '/assessment/kevos-assessment-banner.png',
 } as const;
 
 /**

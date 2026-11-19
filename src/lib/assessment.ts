@@ -96,7 +96,7 @@ export const assessmentSubject = (i: AssessmentInput) =>
 /** Ordered label/value rows, used for the email body and any provider that needs flat fields. */
 export function assessmentRows(i: AssessmentInput): Array<[string, string]> {
   return [
-    ['Service', 'Engineering Problem Assessment (A$195)'],
+    ['Service', 'Engineering Problem Assessment'],
     ['Status', 'NEW'],
     ['Full name', i.name],
     ['Company', i.company],

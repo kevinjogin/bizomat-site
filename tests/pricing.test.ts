@@ -68,3 +68,31 @@ test('no page or screen shows the subscription price, and the Systems pages say 
   // The billing screen's free view.
   assert.match(read('apps/work/src/client/system/billing/Billing.tsx'), /BIZOMAT is free for every company/);
 });
+
+// Every price is withdrawn for now (owner, 19 Nov 2026: "remove all pricings for now"), engineering services included.
+// Amounts stay only where they are records, never shown: src/config/pricing.ts and the numeric fields of the service
+// configs. The Library and the calculators (tools) use amounts as subject matter, so they are not part of this check.
+test('no page, component, FAQ, assistant knowledge or service config shows an amount', async () => {
+  const { readdirSync, statSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const walk = (dir: string): string[] =>
+    readdirSync(dir).flatMap((n) => {
+      const p = join(dir, n);
+      return statSync(p).isDirectory() ? walk(p) : [p];
+    });
+  const skip = /^src\/(pages\/(library|reados|tools)|data\/tools|lib\/tools|content)\b|config\/pricing\.ts$|knowledge-link|tool-input/;
+  const files = ['src/pages', 'src/components', 'src/layouts', 'src/config', 'src/data', 'src/lib', 'src/server']
+    .flatMap(walk)
+    .filter((f) => /\.(astro|ts|json|mjs)$/.test(f) && !skip.test(f.replaceAll('\\', '/')));
+  assert.ok(files.length > 50, 'the check covers the site');
+  const priced = files.filter((f) => /A\$\s?\d/.test(read(f)));
+  assert.deepEqual(priced, [], 'files that show an amount');
+  // The withdrawn marketing files answer 301 to the assessment page.
+  const redirects = read('public/_redirects');
+  for (const f of ['kevos-engineering-problem-assessment-brochure.pdf', 'kevos-sample-assessment-report.pdf', 'kevos-assessment-qr-card.pdf', 'kevos-assessment-social.png', 'kevos-assessment-banner.png']) {
+    assert.equal(existsSync(`public/assessment/${f}`), false, f);
+    assert.match(redirects, new RegExp(`^/assessment/${f.replace('.', '\\.')} /assessment/ 301$`, 'm'), f);
+  }
+  // The website assistant is told never to quote a price.
+  assert.match(read('src/server/chat/handler.ts'), /Never quote, calculate, estimate, discount or invent a price/);
+});

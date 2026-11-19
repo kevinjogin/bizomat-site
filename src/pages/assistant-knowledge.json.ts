@@ -61,9 +61,9 @@ export async function GET() {
     url: '/engine-room/',
     text: [
       `${SITE.name} (${SITE.url.replace('https://', '')}). ${SITE.tagline}. ${SITE.statement}`,
-      `Services: ${SERVICE_GROUPS.map((g) => g.title).join(', ')}, plus the ${ASSESSMENT.name} (${ASSESSMENT.priceLabel} fixed, ${ASSESSMENT.path}) and the ${FACTORY_FIX.name} (${FACTORY_FIX.price}).`,
+      `Services: ${SERVICE_GROUPS.map((g) => g.title).join(', ')}, plus the ${ASSESSMENT.name} (fixed scope, ${ASSESSMENT.path}) and the ${FACTORY_FIX.name} (quoted to scope, /factory-fix/).`,
       `Service area: ${SERVICE_AREA}`,
-      `Indicative prices (costs, fees): ${ASSESSMENT.name} ${ASSESSMENT.priceLabel} fixed for one defined problem; ${PACKAGES.map((p) => `${p.title} ${p.price}`).join('; ')}; ${FACTORY_FIX.name} ${FACTORY_FIX.price}. ${PRICING_NOTE} Final prices are confirmed in a written quote after scoping.`,
+      `Prices (costs, fees): ${PRICING_NOTE} This applies to the ${ASSESSMENT.name}, the ${FACTORY_FIX.name} and every package. BIZOMAT's software (the Systems, /systems/) is free.`,
       'Certification: not every assignment includes professional engineering certification, statutory approval or sign-off; regulated or specialist work (for example designs that legally require a registered engineer or certifier) may require appropriately qualified or registered professionals. See /disclaimer/.',
       'To ask a question, give feedback, suggest an idea, propose a collaboration, request a quote or discuss a project, use the enquiry form at /contact/ (REACHOS). Visitors can also book a meeting online: the Book a meeting option on /contact/ opens the BIZOMAT Proton Calendar booking page.',
       `Main pages: ${NAV.map((n) => `${n.label} ${n.href}`).join(', ')}, Factory Fix /factory-fix/, Privacy /privacy/, Terms /terms/, Disclaimer /disclaimer/.`,
@@ -106,22 +106,22 @@ export async function GET() {
   );
   chunks.push({
     id: 'svc-pricing',
-    title: 'Indicative pricing and packages',
-    url: '/services/#pricing',
-    text: `${PACKAGES.map((p) => `${p.title}: ${p.price} (${p.description})`).join(' ')} ${PRICING_NOTE} Every assignment is scoped and the final price is confirmed in a written proposal before work begins. There is no online checkout; request a quote at /contact/.`,
+    title: 'Packages and quotes',
+    url: '/services/#packages',
+    text: `${PACKAGES.map((p) => `${p.title}: ${p.description}`).join(' ')} ${PRICING_NOTE} Every assignment is scoped and the final price is confirmed in a written proposal before work begins. There is no online checkout; request a quote at /contact/.`,
   });
   chunks.push({
     id: 'svc-factory-fix',
-    title: `${FACTORY_FIX.name} (${FACTORY_FIX.price})`,
+    title: FACTORY_FIX.name,
     url: '/factory-fix/',
-    text: `${FACTORY_FIX.name}, ${FACTORY_FIX.price}. ${FACTORY_FIX.summary} Possible deliverables: ${FACTORY_FIX.deliverables.join(', ')}. Supporting documents may include: ${FACTORY_FIX.documents.join(', ')}. Good candidates: ${FACTORY_FIX.examples.join('; ')}. ${FACTORY_FIX.terms} Implementation support can be quoted separately. A Factory Fix does not include statutory engineering certification. Enquire at /contact/?service=factory-fix.`,
+    text: `${FACTORY_FIX.name}, quoted to scope. ${FACTORY_FIX.summary} Possible deliverables: ${FACTORY_FIX.deliverables.join(', ')}. Supporting documents may include: ${FACTORY_FIX.documents.join(', ')}. Good candidates: ${FACTORY_FIX.examples.join('; ')}. ${FACTORY_FIX.terms} Implementation support can be quoted separately. A Factory Fix does not include statutory engineering certification. Enquire at /contact/?service=factory-fix.`,
   });
   chunks.push({
     id: 'svc-assessment',
-    title: `${ASSESSMENT.name} (${ASSESSMENT.priceLabel})`,
+    title: ASSESSMENT.name,
     url: ASSESSMENT.path,
     text: [
-      `${ASSESSMENT.name}: ${ASSESSMENT.priceLabel}, ${ASSESSMENT.priceCaption.toLowerCase()} for one defined engineering or manufacturing problem. ${ASSESSMENT.summary}`,
+      `${ASSESSMENT.name}: a ${ASSESSMENT.priceCaption.toLowerCase()} for one defined engineering or manufacturing problem. ${ASSESSMENT.summary}`,
       `Included: ${INCLUSIONS.map((i) => `${i.title} (${i.text}${i.points ? ` ${i.points.join(', ')}` : ''})`).join('; ')}.`,
       `Not included: ${EXCLUSIONS.join(', ')}. Further engineering services require separate scoping and a written quote.`,
       `Examples of suitable problems (examples, not guaranteed outcomes): ${EXAMPLES.map((e) => e.title).join(', ')}.`,

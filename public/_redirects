@@ -17,6 +17,13 @@
 # address goes to the Systems catalogue. The billing code and Stripe stay in place, locked (BIZOMAT_BILLING_LOCK).
 /pricing /systems/ 301
 /pricing/ /systems/ 301
+# Every price is withdrawn for now (owner, 19 Nov 2026), engineering services included: the assessment's marketing files
+# that showed its fee answer 301 to the assessment page.
+/assessment/kevos-engineering-problem-assessment-brochure.pdf /assessment/ 301
+/assessment/kevos-sample-assessment-report.pdf /assessment/ 301
+/assessment/kevos-assessment-qr-card.pdf /assessment/ 301
+/assessment/kevos-assessment-social.png /assessment/ 301
+/assessment/kevos-assessment-banner.png /assessment/ 301
 
 # Systems (owner, 14 Nov 2026): BIZOMAT's business software is one catalogue at /systems/, each product with its page and
 # guide there; the applications open inside BIZOMAT ERP (/erp/). The product pages moved here, with their in-page parts.

@@ -45,10 +45,12 @@ function post(fields: Record<string, string | string[]>, { json = true, origin =
   return handleAssessment(new Request('https://kevos.com/api/assessment', { method: 'POST', body, headers }), env);
 }
 
-test('the offer is A$195 for one defined problem, with five inclusions and the required exclusions', () => {
+test('the offer is one defined problem, with five inclusions and the required exclusions; no fee is shown while prices are withdrawn', () => {
+  // The fee stays recorded for the optional payment check, but no page shows it (owner, 19 Nov 2026).
   assert.equal(ASSESSMENT.price, 195);
   assert.equal(ASSESSMENT.currency, 'AUD');
-  assert.equal(ASSESSMENT.priceLabel, 'A$195');
+  assert.equal(ASSESSMENT.priceLabel, 'Fee on request');
+  assert.doesNotMatch(JSON.stringify({ ASSESSMENT, JOURNEY, CONDITIONS }), /A\$\s?\d/);
   assert.equal(INCLUSIONS.length, 5);
   for (const item of ['Physical inspection', 'Site visits', 'Formal certification', 'Regulated design sign-off', 'Guaranteed root-cause identification', 'Guaranteed savings'])
     assert.ok((EXCLUSIONS as readonly string[]).includes(item), item);
@@ -128,7 +130,7 @@ test('Stripe signatures are verified with HMAC-SHA256 and a time tolerance', asy
   assert.equal(await verifyStripeSignature(payload, null, secret), false);
 });
 
-test('the Stripe webhook is off until configured and only reports genuinely paid A$195 sessions', async () => {
+test('the Stripe webhook is off until configured and only reports sessions paid in full for the configured fee', async () => {
   const off = await handleStripeWebhook(new Request('https://kevos.com/api/assessment/stripe-webhook', { method: 'POST', body: '{}' }), env);
   assert.equal(off.status, 503);
 

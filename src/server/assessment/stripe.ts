@@ -1,8 +1,8 @@
-// /api/assessment/stripe-webhook: optional, server-side payment verification for the A$195 assessment.
+// /api/assessment/stripe-webhook: optional, server-side payment verification for the assessment fee (ASSESSMENT.price, src/config/assessment.ts).
 //
 // Disabled (503) until STRIPE_WEBHOOK_SECRET is set as a Worker secret. When enabled, every event's
 // Stripe-Signature header is verified with HMAC-SHA256 before anything is trusted, so a redirect or a
-// forged request can never mark an assessment as paid. A verified, fully paid A$195 AUD Checkout Session
+// forged request can never mark an assessment as paid. A verified Checkout Session paid in full, for exactly the configured fee in AUD,
 // (from a Stripe Payment Link or Checkout) emails BIZOMAT a "payment verified" notice; nothing is sent to
 // the customer (Stripe issues its own receipt) and nothing is stored. Card details never touch BIZOMAT.
 import { ASSESSMENT } from '../../config/assessment.ts';
