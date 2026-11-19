@@ -133,6 +133,13 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   recovery codes; required for the Control Centre, and for the whole console once an admin has enrolled; dangerous
   changes need the password and a code within 10 minutes). Never switch a flag on, or add a capability that is not
   behind one, without the owner's approval.
+  **One company identity** (Stage 1, R3, 19 Nov 2026; `docs/platform/company-identity.md`; migration 0030): the table
+  `companies` has one row for every registered, personal and example company, with the id it already had; the source
+  tables (`co_companies`, `sys_companies`, `sys_demo`) are unchanged and the app keeps the registry in step
+  (`apps/work/src/worker/company/identity.ts`; every write, plus a repair in the 15-minute run). Registration number and
+  status live there for every country (unique per country, type and number); nothing is `verified` until R6's service
+  compares a register's answer with the company's name. A migration whose first line is `-- bizomat:foreign-keys-off`
+  runs with foreign keys off and commits only when `PRAGMA foreign_key_check` is clean (on D1: empty databases only).
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
