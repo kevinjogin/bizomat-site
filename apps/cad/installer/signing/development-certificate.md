@@ -1,14 +1,14 @@
 ﻿# BIZOMAT development code-signing certificate
 
-Written by installer\sign-development.ps1 on 2026-11-08 09:29. Public information only.
+Written by installer\sign-development.ps1 on 2026-11-16 09:18. Public information only.
 
 | Item | Value |
 |---|---|
 | Subject | CN=BIZOMAT Development |
-| Thumbprint (SHA-1) | DBEB45D14B7662DACFCFE92308536CE0ED5E6B12 |
-| Serial number | 5485815DF1D80591456149BD44FFBCE8 |
-| Valid from | 2026-11-08 08:40 |
-| Expires | 2028-11-08 08:50 |
+| Thumbprint (SHA-1) | CB6DBE7431F93403751B1BFE72B6C514D5E23F69 |
+| Serial number | 26C550C75818C0A94EC3FDE7F85179AF |
+| Valid from | 2026-11-16 09:06 |
+| Expires | 2028-11-16 09:16 |
 | Key | RSA 3072 bits, private key not exportable |
 | Signature algorithm | sha256RSA |
 | Private key | in this Windows user's certificate store (Cert:\CurrentUser\My) on the development computer only |

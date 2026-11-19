@@ -24,9 +24,10 @@ FROM ${BASE}
 ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 PIP_DISABLE_PIP_VERSION_CHECK=1 OPENSKETCH_DATA=/data
 
 # OpenCascade (build123d) needs these X/GL libraries even without a screen; node runs the sketch solver
-# (opensketch/solver) that solves every sketch before it is sent to SOLIDWORKS
+# (opensketch/solver) that solves every sketch before it is sent to SOLIDWORKS; ClamAV scans BIZOMAT ERP's
+# verification documents (opensketch/evidencescan.py: its signatures are fetched at run time, not baked in)
 RUN apt-get update -qq \
- && apt-get install -y -qq --no-install-recommends libgl1 libglu1-mesa libxrender1 libxext6 libx11-6 nodejs \
+ && apt-get install -y -qq --no-install-recommends libgl1 libglu1-mesa libxrender1 libxext6 libx11-6 nodejs clamav clamav-freshclam \
  && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

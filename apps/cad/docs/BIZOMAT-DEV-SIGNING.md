@@ -56,6 +56,15 @@ Needs Windows PowerShell 5.1, Git for Windows (Git Bash), the .NET 8 SDK and the
 3. Later runs: `installer\sign-development.ps1 -Build -Backup`. The script finds the certificate by its subject.
    Pass `-Thumbprint` to choose one.
 
+4. Another computer has no certificate (its private key never leaves the computer that made it): run step 2 there,
+   which makes a new one, so the installers it signs show a different publisher. That happened on 16 Nov 2026 (AEDT):
+   0.13.1 is signed with `CB6DBE7431F93403751B1BFE72B6C514D5E23F69`; the 8 Nov certificate (`DBEB45D1...`, 0.13.0) is
+   on no computer any more. A new computer also needs the .NET 8 SDK (`winget install --id Microsoft.DotNet.SDK.8 -e`);
+   a PowerShell window, or a Windows Terminal tab, opened before that install does not find `dotnet`: open a new
+   window, or reload the path with
+   `$env:Path = [Environment]::GetEnvironmentVariable('Path','Machine') + ';' + [Environment]::GetEnvironmentVariable('Path','User')`.
+   Commit the backup on a branch, never straight to main (`git switch -c <branch>`, then the `git add` the script prints).
+
 What it signs: `OpenSketch.Sw.dll`, `KEVOS.Companion.exe` and `OpenSketchSW.exe` (BIZOMAT's own files; the package
 holds no third-party binaries) before they go into the MSI, then the MSI. SHA-256 file digests and an RFC 3161 SHA-256
 timestamp from `http://timestamp.digicert.com` (`-TimestampUrl` for another; `-NoTimestamp` signs without one, and
@@ -105,6 +114,14 @@ then, at the sftp prompt, `put <path to the .msi> /data/downloads/BIZOMAT-CAD-Au
 `fly ssh console -a cados -C "sha256sum /data/downloads/BIZOMAT-CAD-Automation-x64.msi"`. Nothing to restart: the next
 download gives the new file. To change it, put another file there (keep the one before as a backup first); to stop
 serving it, remove it. After the move to Cloudflare the data folder holds no `downloads/`, and 4 takes over.
+
+From GitHub instead (15 Nov 2026, when flyctl on the owner's PC could not open its SSH tunnel: "can't build tunnel ...
+403"): commit the backup on a branch, then Actions > Installer on the CAD volume > Run workflow, with the branch, the
+.msi path under `backups/installer/`, its SHA-256 and version (from the signing report), the signer thumbprint (or
+`unsigned`) and `confirm` = PLACE. It checks all of them on the runner, has the Machine fetch the file from that commit
+and check its SHA-256 again, swaps it in with one rename and keeps the file before as `previous-<time>-<sha>.msi`.
+Nothing restarts. Served since 15 Nov 2026 22:45 UTC: the development-signed 0.13.1 (SHA-256
+`cc8f04ecb1ee20fdcc96261ea100ef48fa03850db454f29908b032aa10c7d1a2`).
 
 A development-signed installer is trusted only where its certificate is installed; elsewhere Windows shows an unknown
 publisher, as for an unsigned one.

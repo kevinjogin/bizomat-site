@@ -11,7 +11,7 @@ calls the `sw_` MCP tools; the server checks each sketch and feature with OpenSk
 kernel, queues the work, and the OpenSketch add-in in SOLIDWORKS (`solidworks/`, C#) fetches it over outgoing HTTPS
 and makes native SOLIDWORKS features. A home page sets it up. License: AGPL-3.0-only.
 
-CADOS for SOLIDWORKS (0.12.3; called KEVOS Bridge up to 0.11) builds on it: the server is the CADOS gateway; each
+BIZOMAT CAD Automation for SOLIDWORKS (0.13.1; CADOS for SOLIDWORKS in 0.12, KEVOS Bridge up to 0.11) builds on it: the server is the CADOS gateway; each
 Windows computer runs the native CADOS add-in (COM `ISwAddin`, Tools > Add-Ins > CADOS, CADOS tab, menu and task pane)
 and the KEVOS Companion (tray app, starts with Windows, registered by pairing) which holds a signed outbound link to the
 gateway and hands commands to the add-in over a local named pipe; one MSI ("CADOS for SOLIDWORKS") installs both.
@@ -21,8 +21,15 @@ COM add-in) and the release process. Docs: `docs/BRIDGE-PROTOCOL.md` (the contra
 notes). The MSI builds unsigned on Windows in CI (`installer` job); release signing waits for a signing service.
 Development signing (`installer/sign-development.ps1`, `docs/BIZOMAT-DEV-SIGNING.md`) runs on the Windows development
 computer with a self-signed `CN=BIZOMAT Development` certificate from its certificate store (not trusted elsewhere);
-`installer-test.yml` runs it with a throwaway certificate. Installer backups: `backups/installer/` (original, as
-released; development-signed), never overwritten.
+`installer-test.yml` runs it with a throwaway certificate, and (job `upgrade`, `.github/scripts/test-upgrade.ps1`) installs
+0.13.0 built from ce0c810, upgrades it to the current version and checks the upgrade in place: one product, the new
+version in the install record and the list of apps, the Companion and add-in replaced, the registrations, and each
+person's settings and data kept. Installer backups: `backups/installer/` (original, as
+released; development-signed), never overwritten. The development certificate in use since 16 Nov 2026 (AEDT) is
+`CB6DBE7431F93403751B1BFE72B6C514D5E23F69` (`installer/signing/`), made on the owner's current PC; the 8 Nov one
+(`DBEB45D1...`, which signed 0.13.0) is on no computer any more. The development-signed 0.13.1 is backed up in
+`backups/installer/development-signed/0.13.1-20261116-0918` (branch `installer-0.13.1-dev`): its program files are
+byte for byte the CI build's apart from the signatures, and its text files apart from line endings.
 
 ## Rules
 
@@ -62,15 +69,19 @@ released; development-signed), never overwritten.
   and raw files answer 404 to everyone else. Downloads are published on bizomat.ai (`/downloads/cad/`, R2).
 - CI: `.github/workflows/tests.yml` (pytest in two jobs: main and `-m slow`; npm test; the Cloudflare Worker's
   `npm run check` in `cloudflare/mcp` on Node 22) on pull requests and
-  non-main pushes; `deploy.yml` deploys main to Fly automatically on every push to main that changes more than docs/,
-  root *.md or backups/ (owner, 9 Nov 2026), and by hand (`confirm` = `DEPLOY`), after the same tests and a preflight
-  of the Machine, and fails if the live /healthz does not show the new version within 3 minutes; `solidworks.yml`
+  non-main pushes; `deploy.yml` is the only way to production (Hosting, below; owner, 16 Nov 2026): on a push to main
+  that changes what the image is built from or fly.toml, after the tests and the image's smoke test, it deploys that
+  exact image and checks it, rolling back by itself when a core check fails; `fly-status.yml` (by hand, read only)
+  checks that Fly has no deployment source for cados, so nothing deploys around it. main is protected by the ruleset
+  `.github/rulesets/main.json` (a pull request with the four tests.yml checks passing, no force push, no deletion, no
+  bypass; applied by the owner with `gh api`, README.md section 11; `tests/test_ruleset.py`), so tests.yml runs on
+  every pull request, docs-only ones included; `solidworks.yml`
   builds and tests the add-in and keeps the zip as an artifact. `domain.yml` (run by hand, `.github/scripts/kevos-domain.sh`) gives the Fly app
   its own address on a Cloudflare domain: DNS record, Fly certificate and validation record, OPENSKETCH_PUBLIC_URL
   (secrets CLOUDFLARE_API_TOKEN, FLY_CADOS_TOKEN; app fixed to cados). Python pins live in requirements.txt (image) and
   requirements-dev.txt (CI), with hashes.
 
-## Current state (v0.8 server, CADOS for SOLIDWORKS 0.12.3)
+## Current state (v0.8 server, BIZOMAT CAD Automation for SOLIDWORKS 0.13.1)
 
 - KEVOS registered computers (`devicebridge.py`, router included in `server.py`): pairing (`/v2/devices/pair/*`, the
   signed-in page `/devices/pair`), device proofs (`Authorization: KEVOS-Device <JWS>`, ES256 by the computer's
@@ -158,6 +169,21 @@ released; development-signed), never overwritten.
   (`auth.PRIVACY_BODY`, section `erp`) and the docs page say what is sent. Tests: `tests/test_erpstatus.py` (a
   stand-in ERP with the ERP's own rules; the slow test runs the real work app when `BIZOMAT_WORK_APP` names a built
   `apps/work`, and checks who sees which computer).
+- Malware scan of BIZOMAT ERP's verification documents (`evidencescan.py`, 19 Nov 2026; the owner chose this 2 GB
+  Machine because BIZOMAT's own have 512 MB and ClamAV needs about 1 GB while it scans: measured 1,000 MB at its peak,
+  about 12 s a file, ClamAV 1.5.4 with the full signature set). A daemon thread `evidence-scan` (started and stopped by
+  `server.lifespan`, never the event loop) asks `POST <bizomat_id.provider()>/api/id/scan/next` with the BIZOMAT client
+  credentials (HTTP Basic, client `cad`; no new secret, no new open address), checks the bytes against the ERP's
+  SHA-256, scans them in a private temporary folder at nice 19 and deletes them, and posts `scan/result` (clean,
+  infected with the signature, or error). Files over ClamAV's limits and encrypted documents count as infected. One at
+  a time, only while 1,300 MB are free (`OPENSKETCH_SCAN_MIN_FREE_MB`; unknown memory: never). freshclam fetches the
+  signatures to the Machine's own disk (`/var/lib/clamav`, not the volume) every 6 hours with `TestDatabases no`. Off
+  without the BIZOMAT client secret or ClamAV (the image installs clamav and clamav-freshclam), or with
+  `OPENSKETCH_EVIDENCE_SCAN=0`; the ERP (bizomat-site `apps/work/src/worker/company/scan.ts`) hands out nothing until
+  its flag `evidence_scanning` is on. Admin's people API reports its status (`evidence_scan`). Tests:
+  `tests/test_evidencescan.py` (stand-in ERP and ClamAV; a slow test runs the real ClamAV on EICAR when installed).
+  Deployed 19 Nov 2026 (version 00f46c2, deploy run 44626760785, every core and public check passed); it scans nothing
+  while the ERP's flag is off, and the privacy notice says where documents are scanned.
 - Pages: `/` is the product page for visitors (`site.landing`) and the app's Home for a signed-in person (and on an
   open server); `/overview` (product page) and `/docs` (setup, connection, auth, verify, self test, troubleshooting,
   security) are public (`auth.PUBLIC_PAGES`), as are `/privacy` and the design system under `/ui/` (`cados.css`,
@@ -238,12 +264,12 @@ released; development-signed), never overwritten.
   delete, rename, dimensions (InsertModelAnnotations3 on one view or all), arrange_dimensions, centre_marks
   (AutoInsertCenterMarks2), note (CreateText2), properties, sheet (scale, projection), bom (InsertBomTable4 with the
   first BOM template in SOLIDWORKS' file locations, then AutoBalloon5). A failing action stops the list; the result
-  says which, with what was done before it. Not run in a real SOLIDWORKS yet.
+  says which, with what was done before it. `sw_get_drawing` ran in a real SOLIDWORKS on 15 Nov 2026; `sw_edit_drawing` not yet.
 - `sw_selftest.py`: stages plate / shapes / assembly in `Documents\OpenSketch\selftest` (the plate stage ends with its drawing and a PDF of it), each step ok / check /
   failed with the reason; the first thing to run on a new PC. Tests run it against SimSW, a stand-in add-in built
   on the kernel and mate solver.
 - Add-in (`solidworks/`, .NET Framework 4.8 x64, SOLIDWORKS 2022 interop embedded; version in
-  `Directory.Build.props`, 0.12.3): Core (Json, Geom, SketchPlan, BridgeClient; Bridge2: Crypto (ES256 JWS, JWK),
+  `Directory.Build.props`, 0.13.1: the Companion's pause and resume fix): Core (Json, Geom, SketchPlan, BridgeClient; Bridge2: Crypto (ES256 JWS, JWK),
   Wire (ids, times, 4-byte-length frames), ReplayGuard, PipeLink (the add-in's pipe client: reader thread for pings and
   cancels, one worker for commands, outbox across reconnects, at-most-once by command id), CloudLink and
   CompanionEngine (the Companion's core: signed long poll, verification, routing to a SOLIDWORKS session, spool,
@@ -276,6 +302,13 @@ released; development-signed), never overwritten.
   `https://bizomat.ai/downloads/cad/BIZOMAT-CAD-Automation-x64.msi`. `/download/solidworks.sha256` (the pages'
   checksum link) answers for the file on the volume, else redirects to `brand.checksum_url()`. Pages link the
   checksum (`/download/solidworks.sha256`) and support (`brand.support_url()`: the website's contact page), never GitHub.
+  Since 15 Nov 2026 (22:45 UTC) the volume holds the development-signed 0.13.1 (1,323,008 bytes, SHA-256
+  `cc8f04ecb1ee20fdcc96261ea100ef48fa03850db454f29908b032aa10c7d1a2`, signer `CB6DBE74...`), put there by
+  `.github/workflows/installer-volume.yml` (by hand, `confirm` = PLACE; inputs: the branch holding the backup, its path
+  under `backups/installer/`, SHA-256, version and signer thumbprint or `unsigned`; checked on the runner with msitools
+  and `.github/scripts/msi-signer.sh`, fetched by the Machine from that commit and checked again, swapped in with one
+  rename, the file before kept as `previous-<time>-<sha>.msi`; no restart). The development-signed 0.13.0 it replaced is
+  `/data/downloads/previous-20261115T224521Z-51b6de4152e6.msi`. `fly-status.yml` prints each installer's SHA-256.
   `tests/test_installer.py` keeps the MSI, the add-in code and the download link in step. `build.ps1` signs with a
   store certificate by thumbprint (`-CertThumbprint`/KEVOS_SIGN_THUMBPRINT, never falls back to unsigned when one is
   asked for) or a `.pfx` (CI); `-Timestamp ''` signs without a timestamp, `-NameSuffix` (sign-development passes
@@ -295,8 +328,23 @@ released; development-signed), never overwritten.
   its own signed-in clones (`bizomat.ps1 setup`, then `git pull`); raw GitHub links do not work for a private
   repository. GitHub Actions minutes for private repositories are limited: when they run out, every job fails at once
   with no log (seen 7 Nov 2026), and `cloudflare.ps1` runs the repository's own checks before each deploy. The Fly app
-  below has no GitHub repository attached (Fly dashboard > cados > Settings shows "Attach existing repository", checked
-  9 Nov 2026): never attach one; deploys go through `deploy.yml` and its preflight.
+  below must have no GitHub repository connected (Fly dashboard > cados > Settings): **GitHub Actions' `deploy.yml` is
+  the single deployment authority** (owner, 16 Nov 2026). One was connected on 15 and 16 Nov 2026: every push to main
+  was built and deployed by Fly itself about a minute after the merge, docs-only and `[skip ci]` merges included
+  (releases v22, v24, v26, v28, v29, v31, v33 and v34; /healthz version `dev`; no tests, no preflight), before
+  deploy.yml's own release (v35 on 16 Nov: `9ec8423`). Both kinds of image were tagged `deployment-<id>`, so only the
+  version told them apart. **The owner disconnected Fly's GitHub deployment for cados on 16 Nov 2026.** Fly's API
+  (GraphQL, read only with FLY_CADOS_TOKEN) confirmed it independently, before and after the merge of #13 (b7db50e,
+  01:08 UTC): `hasDeploymentSource: false` and `deploymentSource: null` in Fly status runs 43784118963 (01:05 UTC) and
+  43784971587 (01:13 UTC). That merge changed no deploy path and made no release: v35 stayed the latest, and the
+  Machine was not restarted (last updated 00:20:46 UTC before and after). Since then `fly-status.yml` checks it on
+  every run (its last step, `.github/scripts/fly-deploy-source.sh`; `tests/test_fly_deploy_source.py`): it passes with
+  no deployment source, fails with an error naming what Fly reports when one is connected, and fails without claiming
+  anything when the answer cannot be read. It never disconnects anything (that is done by hand in the Fly dashboard),
+  never prints the token or the raw answer, and deploys nothing. deploy.yml also warns when production reports `dev`
+  and reports any release it did not make; a merge that does not deploy (docs, workflows, tests) must leave the release
+  list unchanged. The first deploy of a genuine change (the malware scanner, 19 Nov 2026) rolled back on the image check
+  (run 44623909917); after the config-digest fix (#17) it deployed by hand (run 44626760785, 00f46c2).
 - Listens on `::` (`--host ::`, `__main__.listen_sockets`: one dual-stack socket, IPv4 alone where there is no IPv6), so
   the BIZOMAT router (Fly app `bizomat`) reaches it over Fly's private network at cados.internal:8080.
 - Public address https://bizomat.ai/cad: CAD Automation lives under the BIZOMAT website's own address (the owner's
@@ -323,18 +371,35 @@ released; development-signed), never overwritten.
   Favicons (`static/favicon.svg|ico`, `ui/icon-32.png`, `ui/icon-180.png`) are the KEVOS K (drawn from the KEVOS logo;
   kevos.com could not be fetched from the build session). Origin https://cados.fly.dev (Fly
   app `cados`, in ams (Amsterdam), first made with Fly Launch from GitHub on 4 Nov 2026); the deploy health checks use it.
-  Deploys (since 9 Nov 2026): `deploy.yml`, automatically on every merge to main that changes deployable files (the
-  owner's choice), and by hand (Actions > Deploy to Fly.io (cados), `confirm` = `DEPLOY`); repository secret
-  FLY_CADOS_TOKEN, a deploy token for cados only. Every merge to main therefore goes to production: keep main
-  releasable, and use [skip ci] in a merge commit's message to merge without deploying. Steps: the tests, then the preflight
-  (`.github/scripts/fly-preflight.py`, which stops a deploy that would add, remove or resize the Machine), then
-  `flyctl deploy --app cados`. It never creates an app or volume. No repository is attached to the app in Fly (checked
-  9 Nov 2026; it used to build every push to jogkev-creator/CADOS main), so this workflow is the one deploy source.
+  Deploys (owner, 16 Nov 2026): only `.github/workflows/deploy.yml`. On a push to main that changes what the image is
+  built from (Dockerfile, .dockerignore, requirements.txt, opensketch/, solidworks/ but not its tests) or fly.toml, it
+  runs the tests (tests.yml) and, beside them, builds the image once on the runner (OPENSKETCH_VERSION = the commit's
+  first 7 characters; layers of the running image reused when it was built there), smoke-tests it as a container
+  (`.github/scripts/image-smoke.sh`) and pushes it to registry.fly.io/cados:sha-<commit>. Only when both pass: the
+  preflight (`.github/scripts/fly-preflight.py`, which stops a deploy that would add, remove or resize the Machine), the
+  running image recorded, the optional secrets staged (`flyctl secrets import` on standard input, never a command line),
+  then `flyctl deploy --image` of that exact image (no build). Core checks (`.github/scripts/cados-checks.sh core`:
+  /healthz reports the commit, the Machine runs the pushed digest, MCP answers 401 with a Bearer challenge, the OAuth
+  metadata answers) deploy the recorded image again when one fails (automatic rollback) and fail the run; the checks
+  through bizomat.ai and Sign in with BIZOMAT (the token endpoint must refuse a made-up code as invalid_grant, never
+  invalid_client) fail it without a rollback. The image check passes when Fly reports the pushed manifest digest or, because Fly runs an image
+  under its own `deployment-<id>` tag with a rewritten manifest, when that manifest has the pushed image's config digest
+  (`.github/scripts/image-config.sh`, `tests/test_image_config.py`). The first deploy of a real change (19 Nov 2026, the
+  malware scanner, run 44623909917) failed only that check (the new server answered every other) and rolled back by
+  itself to 9ec8423; this was the fix. Docs, workflows, scripts, tests, the installer and backups reach main
+  without a deploy (tests/test_deploy_workflow.py keeps the paths equal to the Dockerfile's COPY lines and holds the
+  other rules). By hand (Actions > Deploy to Fly.io (cados)): `deploy` (`confirm` = `DEPLOY`), `rollback` (`image` =
+  `sha-<commit>` or a `deployment-<id>`, an image already in the registry, no build) or `build-only` (any branch: pushes
+  `check-<commit>-<run>`, deploys nothing). One deploy at a time (concurrency `deploy-cados`; of the waiting runs only
+  the newest is kept); a re-run of a live commit deploys nothing. The laptop's `bizomat.ps1 deploy cad` starts this
+  workflow with the GitHub CLI and never deploys itself. Repository secret FLY_CADOS_TOKEN, a deploy token for cados
+  only (it also pushes to the registry). It never creates an app, Machine or volume.
   Production, read from Fly on 9 Nov 2026: one Machine in ams (Amsterdam, not Sydney), shared CPU, 2 vCPUs, 2048 MB,
   and the 1 GB volume opensketch_data in ams; fly.toml matches it. Never add a Machine, change its size or memory, or
   move its region without the owner's approval (a move to syd means moving the volume: a planned change of its own).
   `fly-status.yml` (run by hand, changes nothing) prints the app's machines, volumes, secret
-  names, releases, logs and /healthz: both need the repository secret FLY_CADOS_TOKEN (a deploy token for cados).
+  names, releases, logs and /healthz, and last checks that no repository is connected to the app in Fly (it fails if
+  one is): both need the repository secret FLY_CADOS_TOKEN (a deploy token for cados).
   How this app and the BIZOMAT website (kevinjogin/bizomat-site, Fly app `bizomat`) work together:
   `docs/SITE-CAD-INTEGRATION.md`.
   No password secret is needed on Fly (fly.toml sets OPENSKETCH_PUBLIC_URL, so a fresh server waits in setup mode);
@@ -411,7 +476,21 @@ released; development-signed), never overwritten.
   `CompanionEngine.SetPaused`), so the gateway sees a resume within about 0.5 s. Before, it waited for the poll (up to
   25 s), the AI's commands were refused as PAUSED meanwhile, and `tests/test_bridge_e2e.py` failed about one run in
   three; the test now requires pause and resume to be seen within 5 s.
-- KEVOS: not yet run on Windows or in a real SOLIDWORKS; the MSI is built only by CI; no MCP progress notifications
+- On the owner's PC (15 Nov 2026): 0.13.0 upgraded in place to the CI-built 0.13.1 (same device id, still paired, the
+  Companion reported 0.13.1 and online).
+- First run in a real SOLIDWORKS (15 Nov 2026, 23:10 to 23:45 UTC; SOLIDWORKS 2022 SP5, 30.5.0, on the owner's PC, add-in
+  and Companion 0.13.1, through the Companion and the MCP from an AI app): a part (fully defined sketch, extrude, hole,
+  fillets: each volume exactly as the kernel predicted), a batch rolled back after a failing step (volume back to the
+  last digit), a delete not done without the person's approval, a global variable, save, a STEP export, an assembly
+  (insert, concentric and coincident mates, no interference), a drawing (A3, 2:1, third angle, 4 views, 18 dimensions,
+  notes, title block properties) and its PDF, a SOLIDWORKS screenshot and a command's history in `sw_command_status`;
+  the owner then reported pause and resume and the add-in's reconnection after Tools > Add-Ins off and on as working
+  (not watched remotely). Results and what was not tested: `docs/KEVOS-TEST-REPORT.md` section 4. Found:
+  `sw_selftest` cannot finish from an AI app that ends a tool call after 60 s (Claude's did): the stage stops with the
+  call, after its first step, and leaves an unsaved part; a fillet with its prediction (the body read back as STEP)
+  took over 60 s; one status read took 39 s (the Companion took the command after 12 s, the add-in answered 26 s later
+  with six documents open); the owner's default drawing template has no sheet format, so no title block shows.
+- KEVOS: the release MSI is built only by CI; no MCP progress notifications
   (JSON responses), progress is in `sw_command_status`; ChatGPT and Grok connectors untested; the gateway is one
   process (SQLite, live sessions in memory).
 - App sign-in (OAuth) is tested with the MCP Python SDK client; not yet with every AI app's connector.
@@ -422,8 +501,9 @@ released; development-signed), never overwritten.
 
 ## Next
 
-1. Run the KEVOS checklist (`docs/KEVOS-TEST-REPORT.md` section 4) on Windows with SOLIDWORKS 2022: the MSI, the
-   Companion, the add-in's new UI, events, confirmation and modal check have only been compiled, not run.
-1. Run the self test on real SOLIDWORKS installs and fix from the reports.
+1. Make `sw_selftest` survive an AI app's 60 s tool limit (run each stage in the background and report progress), and
+   make the slow reads faster (a fillet's prediction, a status read with many documents open).
+1. Finish the KEVOS checklist (`docs/KEVOS-TEST-REPORT.md` section 4): the items still marked not tested.
+1. Run the self test on more real SOLIDWORKS installs and fix from the reports.
 2. Tune SW_GUIDE from what the AI gets wrong on real work.
 3. Early access and Google sign-in settings on the Admin page.

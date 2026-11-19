@@ -367,7 +367,11 @@ seen), your last few commands (an ID, the tool, its status and when) and your co
 they were connected and last used). It never has a password, key or token, a file name or path, or anything from your
 models.</p>
 <p>BIZOMAT ERP shows it to you and, in a company you belong to on BIZOMAT, to that company's owner and administrators.
-When your account is removed here, the report is withdrawn.</p></section>
+When your account is removed here, the report is withdrawn.</p>
+<p>This server, in Amsterdam, the Netherlands, also scans company registration documents that BIZOMAT ERP's companies
+upload for verification: it fetches one document at a time from BIZOMAT ERP over an encrypted connection, scans it for
+malware with ClamAV in a private temporary folder, tells BIZOMAT ERP the result and deletes the document straight away.
+Nothing from the document is kept or logged here.</p></section>
 <section id="google"><h2>Sign in with Google</h2>
 <p>If you choose Continue with Google, Google tells this service your name, your email address, whether that address is
 verified, your Google account ID and, for work accounts, your organisation's domain. It asks for nothing else: no access to
