@@ -10,8 +10,8 @@
 // Registration. Until the verification service of R6 takes over, a registered company's status comes from its ABN
 // checks, claiming no more than they found: a number whose format was checked, or that the Australian Business Register
 // found active, is pending (the register was never compared with the company's name), never verified. A cancelled ABN
-// is deregistered and an ABN the register did not find goes to manual review. A status a platform admin set by hand
-// (status_source manual) is kept until the number changes.
+// is deregistered and an ABN the register did not find goes to manual review. A status a platform admin set by hand, or
+// that the verification service set (company/verification.ts), is kept until the number changes.
 
 import { now } from '../lib/util';
 
@@ -32,12 +32,14 @@ export type RegistrationStatus = (typeof REGISTRATION_STATUSES)[number];
 
 // The ABN, else the ACN when no other live company holds the same ACN without an ABN (the ACN is not unique in
 // co_companies, and the registry allows one company per number).
-const REG_TYPE = `CASE WHEN co.abn IS NOT NULL THEN 'ABN' WHEN co.acn IS NOT NULL AND (SELECT COUNT(*) FROM co_companies x WHERE x.acn = co.acn AND x.abn IS NULL AND x.deleted_at IS NULL) = 1 THEN 'ACN' END`;
-const REG_NUMBER = `CASE WHEN co.abn IS NOT NULL THEN co.abn WHEN co.acn IS NOT NULL AND (SELECT COUNT(*) FROM co_companies x WHERE x.acn = co.acn AND x.abn IS NULL AND x.deleted_at IS NULL) = 1 THEN co.acn END`;
+// Outside Australia the number is the registry's own (set at registration, R6): the sync keeps it.
+const REG_TYPE = `CASE WHEN co.country <> 'AU' THEN (SELECT x.registration_type FROM companies x WHERE x.id = co.id) WHEN co.abn IS NOT NULL THEN 'ABN' WHEN co.acn IS NOT NULL AND (SELECT COUNT(*) FROM co_companies x WHERE x.acn = co.acn AND x.abn IS NULL AND x.deleted_at IS NULL) = 1 THEN 'ACN' END`;
+const REG_NUMBER = `CASE WHEN co.country <> 'AU' THEN (SELECT x.registration_number FROM companies x WHERE x.id = co.id) WHEN co.abn IS NOT NULL THEN co.abn WHEN co.acn IS NOT NULL AND (SELECT COUNT(*) FROM co_companies x WHERE x.acn = co.acn AND x.abn IS NULL AND x.deleted_at IS NULL) = 1 THEN co.acn END`;
 const REG_STATUS = `CASE co.abn_status WHEN 'format_ok' THEN 'registration_pending' WHEN 'active' THEN 'registration_pending' WHEN 'cancelled' THEN 'deregistered' WHEN 'not_found' THEN 'manual_review' ELSE 'not_registered' END`;
 const REG_SOURCE = `CASE co.abn_status WHEN 'none' THEN 'none' WHEN 'format_ok' THEN 'format' ELSE 'registry' END`;
-// Keep a status a person decided while the number is the same.
-const KEEP_MANUAL = `companies.status_source = 'manual' AND companies.registration_number IS excluded.registration_number`;
+// Keep a status a person decided, or that the verification service set (it schedules the next check, R6), while the
+// number is the same. A new number starts again from its ABN checks, with a check due at once.
+const KEEP_MANUAL = `(excluded.country <> 'AU' OR companies.status_source IN ('manual', 'system') OR companies.next_check_at IS NOT NULL) AND companies.registration_number IS excluded.registration_number`;
 
 // ?1: one company id, or NULL for every company. ?2 (registered companies only): the time now.
 const REGISTERED = `
@@ -54,6 +56,7 @@ const REGISTERED = `
     status_changed_at = CASE WHEN ${KEEP_MANUAL} THEN companies.status_changed_at
                              WHEN excluded.registration_status IS NOT companies.registration_status THEN ?2 ELSE companies.status_changed_at END,
     verified_at = CASE WHEN ${KEEP_MANUAL} THEN companies.verified_at ELSE NULL END,
+    next_check_at = CASE WHEN ${KEEP_MANUAL} THEN companies.next_check_at ELSE NULL END,
     updated_at = excluded.updated_at, suspended_at = excluded.suspended_at, deleted_at = excluded.deleted_at
   WHERE companies.name IS NOT excluded.name OR companies.owner_id IS NOT excluded.owner_id OR companies.country IS NOT excluded.country
      OR companies.legal_structure IS NOT excluded.legal_structure OR companies.registration_number IS NOT excluded.registration_number

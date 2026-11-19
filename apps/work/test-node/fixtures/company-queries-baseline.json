@@ -1,5 +1,5 @@
 {
-  "note": "Statements on a company table without company_id that were in the code when the check began (Stage 1, R4). The list may only shrink: fix a statement, then remove its line. See docs/platform/company-context.md.",
+  "note": "Statements on a company table without company_id that were in the code when the check began (Stage 1, R4). The list may only shrink: fix a statement, then remove its line. See docs/platform/company-context.md. platformWide: statements that are meant to read across companies (platform admin views), each with its reason; reviewed one by one.",
   "statements": {
     "src/worker/billing/admin.ts :: \"SELECT id FROM billing_checkout_sessions WHERE environment = ? AND status = 'open' AND created_at < ? ORDER BY created_": 1,
     "src/worker/billing/admin.ts :: \"SELECT id FROM billing_subscriptions WHERE environment = ? AND status NOT IN ('canceled', 'incomplete_expired') AND syn": 1,
@@ -108,5 +108,8 @@
     "src/worker/whs/legal.ts :: 'SELECT COUNT(*) AS n FROM whs_site_packs WHERE pack_id = ?'": 1,
     "src/worker/whs/risk.ts :: `SELECT r.*, ${REF_COLUMNS}, rp.name AS responsible_name, db.name AS drafted_by_name, sb.name AS submitted_by_name, ab.n": 1,
     "src/worker/whs/util.ts :: 'UPDATE whs_alerts SET emailed = 1 WHERE dedupe_key = ?'": 1
+  },
+  "platformWide": {
+    "src/worker/company/verification-routes.ts :: \"SELECT MAX(checked_at) AS last, SUM(CASE WHEN outcome = 'unavailable' AND checked_at > ? THEN 1 ELSE 0 END) AS errors F": "The platform admins' verification dashboard: the last check and today's register errors across every company (counts only, platform admins with two-factor sign-in)."
   }
 }

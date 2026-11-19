@@ -2,7 +2,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { ApiError, del, errorMessage, get, patch, post, put } from '../lib/api';
+import { ApiError, api, del, errorMessage, get, patch, post, put } from '../lib/api';
 import { usePageTitle } from '../lib/hooks';
 import { timeAgo } from '../lib/format';
 import { useSession } from '../lib/session';
@@ -321,6 +321,7 @@ export function People() {
         </section>
       ) : null}
 
+      {admin ? <JoinRequests companyId={id} /> : null}
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Your membership</h2>
         {owner ? (
@@ -338,6 +339,44 @@ export function People() {
         )}
       </section>
     </div>
+  );
+}
+
+/** People who tried to register this company and asked to join it instead (R6, when switched on). */
+function JoinRequests({ companyId }: { companyId: string }) {
+  const qc = useQueryClient();
+  const toast = useToast();
+  const q = useQuery({ queryKey: ['company', companyId, 'join-requests'], queryFn: () => get<{ id: string; name: string; email: string; message: string; created_at: number }[]>(co(companyId, '/join-requests')) });
+  const [role, setRole] = useState('employee');
+  if (!q.data?.length) return null;
+  const decide = async (id: string, decision: 'approve' | 'decline') => {
+    try {
+      await post(co(companyId, `/join-requests/${id}/${decision}`), { role });
+      await qc.invalidateQueries({ queryKey: ['company', companyId] });
+      toast(decision === 'approve' ? 'Added to the company' : 'Request declined');
+    } catch (e) {
+      toast(errorMessage(e), 'error');
+    }
+  };
+  return (
+    <section className="card card-pad stack">
+      <h2 className="crm-subhead">Requests to join</h2>
+      <div className="field">
+        <label htmlFor="join-role">Role for people you approve</label>
+        <select id="join-role" className="select" value={role} onChange={(e) => setRole(e.target.value)}>
+          <option value="manager">Manager</option>
+          <option value="employee">Employee</option>
+          <option value="read_only">Read-only</option>
+        </select>
+      </div>
+      {q.data.map((r) => (
+        <div key={r.id} className="row">
+          <span className="grow small"><strong>{r.name}</strong> {r.email}{r.message ? ` · "${r.message}"` : ''} · {timeAgo(r.created_at)}</span>
+          <button className="btn sm primary" onClick={() => decide(r.id, 'approve')}>Approve</button>
+          <button className="btn sm" onClick={() => decide(r.id, 'decline')}>Decline</button>
+        </div>
+      ))}
+    </section>
   );
 }
 
@@ -675,6 +714,86 @@ export function Tools() {
 
 // ------------------------------------------------------------------ settings
 
+interface VerificationDTO {
+  status: string;
+  statusLabel: string;
+  registration: { country: string | null; type: string | null; number: string | null } | null;
+  verifiedAt: number | null;
+  nextCheckAt: number | null;
+  checksOn: boolean;
+  enforced: boolean;
+  history: { old_status: string | null; new_status: string; source: string; reason: string; created_at: number }[];
+  evidence: { id: string; file_name: string; size: number; status: string; review_note: string | null; uploaded_at: number }[];
+}
+
+/** The company's registration status (R6): what it is, how it changed, documents for a review; never set by the company. */
+function VerificationCard({ companyId }: { companyId: string }) {
+  const qc = useQueryClient();
+  const toast = useToast();
+  const q = useQuery({ queryKey: ['company', companyId, 'verification'], queryFn: () => get<VerificationDTO>(co(companyId, '/verification')) });
+  const [note, setNote] = useState('');
+  const [busy, setBusy] = useState(false);
+  const refresh = () => qc.invalidateQueries({ queryKey: ['company', companyId, 'verification'] });
+  const act = async (fn: () => Promise<unknown>, done: string) => {
+    setBusy(true);
+    try {
+      await fn();
+      await refresh();
+      toast(done);
+    } catch (e) {
+      toast(errorMessage(e), 'error');
+    } finally {
+      setBusy(false);
+    }
+  };
+  const upload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    const fd = new FormData();
+    fd.append('file', file);
+    void act(() => api(co(companyId, '/verification/evidence'), { method: 'POST', form: fd }), 'Document uploaded for review');
+  };
+  const v = q.data;
+  if (!v) return null;
+  return (
+    <section className="card card-pad stack">
+      <h2 className="crm-subhead">Verification</h2>
+      <p>
+        <strong>{v.statusLabel}</strong>
+        {v.registration?.number ? <span className="muted small"> · {v.registration.type} {v.registration.number}{v.registration.country ? ` (${v.registration.country})` : ''}</span> : null}
+      </p>
+      <p className="muted small">
+        {v.checksOn ? 'BIZOMAT checks the company with its country’s register where one can be asked, and again every 30 days.' : 'Automatic registry checks are not switched on yet; the status is shown for information.'}
+        {v.enforced ? ' Until the company is verified, its tools stay closed.' : ''} Only the register or a BIZOMAT review sets the status.
+      </p>
+      <div className="row">
+        {v.checksOn ? <button className="btn sm" disabled={busy} onClick={() => act(() => post(co(companyId, '/verification/check'), {}), 'Checked with the register')}>Check again</button> : null}
+        <label className="btn sm">
+          Upload a registration certificate
+          <input type="file" accept="application/pdf,image/png,image/jpeg" className="sr-only" onChange={upload} disabled={busy} />
+        </label>
+      </div>
+      {v.status !== 'verified' ? (
+        <form className="row" onSubmit={(e) => { e.preventDefault(); void act(() => post(co(companyId, '/verification/review'), { note }), 'Manual review asked for'); setNote(''); }}>
+          <input className="input grow" aria-label="Why a manual review" placeholder="Why a manual review is needed" value={note} onChange={(e) => setNote(e.target.value)} minLength={3} maxLength={1000} required />
+          <button className="btn sm" type="submit" disabled={busy}>Ask for a manual review</button>
+        </form>
+      ) : null}
+      {v.evidence.length ? (
+        <ul className="small">
+          {v.evidence.map((e) => <li key={e.id}>{e.file_name} · {e.status === 'pending' ? 'waiting for review' : e.status}{e.review_note ? ` (${e.review_note})` : ''} · {timeAgo(e.uploaded_at)}</li>)}
+        </ul>
+      ) : null}
+      {v.history.length ? (
+        <ul className="small muted">
+          {v.history.map((h, i) => <li key={i}>{timeAgo(h.created_at)}: {h.old_status ?? 'none'} to {h.new_status} ({h.source}){h.reason ? `, ${h.reason}` : ''}</li>)}
+        </ul>
+      ) : null}
+    </section>
+  );
+}
+
 /** BIZOMAT support's access to the company (R5): who, why, until when; the owner and administrators can end it. */
 function SupportAccess({ companyId }: { companyId: string }) {
   const qc = useQueryClient();
@@ -777,6 +896,7 @@ export function Settings() {
           <p>{c.email} · {c.phone}{c.website ? ` · ${c.website}` : ''}</p>
         </section>
       )}
+      {admin ? <VerificationCard companyId={c.id} /> : null}
       {admin ? <SupportAccess companyId={c.id} /> : null}
       {view.me.role === 'owner' ? (
         <section className="card card-pad stack">

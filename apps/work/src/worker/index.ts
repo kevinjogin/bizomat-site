@@ -14,6 +14,7 @@ import { escalateOverdue } from './whs/actions';
 import { runBillingScheduled } from './billing/admin';
 import { alertFailures } from './platform/alerts';
 import { syncAllCompanies } from './company/identity';
+import { runScheduledVerification } from './company/verification';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -75,6 +76,8 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
   }
   // The registry of every company (Stage 1, R3): put right anything a write missed, and mark companies whose source is gone.
   await step('companyRegistry', () => syncAllCompanies(env.DB, at));
+  // Registration checks due (first checks and the 30-day re-check), only while scheduled re-verification is on (R6).
+  await step('verification', () => runScheduledVerification(env, at));
   // BIZOMAT System: a company of their own for every account that has none yet (system/system.ts), a batch a run.
   try {
     // Every account has its own company in the System (migration 0017 made them for the accounts that existed then).

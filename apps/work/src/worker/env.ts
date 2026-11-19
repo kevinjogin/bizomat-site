@@ -49,6 +49,11 @@ export interface Env {
    */
   ABR_GUID?: string;
   /**
+   * Secret, optional: a Companies House API key (free from developer.company-information.service.gov.uk). With it, and
+   * the registry checks switched on, United Kingdom company numbers are looked up (src/worker/company/verification.ts).
+   */
+  COMPANIES_HOUSE_API_KEY?: string;
+  /**
    * Secret, optional: the BIZOMAT applications that may use BIZOMAT sign-in (src/worker/company/id-provider.ts), as
    * JSON: [{"id":"cad","name":"CAD Automation","secretSha256":"<hex>","redirectUris":["https://bizomat.ai/cad/..."]}].
    */

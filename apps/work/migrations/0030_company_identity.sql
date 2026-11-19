@@ -104,7 +104,8 @@ CREATE INDEX co_invitations_company ON co_invitations(company_id, accepted_at, r
 -- Registration statuses (brief 5.3): not_registered, registration_pending, verification_in_progress, verified,
 -- verification_failed, manual_review, status_changed, suspended, deregistered. status_source says what set the status:
 -- none, format (a number whose format was checked), registry (an official register answered), manual (a platform admin
--- decided, with a reason) or migration (carried over by this file).
+-- decided, with a reason), system (BIZOMAT set it, for example a review asked for) or migration (carried over by this
+-- file).
 CREATE TABLE companies (
   id TEXT PRIMARY KEY,
   type TEXT NOT NULL CHECK (type IN ('registered','personal','example')),
@@ -115,7 +116,7 @@ CREATE TABLE companies (
   registration_type TEXT,
   registration_number TEXT,
   registration_status TEXT NOT NULL DEFAULT 'not_registered' CHECK (registration_status IN ('not_registered','registration_pending','verification_in_progress','verified','verification_failed','manual_review','status_changed','suspended','deregistered')),
-  status_source TEXT NOT NULL DEFAULT 'none' CHECK (status_source IN ('none','format','registry','manual','migration')),
+  status_source TEXT NOT NULL DEFAULT 'none' CHECK (status_source IN ('none','format','registry','manual','system','migration')),
   status_changed_at INTEGER,
   verified_at INTEGER,
   next_check_at INTEGER,

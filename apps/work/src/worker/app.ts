@@ -37,6 +37,7 @@ import { adminSystemRoutes } from './system/admin';
 import { crmPublicRoutes, crmRoutes } from './crm';
 import { finPublicRoutes, finRoutes } from './fin';
 import { companyPublicRoutes, companyRoutes } from './company/routes';
+import { companyVerificationRoutes } from './company/verification-routes';
 import { idPublicRoutes } from './company/id-provider';
 import { maintenanceRoutes } from './maintenance';
 import { erpRoutes } from './erp';
@@ -48,7 +49,7 @@ import { adminBillingRoutes } from './billing/admin';
 import { platformRoutes } from './platform/routes';
 import { consoleMfaGate } from './platform/security';
 import { moduleGate } from './platform/module-gate';
-import { moduleSwitchGate, tokenScopeGate } from './platform/context';
+import { moduleSwitchGate, tokenScopeGate, verificationGate } from './platform/context';
 import { entitlementGate } from './billing/entitlements';
 
 export const CSP = [
@@ -190,6 +191,7 @@ export function createApp() {
   // enforced on the server (platform/context.ts).
   api.use('*', tokenScopeGate);
   api.use('*', moduleSwitchGate);
+  api.use('*', verificationGate);
   // Billing: writes to a registered company's paid tools need an active subscription when enforcement is on (off by
   // default; src/worker/billing/entitlements.ts). Reads always pass.
   api.use('*', entitlementGate);
@@ -219,6 +221,8 @@ export function createApp() {
   api.route('/fin', finRoutes);
   // BIZOMAT company accounts, the control centre at /company (src/worker/company).
   api.route('/company', companyRoutes);
+  // Verification and requests to join (Stage 1, R6; every part behind a flag that ships off).
+  api.route('/company', companyVerificationRoutes);
   // BIZOMAT System, every tool in one place by company, at /system (src/worker/system).
   api.route('/system', systemRoutes);
   // BIZOMAT ERP's Asset Management and Maintenance, Stage 1 (src/worker/maintenance): assets, requests, work orders.

@@ -12,7 +12,7 @@ import type { MiddlewareHandler } from 'hono';
 import type { AppEnv } from '../env';
 import { HttpError } from '../lib/util';
 import { loadErpAccess } from '../erp/access';
-import { MODULES, moduleEnabled, type ModuleKey } from './flags';
+import { MODULES, flagOn, moduleEnabled, type ModuleKey } from './flags';
 
 export type ToolApp = 'tasks' | 'crm' | 'finance';
 /** What a scoped API token may be limited to. */
@@ -187,4 +187,36 @@ export const tokenScopeGate: MiddlewareHandler<AppEnv> = async (c, next) => {
   if (!ctx || ctx.companyId !== scope.companyId) throw new HttpError(403, 'This API token is limited to one company, and this address is not in it.', { code: 'TOKEN_SCOPE' });
   if (scope.apps && !scope.apps.includes(ctx.app)) throw new HttpError(403, 'This API token is not allowed to use this application.', { code: 'TOKEN_SCOPE' });
   return next();
+};
+
+/** Whether verification enforcement is on anywhere: when it is not (the usual case), the gate costs one small query. */
+async function enforcementAnywhere(db: D1Database): Promise<boolean> {
+  try {
+    return !!(await db.prepare("SELECT 1 FROM feature_flags WHERE key = 'verification_enforcement' AND value = 'on' LIMIT 1").first());
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Verification enforcement (brief 5.4; flag verification_enforcement, off): a registered company that is not verified
+ * keeps its company area (onboarding, verification and its people) and support, and its tools and ERP answer 403
+ * VERIFICATION_REQUIRED to its people. Anyone else gets the route's usual answer. Personal and example companies are
+ * governed by the individual accounts policy (R7), not by this.
+ */
+export const verificationGate: MiddlewareHandler<AppEnv> = async (c, next) => {
+  if (!(await enforcementAnywhere(c.env.DB))) return next();
+  const path = c.req.path.replace(/^.*?\/api\//, '/');
+  const ctx = await contextOfPath(c.env.DB, path);
+  if (!ctx || ctx.app === 'company') return next();
+  const co = await c.env.DB.prepare("SELECT registration_status FROM companies WHERE id = ? AND type = 'registered' AND deleted_at IS NULL").bind(ctx.companyId).first<{ registration_status: string }>();
+  if (!co || co.registration_status === 'verified') return next();
+  if (!(await flagOn(c.env.DB, 'verification_enforcement', { companyId: ctx.companyId }))) return next();
+  const user = c.get('user');
+  if (ctx.tool) {
+    if (!(await memberOfTool(c.env.DB, ctx.tool, user.id))) return next();
+  } else {
+    await loadErpAccess(c.env.DB, ctx.companyId, user);
+  }
+  throw new HttpError(403, 'This company is not verified yet, so its tools are closed until it is. Its owner and administrators can see what is needed in Company settings, Verification.', { code: 'VERIFICATION_REQUIRED' });
 };

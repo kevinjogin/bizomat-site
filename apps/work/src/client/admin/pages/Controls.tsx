@@ -191,6 +191,100 @@ interface Integrity {
   skipped: string[];
 }
 
+const STATUS_LABEL: Record<string, string> = {
+  not_registered: 'Not registered',
+  registration_pending: 'Registration pending',
+  verification_in_progress: 'Verification in progress',
+  verified: 'Verified',
+  verification_failed: 'Verification failed',
+  manual_review: 'Requires manual review',
+  status_changed: 'Registration status changed',
+  suspended: 'Suspended',
+  deregistered: 'Deregistered',
+};
+
+interface VerificationDash {
+  totals: Record<string, number>;
+  queue: { id: string; name: string; country: string | null; registration_type: string | null; registration_number: string | null; registration_status: string; status_changed_at: number | null; evidence: number }[];
+  changes: { company_id: string; name: string | null; old_status: string | null; new_status: string; source: string; reason: string; created_at: number }[];
+  providers: { id: string; last_ok_at: number | null; last_error_at: number | null; last_error: string | null; consecutive_failures: number }[];
+  lastCheckAt: number | null;
+  nextCheckAt: number | null;
+  errorsToday: number;
+  configured: Record<string, boolean>;
+  flags: { checks: boolean; scheduled: boolean; enforcement: boolean };
+}
+
+/** Registration checks (R6): totals by status, the review queue with decisions, recent changes and the registers' health. */
+function VerificationCard() {
+  const toast = useToast();
+  const qc = useQueryClient();
+  const q = useAdmin<VerificationDash>('/platform/verification', { retry: false });
+  const [d, setD] = useState({ companyId: '', status: 'verified', reason: '' });
+  const decide = (e: React.FormEvent) => {
+    e.preventDefault();
+    post(`/admin/platform/verification/${encodeURIComponent(d.companyId)}/decision`, { status: d.status, reason: d.reason })
+      .then(() => { toast('Decision recorded; the company has been told'); setD({ companyId: '', status: 'verified', reason: '' }); void qc.invalidateQueries({ queryKey: ['admin'] }); })
+      .catch((err) => toast(errorMessage(err), 'error'));
+  };
+  const recheck = (id: string) => post(`/admin/platform/verification/${encodeURIComponent(id)}/check`, {}).then((r: any) => { toast(`Check: ${r.result}${r.status ? `, ${STATUS_LABEL[r.status] ?? r.status}` : ''}`); void qc.invalidateQueries({ queryKey: ['admin'] }); }).catch((err) => toast(errorMessage(err), 'error'));
+  const v = q.data;
+  return (
+    <Card title="Verification" subtitle="Registered companies by registration status, the review queue, recent changes and the registers. Decisions need a reason and a fresh password and code; the company is told.">
+      {v ? (
+        <div className="ac-stack">
+          <p className="small">
+            Automatic checks {v.flags.checks ? 'on' : 'off'} · scheduled re-checks {v.flags.scheduled ? 'on' : 'off'} · enforcement {v.flags.enforcement ? 'on' : 'off'} ·
+            ABN Lookup {v.configured.abr ? 'set up' : 'not set up'} · Companies House {v.configured.companies_house ? 'set up' : 'not set up'}
+          </p>
+          <p className="small">{Object.entries(v.totals).filter(([, n]) => n > 0).map(([s, n]) => `${STATUS_LABEL[s] ?? s}: ${n}`).join(' · ') || 'No registered companies yet.'}</p>
+          <p className="small muted">
+            Last check {v.lastCheckAt ? <When ts={v.lastCheckAt} /> : 'never'} · next {v.nextCheckAt ? <When ts={v.nextCheckAt} /> : 'none scheduled'} · register errors in the last day: {v.errorsToday}
+            {v.providers.map((p) => ` · ${p.id}: ${p.consecutive_failures ? `${p.consecutive_failures} failures in a row (${p.last_error ?? 'error'})` : 'answering'}`).join('')}
+          </p>
+          {v.queue.length ? (
+            <TableWrap label="Review queue">
+              <thead><tr><th>Company</th><th>Number</th><th>Status</th><th>Documents</th><th /></tr></thead>
+              <tbody>
+                {v.queue.map((r) => (
+                  <tr key={r.id}>
+                    <td>{r.name}<div className="muted small"><code>{r.id}</code></div></td>
+                    <td>{r.registration_number ? `${r.registration_type} ${r.registration_number}${r.country ? ` (${r.country})` : ''}` : 'none'}</td>
+                    <td>{STATUS_LABEL[r.registration_status] ?? r.registration_status}</td>
+                    <td>{r.evidence}</td>
+                    <td><div className="row"><button className="btn sm" type="button" onClick={() => setD({ ...d, companyId: r.id })}>Decide</button><button className="btn sm" type="button" onClick={() => recheck(r.id)}>Check now</button></div></td>
+                  </tr>
+                ))}
+              </tbody>
+            </TableWrap>
+          ) : <Empty>Nothing waiting for review.</Empty>}
+          <form className="ac-form ac-stack" onSubmit={decide}>
+            <div className="ac-grid-2">
+              <Field label="Company id" htmlFor="ver-company"><input id="ver-company" className="input" value={d.companyId} onChange={(e) => setD({ ...d, companyId: e.target.value })} required /></Field>
+              <Field label="New status" htmlFor="ver-status">
+                <select id="ver-status" className="select" value={d.status} onChange={(e) => setD({ ...d, status: e.target.value })}>
+                  <option value="verified">Approve: verified</option>
+                  <option value="verification_failed">Reject: verification failed</option>
+                  <option value="manual_review">Ask for more information: manual review</option>
+                  {Object.entries(STATUS_LABEL).filter(([s]) => !['verified', 'verification_failed', 'manual_review'].includes(s)).map(([s, l]) => <option key={s} value={s}>Override: {l}</option>)}
+                </select>
+              </Field>
+            </div>
+            <Field label="Reason (the company sees it)" htmlFor="ver-reason"><input id="ver-reason" className="input" value={d.reason} onChange={(e) => setD({ ...d, reason: e.target.value })} minLength={3} maxLength={500} required /></Field>
+            <div className="row"><button className="btn" type="submit">Record the decision</button></div>
+          </form>
+          {v.changes.length ? (
+            <TableWrap label="Changes in the last 30 days">
+              <thead><tr><th>Company</th><th>From</th><th>To</th><th>Source</th><th>When</th></tr></thead>
+              <tbody>{v.changes.slice(0, 20).map((h, i) => <tr key={i}><td>{h.name ?? h.company_id}</td><td>{STATUS_LABEL[h.old_status ?? ''] ?? 'none'}</td><td>{STATUS_LABEL[h.new_status] ?? h.new_status}</td><td>{h.source}</td><td><When ts={h.created_at} /></td></tr>)}</tbody>
+            </TableWrap>
+          ) : null}
+        </div>
+      ) : <p className="muted small">Loading</p>}
+    </Card>
+  );
+}
+
 interface SupportGrant { id: string; company_id: string; company: string | null; reason: string; starts_at: number; ends_at: number; revoked_at: number | null; admin: string | null }
 
 /** Support access (R5): time-limited, with a reason, logged in the company's own activity and visible to its owner. */
@@ -349,6 +443,7 @@ export default function Controls() {
           {d.flags.filter(g.test).map((f) => <FlagCard key={f.key} f={f} founder={founder} onChanged={refresh} run={run} />)}
         </div>
       ))}
+      <VerificationCard />
       <IntegrityCard />
       <SupportCard />
       <Card title="Kill switch" subtitle="Every enforcement flag back to its default (off, free, personal workspaces allowed), for everyone, at once.">

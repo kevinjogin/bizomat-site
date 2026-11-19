@@ -5,7 +5,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { companyTables, counts, unscopedStatements } from './company-queries.ts';
 
-const baseline = JSON.parse(readFileSync('test-node/fixtures/company-queries-baseline.json', 'utf8')) as { statements: Record<string, number> };
+const baseline = JSON.parse(readFileSync('test-node/fixtures/company-queries-baseline.json', 'utf8')) as { statements: Record<string, number>; platformWide?: Record<string, string> };
 
 describe('company scope in SQL', () => {
   const tables = companyTables('migrations');
@@ -24,12 +24,19 @@ describe('company scope in SQL', () => {
 
   it('has no new statement on a company table without company_id', () => {
     const added = Object.entries(now)
-      .filter(([k, n]) => n > (baseline.statements[k] ?? 0))
+      .filter(([k, n]) => n > (baseline.statements[k] ?? 0) && !baseline.platformWide?.[k])
       .map(([k]) => {
         const at = found.find((f) => f.key === k)!;
         return `${at.file}:${at.line}  ${k.split(' :: ')[1]}`;
       });
     expect(added, 'Scope these statements by company_id (or, if the row was already found within the company, say so in review and add them to the baseline)').toEqual([]);
+  });
+
+  it('gives every platform-wide statement a reason, and lists only statements still in the code', () => {
+    for (const [k, why] of Object.entries(baseline.platformWide ?? {})) {
+      expect(why.length, k).toBeGreaterThan(20);
+      expect(now[k] ?? 0, k).toBeGreaterThan(0);
+    }
   });
 
   it('keeps the baseline as short as the code (take fixed statements off the list)', () => {

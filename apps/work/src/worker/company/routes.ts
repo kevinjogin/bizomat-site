@@ -46,6 +46,7 @@ import { idAuthorizeRoutes } from './id-provider';
 import { companyProjects, linkRoutes } from './links';
 import { refuseExample } from '../system/example';
 import { syncCompanyStatements } from './identity';
+import { verifyCompany } from './verification';
 
 export const COMPANY_MOUNT = '/company';
 
@@ -425,6 +426,8 @@ companyRoutes.post('/companies', async (c) => {
     ...syncCompanyStatements(db, id, t),
   );
   await db.batch(stmts);
+  // The first registry check (Stage 1, R6): only when automatic registry checks are on for the company's country.
+  c.executionCtx?.waitUntil?.(verifyCompany(c.env, id, 'initial', user.id).catch(() => null));
   // People already in a linked tool keep it; they are listed as "in a tool only" until added to the company.
   await audit(db, { actorId: user.id, action: 'company.created', targetType: 'company', targetId: id, metadata: { abnStatus: checked.abnStatus }, ip: clientIp(c) });
   let confirmation: string | null = null;
@@ -550,6 +553,8 @@ one.patch('/', async (c) => {
     coAuditStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'company.updated', targetType: 'company', targetId: a.companyId, metadata: { abnChanged, emailChanged }, ip: clientIp(c) }),
     ...syncCompanyStatements(c.env.DB, a.companyId, t),
   ]);
+  // A new number, or a new legal name, is checked again (R6; only while automatic registry checks are on).
+  if (abnChanged || input.legalName !== a.company.legal_name) c.executionCtx?.waitUntil?.(verifyCompany(c.env, a.companyId, 'details_changed', a.userId).catch(() => null));
   let confirmation: string | null = null;
   if (emailChanged) confirmation = await sendEmailConfirmation(c, a.companyId, input.name, input.email);
   const co = await c.env.DB.prepare('SELECT * FROM co_companies WHERE id = ?').bind(a.companyId).first<CompanyRow>();
