@@ -126,6 +126,13 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   console. Never create or change Stripe products or prices without the owner's approval; never charge a real card in
   testing without it; never call BIZOMAT's invoices tax invoices or its billing tax compliant. The example company,
   own companies, CAD Automation and the public Resources are never billed.
+  **Admin Control Centre** (Stage 1, R2, 19 Nov 2026; `docs/platform/control-centre.md`; migration 0029): feature flags
+  at `/erp/admin/controls` (`apps/work/src/worker/platform/flags.ts` is the one registry; every new capability ships
+  off and is enforced on the server; scopes company > rollout stage > country > everyone; append-only history and
+  audit), the kill switch, rollout stages, and two-factor sign-in for platform admins at `/erp/admin/security` (TOTP,
+  recovery codes; required for the Control Centre, and for the whole console once an admin has enrolled; dangerous
+  changes need the password and a code within 10 minutes). Never switch a flag on, or add a capability that is not
+  behind one, without the owner's approval.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
