@@ -104,7 +104,7 @@ const tokenError = (c: any, error: string, description: string, status = 400) =>
 };
 
 /** The client from HTTP Basic (or the form's client_id and client_secret), or null when unknown or the secret is wrong. */
-async function clientFrom(c: any, form: Record<string, string>): Promise<IdClient | null | 'malformed'> {
+export async function clientFrom(c: any, form: Record<string, string>): Promise<IdClient | null | 'malformed'> {
   let clientId = String(form.client_id ?? '');
   let secret = String(form.client_secret ?? '');
   const basic = c.req.header('Authorization') ?? '';

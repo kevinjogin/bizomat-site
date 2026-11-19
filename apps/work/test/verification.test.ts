@@ -1,6 +1,6 @@
 // Registration and verification (Stage 1, R6; docs/platform/verification.md). Every capability is behind a flag that
 // ships off; these tests switch each one on in the database for their own companies.
-import { createExecutionContext, env, waitOnExecutionContext } from 'cloudflare:test';
+import { SELF, createExecutionContext, env, waitOnExecutionContext } from 'cloudflare:test';
 import { afterEach, describe, expect, it } from 'vitest';
 import worker from '../src/worker/index';
 import { ORIGIN, PASSWORD, randomIp, signup, uniqueEmail, type Client } from './helpers';
@@ -46,6 +46,29 @@ async function registered(c: Client, o: { abn?: string; legalName?: string; name
 /** A flag on for one company, one country or everyone (as the Control Centre would store it). */
 async function flag(key: string, scope: 'global' | 'company' | 'country' = 'global', scopeId = '') {
   await env.DB.prepare("INSERT OR REPLACE INTO feature_flags (key, scope, scope_id, value, reason, updated_by, updated_at) VALUES (?, ?, ?, 'on', 'test', 'test', 1)").bind(key, scope, scopeId).run();
+}
+
+// CAD Automation's malware scanner (company/scan.ts): the client cad's credentials, as in test/system.test.ts.
+const CAD_AUTH = `Basic ${btoa('cad:test-cad-status-secret')}`;
+const scanCall = (path: 'next' | 'result', body?: unknown, auth = CAD_AUTH) =>
+  SELF.fetch(`http://example.com/api/id/scan/${path}`, { method: 'POST', headers: { Authorization: auth, ...(body ? { 'Content-Type': 'application/json' } : {}) }, body: body ? JSON.stringify(body) : undefined });
+const sha256Of = async (bytes: Uint8Array) => [...new Uint8Array(await crypto.subtle.digest('SHA-256', bytes))].map((b) => b.toString(16).padStart(2, '0')).join('');
+
+/** Hands documents to the stand-in scanner until `id` comes, answering `verdict` for it (and clean for any other). */
+async function scanUntil(id: string, verdict: 'clean' | 'infected' | 'error', signature = '') {
+  for (let i = 0; i < 50; i++) {
+    const r = await scanCall('next');
+    if (r.status === 204) throw new Error(`document ${id} was never handed out`);
+    const got = r.headers.get('X-Scan-Id')!;
+    const bytes = new Uint8Array(await r.arrayBuffer());
+    const sha = await sha256Of(bytes);
+    expect(r.headers.get('X-Scan-Sha256')).toBe(sha);
+    const mine = got === id;
+    const res = await scanCall('result', { id: got, sha256: sha, verdict: mine ? verdict : 'clean', signature: mine ? signature : '', engine: 'ClamAV', database: 'ClamAV 1.5.4/28188' });
+    expect(res.status).toBe(200);
+    if (mine) return bytes;
+  }
+  throw new Error('too many documents waiting');
 }
 
 const abrAnswer = (o: { status?: string; name?: string; found?: boolean }) => async () =>
@@ -204,7 +227,16 @@ describe('manual review, evidence and decisions', () => {
     expect(queue.queue.map((q: any) => q.id)).toContain(co.id);
     expect(queue.totals.manual_review).toBeGreaterThanOrEqual(1);
     const ev = (await a.json('GET', `/api/admin/platform/verification/${co.id}`)).evidence[0];
+    // Not opened, and not accepted, before a clean malware scan.
+    expect(ev.scan_status).toBe('pending');
+    const early = await a.req('GET', `/api/admin/platform/verification/${co.id}/evidence/${ev.id}`);
+    expect(early.status).toBe(409);
+    expect(((await early.json()) as any).details).toEqual({ code: 'NOT_SCANNED', scanStatus: 'pending' });
+    await flag('evidence_scanning');
+    expect(await scanUntil(ev.id, 'clean')).toEqual(pdf);
+    await env.DB.prepare("DELETE FROM feature_flags WHERE key = 'evidence_scanning'").run();
     const file = await a.req('GET', `/api/admin/platform/verification/${co.id}/evidence/${ev.id}`);
+    expect(file.status).toBe(200);
     expect(file.headers.get('Content-Disposition')).toContain('attachment');
     expect((await a.req('POST', `/api/admin/platform/verification/${co.id}/decision`, { status: 'verified', reason: 'Certificate matches' })).status).toBe(403);
     await reauth();
@@ -213,6 +245,44 @@ describe('manual review, evidence and decisions', () => {
     const h = await env.DB.prepare("SELECT old_status, new_status, source, reason, actor_id FROM company_verification_history WHERE company_id = ? AND source = 'manual'").bind(co.id).first<any>();
     expect(h).toMatchObject({ old_status: 'manual_review', new_status: 'verified', reason: 'Certificate matches the register', actor_id: a.userId });
     expect((await owner.req('POST', `/api/company/c/${co.id}/verification/review`, { note: 'again please' })).status).toBe(409);
+  });
+});
+
+describe('malware scan of verification documents', () => {
+  it('hands documents only to CAD’s scanner and only while switched on; deletes an infected one; retries errors; refuses accepting before a clean scan', async () => {
+    const owner = await signup('Scan Owner');
+    const co = await registered(owner);
+    const upload = async (bytes: Uint8Array) => {
+      const fd = new FormData();
+      fd.append('file', new File([bytes], 'certificate.pdf', { type: 'application/pdf' }));
+      return ((await (await owner.req('POST', `/api/company/c/${co.id}/verification/evidence`, fd as any)).json()) as any).id as string;
+    };
+    const bad = await upload(new TextEncoder().encode('%PDF-1.4 pretend this is malware'));
+    const flaky = await upload(new TextEncoder().encode('%PDF-1.4 the scanner fails on this one'));
+    // Off: nothing is handed out. A wrong client or secret: refused.
+    expect((await scanCall('next')).status).toBe(204);
+    await flag('evidence_scanning');
+    expect((await scanCall('next', undefined, `Basic ${btoa('cad:wrong-secret')}`)).status).toBe(401);
+    expect((await scanCall('next', undefined, `Basic ${btoa('cad-test:test-client-secret')}`)).status).toBe(403);
+    // Infected: the file is deleted from storage at once, the document is refused and can never be opened.
+    await scanUntil(bad, 'infected', 'Eicar-Test-Signature');
+    const row = await env.DB.prepare('SELECT file_key, scan_status, scan_detail, status FROM company_evidence WHERE company_id = ? AND id = ?').bind(co.id, bad).first<any>();
+    expect(row).toMatchObject({ scan_status: 'infected', scan_detail: 'Eicar-Test-Signature', status: 'rejected' });
+    expect(await env.FILES.get(row.file_key)).toBeNull();
+    expect(await env.DB.prepare("SELECT 1 FROM co_audit WHERE company_id = ? AND action = 'verification.evidence_infected' AND target_id = ?").bind(co.id, bad).first()).not.toBeNull();
+    // A second verdict for the same document is refused.
+    expect((await scanCall('result', { id: bad, sha256: '0'.repeat(64), verdict: 'clean' })).status).toBe(409);
+    // An error puts it back in the queue; after five attempts it is failed.
+    for (let i = 0; i < 5; i++) await scanUntil(flaky, 'error', 'clamscan failed (2)');
+    expect((await env.DB.prepare('SELECT scan_status, scan_attempts FROM company_evidence WHERE company_id = ? AND id = ?').bind(co.id, flaky).first<any>())).toEqual({ scan_status: 'failed', scan_attempts: 5 });
+    // The company sees why; a platform admin can neither open nor accept either document.
+    const mine = await owner.json('GET', `/api/company/c/${co.id}/verification`);
+    expect(mine.evidence.map((e: any) => e.scan_status).sort()).toEqual(['failed', 'infected']);
+    const { a, reauth } = await platformAdmin();
+    await reauth();
+    for (const id of [bad, flaky]) expect((await a.req('GET', `/api/admin/platform/verification/${co.id}/evidence/${id}`)).status).toBe(409);
+    expect((await a.req('POST', `/api/admin/platform/verification/${co.id}/decision`, { status: 'verified', reason: 'Certificate matches', evidence: [{ id: flaky, status: 'accepted' }] })).status).toBe(409);
+    await env.DB.prepare("DELETE FROM feature_flags WHERE key = 'evidence_scanning'").run();
   });
 });
 

@@ -42,6 +42,7 @@ import { companyVerificationRoutes } from './company/verification-routes';
 import { complianceGate } from './compliance/core';
 import { userComplianceRoutes } from './compliance/routes';
 import { idPublicRoutes } from './company/id-provider';
+import { scanRoutes } from './company/scan';
 import { maintenanceRoutes } from './maintenance';
 import { erpRoutes } from './erp';
 import { whsRoutes } from './whs';
@@ -157,6 +158,8 @@ export function createApp() {
   app.route('/api/company-public', companyPublicRoutes);
   // BIZOMAT sign-in for other BIZOMAT applications: their servers swap codes and read the account
   // (src/worker/company/id-provider.ts).
+  // CAD Automation's malware scanner fetches verification documents and returns verdicts (company/scan.ts).
+  app.route('/api/id/scan', scanRoutes);
   app.route('/api/id', idPublicRoutes);
 
   // Sessions from before the CRM (or Finance) existed have their cookie on /tasks only (or /tasks and /crm). A CRM or

@@ -714,6 +714,15 @@ export function Tools() {
 
 // ------------------------------------------------------------------ settings
 
+/** The malware scan of an uploaded document (src/worker/company/scan.ts), said before its review status. */
+const SCAN_WORDS: Record<string, string> = {
+  pending: 'waiting for the malware scan · ',
+  scanning: 'being scanned · ',
+  clean: 'scanned clean · ',
+  infected: 'refused by the malware scan · ',
+  failed: 'could not be scanned, upload another copy · ',
+};
+
 interface VerificationDTO {
   status: string;
   statusLabel: string;
@@ -723,7 +732,7 @@ interface VerificationDTO {
   checksOn: boolean;
   enforced: boolean;
   history: { old_status: string | null; new_status: string; source: string; reason: string; created_at: number }[];
-  evidence: { id: string; file_name: string; size: number; status: string; review_note: string | null; uploaded_at: number }[];
+  evidence: { id: string; file_name: string; size: number; status: string; review_note: string | null; uploaded_at: number; scan_status?: string }[];
 }
 
 /** The company's registration status (R6): what it is, how it changed, documents for a review; never set by the company. */
@@ -782,7 +791,7 @@ function VerificationCard({ companyId }: { companyId: string }) {
       ) : null}
       {v.evidence.length ? (
         <ul className="small">
-          {v.evidence.map((e) => <li key={e.id}>{e.file_name} · {e.status === 'pending' ? 'waiting for review' : e.status}{e.review_note ? ` (${e.review_note})` : ''} · {timeAgo(e.uploaded_at)}</li>)}
+          {v.evidence.map((e) => <li key={e.id}>{e.file_name} · {SCAN_WORDS[e.scan_status ?? ''] ?? ''}{e.status === 'pending' ? 'waiting for review' : e.status}{e.review_note ? ` (${e.review_note})` : ''} · {timeAgo(e.uploaded_at)}</li>)}
         </ul>
       ) : null}
       {v.history.length ? (

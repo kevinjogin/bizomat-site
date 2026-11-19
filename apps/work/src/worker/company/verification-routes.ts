@@ -21,6 +21,7 @@ import { checkIdentifier, isCountryCode, countryOptions } from './countries';
 import { REGISTRATION_STATUSES, type RegistrationStatus } from './identity';
 import { STATUS_LABELS, setStatus, verifyCompany } from './verification';
 import { memberToolStmts } from './sync';
+import { SCAN_STATUSES, assertScannedClean } from './scan';
 
 const bytesHex = async (b: Uint8Array) => Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', b)), (x) => x.toString(16).padStart(2, '0')).join('');
 
@@ -42,7 +43,7 @@ companyVerificationRoutes.get('/c/:company/verification', async (c) => {
     db.prepare('SELECT country, registration_type, registration_number, registration_status, status_source, status_changed_at, verified_at, next_check_at FROM companies WHERE id = ?').bind(a.companyId).first<any>(),
     db.prepare('SELECT old_status, new_status, source, reason, created_at FROM company_verification_history WHERE company_id = ? ORDER BY created_at DESC LIMIT 50').bind(a.companyId).all<any>(),
     db.prepare('SELECT provider, outcome, name_match, status_after, trigger, checked_at FROM company_verifications WHERE company_id = ? ORDER BY checked_at DESC LIMIT 20').bind(a.companyId).all<any>(),
-    db.prepare('SELECT id, file_name, content_type, size, note, status, review_note, uploaded_at FROM company_evidence WHERE company_id = ? ORDER BY uploaded_at DESC LIMIT 50').bind(a.companyId).all<any>(),
+    db.prepare('SELECT id, file_name, content_type, size, note, status, review_note, uploaded_at, scan_status, scan_detail, scanned_at FROM company_evidence WHERE company_id = ? ORDER BY uploaded_at DESC LIMIT 50').bind(a.companyId).all<any>(),
   ]);
   const checksOn = await flagOn(db, 'registry_verification_enabled', { companyId: a.companyId, country: reg?.country ?? null });
   const enforced = await flagOn(db, 'verification_enforcement', { companyId: a.companyId });
@@ -214,6 +215,8 @@ platformVerificationRoutes.get('/', async (c) => {
     db.prepare("SELECT MAX(checked_at) AS last, SUM(CASE WHEN outcome = 'unavailable' AND checked_at > ? THEN 1 ELSE 0 END) AS errors FROM company_verifications").bind(t - 86_400_000).first<{ last: number | null; errors: number | null }>(),
   ]);
   const next = await db.prepare("SELECT MIN(next_check_at) AS next FROM companies WHERE type = 'registered' AND deleted_at IS NULL AND next_check_at IS NOT NULL").first<{ next: number | null }>();
+  // The malware scanner's queue across every company (counts only), and when it last gave a verdict.
+  const scans = await db.prepare('SELECT scan_status AS status, COUNT(*) AS n, MAX(scanned_at) AS last FROM company_evidence GROUP BY scan_status').all<{ status: string; n: number; last: number | null }>();
   return c.json({
     totals: Object.fromEntries(REGISTRATION_STATUSES.map((s) => [s, totals.results.find((r) => r.status === s)?.n ?? 0])),
     queue: queue.results,
@@ -222,6 +225,11 @@ platformVerificationRoutes.get('/', async (c) => {
     lastCheckAt: checks?.last ?? null,
     errorsToday: Number(checks?.errors ?? 0),
     nextCheckAt: next?.next ?? null,
+    scan: {
+      on: await flagOn(db, 'evidence_scanning'),
+      counts: Object.fromEntries(SCAN_STATUSES.map((st) => [st, scans.results.find((r) => r.status === st)?.n ?? 0])),
+      lastAt: scans.results.reduce<number | null>((m, r) => (r.last && (!m || r.last > m) ? r.last : m), null),
+    },
     configured: { abr: !!c.env.ABR_GUID?.trim(), companies_house: !!c.env.COMPANIES_HOUSE_API_KEY?.trim() },
     flags: {
       checks: await flagOn(db, 'registry_verification_enabled'),
@@ -239,7 +247,7 @@ platformVerificationRoutes.get('/:company', async (c) => {
   const [history, checks, evidence] = await Promise.all([
     db.prepare('SELECT h.*, u.name AS actor FROM company_verification_history h LEFT JOIN users u ON u.id = h.actor_id WHERE h.company_id = ? ORDER BY h.created_at DESC LIMIT 100').bind(id).all(),
     db.prepare('SELECT * FROM company_verifications WHERE company_id = ? ORDER BY checked_at DESC LIMIT 50').bind(id).all(),
-    db.prepare('SELECT id, file_name, content_type, size, note, status, review_note, uploaded_at FROM company_evidence WHERE company_id = ? ORDER BY uploaded_at DESC').bind(id).all(),
+    db.prepare('SELECT id, file_name, content_type, size, note, status, review_note, uploaded_at, scan_status, scan_detail, scanned_at FROM company_evidence WHERE company_id = ? ORDER BY uploaded_at DESC').bind(id).all(),
   ]);
   return c.json({ company: co, history: history.results, checks: checks.results, evidence: evidence.results });
 });
@@ -262,6 +270,13 @@ platformVerificationRoutes.post('/:company/decision', async (c) => {
   if (!co) throw notFound('Registered company');
   const me = c.get('user');
   const t = now();
+  // A document is accepted only after a clean malware scan (rejecting one needs no scan).
+  const accepting = (input.evidence ?? []).filter((e) => e.status === 'accepted').map((e) => e.id);
+  for (const evId of accepting) {
+    const ev = await db.prepare('SELECT scan_status FROM company_evidence WHERE company_id = ? AND id = ?').bind(id, evId).first<{ scan_status: string }>();
+    if (!ev) throw notFound('Document');
+    assertScannedClean(ev);
+  }
   const r = await setStatus(c.env, id, input.status, { source: 'manual', reason: input.reason, actorId: me.id, at: t });
   const stmts: D1PreparedStatement[] = [
     auditStmt(db, { actorId: me.id, action: 'platform.verification_decision', targetType: 'company', targetId: id, metadata: { from: r.before, to: input.status, reason: input.reason }, ip: clientIp(c) }),
@@ -274,8 +289,10 @@ platformVerificationRoutes.post('/:company/decision', async (c) => {
 
 platformVerificationRoutes.get('/:company/evidence/:id', async (c) => {
   const db = c.env.DB;
-  const e = await db.prepare('SELECT * FROM company_evidence WHERE id = ? AND company_id = ?').bind(c.req.param('id'), c.req.param('company')).first<{ file_key: string; file_name: string; content_type: string }>();
+  const e = await db.prepare('SELECT * FROM company_evidence WHERE id = ? AND company_id = ?').bind(c.req.param('id'), c.req.param('company')).first<{ file_key: string; file_name: string; content_type: string; scan_status: string }>();
   if (!e) throw notFound('Document');
+  // Never opened before ClamAV has scanned it clean (company/scan.ts).
+  assertScannedClean(e);
   const obj = await c.env.FILES.get(e.file_key);
   if (!obj) throw notFound('Document');
   await auditStmt(db, { actorId: c.get('user').id, action: 'platform.evidence_viewed', targetType: 'company', targetId: c.req.param('company'), ip: clientIp(c) }).run();

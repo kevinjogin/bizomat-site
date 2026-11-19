@@ -205,6 +205,7 @@ const STATUS_LABEL: Record<string, string> = {
 
 interface VerificationDash {
   totals: Record<string, number>;
+  scan?: { on: boolean; counts: Record<'pending' | 'scanning' | 'clean' | 'infected' | 'failed', number>; lastAt: number | null };
   queue: { id: string; name: string; country: string | null; registration_type: string | null; registration_number: string | null; registration_status: string; status_changed_at: number | null; evidence: number }[];
   changes: { company_id: string; name: string | null; old_status: string | null; new_status: string; source: string; reason: string; created_at: number }[];
   providers: { id: string; last_ok_at: number | null; last_error_at: number | null; last_error: string | null; consecutive_failures: number }[];
@@ -237,6 +238,12 @@ function VerificationCard() {
             Automatic checks {v.flags.checks ? 'on' : 'off'} · scheduled re-checks {v.flags.scheduled ? 'on' : 'off'} · enforcement {v.flags.enforcement ? 'on' : 'off'} ·
             ABN Lookup {v.configured.abr ? 'set up' : 'not set up'} · Companies House {v.configured.companies_house ? 'set up' : 'not set up'}
           </p>
+          {v.scan ? (
+            <p className="small">
+              Malware scan {v.scan.on ? 'on' : 'off'} (ClamAV on CAD Automation’s Machine) · waiting {v.scan.counts.pending + v.scan.counts.scanning} · clean {v.scan.counts.clean} · refused {v.scan.counts.infected} · could not be scanned {v.scan.counts.failed}
+              {v.scan.lastAt ? ` · last verdict ${new Date(v.scan.lastAt).toLocaleString()}` : ''}. Documents open only after a clean scan.
+            </p>
+          ) : null}
           <p className="small">{Object.entries(v.totals).filter(([, n]) => n > 0).map(([s, n]) => `${STATUS_LABEL[s] ?? s}: ${n}`).join(' · ') || 'No registered companies yet.'}</p>
           <p className="small muted">
             Last check {v.lastCheckAt ? <When ts={v.lastCheckAt} /> : 'never'} · next {v.nextCheckAt ? <When ts={v.nextCheckAt} /> : 'none scheduled'} · register errors in the last day: {v.errorsToday}

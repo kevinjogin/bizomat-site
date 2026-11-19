@@ -106,6 +106,15 @@ const BASE: Record<string, FlagDef> = {
     enforcement: false,
     release: 'R7',
   },
+  evidence_scanning: {
+    label: 'Malware scan of verification documents',
+    description: 'Uploaded verification documents are handed to the ClamAV scanner on CAD Automation’s Machine. Documents can be opened or accepted only after a clean scan, whether this is on or not.',
+    values: ONOFF,
+    scopes: ['global'],
+    risk: 'low',
+    enforcement: false,
+    release: 'R6',
+  },
   join_requests: {
     label: 'Request to join',
     description: 'Someone registering a company that already exists can ask its owner to join it instead.',
