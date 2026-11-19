@@ -21,6 +21,11 @@ migration `0029_platform_controls.sql` (reverse: `apps/work/migrations-reverse/0
 
 ## Two-factor sign-in and re-authentication
 
+- **Existing dangerous console actions are guarded too:** granting or removing platform admins, setting someone's
+  password, the security reset, disabling a user, suspending a company, and handing over a CRM or Finance workspace.
+  Enabling a user and resuming a company restore access and are not guarded. One prompt in each console asks for the
+  password and a code, then the action is sent again (`apps/work/src/client/admin/reauth.tsx`).
+
 - **Set up:** Security, then Set up two-factor sign-in. Scan the QR code with an authenticator app, enter its code and
   keep the ten recovery codes; they are shown once.
 - **The Control Centre always needs it.** The rest of the console needs it as soon as you have set it up, once per
@@ -77,3 +82,13 @@ alone. Any platform admin may use it, with a re-authentication and "KILL SWITCH"
    - `auto_suspension` only after the deadlines have passed and the dry run has been reviewed.
 5. `auto_deletion` stays off until a privacy and legal review is recorded, and then runs only in reviewed batches.
 6. If anything goes wrong, use the kill switch, then investigate.
+
+## Alerts
+
+When a step of the 15-minute maintenance run fails, every platform admin gets an email: one per failing step per day
+(`apps/work/src/worker/platform/alerts.ts`). Every step now runs on its own, so one failure never stops the others.
+
+## Not built yet
+
+- **A command to create the first founder from the server, with a Fly secret.** The founder account exists (seeded by
+  migration 0012). A server-side recovery command comes with R7's server commands.
