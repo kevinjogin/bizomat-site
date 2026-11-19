@@ -12,6 +12,7 @@ import { recheckPendingAbns } from './company/routes';
 import { generateDue } from './maintenance/pm';
 import { escalateOverdue } from './whs/actions';
 import { runBillingScheduled } from './billing/admin';
+import { alertFailures } from './platform/alerts';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -20,9 +21,18 @@ const app = createApp();
 export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promise<unknown>) => void) {
   const svc = systemSvc(env, waitUntil);
   const results: Record<string, unknown> = {};
-  results.scheduled = await runScheduledAutomations(svc, at);
-  results.retried = await retryFailedRuns(svc, at);
-  results.dueNotifications = await notifyDueDates(svc, at);
+  // Each step on its own: one that fails never stops the others (before R2 the first three were not wrapped, so an error
+  // there skipped every later step, email included).
+  const step = async (name: string, fn: () => Promise<unknown>) => {
+    try {
+      results[name] = await fn();
+    } catch (e) {
+      results[name] = { error: e instanceof Error ? e.message.slice(0, 200) : 'failed' };
+    }
+  };
+  await step('scheduled', () => runScheduledAutomations(svc, at));
+  await step('retried', () => retryFailedRuns(svc, at));
+  await step('dueNotifications', () => notifyDueDates(svc, at));
   // CRM: scheduled automations (overdue activities, deals close to their expected close date).
   try {
     results.crm = await runCrmScheduled(env, at, waitUntil);
@@ -74,6 +84,12 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     results.system = { ownCompaniesMade: made };
   } catch (e) {
     results.system = { error: e instanceof Error ? e.message : 'failed' };
+  }
+  // Platform admins are emailed about any step that failed above (once a day per step; src/worker/platform/alerts.ts).
+  try {
+    results.alerts = await alertFailures(env, results, at);
+  } catch (e) {
+    results.alerts = { error: e instanceof Error ? e.message.slice(0, 200) : 'failed' };
   }
   // Email: hand queued and delayed messages to the provider, within the daily limit.
   try {

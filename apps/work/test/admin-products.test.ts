@@ -4,12 +4,14 @@
 import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
 import { raw, signup, type Client } from './helpers';
+import { reauthenticate } from './helpers';
 import { createOrg, joinOrg } from './crm-helpers';
 import { accounts, byCode, createWs, fin, joinWs } from './fin-helpers';
 
 async function makeAdmin(role: 'founder' | 'admin', name = 'Super Admin'): Promise<Client> {
   const c = await signup(name);
   await env.DB.prepare('INSERT INTO platform_admins (user_id, role, granted_by, granted_at) VALUES (?, ?, ?, ?)').bind(c.userId, role, 'test', Date.now()).run();
+  if (role === 'founder') await reauthenticate(c);
   return c;
 }
 

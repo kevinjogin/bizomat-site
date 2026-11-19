@@ -1,11 +1,13 @@
 import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
-import { createBoard, login, raw, signup, uniqueEmail, type Client } from './helpers';
+import { createBoard, login, raw, reauthenticate, signup, uniqueEmail, type Client } from './helpers';
 import { runMaintenance } from '../src/worker/index';
 
 async function makeFounder(name = 'Founder'): Promise<Client> {
   const c = await signup(name);
   await env.DB.prepare("INSERT INTO platform_admins (user_id, role, granted_by, granted_at) VALUES (?, 'founder', 'test', ?)").bind(c.userId, Date.now()).run();
+  // Dangerous console actions need two-factor sign-in and a fresh re-authentication (Admin Control Centre, R2).
+  await reauthenticate(c);
   return c;
 }
 

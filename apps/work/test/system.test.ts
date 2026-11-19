@@ -4,6 +4,7 @@
 import { SELF, env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
 import { addMember, raw, signup, uniqueEmail, type Client } from './helpers';
+import { reauthenticate } from './helpers';
 import { createOrg, joinOrg } from './crm-helpers';
 import { createWs } from './fin-helpers';
 import { abnValid } from '../src/worker/company/verify';
@@ -241,6 +242,7 @@ describe('super admin console', () => {
     const founder = await signup('Fay Founder');
     const support = await signup('Sam Support');
     await grant(founder, 'founder');
+    await reauthenticate(founder);
     await grant(support, 'admin');
     const owner = await signup('Rob Registered');
     const { company } = await registerCompany(owner, 'Rob Fabrication');

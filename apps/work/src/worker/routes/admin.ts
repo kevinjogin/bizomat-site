@@ -12,6 +12,7 @@ import { audit, auditStmt } from '../services/audit';
 import { hashPassword, passwordProblems } from '../auth/password';
 import { EVENT_TYPES, utcDay } from '../services/analytics';
 import { ACTIVE_WINDOW_MS, HEARTBEAT_INTERVAL_MS } from './me';
+import { requireReauth } from '../platform/security';
 
 export const adminRoutes = new Hono<AppEnv>();
 
@@ -693,6 +694,8 @@ adminRoutes.get('/settings', async (c) => {
 
 adminRoutes.post('/admins', async (c) => {
   if (c.get('platformRole') !== 'founder') throw new HttpError(403, 'Only the founder can grant admin access');
+  // Dangerous: a fresh password and code (Admin Control Centre, src/worker/platform/security.ts).
+  await requireReauth(c);
   const input = await body(c, z.object({ email: z.string().trim().toLowerCase().email().max(320) }));
   const target = await c.env.DB.prepare('SELECT id FROM users WHERE email = ?').bind(input.email).first<{ id: string }>();
   if (!target) throw notFound('User');
@@ -705,6 +708,8 @@ adminRoutes.post('/admins', async (c) => {
 
 adminRoutes.delete('/admins/:userId', async (c) => {
   if (c.get('platformRole') !== 'founder') throw new HttpError(403, 'Only the founder can revoke admin access');
+  // Dangerous: a fresh password and code (Admin Control Centre, src/worker/platform/security.ts).
+  await requireReauth(c);
   const userId = c.req.param('userId');
   const row = await c.env.DB.prepare('SELECT role FROM platform_admins WHERE user_id = ?').bind(userId).first<{ role: string }>();
   if (!row) throw notFound('Admin');
@@ -723,6 +728,8 @@ adminRoutes.delete('/admins/:userId', async (c) => {
 // choose their own password in Settings. The founder changes their own password in Settings, not here.
 adminRoutes.post('/users/:id/password', async (c) => {
   if (c.get('platformRole') !== 'founder') throw new HttpError(403, 'Only the founder can set a password for someone');
+  // Dangerous: a fresh password and code (Admin Control Centre, src/worker/platform/security.ts).
+  await requireReauth(c);
   const actor = c.get('user');
   await rateLimit(c.env.DB, `admin-password:${actor.id}`, 10, 60 * 60_000);
   const id = c.req.param('id');
@@ -747,6 +754,8 @@ adminRoutes.post('/users/:id/password', async (c) => {
 // hashes. People keep their accounts and data; they sign in again (with their current password, then a new one).
 adminRoutes.post('/security-reset', async (c) => {
   if (c.get('platformRole') !== 'founder') throw new HttpError(403, 'Only the founder can end every session');
+  // Dangerous: a fresh password and code (Admin Control Centre, src/worker/platform/security.ts).
+  await requireReauth(c);
   const actor = c.get('user');
   await rateLimit(c.env.DB, `admin-security-reset:${actor.id}`, 5, 60 * 60_000);
   const input = await body(c, z.object({ requirePasswordReset: z.boolean().default(false) }));

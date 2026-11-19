@@ -9,6 +9,7 @@ import { PageSkeleton } from './ui';
 import '../styles/admin-console.css';
 import { appUrl, toolUrl } from '../lib/base';
 import { MfaGate } from './pages/Security';
+import { ReauthHost } from './reauth';
 
 const Overview = lazy(() => import('./pages/Overview'));
 const Users = lazy(() => import('./pages/Users'));
@@ -80,6 +81,7 @@ export default function AdminApp() {
 
   return (
     <MfaGate>
+    <ReauthHost />
     <div className={`ac-shell${navOpen ? ' nav-open' : ''}`}>
       <aside className="ac-side" aria-label="Founder console navigation">
         <Link to="/admin" className="ac-brand" aria-label={`${BRAND.full} founder console`}>

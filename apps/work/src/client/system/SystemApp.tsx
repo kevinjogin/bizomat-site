@@ -46,6 +46,11 @@ const WhsArea = lazy(() => import('./whs/Whs').then((m) => ({ default: m.WhsArea
 const WhsLegalAdmin = lazy(() => import('./whs/LegalAdmin').then((m) => ({ default: m.LegalAdmin })));
 const BillingPage = lazy(() => import('./billing/Billing').then((m) => ({ default: m.BillingPage })));
 const BillingAdmin = lazy(() => import('./billing/BillingAdmin').then((m) => ({ default: m.BillingAdmin })));
+// The Admin Control Centre and two-factor sign-in (Stage 1, R2; src/client/admin/pages).
+const ControlCentre = lazy(() => import('../admin/pages/Controls'));
+const SecurityPage = lazy(() => import('../admin/pages/Security'));
+const MfaGate = lazy(() => import('../admin/pages/Security').then((m) => ({ default: m.MfaGate })));
+const ReauthHost = lazy(() => import('../admin/reauth').then((m) => ({ default: m.ReauthHost })));
 
 /** The ERP's products, engineering and supplier reports (src/client/system/erp/Reports.tsx keeps the same list). */
 const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
@@ -1183,6 +1188,8 @@ const ADMIN_NAV = [
   { to: 'activity', label: 'Activity' },
   { to: 'whs', label: 'WHS legal packs' },
   { to: 'billing', label: 'Billing' },
+  { to: 'controls', label: 'Control Centre' },
+  { to: 'security', label: 'Security' },
 ];
 
 function AdminArea() {
@@ -1192,6 +1199,9 @@ function AdminArea() {
   if (!me.data.platformRole) return <Navigate to="/" replace />;
   const founder = me.data.platformRole === 'founder';
   return (
+    <Suspense fallback={<Loading />}>
+    <MfaGate>
+    <ReauthHost />
     <div className="page crm-page">
       <PageHeader title="ERP console" subtitle="Every account and company on BIZOMAT, with their activity across the tools. Usage only: never the contents of anyone's records." />
       <nav className="tabs sys-tabs" aria-label="Console sections">
@@ -1204,9 +1214,13 @@ function AdminArea() {
         <Route path="activity" element={<AdminActivity />} />
         <Route path="whs/*" element={<Suspense fallback={<Loading />}><WhsLegalAdmin /></Suspense>} />
         <Route path="billing" element={<Suspense fallback={<Loading />}><BillingAdmin founder={founder} /></Suspense>} />
+        <Route path="controls" element={<Suspense fallback={<Loading />}><ControlCentre /></Suspense>} />
+        <Route path="security" element={<Suspense fallback={<Loading />}><SecurityPage /></Suspense>} />
         <Route path="*" element={<Navigate to="overview" replace />} />
       </Routes>
     </div>
+    </MfaGate>
+    </Suspense>
   );
 }
 

@@ -12,6 +12,7 @@ import { useAdmin } from '../api';
 import { PageSkeleton, num } from '../ui';
 import { NotFound } from '../AdminApp';
 import '../../styles/admin-console.css';
+import { ReauthHost } from '../reauth';
 
 export interface AdminMe {
   user: { id: string; name: string; email: string };
@@ -53,6 +54,7 @@ export function ConsoleShell({ product, productKey, nav, privacy, children }: { 
 
   return (
     <div className={`ac-shell${navOpen ? ' nav-open' : ''}`}>
+      <ReauthHost />
       <aside className="ac-side" aria-label="Super admin navigation">
         <Link to="/admin" className="ac-brand" aria-label={`BIZOMAT ${product} super admin`}>
           <Wordmark height={16} />

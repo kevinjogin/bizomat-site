@@ -1,4 +1,5 @@
 import { SELF, env } from 'cloudflare:test';
+import { base32Decode, hotp, stepAt } from '../src/worker/platform/totp';
 
 export const ORIGIN = 'http://example.com';
 
@@ -104,4 +105,23 @@ export async function addMember(owner: Client, invitee: Client, role: 'admin' | 
 export async function createBoard(c: Client, name = 'Test board', extra: Record<string, unknown> = {}) {
   const board = await c.json('POST', `/api/workspaces/${c.workspaceId}/boards`, { name, ...extra });
   return c.json('GET', `/api/boards/${board.id}`);
+}
+
+// Two-factor sign-in and a fresh re-authentication for a platform admin's session (Admin Control Centre, R2), for tests of
+// dangerous console actions. The secret is kept here so a later call can re-authenticate the same person again.
+const mfaSecrets = new Map<string, string>();
+async function freshTotp(userId: string, secret: string) {
+  // A test cannot wait for the next 30-second step: let the server accept the current one again.
+  await env.DB.prepare('UPDATE user_mfa SET last_step = 0 WHERE user_id = ?').bind(userId).run();
+  return hotp(base32Decode(secret), stepAt(Date.now()));
+}
+export async function reauthenticate(c: Client): Promise<void> {
+  let secret = mfaSecrets.get(c.userId);
+  if (!secret) {
+    const start = await c.json<{ secret: string }>('POST', '/api/admin/platform/security/mfa/start', {});
+    secret = start.secret;
+    mfaSecrets.set(c.userId, secret);
+    await c.json('POST', '/api/admin/platform/security/mfa/confirm', { code: await freshTotp(c.userId, secret) });
+  }
+  await c.json('POST', '/api/admin/platform/security/reauth', { password: PASSWORD, code: await freshTotp(c.userId, secret) });
 }

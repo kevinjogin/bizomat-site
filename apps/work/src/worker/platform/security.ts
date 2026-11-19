@@ -107,6 +107,8 @@ export const consoleMfaGate: MiddlewareHandler<AppEnv> = async (c, next) => {
 
 /** Throws 403 REAUTH_REQUIRED unless this session re-authenticated within the last 10 minutes. */
 export async function requireReauth(c: Context<AppEnv>): Promise<void> {
+  const row = await mfaOf(c.env.DB, c.get('user').id);
+  if (!row?.confirmed_at) throw new HttpError(403, 'Set up two-factor sign-in (ERP console, Security) first: this action needs your password and a code.', { code: 'MFA_ENROLMENT_REQUIRED' });
   const marks = await sessionMarks(c.env.DB, sessionId(c));
   if (!marks.reauth_at || now() - marks.reauth_at > REAUTH_WINDOW_MS) {
     throw new HttpError(403, 'Confirm your password and a code from your authenticator app to do this.', { code: 'REAUTH_REQUIRED' });

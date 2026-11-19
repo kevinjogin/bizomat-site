@@ -8,6 +8,8 @@ import { ApiError, errorMessage, get, post, put } from '../../lib/api';
 import { Field } from '../../components/ui/ui';
 import { useToast } from '../../components/ui/overlays';
 import { useAdmin } from '../api';
+// The console's styles: these pages also open inside the ERP console (src/client/system/SystemApp.tsx).
+import '../../styles/admin-console.css';
 import { Card, Empty, PageIntro, TableWrap, When } from '../ui';
 import { codeOf, useReauth } from '../reauth';
 import '../../styles/billing.css';

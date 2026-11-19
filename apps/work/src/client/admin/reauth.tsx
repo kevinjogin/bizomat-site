@@ -1,37 +1,42 @@
 // Re-authentication for dangerous actions (Admin Control Centre, R2). The server answers 403 REAUTH_REQUIRED when an
-// action needs the password and a code from the last 10 minutes; useReauth runs an action, asks for both when needed,
-// confirms them with /admin/platform/security/reauth and runs the action again.
-import { useRef, useState } from 'react';
-import { ApiError, errorMessage, post } from '../lib/api';
+// action needs the password and a code from the last 10 minutes. ReauthHost, mounted once by each console, registers
+// with the request helper (src/client/lib/api.ts): it asks for both, confirms them with
+// /admin/platform/security/reauth, and the request helper sends the action again. Every screen gets this without
+// changes of its own.
+import { useEffect, useRef, useState } from 'react';
+import { ApiError, errorMessage, post, setReauthHandler } from '../lib/api';
 import { Modal } from '../components/ui/overlays';
 import { Field } from '../components/ui/ui';
 
 export const codeOf = (e: unknown): string | undefined => (e instanceof ApiError ? ((e.details as { code?: string } | undefined)?.code ?? undefined) : undefined);
 
-export function useReauth() {
+export function ReauthHost() {
   const [open, setOpen] = useState(false);
   const [password, setPassword] = useState('');
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const pending = useRef<{ fn: () => Promise<unknown>; resolve: (v: unknown) => void; reject: (e: unknown) => void } | null>(null);
+  const pending = useRef<((ok: boolean) => void) | null>(null);
 
-  /** Runs fn; when the server asks for a re-authentication, asks for it and runs fn again. */
-  const run = <T,>(fn: () => Promise<T>): Promise<T> =>
-    fn().catch((e) => {
-      if (codeOf(e) !== 'REAUTH_REQUIRED') throw e;
-      return new Promise<T>((resolve, reject) => {
-        pending.current = { fn, resolve: resolve as (v: unknown) => void, reject };
-        setPassword('');
-        setCode('');
-        setError(null);
-        setOpen(true);
-      });
-    });
+  useEffect(() => {
+    setReauthHandler(
+      () =>
+        new Promise<boolean>((resolve) => {
+          pending.current?.(false);
+          pending.current = resolve;
+          setPassword('');
+          setCode('');
+          setError(null);
+          setOpen(true);
+        }),
+    );
+    return () => setReauthHandler(null);
+  }, []);
 
-  const close = () => {
+  const finish = (ok: boolean) => {
     setOpen(false);
-    pending.current?.reject(new Error('Cancelled'));
+    setPassword('');
+    pending.current?.(ok);
     pending.current = null;
   };
 
@@ -41,11 +46,7 @@ export function useReauth() {
     setError(null);
     try {
       await post('/admin/platform/security/reauth', { password, code: code.replace(/\s/g, '') });
-      const p = pending.current!;
-      pending.current = null;
-      setOpen(false);
-      setPassword('');
-      p.fn().then(p.resolve, p.reject);
+      finish(true);
     } catch (err) {
       setError(errorMessage(err));
     } finally {
@@ -53,8 +54,9 @@ export function useReauth() {
     }
   };
 
-  const dialog = open ? (
-    <Modal title="Confirm it is you" onClose={close}>
+  if (!open) return null;
+  return (
+    <Modal title="Confirm it is you" onClose={() => finish(false)}>
       <form className="ac-form ac-stack" onSubmit={submit}>
         <p className="muted small">This change needs your password and a code from your authenticator app. It stays confirmed for 10 minutes.</p>
         <Field label="Password" htmlFor="reauth-password">
@@ -65,11 +67,14 @@ export function useReauth() {
         </Field>
         <div className="row">
           <button className="btn primary" type="submit" disabled={busy}>Confirm</button>
-          <button className="btn ghost" type="button" onClick={close}>Cancel</button>
+          <button className="btn ghost" type="button" onClick={() => finish(false)}>Cancel</button>
         </div>
       </form>
     </Modal>
-  ) : null;
+  );
+}
 
-  return { run, dialog };
+/** For pages written before ReauthHost: the request helper now asks and retries, so run only calls the action. */
+export function useReauth() {
+  return { run: <T,>(fn: () => Promise<T>) => fn(), dialog: null as null };
 }

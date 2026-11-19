@@ -7,6 +7,8 @@ import { login, ORIGIN, PASSWORD, randomIp, signup, type Client } from './helper
 import { base32Decode, hotp, matchStep, stepAt } from '../src/worker/platform/totp';
 import { FLAGS, flagValue, MODULES, moduleFlag, resolve } from '../src/worker/platform/flags';
 import { ensureOwnCompany } from '../src/worker/system/system';
+import { failedSteps } from '../src/worker/platform/alerts';
+import { runMaintenance } from '../src/worker/index';
 
 /** A request as `c`, with extra settings in the worker's environment (for example the billing lock). */
 async function call(c: Client, method: string, path: string, body?: unknown, over: Record<string, string> = {}) {
@@ -232,6 +234,31 @@ describe('the Control Centre', () => {
     await f.c.json('POST', '/api/admin/platform/flags/registry_verification_enabled/reset', { scope: 'global', reason: 'cleanup' });
   });
 
+  it('guards the console\'s dangerous actions: set up two-factor sign-in, then a fresh password and code', async () => {
+    const f = await makeAdmin('founder');
+    const target = await signup('Someone');
+    const notEnrolled = await f.req('POST', '/api/admin/admins', { email: target.email });
+    expect(notEnrolled.status).toBe(403);
+    expect(await code(notEnrolled)).toBe('MFA_ENROLMENT_REQUIRED');
+    const e = await enrolled('founder');
+    for (const [method, path, b] of [
+      ['POST', '/api/admin/admins', { email: target.email }],
+      ['POST', `/api/admin/users/${target.userId}/password`, { password: 'A-new-password-42!' }],
+      ['POST', '/api/admin/security-reset', { requirePasswordReset: false }],
+      ['POST', `/api/admin/system/users/${target.userId}/disable`, {}],
+    ] as const) {
+      const r = await e.c.req(method, path, b);
+      expect(r.status, path).toBe(403);
+      expect(await code(r), path).toBe('REAUTH_REQUIRED');
+    }
+    // Restoring access needs no re-authentication.
+    expect((await e.c.req('POST', `/api/admin/system/users/${target.userId}/enable`, {})).status).toBe(200);
+    await reauth(e);
+    expect((await e.c.req('POST', '/api/admin/admins', { email: target.email })).status).toBe(201);
+    expect((await e.c.req('POST', `/api/admin/system/users/${target.userId}/disable`, {})).status).toBe(200);
+    expect((await e.c.req('POST', `/api/admin/system/users/${target.userId}/enable`, {})).status).toBe(200);
+  });
+
   it('puts companies in the internal or pilot stage (founder, re-authenticated), and their stage takes its flags', async () => {
     const owner = await signup('Pilot Owner');
     const own = await ensureOwnCompany(env.DB, { id: owner.userId, name: owner.name, email: owner.email });
@@ -245,5 +272,15 @@ describe('the Control Centre', () => {
     expect(await flagValue(env.DB, 'migration_notifications', { companyId: 'someone-else' })).toBe('off');
     await f.c.json('POST', '/api/admin/platform/flags/migration_notifications/reset', { scope: 'stage', scopeId: 'pilot', reason: 'cleanup' });
     await f.c.json('PUT', `/api/admin/platform/rollout/${own}`, { stage: null, reason: 'Pilot over' });
+  });
+});
+
+describe('scheduled job alerts', () => {
+  it('finds the steps that failed, and every maintenance run reports its alerts', async () => {
+    expect(failedSteps({ crm: { error: 'database is locked\n  at x' }, finance: { made: 2 }, email: null, whs: { overdueEscalated: 0 } })).toEqual([{ step: 'crm', error: 'database is locked at x' }]);
+    const r = await runMaintenance(env as any, Date.now());
+    expect(r).toHaveProperty('alerts');
+    expect(r).toHaveProperty('scheduled');
+    expect(r).toHaveProperty('dueNotifications');
   });
 });
