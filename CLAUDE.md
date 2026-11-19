@@ -158,6 +158,12 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   registry and change only through the service (ABN Lookup, Companies House) or a platform admin's decision with a
   reason; a register that cannot be reached is never a failure; similar names go to manual review; evidence is PDF or
   image only and not yet malware-scanned. Never call a company verified unless its status says so.
+  **Existing users, exports and deletion** (Stage 1, R7, 19 Nov 2026; `docs/platform/compliance.md`; migration 0034):
+  the classification report, the individual accounts policy (acts only while `company_registration_required` is on),
+  notices only from a list a platform admin approved, deadlines that start at a recorded delivery, suspension that
+  leaves registration, invitations, support and export open, personal and company exports (ZIP, 7-day link, audited),
+  and deletion only after a recorded legal review, a final warning and a reviewed batch, never from a public address.
+  Self-service password reset is behind `self_service_password_reset` (off). The audit log is append only.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is

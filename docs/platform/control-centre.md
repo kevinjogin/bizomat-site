@@ -46,6 +46,7 @@ migration `0029_platform_controls.sql` (reverse: `apps/work/migrations-reverse/0
 | `scheduled_reverification` | off, on | everyone | low | no | R6 |
 | `international_registration` | off, on | everyone, country | medium | no | R6 |
 | `join_requests` | off, on | everyone, country | low | no | R6 |
+| `self_service_password_reset` | off, on | everyone | low | no | R7 |
 | `migration_notifications` | off, on | everyone, stage, company | medium | yes | R7 |
 | `compliance_countdown` | off, on | everyone, stage, company | high | yes | R7 |
 | `auto_suspension` | off, on | everyone, stage | high | yes | R7 |
@@ -90,7 +91,8 @@ alone. Any platform admin may use it, with a re-authentication and "KILL SWITCH"
 When a step of the 15-minute maintenance run fails, every platform admin gets an email: one per failing step per day
 (`apps/work/src/worker/platform/alerts.ts`). Every step now runs on its own, so one failure never stops the others.
 
-## Not built yet
+## The first founder
 
-- **A command to create the first founder from the server, with a Fly secret.** The founder account exists (seeded by
-  migration 0012). A server-side recovery command comes with R7's server commands.
+The founder account exists (seeded by migration 0012). On a new platform, the Fly secret
+`WORK_PLATFORM_ADMIN_BOOTSTRAP` (an email) makes that account the founder, only if it is active, its email is proven
+and no founder exists (`apps/work/src/worker/services/platform-admin.ts`). Remove the secret once it has acted.
