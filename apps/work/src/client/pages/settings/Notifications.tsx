@@ -54,7 +54,7 @@ export function NotificationSettings() {
     <div className="card">
       <div className="card-header"><h2 className="grow">Notification preferences</h2><button className="btn primary sm" onClick={save} disabled={busy}>Save</button></div>
       <div className="card-pad">
-        <div className="info-box" style={{ marginBottom: 14 }}>
+        <div className="info-box" style={{ marginBottom: 'var(--ui-s14, 14px)' }}>
           In-app notifications are delivered to your Inbox and bell. {emailOn ? 'Email is sent to your account address for the types switched on below.' : 'Email delivery is not configured on this deployment yet: your email choices are saved and apply once it is.'}
         </div>
         <table className="data-table responsive">

@@ -137,6 +137,7 @@ run_role web /app/web/dist-server/server.mjs >"$tmp/web.json"
 [ "$(uid "$tmp/web.json")" = 10002 ] || bad "web uid"
 [ "$(val "$tmp/web.json" PORT)" = 8003 ] && [ "$(val "$tmp/web.json" WEB_DIST_DIR)" = /app/web/dist ] && [ "$(val "$tmp/web.json" WEB_TRUST_PROXY)" = 1 ] || bad "web fixed settings"
 [ "$(val "$tmp/web.json" CF_AI_TOKEN)" = throwaway-web-token ] && [ "$(val "$tmp/web.json" WEB_EXTRA)" = web-setting ] || bad "web settings"
+[ "$(val "$tmp/web.json" WEB_UPSTREAM_WORK)" = http://work:8002 ] || bad "web: the work address for the new UI's flag"
 for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY \
   WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS GATE_PASSWORD; do
   if has "$tmp/web.json" "$n"; then bad "web holds $n"; fi
@@ -176,6 +177,15 @@ grep -q "secret file OPENSKETCH_KEY_SECRET skipped" "$tmp/stderr" || bad "anothe
 grep -q "secret file GOOGLE_CLIENT_ID skipped: not a regular file" "$tmp/stderr" || bad "link not reported"
 if grep -q "throwaway\|from-the-volume\|not-for-work" "$tmp/stderr"; then bad "a value reached the log"; fi
 ok "work: mapped names, its own Google client, secret files (links and other roles' names refused), volume prepared"
+
+# work: free mode. Billing is locked unless WORK_BIZOMAT_BILLING_LOCK is "false"; an app-wide BIZOMAT_BILLING_LOCK is ignored.
+[ "$(val "$tmp/work.json" BIZOMAT_BILLING_LOCK)" = true ] || bad "billing must be locked by default"
+mkdir -p "$tmp/workvol3" "$tmp/workvol4"
+run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol3:/data" -e BIZOMAT_BILLING_LOCK=false >"$tmp/work3.json"
+[ "$(val "$tmp/work3.json" BIZOMAT_BILLING_LOCK)" = true ] || bad "an app-wide BIZOMAT_BILLING_LOCK must not unlock billing"
+run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol4:/data" -e WORK_BIZOMAT_BILLING_LOCK=false >"$tmp/work4.json"
+[ "$(val "$tmp/work4.json" BIZOMAT_BILLING_LOCK)" = false ] || bad "WORK_BIZOMAT_BILLING_LOCK=false must reach the app"
+ok "work: billing locked unless WORK_BIZOMAT_BILLING_LOCK is false"
 
 # work: the company settings as secret files on its volume, under the names the app reads (they win over Fly secrets)
 as_root 'mkdir -p /t/workvol2/work/.secrets

@@ -122,6 +122,39 @@ export function validateJournal(a: FinAccess, chart: Chart, date: string, lines:
   if (dr !== cr) throw new HttpError(400, `The journal does not balance: debits ${dr / 100} and credits ${cr / 100}`);
 }
 
+/**
+ * The contacts and tracking a set of lines names belong to this workspace, and each tracking id is of the right kind
+ * (audit E4). The database's composite keys already refuse another workspace's records; this says so clearly, before
+ * anything is written, and also refuses a project given as a department.
+ */
+export async function assertLineRefs(
+  db: D1Database,
+  orgId: string,
+  lines: { contactId?: string | null; departmentId?: string | null; projectId?: string | null; costCentreId?: string | null }[],
+  extraContactIds: (string | null | undefined)[] = [],
+) {
+  const contacts = [...new Set([...lines.map((l) => l.contactId), ...extraContactIds].filter((x): x is string => !!x))];
+  const tracking = new Map<string, 'department' | 'project' | 'cost_centre'>();
+  for (const l of lines) {
+    if (l.departmentId) tracking.set(l.departmentId, 'department');
+    if (l.projectId) tracking.set(l.projectId, 'project');
+    if (l.costCentreId) tracking.set(l.costCentreId, 'cost_centre');
+  }
+  if (contacts.length) {
+    const found = await db.prepare(`SELECT id FROM fin_contacts WHERE org_id = ? AND id IN (${contacts.map(() => '?').join(',')})`).bind(orgId, ...contacts).all<{ id: string }>();
+    if (found.results.length !== contacts.length) throw new HttpError(400, 'Choose contacts from this workspace');
+  }
+  if (tracking.size) {
+    const ids = [...tracking.keys()];
+    const found = await db.prepare(`SELECT id, kind FROM fin_tracking WHERE org_id = ? AND id IN (${ids.map(() => '?').join(',')})`).bind(orgId, ...ids).all<{ id: string; kind: string }>();
+    const kinds = new Map(found.results.map((r) => [r.id, r.kind]));
+    for (const [id, kind] of tracking) {
+      if (!kinds.has(id)) throw new HttpError(400, 'Choose departments, projects and cost centres from this workspace');
+      if (kinds.get(id) !== kind) throw new HttpError(400, `That tracking option is not a ${kind.replace('_', ' ')}`);
+    }
+  }
+}
+
 /** Statements that insert a journal as a draft, add its lines and post it (the database checks the balance). */
 export function journalStmts(db: D1Database, j: { id: string; orgId: string; date: string; sourceType: string; sourceId?: string | null; memo?: string; createdBy: string | null; lines: LedgerLine[]; reversesId?: string | null }): D1PreparedStatement[] {
   const t = now();

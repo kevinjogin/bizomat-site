@@ -16,4 +16,8 @@ const live = ['Developing', 'Testing', 'Exploring'].includes(status);
     .status--live::before { animation: pulse 2.4s var(--ease) infinite; }
   }
   @keyframes pulse { 50% { opacity: 0.35; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .status { gap: var(--bz-space-2); padding: 0.2rem var(--bz-space-2); border-radius: var(--bz-radius-full); font-size: var(--bz-text-xs); }
+  /* ui-new:generated end */
 </style>

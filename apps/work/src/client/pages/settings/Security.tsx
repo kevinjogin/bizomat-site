@@ -28,12 +28,53 @@ function describeAgent(ua: string | null) {
 
 export function SecuritySettings() {
   return (
-    <div className="col" style={{ gap: 16 }}>
+    <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
       <PasswordCard />
       <SessionsCard />
       <ProvidersCard />
       <TokensCard />
+      <ExportCard />
     </div>
+  );
+}
+
+interface ExportDTO { id: string; scope: string; status: string; size: number | null; expires_at: number | null; created_at: number }
+
+/** Export your data (R7): at any time; built in the background; the link works for 7 days, only for you. */
+function ExportCard() {
+  const qc = useQueryClient();
+  const toast = useToast();
+  const q = useQuery({ queryKey: ['exports'], queryFn: () => get<ExportDTO[]>('/exports'), refetchInterval: (query) => ((query.state.data ?? []).some((x) => x.status === 'queued' || x.status === 'running') ? 30_000 : false) });
+  const ask = async () => {
+    try {
+      await post('/me/export', {});
+      await qc.invalidateQueries({ queryKey: ['exports'] });
+      toast('Your export is being prepared. You get an email when it is ready.');
+    } catch (e) {
+      toast(errorMessage(e), 'error');
+    }
+  };
+  return (
+    <section className="card" id="export">
+      <div className="card-header">
+        <h2 className="grow">Export your data</h2>
+        <button className="btn sm" onClick={ask}>Prepare an export</button>
+      </div>
+      <div className="card-pad muted small">
+        Your profile, settings, sign-ins, activity and notifications, and the records you made where your company allows it, as JSON and CSV in a ZIP file. It is ready within about 15 minutes and can be downloaded for 7 days, only while you are signed in.
+      </div>
+      <div className="list">
+        {(q.data ?? []).map((x) => (
+          <div key={x.id} className="list-row">
+            <span className="grow small">
+              {x.scope === 'company' ? 'Company export' : 'Personal export'} · {timeAgo(x.created_at)} ·{' '}
+              {x.status === 'ready' && x.expires_at ? `ready until ${new Date(x.expires_at).toLocaleDateString()}` : x.status === 'queued' || x.status === 'running' ? 'being prepared' : x.status}
+            </span>
+            {x.status === 'ready' ? <a className="btn sm" href={appUrl(`/api/exports/${x.id}/download`)}>Download</a> : null}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -68,7 +109,7 @@ function PasswordCard() {
   };
   return (
     <form className="card card-pad" onSubmit={submit}>
-      <h2 style={{ marginBottom: 12 }}>{hasPassword ? 'Change password' : 'Set a password'}</h2>
+      <h2 style={{ marginBottom: 'var(--ui-s12, 12px)' }}>{hasPassword ? 'Change password' : 'Set a password'}</h2>
       {hasPassword ? (
         <Field label="Current password" htmlFor="pw-current">
           <input id="pw-current" className="input" type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} required />
@@ -82,7 +123,7 @@ function PasswordCard() {
       <Field label="Confirm new password" htmlFor="pw-confirm">
         <input id="pw-confirm" className="input" type="password" autoComplete="new-password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} required />
       </Field>
-      {error ? <div className="error-box" style={{ marginBottom: 12 }} role="alert">{error}</div> : null}
+      {error ? <div className="error-box" style={{ marginBottom: 'var(--ui-s12, 12px)' }} role="alert">{error}</div> : null}
       <button className="btn primary" disabled={busy || next.length < 10}>{busy ? 'Saving…' : 'Update password'}</button>
     </form>
   );
@@ -197,19 +238,31 @@ function ProvidersCard() {
   );
 }
 
+const TOKEN_APP_LABELS: Record<string, string> = { tasks: 'Projects', crm: 'CRM', finance: 'Finance', erp: 'ERP modules', company: 'Company administration' };
+
 function TokensCard() {
-  const q = useQuery({ queryKey: ['api-tokens'], queryFn: () => get<{ id: string; name: string; prefix: string; last_used_at: number | null; expires_at: number | null; created_at: number }[]>('/me/tokens') });
+  const q = useQuery({
+    queryKey: ['api-tokens'],
+    queryFn: () =>
+      get<{ id: string; name: string; prefix: string; last_used_at: number | null; expires_at: number | null; created_at: number; company_id: string | null; companyName: string | null; apps: string[] | null; readOnly: boolean }[]>('/me/tokens'),
+  });
+  const companies = useQuery({ queryKey: ['system', 'me'], queryFn: () => get<{ companies: { id: string; name: string; kind: string }[] }>('/system/me') });
   const qc = useQueryClient();
   const toast = useToast();
   const confirm = useConfirm();
   const [creating, setCreating] = useState(false);
   const [name, setName] = useState('');
   const [days, setDays] = useState('90');
+  const [companyId, setCompanyId] = useState('');
+  const [apps, setApps] = useState<string[]>([]);
+  const [readOnly, setReadOnly] = useState(false);
   const [created, setCreated] = useState<string | null>(null);
+  const companyList = companies.data?.companies ?? [];
+  const chosenCompany = companyId || companyList[0]?.id || '';
   const create = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const r = await post('/me/tokens', { name: name.trim(), expiresInDays: days ? Number(days) : undefined });
+      const r = await post('/me/tokens', { name: name.trim(), companyId: chosenCompany, apps: apps.length ? apps : undefined, readOnly, expiresInDays: Number(days) });
       setCreated(r.token);
       setName('');
       qc.invalidateQueries({ queryKey: ['api-tokens'] });
@@ -224,10 +277,10 @@ function TokensCard() {
         <button className="btn sm" onClick={() => { setCreated(null); setCreating(true); }}><Icon name="plus" size={14} /> New token</button>
       </div>
       <div className="card-pad muted small" style={{ paddingBottom: 0 }}>
-        Use tokens with <code>Authorization: Bearer &lt;token&gt;</code> to call the Project Management API. Tokens act as you, with your permissions.
+        Use tokens with <code>Authorization: Bearer &lt;token&gt;</code> to call the BIZOMAT API. A token acts as you, with your permissions, in one company only, and can be limited to some applications or to reading. Changing your password ends every token.
       </div>
       {q.isLoading ? <Loading /> : null}
-      <div className="list" style={{ marginTop: 8 }}>
+      <div className="list" style={{ marginTop: 'var(--ui-s8, 8px)' }}>
         {(q.data ?? []).map((t) => (
           <div key={t.id} className="list-row">
             <Icon name="key" />
@@ -235,6 +288,11 @@ function TokensCard() {
               <strong>{t.name}</strong> <span className="mono muted">{t.prefix}…</span>
               <div className="muted small">
                 Created {timeAgo(t.created_at)} · {t.last_used_at ? `last used ${timeAgo(t.last_used_at)}` : 'never used'} · {t.expires_at ? `expires ${new Date(t.expires_at).toLocaleDateString()}` : 'no expiry'}
+              </div>
+              <div className="muted small">
+                {t.company_id ? `${t.companyName} only` : 'Every company you are in (made before tokens were limited to one company)'}
+                {t.apps ? ` · ${t.apps.map((a) => TOKEN_APP_LABELS[a] ?? a).join(', ')}` : ''}
+                {t.readOnly ? ' · read only' : ''}
               </div>
             </span>
             <button
@@ -256,22 +314,39 @@ function TokensCard() {
         {q.data && q.data.length === 0 ? <div className="card-pad muted small">No tokens yet.</div> : null}
       </div>
       {creating ? (
-        <Modal title={created ? 'Token created' : 'New API token'} onClose={() => setCreating(false)} footer={created ? <button className="btn primary" onClick={() => setCreating(false)}>Done</button> : <><button className="btn" onClick={() => setCreating(false)}>Cancel</button><button className="btn primary" form="token-form" disabled={!name.trim()}>Create token</button></>}>
+        <Modal title={created ? 'Token created' : 'New API token'} onClose={() => setCreating(false)} footer={created ? <button className="btn primary" onClick={() => setCreating(false)}>Done</button> : <><button className="btn" onClick={() => setCreating(false)}>Cancel</button><button className="btn primary" form="token-form" disabled={!name.trim() || !chosenCompany}>Create token</button></>}>
           {created ? (
             <>
               <p>Copy this token now. It will not be shown again.</p>
               <div className="token-reveal" aria-label="New token">{created}</div>
-              <button className="btn sm" style={{ marginTop: 10 }} onClick={() => navigator.clipboard?.writeText(created).then(() => toast('Copied'))}><Icon name="copy" size={14} /> Copy</button>
+              <button className="btn sm" style={{ marginTop: 'var(--ui-s10, 10px)' }} onClick={() => navigator.clipboard?.writeText(created).then(() => toast('Copied'))}><Icon name="copy" size={14} /> Copy</button>
             </>
           ) : (
             <form id="token-form" onSubmit={create}>
               <Field label="Name" htmlFor="tok-name"><input id="tok-name" className="input" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} placeholder="e.g. Reporting script" /></Field>
+              <Field label="Company" htmlFor="tok-company">
+                <select id="tok-company" className="select" value={chosenCompany} onChange={(e) => setCompanyId(e.target.value)}>
+                  {companyList.map((co) => (
+                    <option key={co.id} value={co.id}>{co.name}</option>
+                  ))}
+                </select>
+              </Field>
+              <fieldset className="field">
+                <legend className="label">Applications (none ticked: all of them)</legend>
+                {Object.entries(TOKEN_APP_LABELS).map(([key, label]) => (
+                  <label key={key} className="row small">
+                    <input type="checkbox" checked={apps.includes(key)} onChange={(e) => setApps(e.target.checked ? [...apps, key] : apps.filter((a) => a !== key))} /> {label}
+                  </label>
+                ))}
+              </fieldset>
+              <label className="row small">
+                <input type="checkbox" checked={readOnly} onChange={(e) => setReadOnly(e.target.checked)} /> Read only
+              </label>
               <Field label="Expires" htmlFor="tok-exp">
                 <select id="tok-exp" className="select" value={days} onChange={(e) => setDays(e.target.value)}>
                   <option value="30">In 30 days</option>
                   <option value="90">In 90 days</option>
                   <option value="365">In 1 year</option>
-                  <option value="">Never</option>
                 </select>
               </Field>
             </form>

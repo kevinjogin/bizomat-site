@@ -72,6 +72,18 @@ export function migrationStatus(db: DatabaseSync, migrations: Migration[]): Migr
 }
 
 /**
+ * A migration whose first line is this marker rebuilds tables that other tables refer to (Stage 1, R3). It runs with
+ * foreign keys switched off, so dropping the old table cannot cascade into its children, and it commits only when
+ * PRAGMA foreign_key_check finds nothing. SQLite ignores PRAGMA foreign_keys inside a transaction, so the switch is made
+ * around it. On D1 such a migration may only be applied to an empty database (the move tool does that).
+ */
+export const FOREIGN_KEYS_OFF = '-- bizomat:foreign-keys-off';
+
+export function needsForeignKeysOff(sql: string): boolean {
+  return sql.trimStart().startsWith(FOREIGN_KEYS_OFF);
+}
+
+/**
  * Applies pending migrations in order. Like wrangler, each migration file and
  * its d1_migrations row are one atomic unit; a failing migration is rolled
  * back and stops the run. Returns the names applied.
@@ -82,14 +94,26 @@ export function applyMigrations(db: DatabaseSync, migrations: Migration[]): stri
   const applied: string[] = [];
   for (const m of [...migrations].sort((a, b) => compareMigrationNames(a.name, b.name))) {
     if (done.has(m.name)) continue;
+    const fkOff = needsForeignKeysOff(m.sql);
+    const fkWas = fkOff ? Number((db.prepare('PRAGMA foreign_keys').get() as { foreign_keys: number }).foreign_keys) : 0;
+    if (fkOff) db.exec('PRAGMA foreign_keys = OFF');
     db.exec('BEGIN IMMEDIATE');
     try {
       db.exec(m.sql);
+      if (fkOff) {
+        const bad = db.prepare('PRAGMA foreign_key_check').all() as { table: string }[];
+        if (bad.length) {
+          const tables = [...new Set(bad.map((r) => r.table))].join(', ');
+          throw new Error(`${bad.length} rows would break a foreign key (${tables})`);
+        }
+      }
       db.prepare('INSERT INTO "d1_migrations" (name) values (?)').run(m.name);
       db.exec('COMMIT');
     } catch (e) {
       if (db.isTransaction) db.exec('ROLLBACK');
       throw new Error(`Migration ${m.name} failed: ${(e as Error).message}`, { cause: e });
+    } finally {
+      if (fkOff && fkWas) db.exec('PRAGMA foreign_keys = ON');
     }
     applied.push(m.name);
   }

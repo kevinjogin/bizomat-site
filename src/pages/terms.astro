@@ -76,7 +76,7 @@ import { ASSESSMENT, CONDITIONS, EXCLUSIONS } from '../config/assessment.ts';
 
   <h2 id="assessment">{ASSESSMENT.shortName}</h2>
   <p>
-    The {ASSESSMENT.name} is a fixed-price service ({ASSESSMENT.priceLabel}) for one defined problem. These conditions apply to it, in addition to the rest of these terms. {ASSESSMENT.gstNote}
+    The {ASSESSMENT.name} is a fixed-scope service for one defined problem, with its fee confirmed in writing before any payment. These conditions apply to it, in addition to the rest of these terms. {ASSESSMENT.gstNote}
   </p>
   <ul>{CONDITIONS.map((c) => <li><strong>{c.title}.</strong> {c.text}</li>)}</ul>
   <p>The assessment does not include: {EXCLUSIONS.join(', ').toLowerCase()}. A booking exists only once the calendar confirmation has been received.</p>

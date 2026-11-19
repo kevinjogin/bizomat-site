@@ -400,7 +400,7 @@ describe('billable users', () => {
     expect(await countBillableSeats(env.DB, co.id)).toBe(2);
     const summary = await okJson(await call(owner, 'GET', `/api/billing/c/${co.id}`));
     expect(summary.seats).toMatchObject({ count: 2, pendingInvitations: 1, disabledMembers: 1 });
-    expect(summary.seats.people.map((p: any) => p.role)).toEqual(['owner', 'member']);
+    expect(summary.seats.people.map((p: any) => p.role)).toEqual(['owner', 'employee']);
   });
 
   it('shows billing to the owner and administrators only', async () => {
@@ -453,7 +453,7 @@ describe('starting a subscription', () => {
     const member = await join(owner, co.id);
     await setSetting('audience', 'everyone');
     expect((await call(member, 'POST', `/api/billing/c/${co.id}/checkout`, { interval: 'month' })).status).toBe(403);
-    const token = await owner.json('POST', '/api/me/tokens', { name: 'billing test' });
+    const token = await owner.json('POST', '/api/me/tokens', { name: 'billing test', companyId: co.id });
     expect(token.token).toMatch(/^wos_/);
     const viaToken = await call(null, 'POST', `/api/billing/c/${co.id}/checkout`, { interval: 'month' }, {}, { Authorization: `Bearer ${token.token}` });
     expect(viaToken.status).toBe(403);
@@ -752,6 +752,110 @@ describe('safety', () => {
     const audited = await env.DB.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'billing.audience_changed' AND actor_id = ?").bind(someone.userId).first<{ n: number }>();
     expect(audited!.n).toBe(1);
     await env.DB.prepare('DELETE FROM platform_admins WHERE user_id = ?').bind(someone.userId).run();
+  });
+});
+
+// Free mode (Stage 1, owner 19 Nov 2026): BIZOMAT_BILLING_LOCK = "true" locks billing on the server, whatever the console
+// says, and keeps the webhook recording events.
+describe('free mode (BIZOMAT_BILLING_LOCK)', () => {
+  const LOCK = { BIZOMAT_BILLING_LOCK: 'true' };
+
+  it('refuses every change that involves Stripe, for everyone, and sends nothing to Stripe', async () => {
+    const owner = await signup();
+    const { company: co } = await company(owner);
+    await setSetting('audience', 'everyone');
+    const before = fake.calls.length;
+    for (const [method, path, body] of [
+      ['POST', `/api/billing/c/${co.id}/checkout`, { interval: 'month' }],
+      ['POST', `/api/billing/c/${co.id}/payment-method`, {}],
+      ['POST', `/api/billing/c/${co.id}/interval/preview`, { interval: 'year' }],
+      ['POST', `/api/billing/c/${co.id}/interval`, { interval: 'year' }],
+      ['POST', `/api/billing/c/${co.id}/sync-seats`, {}],
+      ['POST', `/api/billing/c/${co.id}/resume`, {}],
+      ['GET', `/api/billing/c/${co.id}/preview`, undefined],
+    ] as const) {
+      const res = await call(owner, method, path, body, LOCK);
+      expect(res.status, `${method} ${path}`).toBe(403);
+      expect(((await res.json()) as any).details?.code, `${method} ${path}`).toBe('BILLING_LOCKED');
+    }
+    // A platform admin is refused too.
+    await env.DB.prepare("INSERT INTO platform_admins (user_id, role, granted_at) VALUES (?, 'founder', ?)").bind(owner.userId, Date.now()).run();
+    expect((await call(owner, 'POST', `/api/billing/c/${co.id}/checkout`, { interval: 'month' }, LOCK)).status).toBe(403);
+    await env.DB.prepare('DELETE FROM platform_admins WHERE user_id = ?').bind(owner.userId).run();
+    expect(fake.calls.length).toBe(before);
+    await setSetting('audience', 'off');
+  });
+
+  it('shows the billing page as free, with no price and no way to subscribe, and gives the browser no Stripe key', async () => {
+    const owner = await signup();
+    const { company: co } = await company(owner);
+    await setSetting('audience', 'everyone');
+    const page = await okJson(await call(owner, 'GET', `/api/billing/c/${co.id}`, undefined, LOCK));
+    expect(page.billing).toMatchObject({ enabled: false, free: true, canSubscribe: false });
+    expect(page.billing.whyNot).toMatch(/BIZOMAT is free for every company/);
+    expect(page.prices).toEqual({ month: null, year: null });
+    expect(page.entitled).toEqual({ allowed: true, why: 'free' });
+    const cfg = await okJson(await call(owner, 'GET', '/api/billing/config', undefined, LOCK));
+    expect(cfg).toMatchObject({ enabled: false, free: true });
+    expect(cfg.publishableKey).toBeUndefined();
+    await setSetting('audience', 'off');
+  });
+
+  it('never refuses a company for not paying, whatever enforcement says, and seat changes send nothing to Stripe', async () => {
+    const owner = await signup();
+    const { company: co, tools } = await company(owner);
+    await setSetting('enforcement', 'on');
+    expect((await call(owner, 'POST', `/api/crm/orgs/${tools.crm}/companies`, { name: 'Acme Customer' })).status).toBe(402);
+    expect((await call(owner, 'POST', `/api/crm/orgs/${tools.crm}/companies`, { name: 'Acme Customer' }, LOCK)).status).not.toBe(402);
+    expect((await call(owner, 'POST', `/api/erp/c/${co.id}/products`, {}, LOCK)).status).not.toBe(402);
+    await setSetting('enforcement', 'off');
+    const before = fake.calls.length;
+    expect(await syncSeats(billingEnv(LOCK), co.id, { reason: 'test' })).toEqual({ status: 'off' });
+    const person = await signup('Team Member', uniqueEmail('member'));
+    const inv = await owner.json('POST', `/api/company/c/${co.id}/invitations`, { email: person.email, role: 'member' });
+    await okJson(await call(person, 'POST', `/api/company/invitations/${decodeURIComponent(inv.url.split('/join/')[1])}/accept`, {}, LOCK));
+    expect(fake.calls.length).toBe(before);
+  });
+
+  it('keeps the webhook recording signed events, and lets a subscription from before be cancelled but not resumed', async () => {
+    const owner = await signup();
+    const { co, sub } = await subscribed(owner);
+    await setSetting('audience', 'off');
+    const e = await signedEvent('customer.subscription.updated', { id: sub.id, object: 'subscription' });
+    expect((await deliver(e, LOCK)).status).toBe(200);
+    const id = JSON.parse(e.payload).id;
+    expect(await env.DB.prepare('SELECT id FROM billing_events WHERE id = ?').bind(id).first()).not.toBeNull();
+    // The billing page still shows it, so nobody is charged without seeing it.
+    const page = await okJson(await call(owner, 'GET', `/api/billing/c/${co.company.id}`, undefined, LOCK));
+    expect(page.billing.free).toBe(true);
+    expect(page.subscription?.id).toBe(sub.id);
+    const cancelled = await okJson(await call(owner, 'POST', `/api/billing/c/${co.company.id}/cancel`, {}, LOCK));
+    expect(cancelled.ok).toBe(true);
+    expect((await call(owner, 'POST', `/api/billing/c/${co.company.id}/resume`, {}, LOCK)).status).toBe(403);
+  });
+
+  it('keeps the console from opening subscriptions or turning enforcement on, and lets both be switched off', async () => {
+    const founder = await signup();
+    await env.DB.prepare("INSERT INTO platform_admins (user_id, role, granted_at) VALUES (?, 'founder', ?)").bind(founder.userId, Date.now()).run();
+    const overview = await okJson(await call(founder, 'GET', '/api/admin/billing/overview', undefined, LOCK));
+    expect(overview.locked).toBe(true);
+    for (const change of [{ audience: 'everyone' }, { audience: 'admins' }, { enforcement: 'on' }, { enforcement: 'shadow' }]) {
+      const res = await call(founder, 'PUT', '/api/admin/billing/settings', change, LOCK);
+      expect(res.status, JSON.stringify(change)).toBe(403);
+      expect(((await res.json()) as any).details?.code).toBe('BILLING_LOCKED');
+    }
+    expect((await okJson(await call(founder, 'PUT', '/api/admin/billing/settings', { audience: 'off', enforcement: 'off' }, LOCK))).audience).toBe('off');
+    expect((await okJson(await call(founder, 'GET', '/api/admin/billing/overview'))).locked).toBe(false);
+    await env.DB.prepare('DELETE FROM platform_admins WHERE user_id = ?').bind(founder.userId).run();
+  });
+
+  it('finds the company behind a percent-encoded id, as the route does (audit S11)', async () => {
+    const owner = await signup();
+    const { company: co } = await company(owner);
+    const encoded = `%${co.id.charCodeAt(0).toString(16).toUpperCase().padStart(2, '0')}${co.id.slice(1)}`;
+    expect(await registeredCompanyOf(env.DB, `erp/c/${encoded}/products`)).toBe(co.id);
+    expect(await registeredCompanyOf(env.DB, `erp/c/${co.id}/products`)).toBe(co.id);
+    expect(await registeredCompanyOf(env.DB, 'erp/c/%E0%A4%A/products')).toBeNull();
   });
 });
 

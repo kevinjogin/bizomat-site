@@ -58,7 +58,7 @@ export default function Boards() {
           <button className="btn" onClick={() => setCreate('personal')}><Icon name="user" /> Personal board</button>
         )}
       />
-      <div className="row wrap" style={{ marginBottom: 16 }}>
+      <div className="row wrap" style={{ marginBottom: 'var(--ui-s16, 16px)' }}>
         <div className="tabs" role="tablist" style={{ flex: 1 }}>
           {(['all', 'personal', 'archived'] as Tab[]).map((t) => (
             <button key={t} role="tab" aria-selected={tab === t} className={`tab${tab === t ? ' active' : ''}`} onClick={() => setTab(t)}>{t[0].toUpperCase() + t.slice(1)}</button>
@@ -110,7 +110,7 @@ function BoardTile({ board: b, wsId, onAction, folders, folder, draggable, onMov
         <div className="row small muted">
           {b.visibility === 'private' ? <span className="badge"><Icon name="lock" size={11} /> Private</span> : <span className="badge"><Icon name="globe" size={11} /> Workspace</span>}
           <span className="badge">{b.access}</span>
-          {folder ? <span className="badge" style={{ gap: 5 }}><FolderIcon color={folder.color} size={13} /> {folder.name}</span> : null}
+          {folder ? <span className="badge" style={{ gap: 'var(--ui-s5, 5px)' }}><FolderIcon color={folder.color} size={13} /> {folder.name}</span> : null}
           <span className="spacer" />
           <span>{timeAgo(b.updatedAt)}</span>
         </div>

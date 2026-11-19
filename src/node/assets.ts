@@ -70,10 +70,23 @@ export function parseHeaders(text: string): HeaderRule[] {
   return rules;
 }
 
-export interface AssetsOptions { dir: string; cacheBytes?: number }
+export interface AssetsOptions {
+  dir: string;
+  cacheBytes?: number;
+  /** The new UI (flag new_ui_enabled; docs/ui/README.md): while this answers true, HTML pages are served with
+   * data-ui="new" on their <html> element, under their own ETag. */
+  newUi?: () => boolean;
+}
+
+/** An HTML page with data-ui="new" on its <html> element (unchanged when it already has a data-ui). */
+export function markHtml(raw: Buffer): Buffer {
+  const html = raw.toString('utf8');
+  const marked = html.replace(/<html\b(?![^>]*\bdata-ui=)/i, '<html data-ui="new"');
+  return marked === html ? raw : Buffer.from(marked, 'utf8');
+}
 
 /** The ASSETS binding: fetch(request) -> Response, as env.ASSETS behaves on Cloudflare. */
-export function createAssets({ dir, cacheBytes = 64 * 2 ** 20 }: AssetsOptions) {
+export function createAssets({ dir, cacheBytes = 64 * 2 ** 20, newUi }: AssetsOptions) {
   const root = resolve(dir);
   const read = (name: string) => (existsSync(join(root, name)) ? readFileSync(join(root, name), 'utf8') : '');
   const redirects = parseRedirects(read('_redirects'));
@@ -121,26 +134,28 @@ export function createAssets({ dir, cacheBytes = 64 * 2 ** 20 }: AssetsOptions) 
     return new Response(null, { status, headers: { Location: location, 'Cache-Control': 'public, max-age=3600' } });
   }
 
-  function headersFor(pathname: string, type: string, size: number, mtime: number): Headers {
+  function headersFor(pathname: string, type: string, size: number, mtime: number, marked = false): Headers {
     const h = new Headers({ 'Content-Type': type });
     for (const rule of headerRules) if (rule.re.test(pathname)) for (const [k, v] of rule.headers) h.set(k, v);
     if (!h.has('Cache-Control')) h.set('Cache-Control', type.startsWith('text/html') ? 'public, max-age=0, must-revalidate' : 'public, max-age=86400');
-    h.set('ETag', `W/"${size.toString(36)}-${Math.floor(mtime).toString(36)}"`);
+    // A page of the new UI has its own ETag, so a browser never keeps a page of the other look when the flag changes.
+    h.set('ETag', `W/"${size.toString(36)}-${Math.floor(mtime).toString(36)}${marked ? '-ui' : ''}"`);
     return h;
   }
 
   function serve(request: Request, url: URL, file: { path: string; stat: Stats }, status = 200, logicalPath = url.pathname): Response {
     const type = TYPES[extname(file.path).toLowerCase()] ?? 'application/octet-stream';
-    const headers = headersFor(logicalPath, type, file.stat.size, file.stat.mtimeMs);
+    const marked = type.startsWith('text/html') && !!newUi?.();
+    const headers = headersFor(logicalPath, type, file.stat.size, file.stat.mtimeMs, marked);
     if (status === 200 && request.headers.get('If-None-Match') === headers.get('ETag')) return new Response(null, { status: 304, headers });
     const head = request.method === 'HEAD';
     const accept = request.headers.get('Accept-Encoding') ?? '';
     const encoding = /\bbr\b/.test(accept) ? 'br' : /\bgzip\b/.test(accept) ? 'gzip' : '';
     if (COMPRESSIBLE.test(type) && encoding && file.stat.size > 1024 && file.stat.size < 8 * 2 ** 20) {
-      const key = `${file.path}|${file.stat.mtimeMs}|${encoding}`;
+      const key = `${file.path}|${file.stat.mtimeMs}|${encoding}${marked ? '|ui' : ''}`;
       let body = cache.get(key);
       if (!body) {
-        const raw = readFileSync(file.path);
+        const raw = marked ? markHtml(readFileSync(file.path)) : readFileSync(file.path);
         body = encoding === 'br' ? brotliCompressSync(raw, { params: { [zlib.BROTLI_PARAM_QUALITY]: 5 } }) : gzipSync(raw, { level: 6 });
         remember(key, body);
       }
@@ -150,6 +165,11 @@ export function createAssets({ dir, cacheBytes = 64 * 2 ** 20 }: AssetsOptions) 
       // A Buffer is a Uint8Array over an ArrayBuffer: this view satisfies the DOM BodyInit typing without a copy.
       const bytes = new Uint8Array(body.buffer as ArrayBuffer, body.byteOffset, body.byteLength);
       return new Response(head ? null : bytes, { status, headers });
+    }
+    if (marked) {
+      const body = markHtml(readFileSync(file.path));
+      headers.set('Content-Length', String(body.length));
+      return new Response(head ? null : new Uint8Array(body.buffer as ArrayBuffer, body.byteOffset, body.byteLength), { status, headers });
     }
     headers.set('Accept-Ranges', 'bytes');
     const range = /^bytes=(\d*)-(\d*)$/.exec(request.headers.get('Range') ?? '');

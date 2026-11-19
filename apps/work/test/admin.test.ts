@@ -1,11 +1,13 @@
 import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
-import { createBoard, login, raw, signup, uniqueEmail, type Client } from './helpers';
+import { createBoard, login, raw, reauthenticate, signup, uniqueEmail, type Client } from './helpers';
 import { runMaintenance } from '../src/worker/index';
 
 async function makeFounder(name = 'Founder'): Promise<Client> {
   const c = await signup(name);
   await env.DB.prepare("INSERT INTO platform_admins (user_id, role, granted_by, granted_at) VALUES (?, 'founder', 'test', ?)").bind(c.userId, Date.now()).run();
+  // Dangerous console actions need two-factor sign-in and a fresh re-authentication (Admin Control Centre, R2).
+  await reauthenticate(c);
   return c;
 }
 
@@ -47,7 +49,8 @@ describe('admin authorization', () => {
 
   it('does not accept API tokens for admin access', async () => {
     const f = await makeFounder();
-    const tok = await f.json('POST', '/api/me/tokens', { name: 'ci' });
+    const own = (await f.json('GET', '/api/system/me')).companies.find((c: any) => c.kind === 'own');
+    const tok = await f.json('POST', '/api/me/tokens', { name: 'ci', companyId: own.id });
     const res = await raw('GET', '/api/admin/overview', { headers: { Authorization: `Bearer ${tok.token}` } });
     expect(res.status).toBe(404);
   });
@@ -122,7 +125,7 @@ describe('account recovery by the founder', () => {
     const row = await env.DB.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'admin.password_reset' AND target_id = ? AND actor_id = ?").bind(target.userId, f.userId).first<{ n: number }>();
     expect(row!.n).toBe(1);
     const hash = await env.DB.prepare('SELECT password_hash FROM users WHERE id = ?').bind(target.userId).first<{ password_hash: string }>();
-    expect(hash!.password_hash).toMatch(/^pbkdf2\$100000\$/);
+    expect(hash!.password_hash).toMatch(/^(pbkdf2\$100000|scrypt\$\d+\$8\$3)\$/);
   });
 });
 
@@ -150,13 +153,15 @@ describe('forced new password and security reset', () => {
     expect((await (await again.req('GET', '/api/auth/me')).json<any>()).user.passwordResetRequired).toBe(false);
   });
 
-  it('a flagged account can still sign out, and its personal API tokens are refused too', async () => {
+  it('a flagged account can still sign out, and its personal API tokens end (audit S5)', async () => {
     const f = await makeFounder();
     const target = await signup('Token Holder');
-    const tok = await (await target.req('POST', '/api/me/tokens', { name: 'script' })).json<any>();
+    const own = (await target.json('GET', '/api/system/me')).companies.find((c: any) => c.kind === 'own');
+    const tok = await (await target.req('POST', '/api/me/tokens', { name: 'script', companyId: own.id })).json<any>();
     expect((await f.req('POST', `/api/admin/users/${target.userId}/password`, { password: TEMP })).status).toBe(200);
-    const viaToken = await raw('GET', '/api/workspaces', { headers: { Authorization: `Bearer ${tok.token}` } });
-    expect(viaToken.status).toBe(403);
+    const viaToken = await raw('GET', `/api/workspaces/${target.workspaceId}`, { headers: { Authorization: `Bearer ${tok.token}` } });
+    expect(viaToken.status).toBe(401);
+    expect(await env.DB.prepare('SELECT revoked_reason FROM api_tokens WHERE id = ?').bind(tok.id).first<any>()).toEqual({ revoked_reason: 'password_reset' });
     const s = await login(target.email, TEMP);
     expect((await s.req('POST', '/api/auth/logout')).status).toBe(200);
   });
@@ -169,10 +174,17 @@ describe('forced new password and security reset', () => {
     expect((await f.req('POST', '/api/admin/admins', { email: admin.email })).status).toBe(201);
     expect((await admin.req('POST', '/api/admin/security-reset', { requirePasswordReset: true })).status).toBe(403);
     expect((await a.req('POST', '/api/admin/security-reset', {})).status).toBe(404);
+    const ownOf = async (c: Client) => (await c.json('GET', '/api/system/me')).companies.find((x: any) => x.kind === 'own').id;
+    const aToken = await a.json('POST', '/api/me/tokens', { name: 'a script', companyId: await ownOf(a) });
+    const fToken = await f.json('POST', '/api/me/tokens', { name: 'founder script', companyId: await ownOf(f) });
     const r = await f.req('POST', '/api/admin/security-reset', { requirePasswordReset: true });
     expect(r.status).toBe(200);
     const out = await r.json<any>();
     expect(out.sessionsEnded).toBeGreaterThanOrEqual(3);
+    // Every API token ends too, but the founder's own (audit S5).
+    expect(out.tokensRevoked).toBeGreaterThanOrEqual(1);
+    expect((await raw('GET', `/api/workspaces/${a.workspaceId}`, { headers: { Authorization: `Bearer ${aToken.token}` } })).status).toBe(401);
+    expect((await env.DB.prepare('SELECT revoked_at FROM api_tokens WHERE id = ?').bind(fToken.id).first<any>()).revoked_at).toBeNull();
     expect(out.accountsToChoosePassword).toBeGreaterThanOrEqual(3);
     expect((await a.req('GET', '/api/auth/me')).status).toBe(401);
     expect((await b.req('GET', '/api/auth/me')).status).toBe(401);
@@ -229,7 +241,7 @@ describe('tracking', () => {
     const mine = loggedIn.sessions.find((s: any) => s.userId === u.userId);
     expect(mine.status).toBe('idle');
     expect(mine).not.toHaveProperty('ip');
-    expect(JSON.stringify(loggedIn)).not.toMatch(/token_hash|csrf|pbkdf2|password_hash/i);
+    expect(JSON.stringify(loggedIn)).not.toMatch(/token_hash|csrf|pbkdf2|scrypt\$|password_hash/i);
   });
 
   it('logout ends the session but keeps it as history through maintenance', async () => {
@@ -298,7 +310,7 @@ describe('dashboard accuracy', () => {
     expect(detail.projects[0].name).toBe('Counted board');
     expect(detail.sessions.length).toBeGreaterThanOrEqual(1);
     const text = JSON.stringify(detail);
-    expect(text).not.toMatch(/password_hash|token_hash|csrf_token|pbkdf2/);
+    expect(text).not.toMatch(/password_hash|token_hash|csrf_token|pbkdf2|scrypt\$/);
     // Viewing a user's details is audited.
     const aud = await env.DB.prepare("SELECT COUNT(*) AS n FROM audit_log WHERE action = 'admin.user_viewed' AND target_id = ?").bind(u.userId).first<{ n: number }>();
     expect(aud!.n).toBe(1);
@@ -334,7 +346,7 @@ describe('exports and health', () => {
     const text = await res.text();
     expect(text.split('\r\n')[0]).toContain('email');
     expect(text).toContain(`'=HYPERLINK`);
-    expect(text).not.toMatch(/pbkdf2|token_hash/);
+    expect(text).not.toMatch(/pbkdf2|scrypt\$|token_hash/);
     const s = await f.req('GET', '/api/admin/export/summary.csv?range=7d');
     expect((await s.text()).split('\r\n')[0]).toBe('date_utc,registrations,daily_active_users,projects_created,tasks_created,tasks_completed,anonymous_page_views');
   });

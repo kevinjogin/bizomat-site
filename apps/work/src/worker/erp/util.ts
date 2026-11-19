@@ -3,7 +3,7 @@
 
 import { z } from 'zod';
 import type { Context } from 'hono';
-import { HttpError, newId, now, parseJson } from '../lib/util';
+import { HttpError, andAll, newId, now, parseJson } from '../lib/util';
 import { csvOf } from '../fin/util';
 
 export { zDate, zText, zId, validDate, likeOf, searchText } from '../maintenance/util';
@@ -189,7 +189,7 @@ export function eventDTO(e: any) {
 }
 
 export async function historyOf(db: D1Database, companyId: string, where: { entityType?: string; entityId?: string; productId?: string }, limit = 100) {
-  const clauses = ['e.company_id = ?'];
+  const clauses: string[] = [];
   const args: unknown[] = [companyId];
   if (where.productId) {
     clauses.push('e.product_id = ?');
@@ -205,7 +205,7 @@ export async function historyOf(db: D1Database, companyId: string, where: { enti
     }
   }
   const rows = await db
-    .prepare(`SELECT e.*, u.name AS actor_name FROM erp_events e LEFT JOIN users u ON u.id = e.actor_id WHERE ${clauses.join(' AND ')} ORDER BY e.created_at DESC, e.rowid DESC LIMIT ?`)
+    .prepare(`SELECT e.*, u.name AS actor_name FROM erp_events e LEFT JOIN users u ON u.id = e.actor_id WHERE e.company_id = ?${andAll(clauses)} ORDER BY e.created_at DESC, e.rowid DESC LIMIT ?`)
     .bind(...args, limit)
     .all<any>();
   return rows.results.map(eventDTO);

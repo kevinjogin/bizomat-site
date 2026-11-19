@@ -49,6 +49,16 @@ export interface Env {
    */
   ABR_GUID?: string;
   /**
+   * Secret, optional: a Companies House API key (free from developer.company-information.service.gov.uk). With it, and
+   * the registry checks switched on, United Kingdom company numbers are looked up (src/worker/company/verification.ts).
+   */
+  COMPANIES_HOUSE_API_KEY?: string;
+  /**
+   * Optional: the email of the account to make the founder (platform owner) when no founder exists yet (Stage 1, R7).
+   * Acts only on an active account with a confirmed email, and never while a founder exists. Remove it once used.
+   */
+  PLATFORM_ADMIN_BOOTSTRAP?: string;
+  /**
    * Secret, optional: the BIZOMAT applications that may use BIZOMAT sign-in (src/worker/company/id-provider.ts), as
    * JSON: [{"id":"cad","name":"CAD Automation","secretSha256":"<hex>","redirectUris":["https://bizomat.ai/cad/..."]}].
    */
@@ -77,6 +87,9 @@ export interface Env {
   STRIPE_GRACE_DAYS?: string;
   /** Development and tests only: a local stand-in for api.stripe.com (refused in production and in live). */
   STRIPE_API_BASE?: string;
+  /** Free mode (Stage 1, owner 19 Nov 2026): "true" locks billing. Nobody can subscribe or be restricted for not
+   * paying, whatever the console says; the webhook still records events (src/worker/billing/config.ts billingLocked). */
+  BIZOMAT_BILLING_LOCK?: string;
 }
 
 export interface AuthUser {
@@ -99,6 +112,8 @@ export type AppVariables = {
   session: SessionInfo | null;
   authKind: 'session' | 'token';
   platformRole?: 'founder' | 'admin';
+  /** An API token's limits (platform/context.ts); null for sessions and for tokens made before R4. */
+  tokenScope?: { companyId: string | null; apps: ('tasks' | 'crm' | 'finance' | 'erp' | 'company')[] | null; readOnly: boolean } | null;
 };
 
 export type AppEnv = { Bindings: Env; Variables: AppVariables };

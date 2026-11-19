@@ -402,15 +402,18 @@ orgRoutes.delete('/workspaces/:ws/invitations/:id', async (c) => {
 
 // ------------------------------------------------------------- my invitations
 
-/** Pending invitations addressed to the signed-in person's email (to point them to the invitation email). */
+/** Pending invitations addressed to the signed-in person's email (to point them to the invitation email). Only once the
+ * person has proved the address (audit L4): the list names the workspace and who invited them. */
 orgRoutes.get('/me/invitations', async (c) => {
   const user = c.get('user');
   const rows = await c.env.DB.prepare(
     `SELECT i.id, i.role, i.expires_at, i.created_at, w.name AS workspace_name, u.name AS inviter FROM invitations i
      JOIN workspaces w ON w.id = i.workspace_id AND w.deleted_at IS NULL JOIN users u ON u.id = i.invited_by
-     WHERE i.email = ? AND i.accepted_at IS NULL AND i.revoked_at IS NULL AND i.expires_at > ? ORDER BY i.created_at DESC LIMIT 50`,
+     WHERE i.email = ? AND i.accepted_at IS NULL AND i.revoked_at IS NULL AND i.expires_at > ?
+       AND EXISTS (SELECT 1 FROM users me WHERE me.id = ? AND me.email_verified_at IS NOT NULL)
+     ORDER BY i.created_at DESC LIMIT 50`,
   )
-    .bind(user.email, now())
+    .bind(user.email, now(), user.id)
     .all();
   return c.json(rows.results);
 });

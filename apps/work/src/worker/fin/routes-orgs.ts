@@ -150,9 +150,10 @@ orgRoutes.get('/orgs', async (c) => {
      JOIN fin_orgs o ON o.id = i.org_id AND o.deleted_at IS NULL LEFT JOIN users u ON u.id = i.invited_by
      WHERE i.email = ? AND i.accepted_at IS NULL AND i.revoked_at IS NULL AND i.declined_at IS NULL AND i.expires_at > ?
        AND NOT EXISTS (SELECT 1 FROM fin_members m WHERE m.org_id = i.org_id AND m.user_id = ?)
+       AND EXISTS (SELECT 1 FROM users me WHERE me.id = ? AND me.email_verified_at IS NOT NULL)
      ORDER BY i.created_at DESC LIMIT 50`,
   )
-    .bind(user.email, now(), user.id)
+    .bind(user.email, now(), user.id, user.id)
     .all<{ id: string; role: FinRole; expires_at: number; created_at: number; message: string; org_name: string; org_kind: WorkspaceKind; inviter: string | null }>();
   return c.json({
     orgs: rows.results.map((o) => ({ id: o.id, name: o.name, kind: o.kind, logoUrl: logoUrl(o), role: o.role, memberCount: o.member_count })),
@@ -547,7 +548,7 @@ orgRoutes.post('/invitations/:token/decline', async (c) => {
 
 orgRoutes.post('/me/invitations/:id/decline', async (c) => {
   const user = c.get('user');
-  const inv = await c.env.DB.prepare('SELECT i.*, o.name AS org_name FROM fin_invitations i JOIN fin_orgs o ON o.id = i.org_id WHERE i.id = ? AND i.email = ?').bind(c.req.param('id'), user.email).first<InviteRow & { org_name: string }>();
+  const inv = await c.env.DB.prepare('SELECT i.*, o.name AS org_name FROM fin_invitations i JOIN fin_orgs o ON o.id = i.org_id WHERE i.id = ? AND i.email = ? AND EXISTS (SELECT 1 FROM users me WHERE me.id = ? AND me.email_verified_at IS NOT NULL)').bind(c.req.param('id'), user.email, user.id).first<InviteRow & { org_name: string }>();
   if (!inv) throw notFound('Invitation');
   return declineInvite(c, inv, user);
 });

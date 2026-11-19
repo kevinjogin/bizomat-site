@@ -16,7 +16,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { abnValid, formatAbn } from '../company/verify';
 import { companyTools } from '../company/access';
@@ -130,7 +130,7 @@ const SORTS: Record<string, string> = { number: 's.number COLLATE NOCASE', name:
 supplierRoutes.get('/c/:company/suppliers', async (c) => {
   const a = await requireErp(c, 'suppliers.view');
   const db = c.env.DB;
-  const where = ['s.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   where.push(c.req.query('archived') === '1' ? 's.archived_at IS NOT NULL' : 's.archived_at IS NULL');
   const status = c.req.query('status');
@@ -150,7 +150,7 @@ supplierRoutes.get('/c/:company/suppliers', async (c) => {
   }
   const sort = SORTS[c.req.query('sort') ?? ''] ?? SORTS.number;
   const dir = c.req.query('dir') === 'desc' ? 'DESC' : 'ASC';
-  const sql = `${SUPPLIER_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} ${dir}, s.rowid`;
+  const sql = `${SUPPLIER_SELECT} WHERE s.company_id = ?${andAll(where)} ORDER BY ${sort} ${dir}, s.rowid`;
   if (wantsCsv(c)) {
     const rows = await db.prepare(`${sql} LIMIT 10000`).bind(...args).all<any>();
     return csvResponse('suppliers', [
@@ -161,7 +161,7 @@ supplierRoutes.get('/c/:company/suppliers', async (c) => {
   const { limit, offset } = paging(c);
   const [rows, total, cats] = await Promise.all([
     db.prepare(`${sql} LIMIT ? OFFSET ?`).bind(...args, limit, offset).all<any>(),
-    db.prepare(`SELECT COUNT(*) AS n FROM erp_suppliers s WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>(),
+    db.prepare(`SELECT COUNT(*) AS n FROM erp_suppliers s WHERE s.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>(),
     db.prepare("SELECT DISTINCT category FROM erp_suppliers WHERE company_id = ? AND category <> '' ORDER BY category COLLATE NOCASE LIMIT 200").bind(a.companyId).all<{ category: string }>(),
   ]);
   return c.json({ suppliers: rows.results.map(supplierDTO), total: total?.n ?? 0, categories: cats.results.map((r) => r.category), can: { create: can(a, 'suppliers.edit') } });

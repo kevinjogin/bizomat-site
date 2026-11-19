@@ -172,7 +172,7 @@ export type TemplateData =
   | { template: 'fin_invitation'; organisation: string; inviter: string; role: string; expires: string; url: string; message?: string | null; existingUser: boolean }
   | { template: 'fin_notification'; organisation: string; title: string; body?: string | null; url?: string | null; preferencesUrl?: string }
   | { template: 'fin_document'; organisation: string; replyEmail?: string | null; kind: 'quote' | 'invoice' | 'credit_note'; number: string; amount: string; dateLabel?: string | null; date?: string | null; url: string; message?: string | null }
-  | { template: 'company_invitation'; organisation: string; inviter: string; role: string; tools: string; expires: string; url: string; existingUser: boolean }
+  | { template: 'company_invitation'; organisation: string; inviter: string; role: string; tools: string; expires: string; url: string; existingUser: boolean; message?: string | null }
   | { template: 'company_email'; organisation: string; email: string; url: string; expires: string }
   | { template: 'erp_dispatch'; organisation: string; order: string; shipment: string; customerPo?: string | null; carrier?: string | null; service?: string | null; tracking?: string | null; trackingUrl?: string | null; window?: string | null; packages?: string | null }
   | { template: 'whs_alert'; organisation: string; title: string; body?: string | null; url?: string | null };
@@ -503,7 +503,10 @@ export function renderEmail(d: TemplateData): RenderedEmail {
         subject: `You've been invited to join ${oneLine(d.organisation, 80)} on BIZOMAT`,
         preheader: `${d.inviter} invited you to ${d.organisation} as ${d.role}.`,
         heading: `Join ${d.organisation} on BIZOMAT`,
-        intro: [`${d.inviter} has invited you to the company account of ${d.organisation} on BIZOMAT. One sign-in opens every tool the company gives you.`],
+        intro: [
+          `${d.inviter} has invited you to the company account of ${d.organisation} on BIZOMAT. One sign-in opens every tool the company gives you.`,
+          ...(d.message ? [`${d.inviter} wrote: “${clip(d.message, 500)}”`] : []),
+        ],
         rows: [
           ['Company', d.organisation],
           ['Invited by', d.inviter],

@@ -97,7 +97,7 @@ export function ConfirmProvider({ children }: { children: ReactNode }) {
             </>
           }
         >
-          {state.message ? <div style={{ marginBottom: 12 }}>{state.message}</div> : null}
+          {state.message ? <div style={{ marginBottom: 'var(--ui-s12, 12px)' }}>{state.message}</div> : null}
           {state.typeToConfirm ? (
             <div className="field">
               <label htmlFor="confirm-type">

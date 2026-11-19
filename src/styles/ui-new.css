@@ -1,0 +1,105 @@
+/* The new UI of the BIZOMAT website (owner's UI brief of 19 Nov 2026; docs/ui/README.md). Every rule is scoped to
+   html[data-ui="new"], which the website's server adds while the flag new_ui_enabled is on (src/node/server.ts reads it
+   every minute), so with the flag off nothing here applies. Values come only from the tokens
+   (bizomat/ui-tokens.css); ui-new-generated.css and the generated blocks of each component put the rest on the same
+   scales. Only transform, opacity and box-shadow move; nothing moves under reduced motion. */
+
+html[data-ui="new"] {
+  --shadow-1: var(--bz-shadow-sm);
+  --shadow-menu: var(--bz-shadow-lg);
+  --radius: var(--bz-radius-md);
+  --radius-lg: var(--bz-radius-lg);
+  --max: var(--bz-content-max);
+  --space-section: var(--bz-space-16);
+}
+@media (max-width: 1023px) { html[data-ui="new"] { --space-section: var(--bz-space-12); } }
+@media (max-width: 639px) { html[data-ui="new"] { --space-section: var(--bz-space-10); } }
+
+/* Headings: one rhythm. The space above a heading that follows text is for running text only (articles, legal pages,
+   guides), never for a section head, where a label (the eyebrow) sits right above its heading. */
+html[data-ui="new"] :where(h1, h2, h3, h4) { margin-top: 0; margin-bottom: var(--bz-space-4); }
+html[data-ui="new"] :where(h3, h4) { margin-bottom: var(--bz-space-2); }
+html[data-ui="new"] :where(.prose, .legal, .guide-body, article) :where(p, ul, ol) + :where(h2) { margin-top: var(--bz-space-10); }
+html[data-ui="new"] :where(.prose, .legal, .guide-body, article) :where(p, ul, ol) + :where(h3) { margin-top: var(--bz-space-6); }
+/* The section label (eyebrow): one size, colour and gap everywhere, also where a section head's paragraph rule
+   (.pp-head p) used to make it as large as a lead. */
+html[data-ui="new"] :is(.bz-eyebrow, .eyebrow) { font-size: var(--bz-text-xs); line-height: var(--bz-leading-tight); color: var(--accent); }
+html[data-ui="new"] :is(.pp-head, .sys-head, .section-head) > :is(.bz-eyebrow, .eyebrow) { margin: 0 0 var(--bz-space-3); }
+
+/* ---------------------------------------------------------------- buttons */
+html[data-ui="new"] .button {
+  min-height: var(--bz-control-md);
+  padding: 0 var(--bz-control-pad-md);
+  border-radius: var(--bz-radius-md);
+  font-size: var(--bz-text-base);
+  box-shadow: var(--bz-shadow-xs);
+  transition: background-color var(--bz-duration-base) var(--bz-ease-standard), border-color var(--bz-duration-base) var(--bz-ease-standard),
+    color var(--bz-duration-base) var(--bz-ease-standard), box-shadow var(--bz-duration-base) var(--bz-ease-standard), transform var(--bz-duration-base) var(--bz-ease-standard);
+}
+html[data-ui="new"] .button:hover:not([disabled]) { box-shadow: var(--bz-shadow-md); transform: translateY(-1px); }
+html[data-ui="new"] .button:active:not([disabled]) { box-shadow: var(--bz-shadow-xs); transform: translateY(0); filter: brightness(0.95); }
+html[data-ui="new"] .button:focus-visible { outline: none; box-shadow: var(--bz-focus-ring), var(--bz-shadow-xs); }
+html[data-ui="new"] .button[disabled] { opacity: 0.5; box-shadow: none; transform: none; cursor: not-allowed; }
+html[data-ui="new"] .button[aria-busy="true"] { pointer-events: none; opacity: 0.75; }
+html[data-ui="new"] .button--small { min-height: var(--bz-control-sm); padding: 0 var(--bz-control-pad-sm); font-size: var(--bz-text-sm); }
+/* Large: hero and closing calls to action. */
+html[data-ui="new"] .button--large,
+html[data-ui="new"] :is(.hero, .cta, .home-close, .custom-cta, .pp-hero, .sys-hero) .button:not(.button--small):not(.button--text) {
+  min-height: var(--bz-control-lg); padding: 0 var(--bz-control-pad-lg); font-size: var(--bz-text-md);
+}
+html[data-ui="new"] .button--secondary, html[data-ui="new"] .button--text { box-shadow: none; }
+html[data-ui="new"] .button--secondary:hover:not([disabled]) { box-shadow: var(--bz-shadow-sm); }
+html[data-ui="new"] .button--text { min-height: 0; padding: var(--bz-space-1) 0; }
+html[data-ui="new"] .button--text:hover:not([disabled]) { box-shadow: none; transform: none; }
+html[data-ui="new"] .btn { border-radius: var(--bz-radius-md); min-height: var(--bz-control-md); transition: box-shadow var(--bz-duration-base) var(--bz-ease-standard), transform var(--bz-duration-base) var(--bz-ease-standard); }
+html[data-ui="new"] .btn:hover { box-shadow: var(--bz-shadow-md); transform: translateY(-1px); }
+
+/* ---------------------------------------------------------------- links */
+/* Text links in running text (links without a class of their own; buttons and cards have one): the brand colour, a
+   light underline that fills in on hover. Not in navigation (breadcrumbs, lists of links). */
+html[data-ui="new"] main :is(p, li, dd, td, figcaption, blockquote):not(nav *) > a:not([class]) {
+  color: var(--accent);
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+  text-underline-offset: 0.18em;
+  transition: text-decoration-color var(--bz-duration-fast) var(--bz-ease-standard), text-underline-offset var(--bz-duration-fast) var(--bz-ease-standard), color var(--bz-duration-fast) var(--bz-ease-standard);
+}
+html[data-ui="new"] main :is(p, li, dd, td, figcaption, blockquote):not(nav *) > a:not([class]):hover { text-decoration-color: currentColor; text-underline-offset: 0.26em; }
+html[data-ui="new"] main :is(p, li, dd, td, figcaption, blockquote):not(nav *) > a:not([class]):visited { color: var(--accent); }
+html[data-ui="new"] a:focus-visible { outline: none; box-shadow: var(--bz-focus-ring); border-radius: var(--bz-radius-sm); }
+/* Navigation: a highlight on hover, the indicator bar on the current section. */
+html[data-ui="new"] .site-nav__link { border-radius: var(--bz-radius-md); transition: background-color var(--bz-duration-fast) var(--bz-ease-standard), color var(--bz-duration-fast) var(--bz-ease-standard); }
+html[data-ui="new"] .site-nav__link.is-current::after { height: 3px; transform-origin: center; animation: ui-bar-in var(--bz-duration-base) var(--bz-ease-out); }
+@keyframes ui-bar-in { from { transform: scaleX(0.4); opacity: 0; } }
+
+/* ---------------------------------------------------------------- cards */
+html[data-ui="new"] :is(.pp-card, .v-card, .lg-card, .guide-card, .sys-card, .res-card, .reach-card, .lib-card, .work-card, .tool-card, .product-card, .bz-card) {
+  border-radius: var(--bz-radius-lg);
+  box-shadow: var(--bz-shadow-sm);
+}
+html[data-ui="new"] a:is(.pp-card, .v-card, .lg-card, .guide-card, .sys-card, .res-card, .lib-card, .tool-card, .product-card),
+html[data-ui="new"] :is(.pp-card, .v-card, .lg-card, .guide-card, .sys-card, .res-card, .lib-card, .tool-card, .product-card):has(> a:only-child) {
+  transition: box-shadow var(--bz-duration-base) var(--bz-ease-standard), transform var(--bz-duration-base) var(--bz-ease-standard);
+}
+html[data-ui="new"] a:is(.pp-card, .v-card, .lg-card, .guide-card, .sys-card, .res-card, .lib-card, .tool-card, .product-card):hover { box-shadow: var(--bz-shadow-lg); transform: translateY(-2px); }
+
+/* ---------------------------------------------------------------- forms */
+html[data-ui="new"] :is(.input-wrap input, .field select, .field input, .field textarea, input[type="text"], input[type="email"], input[type="search"], input[type="number"], select) {
+  min-height: var(--bz-control-md);
+  border-radius: var(--bz-radius-md);
+  transition: border-color var(--bz-duration-fast) var(--bz-ease-standard), box-shadow var(--bz-duration-fast) var(--bz-ease-standard);
+}
+html[data-ui="new"] :is(input, select, textarea):focus-visible { outline: none; border-color: var(--accent); box-shadow: var(--bz-focus-ring); }
+html[data-ui="new"] .field + .field { margin-top: var(--bz-space-4); }
+html[data-ui="new"] .field label { margin-bottom: var(--bz-space-2); }
+
+/* ---------------------------------------------------------------- menus and page */
+html[data-ui="new"] :is(.site-nav__menu, .site-nav details > ul, [role="menu"]) { box-shadow: var(--bz-shadow-lg); border-radius: var(--bz-radius-md); animation: ui-pop-in var(--bz-duration-fast) var(--bz-ease-out); }
+@keyframes ui-pop-in { from { opacity: 0; transform: translateY(-4px); } }
+html[data-ui="new"] main { animation: ui-page-in var(--bz-duration-base) var(--bz-ease-out); }
+@keyframes ui-page-in { from { opacity: 0; transform: translateY(4px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui="new"] *, html[data-ui="new"] *::before, html[data-ui="new"] *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }
+  html[data-ui="new"] :is(.button, .btn, a):hover { transform: none !important; }
+}

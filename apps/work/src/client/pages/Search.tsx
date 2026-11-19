@@ -125,7 +125,7 @@ export default function Search() {
           <p>Find boards, items, documents, comments and people. Combine filters with AND / OR logic.</p>
         </div>
       </div>
-      <div className="row" style={{ marginBottom: 16 }}>
+      <div className="row" style={{ marginBottom: 'var(--ui-s16, 16px)' }}>
         <div className="search-trigger" style={{ maxWidth: 'none', cursor: 'text', background: 'var(--surface)', height: 42 }}>
           <Icon name="search" />
           <input className="grow" aria-label="Search query" autoFocus value={query.q} onChange={(e) => set('q', e.target.value)} placeholder="Search everything…" style={{ border: 0, background: 'transparent', outline: 'none', height: '100%', fontSize: 15 }} maxLength={200} />
@@ -135,19 +135,19 @@ export default function Search() {
       <div className="search-layout">
         <aside className="filters card card-pad" aria-label="Search filters">
           <Field label="Search in">
-            <div className="row wrap" style={{ gap: 6 }}>
+            <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)' }}>
               {TYPES.map((t) => <button key={t.v} type="button" className={`chip${query.types.includes(t.v) ? ' on' : ''}`} aria-pressed={query.types.includes(t.v)} onClick={() => toggleIn('types', t.v)}><Icon name={t.icon} size={12} /> {t.l}</button>)}
             </div>
           </Field>
           <Field label="Boards">
-            <div className="row wrap" style={{ gap: 6, maxHeight: 120, overflow: 'auto' }}>
+            <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)', maxHeight: 120, overflow: 'auto' }}>
               {(boards.data ?? []).map((b) => <button key={b.id} type="button" className={`chip${query.boardIds.includes(b.id) ? ' on' : ''}`} aria-pressed={query.boardIds.includes(b.id)} onClick={() => toggleIn('boardIds', b.id)}>{b.name}</button>)}
             </div>
           </Field>
           <ChipInput label="Status labels" values={query.statuses} onChange={(v) => set('statuses', v)} placeholder="e.g. Done, Stuck" />
           <ChipInput label="Priority labels" values={query.priorities} onChange={(v) => set('priorities', v)} placeholder="e.g. High" />
           <Field label="People (assigned)">
-            <div className="row wrap" style={{ gap: 6, maxHeight: 120, overflow: 'auto' }}>
+            <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)', maxHeight: 120, overflow: 'auto' }}>
               {(members.data ?? []).map((m) => <button key={m.id} type="button" className={`chip${query.people.includes(m.id) ? ' on' : ''}`} aria-pressed={query.people.includes(m.id)} onClick={() => toggleIn('people', m.id)}>{m.name}</button>)}
             </div>
           </Field>
@@ -175,8 +175,8 @@ export default function Search() {
           {saved.data?.length ? (
             <>
               <hr />
-              <div className="label" style={{ marginBottom: 6 }}>Saved filters</div>
-              <div className="col" style={{ gap: 2 }}>
+              <div className="label" style={{ marginBottom: 'var(--ui-s6, 6px)' }}>Saved filters</div>
+              <div className="col" style={{ gap: 'var(--ui-s2, 2px)' }}>
                 {saved.data.map((s) => (
                   <div key={s.id} className="row small">
                     <button className="btn ghost sm grow" style={{ justifyContent: 'flex-start' }} onClick={() => setQuery({ ...EMPTY, ...s.query, dateRange: { ...EMPTY.dateRange, ...(s.query.dateRange ?? {}) }, filter: s.query.filter ?? EMPTY.filter })}>
@@ -271,7 +271,7 @@ function ChipInput({ label, values, onChange, placeholder }: { label: string; va
   };
   return (
     <Field label={label}>
-      <div className="row wrap" style={{ gap: 4 }}>
+      <div className="row wrap" style={{ gap: 'var(--ui-s4, 4px)' }}>
         {values.map((v) => (
           <span key={v} className="chip on">{v}<button type="button" aria-label={`Remove ${v}`} onClick={() => onChange(values.filter((x) => x !== v))}><Icon name="x" size={11} /></button></span>
         ))}
@@ -285,7 +285,7 @@ function GroupEditor({ group, onChange, depth }: { group: FilterGroup; onChange:
   const update = (i: number, r: FilterRule | FilterGroup) => onChange({ ...group, rules: group.rules.map((x, j) => (j === i ? r : x)) });
   const remove = (i: number) => onChange({ ...group, rules: group.rules.filter((_, j) => j !== i) });
   return (
-    <div className="col" style={{ gap: 6, ...(depth ? { borderLeft: '2px solid var(--accent)', paddingLeft: 8 } : {}) }}>
+    <div className="col" style={{ gap: 'var(--ui-s6, 6px)', ...(depth ? { borderLeft: '2px solid var(--accent)', paddingLeft: 'var(--ui-s8, 8px)' } : {}) }}>
       {group.rules.length > 1 ? (
         <div className="row small">
           Match
@@ -318,7 +318,7 @@ function RuleEditor({ rule, onChange, onRemove }: { rule: FilterRule; onChange: 
   const field = FIELDS.find((f) => f.v === rule.field) ?? FIELDS[0];
   const needsValue = rule.field !== 'done' && opNeedsValue(rule.op);
   return (
-    <div className="col" style={{ gap: 4, padding: 6, border: '1px solid var(--border)', borderRadius: 6 }}>
+    <div className="col" style={{ gap: 'var(--ui-s4, 4px)', padding: 'var(--ui-s6, 6px)', border: '1px solid var(--border)', borderRadius: 6 }}>
       <div className="row">
         <select className="select sm" aria-label="Field" value={rule.field} onChange={(e) => {
           const f = FIELDS.find((x) => x.v === e.target.value)!;

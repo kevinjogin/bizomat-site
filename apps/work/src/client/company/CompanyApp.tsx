@@ -13,7 +13,7 @@ import { BrandMark, Icon, ProductLockup } from '../components/ui/Icon';
 import { Avatar, ErrorBox, Loading, PageHeader } from '../components/ui/ui';
 import { Dropdown, MenuItem, MenuSep, useToast } from '../components/ui/overlays';
 import { PlatformFooter } from '../components/layout/PlatformLinks';
-import { COMPANY_ROLE_LABELS, TOOL_APPS, TOOL_ICONS, TOOL_NAMES, abnLabel, lastCompany, rememberCompany, toolHref, useCompany, useMine } from './lib';
+import { COMPANY_ROLE_LABELS, TOOL_APPS, TOOL_ICONS, TOOL_NAMES, abnLabel, isCompanyAdmin, lastCompany, normRole, rememberCompany, toolHref, useCompany, useMine } from './lib';
 import { Register } from './Register';
 import '../styles/crm.css';
 import '../styles/fin.css';
@@ -22,6 +22,21 @@ import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
 
 const Overview = lazy(() => import('./Pages').then((m) => ({ default: m.Overview })));
 const People = lazy(() => import('./Pages').then((m) => ({ default: m.People })));
+const Members = lazy(() => import('./Members').then((m) => ({ default: m.Members })));
+const TransferRequests = lazy(() => import('./Members').then((m) => ({ default: m.TransferRequests })));
+
+/** Members (flag company_members_v2) where it is on for the company, else the People page. */
+function PeopleOrMembers() {
+  const view = useCompany().data!;
+  const q = useQuery({
+    queryKey: ['company', view.company.id, 'team-on'],
+    queryFn: () => get(`/company/c/${encodeURIComponent(view.company.id)}/team?pageSize=5`).then(() => true).catch((e) => (e instanceof ApiError && e.status === 404 ? false : Promise.reject(e))),
+    staleTime: 60_000,
+  });
+  if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
+  if (q.data === undefined) return <Loading />;
+  return q.data ? <Members companyId={view.company.id} companyName={view.company.name} /> : <People />;
+}
 const Departments = lazy(() => import('./Pages').then((m) => ({ default: m.Departments })));
 const Tools = lazy(() => import('./Pages').then((m) => ({ default: m.Tools })));
 const Settings = lazy(() => import('./Pages').then((m) => ({ default: m.Settings })));
@@ -66,13 +81,16 @@ function CompanyHome() {
       </header>
       <div className="page crm-page">
         <PageHeader title="Your companies" subtitle="Work as your company: its people, departments and tools, with one sign-in for Project Management, the CRM and Finance." />
+        <Suspense fallback={null}>
+          <TransferRequests />
+        </Suspense>
         {invitations.length ? (
           <section className="card card-pad stack">
             <h2 className="crm-subhead">Invitations for {session?.user.email}</h2>
             {invitations.map((i) => (
               <div key={i.id} className="row wrap crm-invite-row">
                 <div className="grow">
-                  <strong>{i.company}</strong> as {COMPANY_ROLE_LABELS[i.role as 'admin' | 'member'] ?? i.role}
+                  <strong>{i.company}</strong> as {COMPANY_ROLE_LABELS[normRole(i.role)] ?? i.role}
                   <div className="muted small">{i.inviter ? `From ${i.inviter}. ` : ''}Open the link in the invitation email to accept.</div>
                 </div>
               </div>
@@ -143,7 +161,8 @@ function CompanyArea() {
       <Routes>
         <Route path="overview" element={page(<Overview />)} />
         <Route path="departments" element={page(<Departments />)} />
-        <Route path="people" element={page(<People />)} />
+        <Route path="people" element={page(<PeopleOrMembers />)} />
+        <Route path="members" element={page(<PeopleOrMembers />)} />
         <Route path="tools" element={page(<Tools />)} />
         <Route path="projects" element={page(<Projects />)} />
         <Route path="activity" element={page(<Activity />)} />
@@ -159,7 +178,7 @@ function CompanyShell({ children }: { children: ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
   const location = useLocation();
   const base = `/c/${view.company.id}`;
-  const admin = view.me.role !== 'member';
+  const admin = isCompanyAdmin(view.me.role);
   useEffect(() => setNavOpen(false), [location.pathname]);
   return (
     <div className={`shell crm-shell co-shell${SUITE_SHELL ? ' in-suite' : ''}${navOpen ? ' nav-open' : ''}`}>

@@ -138,7 +138,7 @@ function Sidebar({ onNewBoard }: { onNewBoard: () => void }) {
       </div>
       {boards.isLoading ? <div className="nav-item"><Spinner /></div> : null}
       <SidebarBoards wsId={ws.id} base={base} boards={boards.data ?? []} />
-      {boards.data && boards.data.length === 0 ? <div className="muted small" style={{ padding: '4px 10px' }}>No boards yet.</div> : null}
+      {boards.data && boards.data.length === 0 ? <div className="muted small" style={{ padding: 'var(--ui-s4, 4px) var(--ui-s10, 10px)' }}>No boards yet.</div> : null}
       <PlatformFooter />
     </nav>
   );
@@ -320,7 +320,7 @@ function NotificationsBell() {
       </button>
       {open ? (
         <Popover anchor={ref} onClose={() => setOpen(false)} align="end" width={360}>
-          <div className="row" style={{ padding: '6px 8px' }}>
+          <div className="row" style={{ padding: 'var(--ui-s6, 6px) var(--ui-s8, 8px)' }}>
             <strong className="grow">Notifications</strong>
             <button className="btn ghost sm" onClick={async () => { await post(`/notifications/read-all?workspaceId=${ws.id}`); qc.invalidateQueries({ queryKey: ['notifications', ws.id] }); }}>Mark all read</button>
           </div>
@@ -334,7 +334,7 @@ function NotificationsBell() {
               </span>
             </button>
           ))}
-          {q.data && q.data.notifications.length === 0 ? <div className="muted small" style={{ padding: 12 }}>You're all caught up.</div> : null}
+          {q.data && q.data.notifications.length === 0 ? <div className="muted small" style={{ padding: 'var(--ui-s12, 12px)' }}>You're all caught up.</div> : null}
           <div className="menu-sep" />
           <MenuItem icon="bell" onClick={() => { setOpen(false); navigate(`/w/${ws.id}/notifications`); }}>View all notifications</MenuItem>
         </Popover>
@@ -401,7 +401,7 @@ function ProfileMenu() {
     >
       {(close) => (
         <>
-          <div style={{ padding: '8px 10px' }}>
+          <div style={{ padding: 'var(--ui-s8, 8px) var(--ui-s10, 10px)' }}>
             <div style={{ fontWeight: 600 }}>{user.name}</div>
             <div className="muted small ellipsis">{user.email}</div>
           </div>
@@ -451,7 +451,7 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
     <Modal title="Search" onClose={onClose} wide>
       <input
         className="palette-input"
-        style={{ margin: '-18px -18px 0', width: 'calc(100% + 36px)' }}
+        style={{ margin: 'calc(-1 * var(--ui-s18, 18px)) calc(-1 * var(--ui-s18, 18px)) 0', width: 'calc(100% + 36px)' }}
         placeholder="Search boards, items, documents, people…"
         value={q}
         autoFocus
@@ -463,14 +463,14 @@ function SearchPalette({ onClose }: { onClose: () => void }) {
           if (e.key === 'Enter' && all[active]) go(all[active].to);
         }}
       />
-      <div className="palette-results" role="listbox" style={{ margin: '0 -12px' }}>
-        {res.isFetching ? <div className="row muted small" style={{ padding: 8 }}><Spinner /> Searching…</div> : null}
+      <div className="palette-results" role="listbox" style={{ margin: '0 calc(-1 * var(--ui-s12, 12px))' }}>
+        {res.isFetching ? <div className="row muted small" style={{ padding: 'var(--ui-s8, 8px)' }}><Spinner /> Searching…</div> : null}
         {all.map((r, i) => (
           <a key={r.key} href={r.to} role="option" aria-selected={i === active} className={`palette-item${i === active ? ' active' : ''}`} onMouseEnter={() => setActive(i)} onClick={(e) => { e.preventDefault(); go(r.to); }}>
             <Icon name={r.icon} /> <span className="grow ellipsis">{r.label}</span> <span className="muted small ellipsis" style={{ maxWidth: 200 }}>{r.sub}</span>
           </a>
         ))}
-        {dq && res.data && !results.length ? <div className="muted small" style={{ padding: 10 }}>No matches.</div> : null}
+        {dq && res.data && !results.length ? <div className="muted small" style={{ padding: 'var(--ui-s10, 10px)' }}>No matches.</div> : null}
       </div>
     </Modal>
   );

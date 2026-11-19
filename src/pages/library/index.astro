@@ -49,4 +49,17 @@ import { LIBRARY_GUIDES } from '../../data/library.ts';
   .book-bottom{display:flex;justify-content:space-between;gap:.75rem;align-items:center;margin-top:auto;padding-top:1.5rem;font-size:.84rem;border-top:1px solid var(--line)}
   .book-bottom a{color:var(--accent);font-weight:650}
   @media(max-width:500px){.book-card{grid-template-columns:110px 1fr;padding:.85rem}.book-description{display:none}}
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .library-heading h1 { margin: var(--bz-space-4) 0 var(--bz-space-6); }
+  :global(html[data-ui="new"]) .collection-title { padding-bottom: var(--bz-space-5); margin-bottom: var(--bz-space-8); }
+  :global(html[data-ui="new"]) .collection-title span { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .books-grid { gap: var(--bz-space-8); }
+  :global(html[data-ui="new"]) .book-card { padding: var(--bz-space-5); }
+  :global(html[data-ui="new"]) .book-category { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .book-details h3 { margin: var(--bz-space-3) 0 var(--bz-space-2); }
+  :global(html[data-ui="new"]) .book-description { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .book-bottom { gap: var(--bz-space-3); padding-top: var(--bz-space-6); font-size: var(--bz-text-sm); }
+  @media(max-width:500px) { :global(html[data-ui="new"]) .book-card { padding: var(--bz-space-3); } }
+  /* ui-new:generated end */
 </style>

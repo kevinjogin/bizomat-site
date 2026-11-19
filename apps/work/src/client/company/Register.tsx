@@ -13,6 +13,7 @@ import { useToast } from '../components/ui/overlays';
 import { ProductLockup } from '../components/ui/Icon';
 import { STATES, TOOL_APPS, TOOL_NAMES, useMine, type AbnStatus, type CompanyDTO, type ToolApp } from './lib';
 import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
+import { InternationalForm, countryOpen, useRegistrationOptions } from './RegisterInternational';
 
 export interface Details {
   kind: 'business' | 'individual';
@@ -186,6 +187,11 @@ export function Register() {
   const { result, touch, setResult } = useLiveCheck(d);
   const [tools, setTools] = useState<Record<ToolApp, ToolChoice>>({ tasks: { create: true }, crm: { create: true }, finance: { create: true } });
   const [busy, setBusy] = useState(false);
+  // Outside Australia (flag international_registration): the country's own numbers and structures.
+  const options = useRegistrationOptions();
+  const [country, setCountry] = useState('AU');
+  const [otherCode, setOtherCode] = useState('');
+  const chosen = country === 'OTHER' ? otherCode.trim().toUpperCase() : country;
   const set = (next: Details) => {
     setD(next);
     touch();
@@ -222,11 +228,34 @@ export function Register() {
           title="Register your company"
           subtitle="BIZOMAT works as a company: your people, departments, projects, customers and money in one account, with one sign-in. If you work for yourself, register in your own name."
         />
+        {options.data?.international ? (
+          <div className="card card-pad stack crm-start-form co-register-form">
+            <div className="crm-form-grid">
+              <div className="field">
+                <label htmlFor="co-country">Country of registration</label>
+                <select id="co-country" className="select" value={country} onChange={(e) => setCountry(e.target.value)}>
+                  <option value="AU">Australia</option>
+                  {options.data.countries.filter((c) => c.code !== 'AU' && countryOpen(options.data!, c.code)).map((c) => <option key={c.code} value={c.code}>{c.name}</option>)}
+                  {options.data.internationalCountries === null ? <option value="OTHER">Another country</option> : null}
+                </select>
+              </div>
+              {country === 'OTHER' ? (
+                <div className="field">
+                  <label htmlFor="co-country-code">Country code (two letters, for example NZ)</label>
+                  <input id="co-country-code" className="input" maxLength={2} value={otherCode} onChange={(e) => setOtherCode(e.target.value.replace(/[^a-zA-Z]/g, ''))} />
+                </div>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+        {chosen !== 'AU' && options.data?.international ? (
+          !/^[A-Z]{2}$/.test(chosen) ? <p className="muted small">Type the two-letter country code.</p> : countryOpen(options.data, chosen) ? <InternationalForm key={chosen} country={chosen} options={options.data} email={session?.user.email ?? ''} /> : <p className="muted small">Registration for this country is not open yet.</p>
+        ) : (
         <form className="card card-pad stack crm-start-form co-register-form" onSubmit={submit} noValidate>
           <DetailsFields d={d} set={set} result={result} />
           <h2 className="crm-subhead">Tools</h2>
           <p className="muted small">Each tool gets its own space for the company. You own them all and choose who else uses each one.</p>
-          <p className="muted small">Registering is free. BIZOMAT ERP subscriptions for registered companies, charged per active user every month, are not open yet, and nothing is charged today. <a href="https://bizomat.ai/pricing/" target="_blank" rel="noopener noreferrer">Pricing and billing</a></p>
+          <p className="muted small">Registering is free, and so is using BIZOMAT: nothing is charged.</p>
           <div className="co-tool-choices">
             {TOOL_APPS.map((app) => {
               const choice = tools[app];
@@ -264,6 +293,7 @@ export function Register() {
             <span className="muted small">Nothing is sent to the Australian Business Register except the ABN.</span>
           </div>
         </form>
+        )}
       </div>
     </div>
   );

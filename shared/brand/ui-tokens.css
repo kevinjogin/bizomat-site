@@ -1,0 +1,123 @@
+/* BIZOMAT UI design tokens (owner's UI brief of 19 Nov 2026; docs/ui/README.md). The single source of truth for
+   spacing, radius, elevation, focus, motion, type and control sizes. Copied by shared/brand/build.mjs to the website
+   (src/styles/bizomat/ui-tokens.css) and the ERP (apps/work/src/client/styles/bizomat-ui-tokens.css); never edit the
+   copies. Colours stay in tokens.css (--bz-*).
+
+   Everything that uses these tokens is scoped to html[data-ui="new"], which the flag new_ui_enabled switches on: the
+   website's server adds the attribute to every page, the ERP to its root. Without it nothing changes.
+
+   Breakpoints (media queries cannot read variables, so they are written as numbers everywhere and listed here):
+     mobile  < 640px      tablet  640px to 1023px      desktop  1024px to 1439px      wide  >= 1440px */
+
+:root {
+  /* Spacing: a 4px base. */
+  --bz-space-0: 0px;
+  --bz-space-1: 4px;
+  --bz-space-2: 8px;
+  --bz-space-3: 12px;
+  --bz-space-4: 16px;
+  --bz-space-5: 20px;
+  --bz-space-6: 24px;
+  --bz-space-8: 32px;
+  --bz-space-10: 40px;
+  --bz-space-12: 48px;
+  --bz-space-16: 64px;
+
+  /* Radius */
+  --bz-radius-sm: 6px;
+  --bz-radius-md: 8px;
+  --bz-radius-lg: 12px;
+  --bz-radius-full: 9999px;
+
+  /* Elevation */
+  --bz-shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --bz-shadow-sm: 0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px rgba(16, 24, 40, 0.06);
+  --bz-shadow-md: 0 4px 8px -2px rgba(16, 24, 40, 0.1), 0 2px 4px -2px rgba(16, 24, 40, 0.06);
+  --bz-shadow-lg: 0 12px 16px -4px rgba(16, 24, 40, 0.08), 0 4px 6px -2px rgba(16, 24, 40, 0.03);
+  --bz-shadow-xl: 0 20px 24px -4px rgba(16, 24, 40, 0.08), 0 8px 8px -4px rgba(16, 24, 40, 0.03);
+  /* The brand teal at 30% */
+  --bz-focus-ring: 0 0 0 3px rgba(15, 118, 110, 0.3);
+
+  /* Motion */
+  --bz-duration-fast: 120ms;
+  --bz-duration-base: 200ms;
+  --bz-duration-slow: 300ms;
+  --bz-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --bz-ease-out: cubic-bezier(0, 0, 0.2, 1);
+
+  /* Type: one scale for both (rem, 16px root). The ERP's body text is --bz-text-sm, the website's --bz-text-md. */
+  --bz-text-2xs: 0.6875rem; /* 11px */
+  --bz-text-xs: 0.75rem; /* 12px */
+  --bz-text-sm: 0.8125rem; /* 13px */
+  --bz-text-base: 0.875rem; /* 14px */
+  --bz-text-md: 1rem; /* 16px */
+  --bz-text-lg: 1.125rem; /* 18px */
+  --bz-text-xl: 1.25rem; /* 20px */
+  --bz-text-2xl: 1.5rem; /* 24px */
+  --bz-text-3xl: 1.875rem; /* 30px */
+  --bz-text-4xl: 2.25rem; /* 36px */
+  --bz-text-5xl: 3rem; /* 48px */
+  --bz-leading-tight: 1.2;
+  --bz-leading-normal: 1.5;
+
+  /* Controls: one height per size everywhere (buttons, inputs, selects). */
+  --bz-control-sm: 32px;
+  --bz-control-md: 40px;
+  --bz-control-lg: 48px;
+  --bz-control-pad-sm: 12px;
+  --bz-control-pad-md: 16px;
+  --bz-control-pad-lg: 20px;
+
+  /* Layout */
+  --bz-page-pad: var(--bz-space-6);
+  --bz-section-gap: var(--bz-space-8);
+  --bz-item-gap: var(--bz-space-4);
+  --bz-content-max: 1200px;
+  --bz-grid-columns: 12;
+  --bz-grid-gap: var(--bz-space-6);
+}
+
+/* Dark: deeper shadows, the bright teal ring. */
+[data-theme='dark'] {
+  --bz-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --bz-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.5), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --bz-shadow-md: 0 4px 8px -2px rgba(0, 0, 0, 0.55), 0 2px 4px -2px rgba(0, 0, 0, 0.4);
+  --bz-shadow-lg: 0 12px 16px -4px rgba(0, 0, 0, 0.55), 0 4px 6px -2px rgba(0, 0, 0, 0.35);
+  --bz-shadow-xl: 0 20px 24px -4px rgba(0, 0, 0, 0.6), 0 8px 8px -4px rgba(0, 0, 0, 0.4);
+  --bz-focus-ring: 0 0 0 3px rgba(45, 212, 191, 0.35);
+}
+
+/* Phones: less page padding. */
+@media (max-width: 639px) {
+  :root {
+    --bz-page-pad: var(--bz-space-4);
+    --bz-grid-gap: var(--bz-space-4);
+  }
+}
+
+/* Compact density (the ERP, a choice on the person's account): the same scale, one step tighter. */
+html[data-density='compact'] {
+  --bz-space-2: 4px;
+  --bz-space-3: 8px;
+  --bz-space-4: 12px;
+  --bz-space-5: 16px;
+  --bz-space-6: 16px;
+  --bz-space-8: 24px;
+  --bz-space-10: 32px;
+  --bz-space-12: 40px;
+  --bz-control-sm: 28px;
+  --bz-control-md: 32px;
+  --bz-control-lg: 40px;
+  --bz-control-pad-sm: 8px;
+  --bz-control-pad-md: 12px;
+  --bz-control-pad-lg: 16px;
+}
+
+/* Reduced motion: no movement, only instant or opacity changes. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --bz-duration-fast: 0ms;
+    --bz-duration-base: 0ms;
+    --bz-duration-slow: 0ms;
+  }
+}

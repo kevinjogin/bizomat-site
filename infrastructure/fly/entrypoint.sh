@@ -222,11 +222,14 @@ case "$ROLE" in
     pass "${EXACT[@]}"
     pass_prefix "${PREFIXES[@]}"
     map WEB_VERSION WEB_VERSION "$VERSION"
+    # The new UI's flag (docs/ui/README.md): the website asks Project Management for it every minute over Fly's private
+    # network, at the address the proxy uses. Only the address: nothing else of the proxy's or work's settings.
+    map UPSTREAM_WORK WEB_UPSTREAM_WORK
     ;;
   work)
     EXACT=(APP_URL APP_NAME ENVIRONMENT ALLOW_SIGNUP SESSION_TTL_HOURS CANONICAL_URL GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET
       BREVO_API_KEY BREVO_WEBHOOK_TOKEN EMAIL_PROVIDER EMAIL_FROM_NAME EMAIL_FROM_ADDRESS EMAIL_REPLY_TO APP_BASE_URL
-      EMAIL_DAILY_LIMIT EMAIL_CRITICAL_RESERVE EMAIL_SANDBOX ABR_GUID BIZOMAT_ID_CLIENTS
+      EMAIL_DAILY_LIMIT EMAIL_CRITICAL_RESERVE EMAIL_SANDBOX ABR_GUID COMPANIES_HOUSE_API_KEY BIZOMAT_ID_CLIENTS PLATFORM_ADMIN_BOOTSTRAP
       STRIPE_ENVIRONMENT STRIPE_SECRET_KEY STRIPE_PUBLISHABLE_KEY STRIPE_WEBHOOK_SECRET STRIPE_WEBHOOK_SECRET_PREVIOUS
       STRIPE_PRICE_SEAT_MONTHLY STRIPE_PRICE_SEAT_ANNUAL STRIPE_PRORATION STRIPE_AUTOMATIC_TAX STRIPE_GRACE_DAYS)
     PREFIXES=(WORK_)
@@ -254,6 +257,10 @@ case "$ROLE" in
     # Company accounts (docs/company/README.md): Fly secrets WORK_ABR_GUID (the Australian Business Register lookup) and
     # WORK_BIZOMAT_ID_CLIENTS (the applications allowed to use BIZOMAT sign-in), under the names the app reads.
     map WORK_ABR_GUID ABR_GUID
+    # Registration checks in the United Kingdom (Stage 1, R6; docs/platform/verification.md): a free Companies House key.
+    map WORK_COMPANIES_HOUSE_API_KEY COMPANIES_HOUSE_API_KEY
+    # The first founder, only while there is none (Stage 1, R7; docs/platform/control-centre.md).
+    map WORK_PLATFORM_ADMIN_BOOTSTRAP PLATFORM_ADMIN_BOOTSTRAP
     map WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS
     # Billing (docs/billing/README.md): Fly secrets WORK_STRIPE_* under the names the app reads; this role alone gets
     # them. Billing stays off unless all the required ones are set and of one Stripe environment. STRIPE_API_BASE (a
@@ -268,6 +275,10 @@ case "$ROLE" in
     map WORK_STRIPE_PRORATION STRIPE_PRORATION
     map WORK_STRIPE_AUTOMATIC_TAX STRIPE_AUTOMATIC_TAX
     map WORK_STRIPE_GRACE_DAYS STRIPE_GRACE_DAYS
+    # Free mode (Stage 1, owner 19 Nov 2026): billing is locked unless WORK_BIZOMAT_BILLING_LOCK is "false", so a
+    # configuration that forgets the setting can never open billing. A setting named BIZOMAT_BILLING_LOCK itself is not
+    # read: only this mapping sets it.
+    map WORK_BIZOMAT_BILLING_LOCK BIZOMAT_BILLING_LOCK "true"
     map WORK_VERSION WORK_VERSION "$VERSION"
     ;;
   cad)

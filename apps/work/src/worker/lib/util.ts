@@ -80,6 +80,25 @@ export function clientIp(c: Context): string {
   return c.req.header('CF-Connecting-IP') ?? c.req.header('X-Forwarded-For')?.split(',')[0]?.trim() ?? 'local';
 }
 
+/** Clauses joined after a statement's own first condition: `WHERE x.company_id = ?${andAll(where)}`. */
+export function andAll(clauses: string[]): string {
+  return clauses.map((c) => ` AND ${c}`).join('');
+}
+
+/**
+ * One row of a company's own table, inserted with its company written first in the statement: the row must carry a
+ * non-empty company_id (test-node/company-queries.ts checks that every statement on a company table names it).
+ */
+export function insertCompanyRow(db: D1Database, table: string, row: Record<string, unknown>, opts: { orIgnore?: boolean } = {}): D1PreparedStatement {
+  const { company_id: companyId, ...rest } = row;
+  if (typeof companyId !== 'string' || !companyId) throw new Error(`A row of ${table} needs its company`);
+  const keys = Object.keys(rest);
+  for (const k of [table, ...keys]) if (!/^[a-z_][a-z0-9_]*$/.test(k)) throw new Error(`Not a column name: ${k}`);
+  return db
+    .prepare(`INSERT${opts.orIgnore ? ' OR IGNORE' : ''} INTO ${table} (company_id${keys.map((k) => `, ${k}`).join('')}) VALUES (?${keys.map(() => ', ?').join('')})`)
+    .bind(companyId, ...keys.map((k) => rest[k]));
+}
+
 export function placeholders(n: number): string {
   return Array.from({ length: n }, () => '?').join(',');
 }

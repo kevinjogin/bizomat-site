@@ -138,7 +138,7 @@ export function ActivityStrip({ days }: { days: { date: string; heartbeats: numb
           <span key={c.date} className={`l${level(c)}`} title={`${c.date}: ${c.active ? `active${c.beats ? `, ${c.beats} heartbeat${c.beats === 1 ? '' : 's'}` : ''}` : 'no activity'}`} />
         ))}
       </div>
-      <div className="muted small" style={{ marginTop: 6 }}>
+      <div className="muted small" style={{ marginTop: 'var(--ui-s6, 6px)' }}>
         Active on <b>{activeDays}</b> of the last 90 days (UTC). Darker = more minutes with the app open.
       </div>
     </div>

@@ -70,7 +70,7 @@ export function ColumnDialog({ column, columns, onClose, onSave }: { column?: Co
         </>
       }
     >
-      <div className="row wrap" style={{ alignItems: 'flex-start', gap: 16 }}>
+      <div className="row wrap" style={{ alignItems: 'flex-start', gap: 'var(--ui-s16, 16px)' }}>
         <div className="grow" style={{ minWidth: 220 }}>
           <Field label="Title" htmlFor="col-title">
             <input id="col-title" className="input" value={title} onChange={(e) => setTitle(e.target.value)} maxLength={100} />
@@ -86,7 +86,7 @@ export function ColumnDialog({ column, columns, onClose, onSave }: { column?: Co
         <input id="col-desc" className="input" value={description} onChange={(e) => setDescription(e.target.value)} maxLength={500} placeholder="Optional help text" />
       </Field>
       {!getColumnType(type).computed ? (
-        <label className="checkbox" style={{ marginBottom: 12 }}>
+        <label className="checkbox" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
           <input type="checkbox" checked={required} onChange={(e) => setRequired(e.target.checked)} /> Required (cannot be cleared once set; enforced in forms)
         </label>
       ) : null}
@@ -104,7 +104,7 @@ function TypeSettings({ type, settings, setSettings, columns, formulaError }: { 
     case 'dropdown':
       return (
         <>
-          <label className="checkbox" style={{ marginBottom: 10 }}><input type="checkbox" checked={settings.multiple !== false} onChange={(e) => set('multiple', e.target.checked)} /> Allow multiple selections</label>
+          <label className="checkbox" style={{ marginBottom: 'var(--ui-s10, 10px)' }}><input type="checkbox" checked={settings.multiple !== false} onChange={(e) => set('multiple', e.target.checked)} /> Allow multiple selections</label>
           <LabelsEditor labels={settings.options ?? []} onChange={(l) => set('options', l)} />
         </>
       );
@@ -126,7 +126,7 @@ function TypeSettings({ type, settings, setSettings, columns, formulaError }: { 
       // Stored settings, not the currency shown on the board (which may come from the project or organisation).
       const mode = settings.currencyMode ?? (settings.currency && settings.currencySource === 'column' ? 'fixed' : 'inherit');
       return (
-        <div className="col" style={{ gap: 8 }}>
+        <div className="col" style={{ gap: 'var(--ui-s8, 8px)' }}>
           <div className="row wrap">
             <Field label="Currency" hint="Changing it never changes the amounts already entered.">
               <select
@@ -179,7 +179,7 @@ function TypeSettings({ type, settings, setSettings, columns, formulaError }: { 
       return (
         <Field label="Formula" error={formulaError} hint={<>Reference columns with {'{Column title}'}. Functions: SUM, AVG, MIN, MAX, ROUND, ABS, IF, AND, OR, NOT, CONCAT, LEN, UPPER, LOWER, TODAY, DAYS, ADD_DAYS, ISBLANK, COALESCE.</>}>
           <textarea className="textarea mono" rows={3} value={settings.formula ?? ''} onChange={(e) => set('formula', e.target.value)} placeholder="ROUND({Deal value} * {Probability} / 100, 0)" />
-          <div className="row wrap" style={{ gap: 4, marginTop: 6 }}>
+          <div className="row wrap" style={{ gap: 'var(--ui-s4, 4px)', marginTop: 'var(--ui-s6, 6px)' }}>
             {columns.filter((c) => c.type !== 'formula').map((c) => (
               <button key={c.id} type="button" className="badge" style={{ cursor: 'pointer', border: 0 }} onClick={() => set('formula', `${settings.formula ?? ''}{${c.title}}`)}>{c.title}</button>
             ))}
@@ -206,7 +206,7 @@ function LabelsEditor({ labels, onChange, allowDone }: { labels: LabelOption[]; 
   return (
     <div className="field">
       <label>Labels</label>
-      <div className="col" style={{ gap: 6 }}>
+      <div className="col" style={{ gap: 'var(--ui-s6, 6px)' }}>
         {labels.map((l, i) => (
           <div key={l.id} className="row">
             <input type="color" value={l.color} onChange={(e) => update(i, { color: e.target.value })} aria-label={`Colour for ${l.label}`} style={{ width: 32, height: 28, border: 0, background: 'none', padding: 0 }} />

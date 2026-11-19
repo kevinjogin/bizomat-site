@@ -1,5 +1,5 @@
 ---
-// The A$195 Engineering Problem Assessment, presented as an introductory fixed-scope offer on the
+// The Engineering Problem Assessment, presented as an introductory fixed-scope offer on the
 // homepage, Services, Factory Fix and REACHOS pages. All wording comes from src/config/assessment.ts.
 import Button from '../Button.astro';
 import AssessmentIcon from './AssessmentIcon.astro';
@@ -65,4 +65,16 @@ const icons = ['understand', 'discussion', 'review', 'options', 'report'] as con
   .af-feature__num { font-family: var(--font-mono); font-size: 0.78rem; color: var(--accent); }
   .af-feature__item { font-weight: 580; color: var(--ink); }
   @media (max-width: 860px) { .af-feature { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .af-feature { gap: var(--bz-space-8) var(--bz-space-16); }
+  :global(html[data-ui="new"]) .af-feature__eyebrow { margin: 0 0 var(--bz-space-3); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .af-feature__price { margin: var(--bz-space-4) 0 0; gap: var(--bz-space-1) var(--bz-space-3); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .af-feature__summary { margin: var(--bz-space-4) 0 0; }
+  :global(html[data-ui="new"]) .af-feature__actions { gap: var(--bz-space-3); margin-top: var(--bz-space-8); }
+  :global(html[data-ui="new"]) .af-feature__terms { margin: var(--bz-space-4) 0 0; font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .af-feature__list { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .af-feature__list li { gap: var(--bz-space-2); padding: var(--bz-space-2) var(--bz-space-3); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .af-feature__num { font-size: var(--bz-text-xs); }
+  /* ui-new:generated end */
 </style>

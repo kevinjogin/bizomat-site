@@ -110,7 +110,7 @@ export default function MyWork() {
           </EmptyState>
         </div>
       ) : (
-        <div className="col" style={{ gap: 14 }}>
+        <div className="col" style={{ gap: 'var(--ui-s14, 14px)' }}>
           {BUCKETS.map((b) => {
             const list = data[b.key];
             const isCollapsed = collapsed[b.key];
@@ -126,7 +126,7 @@ export default function MyWork() {
                   list.length ? (
                     list.map((w) => <WorkRow key={w.item.id} w={w} wsId={ws.id} onAdd={(x) => add(x.item.id, data.date)} />)
                   ) : (
-                    <div className="muted small" style={{ padding: '6px 14px 14px' }}>Nothing here.</div>
+                    <div className="muted small" style={{ padding: 'var(--ui-s6, 6px) var(--ui-s14, 14px) var(--ui-s14, 14px)' }}>Nothing here.</div>
                   )
                 ) : null}
               </section>
@@ -143,7 +143,7 @@ function SharedWithMe({ wsId }: { wsId: string }) {
   const q = useQuery({ queryKey: ['shared-tasks', wsId], queryFn: () => get<{ id: string; name: string; boardName: string; done: boolean; sharedBy: string | null }[]>(`/workspaces/${wsId}/shared-tasks`) });
   if (!q.data?.length) return null;
   return (
-    <section className="card" style={{ marginBottom: 14 }} aria-labelledby="shared-tasks">
+    <section className="card" style={{ marginBottom: 'var(--ui-s14, 14px)' }} aria-labelledby="shared-tasks">
       <div className="card-header"><h2 id="shared-tasks" className="grow">Shared with me</h2><span className="badge">{q.data.length}</span></div>
       {q.data.map((t) => (
         <div key={t.id} className="work-row">

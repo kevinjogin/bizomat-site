@@ -333,7 +333,7 @@ function GroupSection(p: {
                 <MenuItem icon="plus" onClick={() => { setMenuOpen(false); actions.createItem({ name: 'New item', groupId: section.group!.id, position: 'top' }); }}>Add item at top</MenuItem>
                 <MenuItem icon="edit" onClick={() => { setMenuOpen(false); setEditingName(true); }}>Rename group</MenuItem>
                 <MenuItem icon="info" onClick={() => { setMenuOpen(false); setInfo('edit'); }}>{description ? 'Edit description' : 'Add description'}</MenuItem>
-                <div style={{ padding: '6px 10px' }}><ColorSwatches value={section.color} onChange={(c) => actions.updateGroup(section.group!.id, { color: c })} /></div>
+                <div style={{ padding: 'var(--ui-s6, 6px) var(--ui-s10, 10px)' }}><ColorSwatches value={section.color} onChange={(c) => actions.updateGroup(section.group!.id, { color: c })} /></div>
                 <MenuItem icon="chevronDown" onClick={() => { setMenuOpen(false); moveGroup(props, section.group!, 1); }}>Move down</MenuItem>
                 <MenuItem icon="chevronRight" onClick={() => { setMenuOpen(false); moveGroup(props, section.group!, -1); }}>Move up</MenuItem>
                 <MenuItem icon="copy" onClick={() => { setMenuOpen(false); actions.duplicateGroup(section.group!.id); }}>Duplicate group</MenuItem>
@@ -437,7 +437,7 @@ function GroupSection(p: {
           </tbody>
         </table>
       ) : (
-        <div className="muted small" style={{ paddingLeft: 40 }} onDragOver={(e) => p.drag && e.preventDefault()} onDrop={(e) => { e.preventDefault(); p.onDrop(); }}>
+        <div className="muted small" style={{ paddingLeft: 'var(--ui-s40, 40px)' }} onDragOver={(e) => p.drag && e.preventDefault()} onDrop={(e) => { e.preventDefault(); p.onDrop(); }}>
           {section.items.length} hidden item(s) — drop here to move
         </div>
       )}

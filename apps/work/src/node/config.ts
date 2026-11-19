@@ -30,6 +30,10 @@ export interface WorkerVars {
   // Company accounts (docs/company/README.md at the repository root): passed through when set.
   /** The Australian Business Register web services GUID: with it, registration looks the ABN up on the register. */
   ABR_GUID?: string;
+  /** The Companies House API key: with it, United Kingdom company numbers are looked up (Stage 1, R6). */
+  COMPANIES_HOUSE_API_KEY?: string;
+  /** The account to make the founder when there is none (Stage 1, R7). */
+  PLATFORM_ADMIN_BOOTSTRAP?: string;
   /** JSON list of the applications allowed to use BIZOMAT sign-in (src/worker/company/id-provider.ts). */
   BIZOMAT_ID_CLIENTS?: string;
   // Billing (docs/billing/README.md): passed through when set; src/worker/billing/config.ts checks them.
@@ -44,13 +48,14 @@ export interface WorkerVars {
   STRIPE_AUTOMATIC_TAX?: string;
   STRIPE_GRACE_DAYS?: string;
   STRIPE_API_BASE?: string;
+  BIZOMAT_BILLING_LOCK?: string;
 }
 
 /** Email settings copied from the environment into the Worker's env when present. */
 export const EMAIL_VARS = ['EMAIL_PROVIDER', 'BREVO_API_KEY', 'BREVO_WEBHOOK_TOKEN', 'EMAIL_FROM_NAME', 'EMAIL_FROM_ADDRESS', 'EMAIL_REPLY_TO', 'APP_BASE_URL', 'EMAIL_DAILY_LIMIT', 'EMAIL_CRITICAL_RESERVE', 'EMAIL_SANDBOX', 'SETTINGS_ENCRYPTION_KEY'] as const;
 
 /** Company account settings copied from the environment into the Worker's env when present. */
-export const COMPANY_VARS = ['ABR_GUID', 'BIZOMAT_ID_CLIENTS'] as const;
+export const COMPANY_VARS = ['ABR_GUID', 'COMPANIES_HOUSE_API_KEY', 'BIZOMAT_ID_CLIENTS', 'PLATFORM_ADMIN_BOOTSTRAP'] as const;
 
 /** Billing settings copied from the environment into the Worker's env when present (src/worker/billing/config.ts checks
  * them; docs/billing/README.md). On Fly they arrive as WORK_STRIPE_* (infrastructure/fly/entrypoint.sh). */
@@ -66,6 +71,8 @@ export const BILLING_VARS = [
   'STRIPE_AUTOMATIC_TAX',
   'STRIPE_GRACE_DAYS',
   'STRIPE_API_BASE',
+  // free mode: "true" locks billing (on Fly WORK_BIZOMAT_BILLING_LOCK, locked unless set to "false")
+  'BIZOMAT_BILLING_LOCK',
 ] as const;
 
 /** An https address with an optional lowercase path, as canonicalRedirect (src/worker/mount.ts) accepts it. */

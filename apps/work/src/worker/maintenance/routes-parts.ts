@@ -151,7 +151,7 @@ partsRoutes.delete('/c/:company/work-orders/:id/labour/:labourId', async (c) => 
   if (!l) throw notFound('Time entry');
   if (!isManager(a) && l.user_id !== a.userId) deny('You can remove only your own time entries');
   await db.batch([
-    db.prepare('DELETE FROM mt_labour_costs WHERE labour_id = ?').bind(l.id),
+    db.prepare('DELETE FROM mt_labour_costs WHERE company_id = ? AND labour_id = ?').bind(a.companyId, l.id),
     db.prepare('DELETE FROM mt_labour WHERE company_id = ? AND id = ?').bind(a.companyId, l.id),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'labour.removed', assetId: w.asset_id, workOrderId: w.id, summary: `Time entry removed: ${l.minutes} min`, before: { labourId: l.id, minutes: l.minutes, userId: l.user_id } }),
   ]);

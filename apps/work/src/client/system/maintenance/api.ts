@@ -50,7 +50,7 @@ export interface MtMe {
   user: { id: string; name: string };
   role: MtRole;
   roleIsDefault: boolean;
-  companyRole: 'owner' | 'admin' | 'member';
+  companyRole: 'owner' | 'admin' | 'manager' | 'employee' | 'read_only';
   approvalRequired: boolean;
   departments: { id: string; name: string; parentId: string | null }[];
   people: { id: string; name: string; role?: MtRole }[];

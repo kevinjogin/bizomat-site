@@ -1,0 +1,189 @@
+/* The new UI of BIZOMAT ERP (owner's UI brief of 19 Nov 2026; docs/ui/README.md). Every rule is scoped to
+   html[data-ui="new"], which the flag new_ui_enabled switches on (src/client/lib/ui.ts), so with the flag off nothing
+   here applies. Values come only from the tokens (bizomat-ui-tokens.css); the generated rules
+   (ui-new-generated.css, loaded first) put every other stylesheet on the same scales.
+
+   Motion: only transform, opacity and (on small elements) box-shadow move; nothing moves under reduced motion. Hover
+   effects never change size or position of the layout (a 1px lift is a transform). */
+
+/* ---------------------------------------------------------------- foundations */
+html[data-ui="new"] {
+  --shadow-1: var(--bz-shadow-sm);
+  --shadow-2: var(--bz-shadow-lg);
+  --shadow-3: var(--bz-shadow-xl);
+  --radius-sm: var(--bz-radius-sm);
+  --radius: var(--bz-radius-md);
+  --radius-lg: var(--bz-radius-lg);
+  --focus: var(--bz-focus-ring);
+}
+/* The screens' inline spacing (scripts/ui/inline-styles.mjs): var(--ui-sN, Npx) takes the old number until here. */
+html[data-ui="new"] {
+  --ui-s4: var(--bz-space-1); --ui-s5: var(--bz-space-1); --ui-s6: var(--bz-space-2); --ui-s8: var(--bz-space-2);
+  --ui-s10: var(--bz-space-3); --ui-s12: var(--bz-space-3); --ui-s14: var(--bz-space-4); --ui-s16: var(--bz-space-4);
+  --ui-s18: var(--bz-space-5); --ui-s20: var(--bz-space-5); --ui-s24: var(--bz-space-6); --ui-s28: var(--bz-space-8);
+  --ui-s32: var(--bz-space-8); --ui-s40: var(--bz-space-10);
+}
+html[data-ui="new"] body { font-size: var(--bz-text-sm); line-height: var(--bz-leading-normal); }
+html[data-ui="new"] :focus-visible { outline: 2px solid var(--focus-color, var(--accent)); outline-offset: 2px; }
+
+/* ---------------------------------------------------------------- buttons */
+html[data-ui="new"] .btn {
+  height: var(--bz-control-sm);
+  padding: 0 var(--bz-control-pad-sm);
+  gap: var(--bz-space-2);
+  border-radius: var(--bz-radius-md);
+  font-size: var(--bz-text-sm);
+  font-weight: 600;
+  box-shadow: var(--bz-shadow-xs);
+  transition: background-color var(--bz-duration-base) var(--bz-ease-standard), border-color var(--bz-duration-base) var(--bz-ease-standard),
+    box-shadow var(--bz-duration-base) var(--bz-ease-standard), transform var(--bz-duration-base) var(--bz-ease-standard), color var(--bz-duration-base) var(--bz-ease-standard);
+}
+html[data-ui="new"] .btn:hover:not(:disabled):not([aria-disabled="true"]) { box-shadow: var(--bz-shadow-md); transform: translateY(-1px); }
+html[data-ui="new"] .btn:active:not(:disabled):not([aria-disabled="true"]) { box-shadow: var(--bz-shadow-xs); transform: translateY(0); filter: brightness(0.96); }
+html[data-ui="new"] .btn:focus-visible { outline: none; box-shadow: var(--bz-focus-ring), var(--bz-shadow-xs); }
+html[data-ui="new"] .btn:disabled, html[data-ui="new"] .btn[aria-disabled="true"] { opacity: 0.5; box-shadow: none; transform: none; cursor: not-allowed; }
+/* Sizes: small (32) is the ERP's default; .sm stays small, .lg is medium (40), .xl large (48). */
+html[data-ui="new"] .btn.sm { height: var(--bz-control-sm); padding: 0 var(--bz-control-pad-sm); font-size: var(--bz-text-sm); }
+html[data-ui="new"] .btn.lg { height: var(--bz-control-md); padding: 0 var(--bz-control-pad-md); font-size: var(--bz-text-base); }
+html[data-ui="new"] .btn.xl { height: var(--bz-control-lg); padding: 0 var(--bz-control-pad-lg); font-size: var(--bz-text-md); }
+html[data-ui="new"] .btn.icon { width: var(--bz-control-sm); padding: 0; }
+html[data-ui="new"] .btn.icon.lg { width: var(--bz-control-md); }
+/* Variants: primary, secondary (the default .btn), outline, ghost, danger, link. */
+html[data-ui="new"] .btn.primary:hover:not(:disabled) { background: var(--accent-2); border-color: var(--accent-2); }
+html[data-ui="new"] .btn.outline { background: transparent; border-color: var(--accent); color: var(--accent); box-shadow: none; }
+html[data-ui="new"] .btn.outline:hover:not(:disabled) { background: var(--accent-soft); }
+html[data-ui="new"] .btn.ghost, html[data-ui="new"] .btn.link { box-shadow: none; }
+html[data-ui="new"] .btn.ghost:hover:not(:disabled) { box-shadow: none; transform: none; background: var(--surface-2); }
+html[data-ui="new"] .btn.danger:hover:not(:disabled) { filter: brightness(0.92); }
+html[data-ui="new"] .btn.link { height: auto; padding: 0; border-color: transparent; background: none; color: var(--accent); font-weight: 600; }
+html[data-ui="new"] .btn.link:hover:not(:disabled) { transform: none; box-shadow: none; text-decoration: underline; text-underline-offset: 3px; }
+/* Loading: the label stays (so the width does not jump) but turns transparent behind a spinner. */
+html[data-ui="new"] .btn[aria-busy="true"] { position: relative; color: transparent !important; pointer-events: none; }
+html[data-ui="new"] .btn[aria-busy="true"]::after {
+  content: ''; position: absolute; inset: 0; margin: auto; width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid currentColor; border-color: var(--text-3) transparent var(--text-3) transparent; animation: spin 0.7s linear infinite;
+}
+html[data-ui="new"] .btn.primary[aria-busy="true"]::after, html[data-ui="new"] .btn.danger[aria-busy="true"]::after { border-color: var(--on-strong) transparent var(--on-strong) transparent; }
+
+/* ---------------------------------------------------------------- links */
+html[data-ui="new"] .main a:not(.btn):not(.tab):not(.nav-item):not(.suite-item):not(.menu-item):not(.card) {
+  text-decoration: underline; text-decoration-color: transparent; text-underline-offset: 3px; text-decoration-thickness: 1px;
+  transition: text-decoration-color var(--bz-duration-fast) var(--bz-ease-standard), color var(--bz-duration-fast) var(--bz-ease-standard);
+}
+html[data-ui="new"] .main a:not(.btn):not(.tab):not(.nav-item):not(.suite-item):not(.menu-item):not(.card):hover { text-decoration-color: currentColor; }
+html[data-ui="new"] .main a:not(.btn):focus-visible { outline: none; box-shadow: var(--bz-focus-ring); border-radius: var(--bz-radius-sm); }
+
+/* Navigation: highlight on hover, an indicator bar on the active item. */
+html[data-ui="new"] .nav-item, html[data-ui="new"] .suite-item, html[data-ui="new"] .tab, html[data-ui="new"] .menu-item {
+  transition: background-color var(--bz-duration-fast) var(--bz-ease-standard), color var(--bz-duration-fast) var(--bz-ease-standard), box-shadow var(--bz-duration-fast) var(--bz-ease-standard);
+}
+html[data-ui="new"] .nav-item { height: var(--bz-control-sm); padding: 0 var(--bz-space-3); gap: var(--bz-space-3); position: relative; }
+html[data-ui="new"] .nav-item.active { box-shadow: inset 3px 0 0 var(--accent); }
+html[data-ui="new"] .tab { padding: var(--bz-space-2) var(--bz-space-3); border-bottom-width: 2px; }
+html[data-ui="new"] .tab:focus-visible { outline: none; box-shadow: var(--bz-focus-ring); border-radius: var(--bz-radius-sm); }
+
+/* ---------------------------------------------------------------- forms */
+html[data-ui="new"] .input, html[data-ui="new"] .select, html[data-ui="new"] .textarea {
+  height: var(--bz-control-sm); padding: 0 var(--bz-space-3); border-radius: var(--bz-radius-md); font-size: var(--bz-text-sm);
+  transition: border-color var(--bz-duration-fast) var(--bz-ease-standard), box-shadow var(--bz-duration-fast) var(--bz-ease-standard);
+}
+html[data-ui="new"] .textarea { height: auto; min-height: calc(var(--bz-space-16) + var(--bz-space-4)); padding: var(--bz-space-2) var(--bz-space-3); }
+html[data-ui="new"] .input:focus, html[data-ui="new"] .select:focus, html[data-ui="new"] .textarea:focus { border-color: var(--accent); box-shadow: var(--bz-focus-ring); }
+html[data-ui="new"] .input.sm, html[data-ui="new"] .select.sm { height: var(--bz-control-sm); font-size: var(--bz-text-sm); }
+html[data-ui="new"] .input.lg, html[data-ui="new"] .select.lg { height: var(--bz-control-md); font-size: var(--bz-text-base); }
+html[data-ui="new"] .field { gap: var(--bz-space-1); margin-bottom: var(--bz-space-4); }
+html[data-ui="new"] .field > label, html[data-ui="new"] .label { font-size: var(--bz-text-xs); }
+html[data-ui="new"] .field .hint, html[data-ui="new"] .field .error { font-size: var(--bz-text-xs); margin-top: var(--bz-space-1); }
+html[data-ui="new"] .field .error { color: var(--danger); }
+html[data-ui="new"] form.stack > * + h2, html[data-ui="new"] .stack-lg { gap: var(--bz-section-gap); }
+html[data-ui="new"] .stack { gap: var(--bz-item-gap); }
+
+/* ---------------------------------------------------------------- cards and panels */
+html[data-ui="new"] .card { border-radius: var(--bz-radius-lg); box-shadow: var(--bz-shadow-sm); }
+html[data-ui="new"] .card-pad { padding: var(--bz-space-6); }
+html[data-ui="new"] a.card, html[data-ui="new"] .card.clickable, html[data-ui="new"] .tile, html[data-ui="new"] .suite-home .card {
+  transition: box-shadow var(--bz-duration-base) var(--bz-ease-standard), transform var(--bz-duration-base) var(--bz-ease-standard);
+}
+html[data-ui="new"] a.card:hover, html[data-ui="new"] .card.clickable:hover, html[data-ui="new"] .tile:hover { box-shadow: var(--bz-shadow-lg); transform: translateY(-1px); text-decoration: none; }
+html[data-ui="new"] .info-box { border-radius: var(--bz-radius-md); padding: var(--bz-space-3) var(--bz-space-4); }
+html[data-ui="new"] .badge { height: calc(var(--bz-space-5) + 2px); padding: 0 var(--bz-space-2); border-radius: var(--bz-radius-full); font-size: var(--bz-text-2xs); }
+
+/* ---------------------------------------------------------------- tables */
+html[data-ui="new"] .data-table th, html[data-ui="new"] .data-table td { padding: var(--bz-space-2) var(--bz-space-3); font-size: var(--bz-text-sm); height: calc(var(--bz-control-sm) + var(--bz-space-2)); }
+html[data-ui="new"] .data-table th {
+  font-size: var(--bz-text-xs); position: sticky; top: 0; z-index: 1; background: var(--surface);
+  box-shadow: inset 0 -1px 0 var(--border);
+}
+html[data-ui="new"] .data-table tbody tr { transition: background-color var(--bz-duration-fast) var(--bz-ease-standard); }
+html[data-ui="new"] .data-table tbody tr:hover { background: var(--surface-2); }
+
+/* ---------------------------------------------------------------- overlays: modals, drawers, menus, toasts */
+html[data-ui="new"] .overlay { animation: ui-fade var(--bz-duration-slow) var(--bz-ease-out); }
+html[data-ui="new"] .modal { box-shadow: var(--bz-shadow-xl); border-radius: var(--bz-radius-lg); animation: ui-modal-in var(--bz-duration-slow) var(--bz-ease-out); }
+html[data-ui="new"] .modal-header { padding: var(--bz-space-4) var(--bz-space-6); }
+html[data-ui="new"] .modal-body { padding: var(--bz-space-6); }
+html[data-ui="new"] .modal-footer { padding: var(--bz-space-3) var(--bz-space-6); gap: var(--bz-space-2); }
+html[data-ui="new"] .sidepanel { box-shadow: var(--bz-shadow-xl); animation: ui-drawer-in var(--bz-duration-slow) var(--bz-ease-out); }
+html[data-ui="new"] .popover { box-shadow: var(--bz-shadow-lg); border-radius: var(--bz-radius-md); padding: var(--bz-space-1); animation: ui-pop-in var(--bz-duration-fast) var(--bz-ease-out); }
+html[data-ui="new"] .menu-item { padding: var(--bz-space-2) var(--bz-space-3); gap: var(--bz-space-2); }
+html[data-ui="new"] .toasts { bottom: var(--bz-space-6); right: var(--bz-space-6); left: auto; transform: none; align-items: flex-end; gap: var(--bz-space-2); }
+html[data-ui="new"] .toast { padding: var(--bz-space-3) var(--bz-space-4); border-radius: var(--bz-radius-md); box-shadow: var(--bz-shadow-lg); animation: ui-toast-in var(--bz-duration-base) var(--bz-ease-out); }
+
+@keyframes ui-fade { from { opacity: 0; } }
+@keyframes ui-modal-in { from { opacity: 0; transform: scale(0.97); } }
+@keyframes ui-drawer-in { from { opacity: 0; transform: translateX(16px); } }
+@keyframes ui-pop-in { from { opacity: 0; transform: translateY(-4px); } }
+@keyframes ui-toast-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes ui-page-in { from { opacity: 0; transform: translateY(4px); } }
+@keyframes ui-shimmer { to { background-position: -200% 0; } }
+
+/* ---------------------------------------------------------------- layout: one page template for every module */
+html[data-ui="new"] .page { padding: var(--bz-page-pad) var(--bz-page-pad) var(--bz-space-12); }
+html[data-ui="new"] .page-header { gap: var(--bz-space-3); margin-bottom: var(--bz-space-6); align-items: flex-start; }
+html[data-ui="new"] .page-header h1 { font-size: var(--bz-text-2xl); line-height: var(--bz-leading-tight); margin: 0; }
+html[data-ui="new"] .page-header p { margin: var(--bz-space-1) 0 0; font-size: var(--bz-text-sm); }
+html[data-ui="new"] .page > * + section, html[data-ui="new"] .page > section + * { margin-top: var(--bz-section-gap); }
+/* Route changes: a short fade of the page (src/client/lib/ui.ts useUiRouteEffects). */
+html[data-ui="new"] .ui-route-in { animation: ui-page-in var(--bz-duration-base) var(--bz-ease-out); }
+/* 12 columns */
+html[data-ui="new"] .ui-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--bz-grid-gap); }
+html[data-ui="new"] .ui-col-12 { grid-column: span 12; }
+html[data-ui="new"] .ui-col-8 { grid-column: span 8; }
+html[data-ui="new"] .ui-col-6 { grid-column: span 6; }
+html[data-ui="new"] .ui-col-4 { grid-column: span 4; }
+html[data-ui="new"] .ui-col-3 { grid-column: span 3; }
+@media (max-width: 1023px) { html[data-ui="new"] .ui-col-3, html[data-ui="new"] .ui-col-4 { grid-column: span 6; } html[data-ui="new"] .ui-col-8 { grid-column: span 12; } }
+@media (max-width: 639px) { html[data-ui="new"] [class*="ui-col-"] { grid-column: span 12; } }
+
+/* ---------------------------------------------------------------- loading and empty states */
+.ui-loading { display: contents; }
+.ui-skeleton { display: none; }
+html[data-ui="new"] .ui-skeleton { display: block; padding: var(--bz-page-pad); }
+html[data-ui="new"] .ui-skeleton + .ui-spinner { display: none; }
+html[data-ui="new"] .ui-skeleton-line {
+  height: var(--bz-space-3); margin-bottom: var(--bz-space-3); border-radius: var(--bz-radius-sm);
+  background: linear-gradient(90deg, var(--surface-2), var(--surface-3), var(--surface-2)); background-size: 200% 100%;
+  animation: ui-shimmer 1.4s linear infinite;
+}
+html[data-ui="new"] .ui-skeleton-line.title { height: var(--bz-space-6); width: 40%; margin-bottom: var(--bz-space-6); }
+html[data-ui="new"] .ui-skeleton-line.w-90 { width: 90%; }
+html[data-ui="new"] .ui-skeleton-line.w-75 { width: 75%; }
+html[data-ui="new"] .ui-skeleton-line.w-60 { width: 60%; }
+html[data-ui="new"] .empty { gap: var(--bz-space-3); padding: var(--bz-space-12) var(--bz-space-4); }
+html[data-ui="new"] .empty svg { color: var(--text-3); }
+html[data-ui="new"] .empty h3 { font-size: var(--bz-text-md); margin: 0; }
+/* A company switch: the old company's content is never shown while the new one loads. */
+html[data-ui="new"][data-switching="1"] .main .page { opacity: 0; }
+
+/* List items: a short fade on load, never staggered (large tables stay instant). */
+html[data-ui="new"] .list-row, html[data-ui="new"] .grid-cards > * { animation: ui-fade var(--bz-duration-fast) var(--bz-ease-out); }
+
+/* ---------------------------------------------------------------- reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  html[data-ui="new"] *, html[data-ui="new"] *::before, html[data-ui="new"] *::after { animation-duration: 0ms !important; transition-duration: 0ms !important; }
+  html[data-ui="new"] .btn:hover, html[data-ui="new"] a.card:hover, html[data-ui="new"] .tile:hover { transform: none !important; }
+  html[data-ui="new"] .ui-skeleton-line { animation: none; }
+}
+
+/* The UI kit page (admin/pages/UiKit.tsx) */
+.ui-kit-label { min-width: 120px; }

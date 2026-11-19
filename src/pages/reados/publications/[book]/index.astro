@@ -47,4 +47,11 @@ const schema = { '@type': 'Book', '@id': new URL(href, SITE.url).href + '#book',
 .book-audience,.book-contents,.book-references,.book-related{padding:2.5rem 0;border-top:1px solid var(--line)}
 .book-references{font-size:.9rem}.book-references li{margin:1rem 0}.book-references span{color:var(--muted)}
 .back{display:inline-block;margin:1rem 0 var(--space-section);font-size:.9rem;color:var(--accent)}
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .book-audience, :global(html[data-ui="new"]) .book-contents, :global(html[data-ui="new"]) .book-references, :global(html[data-ui="new"]) .book-related { padding: var(--bz-space-10) 0; }
+  :global(html[data-ui="new"]) .book-references { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .book-references li { margin: var(--bz-space-4) 0; }
+  :global(html[data-ui="new"]) .back { font-size: var(--bz-text-base); }
+  /* ui-new:generated end */
 </style>

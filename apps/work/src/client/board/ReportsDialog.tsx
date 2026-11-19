@@ -156,7 +156,7 @@ export function ReportsDialog({ bundle, onClose }: { bundle: BoardBundle; onClos
   return (
     <Modal title={`Reports · ${bundle.board.name}`} onClose={onClose} xl>
       <div className="col" style={{ width: '100%', minHeight: 0 }}>
-        <div className="tabs" style={{ padding: '0 18px', borderBottom: '1px solid var(--border)' }} role="tablist">
+        <div className="tabs" style={{ padding: '0 var(--ui-s18, 18px)', borderBottom: '1px solid var(--border)' }} role="tablist">
           <button role="tab" aria-selected={tab === 'create'} className={`tab${tab === 'create' ? ' active' : ''}`} onClick={() => setTab('create')}><Icon name="plus" size={14} /> New report</button>
           <button role="tab" aria-selected={tab === 'history'} className={`tab${tab === 'history' ? ' active' : ''}`} onClick={() => setTab('history')}><Icon name="history" size={14} /> Report history</button>
         </div>
@@ -214,7 +214,7 @@ export function ReportsDialog({ bundle, onClose }: { bundle: BoardBundle; onClos
               </div>
               {!hasFinance ? <p className="muted small">No financial data you can view on this project.</p> : null}
               <h3>Sections</h3>
-              <div className="col" style={{ gap: 4 }}>
+              <div className="col" style={{ gap: 'var(--ui-s4, 4px)' }}>
                 {REPORT_SECTIONS.map((s) => (
                   <label key={s} className="checkbox small"><input type="checkbox" checked={sections.includes(s)} onChange={() => setSections(toggle(sections, s))} /> {SECTION_LABELS[s]}</label>
                 ))}
@@ -260,12 +260,12 @@ export function ReportsDialog({ bundle, onClose }: { bundle: BoardBundle; onClos
                 {preview ? <span className="muted small">Preview from {timeAgo(preview.at)}; draft, not saved</span> : null}
                 {preview ? <button className="btn ghost sm" onClick={() => printPreview(preview.html)}><Icon name="file" size={14} /> Print preview</button> : null}
               </div>
-              {error ? <div className="error-box" role="alert" style={{ margin: 12 }}>{error}</div> : null}
+              {error ? <div className="error-box" role="alert" style={{ margin: 'var(--ui-s12, 12px)' }}>{error}</div> : null}
               {preview ? (
                 // The report page itself, in a sandbox without scripts.
                 <iframe className="report-frame" title="Report preview" sandbox="allow-same-origin allow-modals" srcDoc={preview.html} />
               ) : (
-                <div style={{ padding: 24 }}>
+                <div style={{ padding: 'var(--ui-s24, 24px)' }}>
                   <EmptyState icon="file" title="Preview before you save">
                     Every figure comes from what is recorded on the project: past statuses come from the history of changes, and the report says where that history is incomplete. Saved reports never change afterwards.
                   </EmptyState>
@@ -309,7 +309,7 @@ function History({ boardId }: { boardId: string }) {
   }
   return (
     <div className="report-history">
-      {q.data?.hiddenWithFinance ? <div className="info-box" style={{ marginBottom: 12 }}>{q.data.hiddenWithFinance} saved report(s) with financial data are not listed because your access does not include this project's finances.</div> : null}
+      {q.data?.hiddenWithFinance ? <div className="info-box" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>{q.data.hiddenWithFinance} saved report(s) with financial data are not listed because your access does not include this project's finances.</div> : null}
       {!list.length ? (
         <EmptyState icon="file" title="No saved reports yet">Create one on the New report tab. Each saved report keeps its own PDF, Excel, HTML and CSV files.</EmptyState>
       ) : (
@@ -319,12 +319,12 @@ function History({ boardId }: { boardId: string }) {
             <tbody>
               {list.map((r) => (
                 <tr key={r.id}>
-                  <td><button className="btn ghost sm" onClick={() => setViewing(r.id)}><Icon name="eye" size={14} /> {r.typeLabel}</button>{r.includesFinance ? <span className="badge" style={{ marginLeft: 6 }}>Finance</span> : null}</td>
+                  <td><button className="btn ghost sm" onClick={() => setViewing(r.id)}><Icon name="eye" size={14} /> {r.typeLabel}</button>{r.includesFinance ? <span className="badge" style={{ marginLeft: 'var(--ui-s6, 6px)' }}>Finance</span> : null}</td>
                   <td className="small">{r.periodStart} to {r.periodEnd}</td>
                   <td>v{r.version}</td>
                   <td className="small">{new Date(r.generatedAt).toLocaleString()}<div className="muted">{r.generatedBy ?? ''}</div></td>
                   <td>
-                    <div className="row wrap" style={{ gap: 4 }}>
+                    <div className="row wrap" style={{ gap: 'var(--ui-s4, 4px)' }}>
                       {(['pdf', 'xlsx', 'html', 'csv'] as const).filter((f) => r.files[f]).map((f) => (
                         <a key={f} className="btn sm" href={appUrl(`/api/reports/${r.id}/download/${f}`)} download title={`${formatBytes(r.files[f].size)} · SHA-256 ${r.files[f].sha256.slice(0, 12)}`}>
                           <Icon name="download" size={13} /> {FORMAT_LABELS[f]}

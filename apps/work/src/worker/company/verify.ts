@@ -246,7 +246,7 @@ export async function abrLookup(env: Env, abn: string): Promise<AbrResult> {
 
 const SUFFIXES = /\b(PTY\.?|PROPRIETARY|LIMITED|LTD\.?|INC\.?|INCORPORATED|THE TRUSTEE FOR|TRUSTEE FOR|CO\.?|COMPANY)\b/g;
 
-function tokens(name: string): string[] {
+export function nameTokens(name: string): string[] {
   return name
     .toUpperCase()
     .replace(/&/g, ' AND ')
@@ -258,8 +258,8 @@ function tokens(name: string): string[] {
 
 /** Whether a name entered matches a name on the register (word order, case, punctuation and "Pty Ltd" aside). */
 export function namesMatch(entered: string, registered: string): boolean {
-  const a = tokens(entered);
-  const b = tokens(registered);
+  const a = nameTokens(entered);
+  const b = nameTokens(registered);
   if (!a.length || !b.length) return false;
   const sa = new Set(a);
   const sb = new Set(b);

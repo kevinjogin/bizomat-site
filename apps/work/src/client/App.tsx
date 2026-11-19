@@ -1,10 +1,11 @@
 import { lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useUiRouteEffects } from './lib/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { lastWorkspace, useSession } from './lib/session';
 import { Loading, ErrorBox } from './components/ui/ui';
 import { AppShell } from './components/layout/AppShell';
-import { LoginPage, SignupPage, InvitePage, VerifyEmailPage } from './pages/Auth';
+import { LoginPage, SignupPage, InvitePage, VerifyEmailPage, ResetPasswordPage } from './pages/Auth';
 import { ChoosePasswordPage } from './pages/ChoosePassword';
 import { useHeartbeat } from './lib/heartbeat';
 import { BRAND, IS_COMPANY, IS_CRM, IS_FINANCE, IS_SYSTEM } from './lib/brand';
@@ -72,16 +73,22 @@ function WorkspaceGate({ children }: { children: ReactNode }) {
 
 function RootRedirect() {
   const { session } = useSession();
+  const location = useLocation();
   if (!session) return null;
   const last = lastWorkspace();
   const ws = session.workspaces.find((w) => w.id === last) ?? session.workspaces[0];
-  return ws ? <Navigate to={`/w/${ws.id}/home`} replace /> : <Navigate to="/welcome" replace />;
+  // /settings/<tab> (the account settings, from the ERP's menus and notices) opens that tab in the last workspace.
+  const settings = /^\/settings(\/[a-z-]+)?\/?$/.exec(location.pathname);
+  const to = ws ? (settings ? `/w/${ws.id}/settings${settings[1] ?? '/profile'}${location.hash}` : `/w/${ws.id}/home`) : '/welcome';
+  return <Navigate to={to} replace />;
 }
 
 export function App() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { session } = useSession();
+  // The new UI's route fade and company-switch cover (flag new_ui_enabled; nothing happens while it is off).
+  useUiRouteEffects(useLocation().pathname);
 
   useEffect(() => {
     const onUnauthorized = () => {
@@ -106,6 +113,7 @@ export function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
@@ -121,6 +129,7 @@ export function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
@@ -137,6 +146,7 @@ export function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
@@ -151,6 +161,7 @@ export function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
@@ -164,6 +175,7 @@ export function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/invite/:token" element={<InvitePage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />

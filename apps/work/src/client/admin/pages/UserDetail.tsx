@@ -39,7 +39,7 @@ function PasswordReset({ userId, name }: { userId: string; name: string }) {
     <Card title="Account recovery">
       <form className="ac-stack" onSubmit={submit}>
         <p className="muted small">Set a temporary password for {name} if they have lost theirs, or if their password may have been exposed. Confirm who is asking before you do: this signs them out of every device, their old password stops working at once, and they must choose their own when they next sign in.</p>
-        <div className="row" style={{ flexWrap: 'wrap', gap: 8 }}>
+        <div className="row" style={{ flexWrap: 'wrap', gap: 'var(--ui-s8, 8px)' }}>
           <input className="input grow" type={show ? 'text' : 'password'} autoComplete="new-password" aria-label="New password" value={password} onChange={(e) => setPassword(e.target.value)} minLength={10} maxLength={256} required />
           <button type="button" className="btn sm" onClick={() => setShow((v) => !v)}>{show ? 'Hide' : 'Show'}</button>
           <button type="button" className="btn sm" onClick={() => { setPassword(suggestPassword()); setShow(true); }}>Suggest</button>

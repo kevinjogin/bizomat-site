@@ -24,6 +24,7 @@ import type { Context } from 'hono';
 import type { AppEnv, AuthUser, Env } from '../env';
 import { HttpError, clientIp, newId, now, randomToken, sha256Hex } from '../lib/util';
 import { auditStmt } from '../services/audit';
+import { syncCompany, syncCompanyStatements } from '../company/identity';
 
 export const EXAMPLE_NAME = 'Acme Studio (example)';
 export type ExampleStatus = 'building' | 'ready' | 'failed' | 'removed';
@@ -121,6 +122,7 @@ export async function buildExample(c: Context<AppEnv>, user: AuthUser, again = f
     }
   }
   const row = (await exampleOf(db, user.id))!;
+  await syncCompany(db, row.company_id, t);
   try {
     await makeExample(c, user, row.company_id);
     await db.prepare("UPDATE sys_demo SET status = 'ready', error = NULL, updated_at = ? WHERE user_id = ?").bind(now(), user.id).run();
@@ -146,6 +148,7 @@ export async function removeExample(c: Context<AppEnv>, user: AuthUser): Promise
   await db.batch([
     db.prepare("UPDATE sys_demo SET status = 'removed', removed_at = ?, updated_at = ? WHERE user_id = ?").bind(t, t, user.id),
     auditStmt(db, { actorId: user.id, action: 'example_company.removed', targetType: 'example_company', targetId: row.company_id, ip: clientIp(c) }),
+    ...syncCompanyStatements(db, row.company_id, t),
   ]);
 }
 

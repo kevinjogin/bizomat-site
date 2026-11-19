@@ -23,9 +23,9 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now, parseJson } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now, parseJson } from '../lib/util';
 import { docLineAmount } from '../fin/ledger';
-import { hasPerm as finHasPerm } from '../fin/access';
+import { hasPerm as finHasPerm, scopeSql as finScopeSql } from '../fin/access';
 import { assertRecord as crmAssertRecord, loadAccess as crmAccess, scopeSql as crmScopeSql, type OrgAccess } from '../crm/access';
 import { splitTax } from '../../shared/fin/tax';
 import { companyTools } from '../company/access';
@@ -428,13 +428,21 @@ salesRoutes.get('/c/:company/sales-order-options', async (c) => {
       continue;
     }
     const scope = crmScopeSql(ca, 'companies', 'co');
+    // Contacts follow the person's own rights in the CRM, as companies do (audit L3: a custom role limited to its own
+    // contacts saw every contact of a company here).
+    const contactScope = crmScopeSql(ca, 'contacts', 'ct');
     const rows = await db
       .prepare(`SELECT co.id, co.name, co.email, co.address, co.city, co.region, co.postcode, co.country FROM crm_companies co WHERE co.org_id = ? AND co.deleted_at IS NULL ${q ? 'AND lower(co.name) LIKE ?' : ''} AND ${scope.sql} ORDER BY co.name COLLATE NOCASE LIMIT 100`)
       .bind(o.id, ...(q ? [likeOf(q)] : []), ...scope.args)
       .all<any>();
     const companies = [];
     for (const r of rows.results) {
-      const contacts = (await db.prepare('SELECT id, first_name, last_name, email FROM crm_contacts WHERE org_id = ? AND company_id = ? AND deleted_at IS NULL ORDER BY first_name LIMIT 20').bind(o.id, r.id).all<any>()).results;
+      const contacts = (
+        await db
+          .prepare(`SELECT ct.id, ct.first_name, ct.last_name, ct.email FROM crm_contacts ct WHERE ct.org_id = ? AND ct.company_id = ? AND ct.deleted_at IS NULL AND ${contactScope.sql} ORDER BY ct.first_name LIMIT 20`)
+          .bind(o.id, r.id, ...contactScope.args)
+          .all<any>()
+      ).results;
       companies.push({
         id: r.id,
         name: r.name,
@@ -446,8 +454,14 @@ salesRoutes.get('/c/:company/sales-order-options', async (c) => {
     }
     crm.push({ orgId: o.id, name: o.name, access: true, companies });
   }
+  const finScope = fa ? finScopeSql(fa, 'contacts', 'fc') : { sql: '0', args: [] };
   const finContacts = fa && finHasPerm(fa, 'contacts', 'view')
-    ? (await db.prepare(`SELECT id, name, email, address FROM fin_contacts WHERE org_id = ? AND kind IN ('customer','both') AND archived_at IS NULL ${q ? 'AND lower(name) LIKE ?' : ''} ORDER BY name COLLATE NOCASE LIMIT 100`).bind(fin!.id, ...(q ? [likeOf(q)] : [])).all<any>()).results
+    ? (
+        await db
+          .prepare(`SELECT fc.id, fc.name, fc.email, fc.address FROM fin_contacts fc WHERE fc.org_id = ? AND fc.kind IN ('customer','both') AND fc.archived_at IS NULL ${q ? 'AND lower(fc.name) LIKE ?' : ''} AND ${finScope.sql} ORDER BY fc.name COLLATE NOCASE LIMIT 100`)
+          .bind(fin!.id, ...(q ? [likeOf(q)] : []), ...finScope.args)
+          .all<any>()
+      ).results
     : [];
   const options = await salesTaxOptions(db, fin?.id ?? null);
   const settings = await loadSettings(db, a.companyId);
@@ -473,7 +487,7 @@ salesRoutes.get('/c/:company/sales-orders', async (c) => {
   const a = await requireErp(c, 'sales.view');
   const db = c.env.DB;
   const { limit, offset } = paging(c);
-  const where = ['o.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const qp = (k: string) => c.req.query(k)?.trim();
   const status = qp('status');
@@ -513,7 +527,7 @@ salesRoutes.get('/c/:company/sales-orders', async (c) => {
   const sorts: Record<string, string> = { newest: 'o.created_at DESC', number: 'o.number COLLATE NOCASE', customer: 'o.customer_name COLLATE NOCASE', due: "COALESCE(o.promised_date, o.requested_date, '9999')", total: 'o.total_cents DESC' };
   const order = sorts[qp('sort') ?? ''] ?? sorts.newest;
   const csv = wantsCsv(c);
-  const rows = await db.prepare(`${SO_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${order}, o.rowid DESC LIMIT ? OFFSET ?`).bind(...args, csv ? 20000 : limit, csv ? 0 : offset).all<any>();
+  const rows = await db.prepare(`${SO_SELECT} WHERE o.company_id = ?${andAll(where)} ORDER BY ${order}, o.rowid DESC LIMIT ? OFFSET ?`).bind(...args, csv ? 20000 : limit, csv ? 0 : offset).all<any>();
   const list = rows.results.map(soDTO);
   if (csv) {
     return csvResponse('sales-orders', [
@@ -521,7 +535,7 @@ salesRoutes.get('/c/:company/sales-orders', async (c) => {
       ...list.map((o) => [o.number, o.customerName, o.contactName, o.statusLabel, o.orderDate, o.requestedDate ?? '', o.promisedDate ?? '', o.customerPo, o.currency, dollars(o.subtotalCents), dollars(o.taxCents), dollars(o.totalCents), o.late ? 'yes' : '']),
     ]);
   }
-  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_sales_orders o WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>();
+  const total = await db.prepare(`SELECT COUNT(*) AS n FROM erp_sales_orders o WHERE o.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>();
   return c.json({ orders: list, total: total?.n ?? 0, limit, offset, statuses: Object.entries(SO_STATUS).map(([value, l]) => ({ value, label: l })), can: { edit: can(a, 'sales.edit'), confirm: can(a, 'sales.confirm') } });
 });
 

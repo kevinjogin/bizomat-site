@@ -161,7 +161,7 @@ export function FormView(props: BoardViewProps) {
     <div className={`form-view${builder ? '' : ' public'}`}>
       {builder ? (
         <aside className="card form-builder" aria-label="Form builder">
-          <h3 style={{ marginBottom: 10 }}>Form settings</h3>
+          <h3 style={{ marginBottom: 'var(--ui-s10, 10px)' }}>Form settings</h3>
           <Field label="Title" htmlFor="form-title">
             <input id="form-title" className="input sm" defaultValue={title} maxLength={200} onBlur={(e) => e.target.value !== title && updateViewSettings({ formTitle: e.target.value })} />
           </Field>
@@ -174,7 +174,7 @@ export function FormView(props: BoardViewProps) {
               {bundle.groups.map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}
             </select>
           </Field>
-          <div className="label" style={{ marginBottom: 6 }}>Questions</div>
+          <div className="label" style={{ marginBottom: 'var(--ui-s6, 6px)' }}>Questions</div>
           <div className="field-list">
             {eligible.map((c) => {
               const on = (view.settings.formColumns ?? []).includes(c.id);
@@ -191,7 +191,7 @@ export function FormView(props: BoardViewProps) {
               );
             })}
           </div>
-          <p className="muted small" style={{ marginTop: 10 }}>Submissions create items on this board. Anyone with edit access to the board can submit.</p>
+          <p className="muted small" style={{ marginTop: 'var(--ui-s10, 10px)' }}>Submissions create items on this board. Anyone with edit access to the board can submit.</p>
         </aside>
       ) : null}
       <div className="card form-card">
@@ -203,7 +203,7 @@ export function FormView(props: BoardViewProps) {
           </div>
         ) : (
           <form onSubmit={submit} noValidate>
-            <h2 style={{ marginBottom: 4 }}>{title}</h2>
+            <h2 style={{ marginBottom: 'var(--ui-s4, 4px)' }}>{title}</h2>
             {description ? <p className="muted" style={{ whiteSpace: 'pre-wrap' }}>{description}</p> : null}
             <hr />
             <Field label="Name *" htmlFor="f-name">
@@ -215,7 +215,7 @@ export function FormView(props: BoardViewProps) {
               </Field>
             ))}
             {fields.length === 0 && builder ? <p className="muted small">Choose questions in the form settings.</p> : null}
-            {error ? <div className="error-box" role="alert" style={{ marginBottom: 12 }}>{error}</div> : null}
+            {error ? <div className="error-box" role="alert" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>{error}</div> : null}
             {canSubmit ? (
               <button className="btn primary lg" disabled={busy}>{busy ? 'Submitting…' : 'Submit'}</button>
             ) : (

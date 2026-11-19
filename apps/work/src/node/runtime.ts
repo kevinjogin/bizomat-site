@@ -31,6 +31,8 @@ import { CACHE_NAMESPACE, dataLayout, FILES_BUCKET, type DataLayout } from './st
 import { acquireServerLock } from './store/server-lock.ts';
 import { applyMigrations, migrationStatus, readMigrationsDir, type Migration } from './store/migrations.ts';
 import { integrityProblems, openDatabase, type DatabaseSync } from './store/sqlite.ts';
+import { setStrongHasher } from '../worker/auth/password.ts';
+import { scryptHasher } from './password.ts';
 
 declare const __WORK_MIGRATIONS__: Migration[] | undefined;
 
@@ -91,6 +93,8 @@ export function settingsKey(root: string): string {
 
 export function createRuntime(config: NodeConfig, options: RuntimeOptions = {}): Runtime {
   const log = options.log ?? silentLogger;
+  // Passwords on the Node server: scrypt (audit S7). WORK_SCRYPT_LOG_N lowers the cost for tests only.
+  setStrongHasher(scryptHasher(Number(process.env.WORK_SCRYPT_LOG_N) || 15));
   const layout = dataLayout(config.dataDir);
   mkdirSync(layout.root, { recursive: true, mode: 0o700 });
   const db = openDatabase(layout.db);
@@ -288,7 +292,7 @@ export async function startServer(config: NodeConfig, options: ServerOptions = {
           sockets.add(ws);
           ws.on('pong', () => alive.add(ws));
           ws.on('close', () => sockets.delete(ws));
-          runtime.hub.attach(ticket.room, ws);
+          runtime.hub.attach(ticket.room, ws, ticket.userId);
         });
         return;
       }

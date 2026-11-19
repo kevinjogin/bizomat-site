@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { errorMessage, patch, upload } from '../../lib/api';
-import { useUser } from '../../lib/session';
+import { useSession, useUser } from '../../lib/session';
+import { applyUi, type Density } from '../../lib/ui';
 import { applyTheme, storedTheme, type ThemePref } from '../../lib/hooks';
 import { Avatar, Field } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
@@ -36,6 +37,10 @@ export function ProfileSettings() {
   const [locale, setLocale] = useState(user.locale);
   // The theme is kept on this computer, not on the account (src/client/lib/hooks.ts).
   const [theme, setTheme] = useState<ThemePref>(storedTheme());
+  // Density is kept on the account (owner, 19 Nov 2026), so it follows the person; it acts only in the new UI.
+  const { session } = useSession();
+  const newUi = !!session?.ui?.newUi || document.documentElement.dataset.ui === 'new';
+  const [density, setDensity] = useState<Density>(session?.ui?.density ?? 'comfortable');
   const [busy, setBusy] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
   const zones = timeZones();
@@ -44,8 +49,9 @@ export function ProfileSettings() {
     e.preventDefault();
     setBusy(true);
     try {
-      await patch('/me', { name: name.trim(), timezone, locale });
+      await patch('/me', { name: name.trim(), timezone, locale, ...(newUi ? { preferences: { density } } : {}) });
       applyTheme(theme);
+      if (newUi) applyUi({ newUi: !!session?.ui?.newUi, density });
       await qc.invalidateQueries({ queryKey: ['me'] });
       toast('Profile saved');
     } catch (err) {
@@ -74,10 +80,10 @@ export function ProfileSettings() {
 
   return (
     <form className="card card-pad" onSubmit={save}>
-      <h2 style={{ marginBottom: 16 }}>Profile</h2>
-      <div className="row" style={{ marginBottom: 20, gap: 16 }}>
+      <h2 style={{ marginBottom: 'var(--ui-s16, 16px)' }}>Profile</h2>
+      <div className="row" style={{ marginBottom: 'var(--ui-s20, 20px)', gap: 'var(--ui-s16, 16px)' }}>
         <Avatar name={user.name} id={user.id} url={user.avatarUrl} size="lg" />
-        <div className="col" style={{ gap: 4 }}>
+        <div className="col" style={{ gap: 'var(--ui-s4, 4px)' }}>
           <button type="button" className="btn sm" onClick={() => fileRef.current?.click()}>
             <Icon name="upload" size={14} /> Upload photo
           </button>
@@ -109,6 +115,14 @@ export function ProfileSettings() {
           <option value="dark">Dark</option>
         </select>
       </Field>
+      {newUi ? (
+        <Field label="Density" htmlFor="p-density" hint="Compact fits more on each screen with less space around items. Kept on your account, so it follows you to every computer.">
+          <select id="p-density" className="select" value={density} onChange={(e) => setDensity(e.target.value as Density)}>
+            <option value="comfortable">Comfortable</option>
+            <option value="compact">Compact</option>
+          </select>
+        </Field>
+      ) : null}
       <button className="btn primary" disabled={busy || !name.trim()}>{busy ? 'Saving…' : 'Save changes'}</button>
     </form>
   );

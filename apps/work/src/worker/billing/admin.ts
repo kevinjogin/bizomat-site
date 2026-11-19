@@ -7,7 +7,7 @@ import { z } from 'zod';
 import type { AppEnv, Env } from '../env';
 import { body, clientIp, HttpError, newId, notFound, now } from '../lib/util';
 import { auditStmt } from '../services/audit';
-import { billingConfig, type BillingOn } from './config';
+import { billingConfig, billingLocked, FREE_MESSAGE, type BillingOn } from './config';
 import { audience, enforcement, getSetting, SEAT_STATUSES, setSettingStmt, verifiedPrice } from './store';
 import { syncSeats } from './seats';
 import { stripeMessage } from './stripe';
@@ -56,6 +56,8 @@ adminBillingRoutes.get('/overview', async (c) => {
       ? { enabled: true, environment: cfg.environment, keyKind: cfg.keyKind, webhookSecrets: cfg.webhookSecrets.length, proration: cfg.proration, automaticTax: cfg.automaticTax, graceDays: cfg.graceDays, annualOffered: !!cfg.prices.year }
       : { enabled: false, environment: cfg.environment, reason: cfg.reason },
     settings: { audience: await audience(db), enforcement: await enforcement(db) },
+    // Free mode (BIZOMAT_BILLING_LOCK): the switches below are stored but have no effect, and cannot be turned on.
+    locked: billingLocked(c.env),
     prices,
     handledEvents: HANDLED_EVENTS,
     subscriptions: subs.results,
@@ -71,6 +73,10 @@ adminBillingRoutes.get('/overview', async (c) => {
 adminBillingRoutes.put('/settings', async (c) => {
   founderOnly(c);
   const input = await body(c, z.object({ audience: z.enum(['off', 'admins', 'everyone']).optional(), enforcement: z.enum(['off', 'shadow', 'on']).optional() }));
+  // Free mode: subscriptions cannot be opened and enforcement cannot be turned on; switching either off is allowed.
+  if (billingLocked(c.env) && ((input.audience && input.audience !== 'off') || (input.enforcement && input.enforcement !== 'off'))) {
+    throw new HttpError(403, `${FREE_MESSAGE} The lock (BIZOMAT_BILLING_LOCK) is set on the server, so subscriptions and enforcement stay off.`, { code: 'BILLING_LOCKED' });
+  }
   const db = c.env.DB;
   const me = c.get('user').id;
   const stmts = [];
@@ -108,7 +114,7 @@ adminBillingRoutes.post('/grants/:id/revoke', async (c) => {
   if (!g) throw notFound('Grant');
   const me = c.get('user').id;
   await db.batch([
-    db.prepare('UPDATE billing_grants SET revoked_at = ?, revoked_by = ? WHERE id = ? AND revoked_at IS NULL').bind(now(), me, g.id),
+    db.prepare('UPDATE billing_grants SET revoked_at = ?, revoked_by = ? WHERE company_id = ? AND id = ? AND revoked_at IS NULL').bind(now(), me, g.company_id, g.id),
     auditStmt(db, { actorId: me, action: 'billing.grant_revoked', targetType: 'company', targetId: g.company_id, ip: clientIp(c) }),
   ]);
   return c.json({ ok: true });

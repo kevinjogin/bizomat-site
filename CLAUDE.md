@@ -95,6 +95,18 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   surveillance and the compliance register are planned. Hours worked by site and month (reasoned, append-only history)
   and LTIFR/TRIFR, which show "Cannot be calculated" when hours are missing, are live since 15 Nov 2026
   (kevinjogin/bizomat-site#77, migration 0028, deploy run 40).
+  **Free mode (owner, 19 Nov 2026, Stage 1): BIZOMAT is free for every customer**, and it supersedes the selling
+  decisions in the next paragraph. Billing is locked on the server (`BIZOMAT_BILLING_LOCK`; production sets
+  `WORK_BIZOMAT_BILLING_LOCK = "true"` and the entrypoint locks it by default): nobody can subscribe or be refused for
+  not paying, and the console cannot open subscriptions or turn enforcement on. `/pricing/` answers 301 to `/systems/`
+  and no page shows a price. Stripe stays intact and untouched (code, product, prices, tables, webhook still recording
+  events); on 19 Nov 2026 Stripe held no customers, subscriptions or charges. Never unlock billing, show a price or
+  add an upgrade prompt without the owner's approval (`docs/billing/README.md`, "Free mode"; `tests/pricing.test.ts`).
+  **Every price is withdrawn for now** (owner, 19 Nov 2026: "remove all pricings for now"), engineering services
+  included: the Engineering Problem Assessment shows "Fee on request", Factory Fix and the packages "Quoted to scope",
+  their structured data names no price, the marketing files that showed the fee answer 301 to `/assessment/`, and the
+  website assistant never quotes an amount. The figures stay as unpublished records in `src/config/assessment.ts` and
+  `src/data/services.ts`; `tests/pricing.test.ts` fails on any amount in the website's pages, components or data.
   **Billing** (owner's brief of 15 Nov 2026; `docs/billing/README.md`; migration 0027, kevinjogin/bizomat-site#77):
   one Stripe customer and subscription per registered company, charged per active member, monthly, AUD; prices only
   from Stripe Price ids in `WORK_STRIPE_*`; embedded Checkout on the ERP's billing page; signed idempotent webhook; seat
@@ -114,6 +126,65 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   console. Never create or change Stripe products or prices without the owner's approval; never charge a real card in
   testing without it; never call BIZOMAT's invoices tax invoices or its billing tax compliant. The example company,
   own companies, CAD Automation and the public Resources are never billed.
+  **Admin Control Centre** (Stage 1, R2, 19 Nov 2026; `docs/platform/control-centre.md`; migration 0029): feature flags
+  at `/erp/admin/controls` (`apps/work/src/worker/platform/flags.ts` is the one registry; every new capability ships
+  off and is enforced on the server; scopes company > rollout stage > country > everyone; append-only history and
+  audit), the kill switch, rollout stages, and two-factor sign-in for platform admins at `/erp/admin/security` (TOTP,
+  recovery codes; required for the Control Centre, and for the whole console once an admin has enrolled; dangerous
+  changes need the password and a code within 10 minutes). Never switch a flag on, or add a capability that is not
+  behind one, without the owner's approval.
+  **One company identity** (Stage 1, R3, 19 Nov 2026; `docs/platform/company-identity.md`; migration 0030): the table
+  `companies` has one row for every registered, personal and example company, with the id it already had; the source
+  tables (`co_companies`, `sys_companies`, `sys_demo`) are unchanged and the app keeps the registry in step
+  (`apps/work/src/worker/company/identity.ts`; every write, plus a repair in the 15-minute run). Registration number and
+  status live there for every country (unique per country, type and number); nothing is `verified` until R6's service
+  compares a register's answer with the company's name. A migration whose first line is `-- bizomat:foreign-keys-off`
+  runs with foreign keys off and commits only when `PRAGMA foreign_key_check` is clean (on D1: empty databases only).
+  **Company context** (Stage 1, R4, 19 Nov 2026; `docs/platform/company-context.md`; migration 0031): the company of a
+  request is worked out from its address on the server (`apps/work/src/worker/platform/context.ts`); API tokens are
+  limited to one company (optionally some applications, or reading), expire in 90 days by default and end at a
+  password change or security reset; the module switches act for every module; realtime re-checks access at every
+  event; an integrity check in the Control Centre; and `test-node/company-queries.test.ts` fails on any new SQL
+  statement on a company table without `company_id` (the older ones were all scoped on 19 Nov 2026; the cross-company
+  ones are listed with their reasons).
+  **Company roles** (Stage 1, R5, 19 Nov 2026; `docs/platform/roles.md`; migration 0032): owner, admin, manager,
+  employee (formerly member) and read_only, each a preset of tool roles that can be changed tool by tool; only the owner
+  makes administrators of the company or a tool, and nobody but the owner changes their own role; a disabled owner's
+  companies pass to their longest-serving active administrator; pending invitations are listed only to proven
+  addresses; support access is time-limited (72 hours at most), needs a reason and a re-authentication, never signs in
+  as anyone, and shows to the company's owner and administrators, who can end it.
+  **Registration and verification** (Stage 1, R6, 19 Nov 2026; `docs/platform/verification.md`; migration 0033): every
+  part is behind a flag that ships off (`registry_verification_enabled`, `scheduled_reverification`,
+  `verification_enforcement`, `international_registration`, `join_requests`). The nine statuses live in the company
+  registry and change only through the service (ABN Lookup, Companies House) or a platform admin's decision with a
+  reason; a register that cannot be reached is never a failure; similar names go to manual review; evidence is PDF or
+  image only, and nobody can open or accept a document before ClamAV has scanned it clean (`company/scan.ts`, migration
+  0035; flag `evidence_scanning`, off): the scanner runs on CAD Automation's 2 GB Machine (`opensketch/evidencescan.py`,
+  owner's choice, 19 Nov 2026: no Machine added) and fetches documents with CAD's BIZOMAT client credentials.
+  Registration outside Australia offers only the countries where its flag is on. Never call a company verified unless
+  its status says so.
+  **Existing users, exports and deletion** (Stage 1, R7, 19 Nov 2026; `docs/platform/compliance.md`; migration 0034):
+  the classification report, the individual accounts policy (acts only while `company_registration_required` is on),
+  notices only from a list a platform admin approved, deadlines that start at a recorded delivery, suspension that
+  leaves registration, invitations, support and export open, personal and company exports (ZIP, 7-day link, audited),
+  and deletion only after a recorded legal review, a final warning and a reviewed batch, never from a public address.
+  Self-service password reset is behind `self_service_password_reset` (off). The audit log is append only.
+  **Company members, roles and ownership transfer** (owner's brief of 19 Nov 2026; `docs/platform/members.md`; migration
+  0036; flag `company_members_v2`, off): one permission service (`company/members-access.ts`) and its gate
+  (`members-gate.ts`) for membership, suspension, module access, all/team/own scope and sensitive fields, applied
+  before each module's own checks (both must pass; never wider); the Members page (Members, Invitations, Roles & Access,
+  Activity); invitations with modules, scope and a message (7 days); ownership transfer the new owner accepts, and a
+  platform admin's recovery transfer with reason and evidence. Removal revokes the person's API tokens for that company
+  and clears their ERP and Maintenance roles, flag or not. Never switch the flag on without the owner's approval.
+  **New UI** (owner's UI brief and decisions of 19 Nov 2026; `docs/ui/README.md`; flag `new_ui_enabled`, off): one
+  design system for the website and BIZOMAT ERP: tokens in `shared/brand/ui-tokens.css` (4 px spacing grid, radius,
+  shadows, motion, type scale, buttons 32, 40 and 48 px; copied to the website and the ERP only, never to CAD), the
+  components in `src/styles/ui-new.css` and `apps/work/src/client/styles/ui-new.css`, generated overrides for every
+  existing stylesheet (`scripts/ui/gen-overrides.mjs`) and inline ERP spacing (`scripts/ui/inline-styles.mjs`), both
+  checked in CI (`tests/ui-tokens.test.ts`); every rule waits for `html[data-ui="new"]`. The ERP learns the flag from
+  `/api/auth/me`; the website's server asks `/tasks/api/ui/public` every minute (`WEB_UPSTREAM_WORK`) and marks pages
+  before compressing them. Comfortable or Compact density is saved per account; the UI kit is `/erp/admin/ui-kit`.
+  Illustrations are never converted. Never switch the flag on without the owner's approval.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is

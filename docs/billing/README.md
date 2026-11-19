@@ -4,6 +4,33 @@ The owner's brief of 15 Nov 2026 replaced the four-plan model in `docs/billing/P
 describes what is built, the live and sandbox configuration in Stripe, the owner's steps to go live, and what still
 needs a decision. `PLAN.md` stays as the discovery record; where the two differ, this page is the current design.
 
+## Free mode (Stage 1, owner 19 Nov 2026): BIZOMAT is free for every customer
+
+This supersedes the selling plans below; the code, the Stripe product and prices, the tables, the webhook and their
+tests stay as they are, locked.
+
+- **The lock.** `BIZOMAT_BILLING_LOCK = "true"` in the work app (`apps/work/src/worker/billing/config.ts`,
+  `billingLocked`). Production sets `WORK_BIZOMAT_BILLING_LOCK = "true"` in `fly.website.toml`, and the entrypoint
+  maps it with a default of `"true"`, so a configuration that loses the line stays locked. Only
+  `WORK_BIZOMAT_BILLING_LOCK = "false"`, with the owner's approval, would unlock it; an app-wide `BIZOMAT_BILLING_LOCK`
+  is ignored. Staging has the same default.
+- **While locked, on the server, for everyone (platform admins included):**
+  - checkout, payment method, interval changes, estimates, seat sync and resume answer 403 `BILLING_LOCKED`, and
+    nothing is sent to Stripe;
+  - cancelling a subscription made before free mode stays possible, because it only stops charges;
+  - the billing page and `/api/billing/config` say BIZOMAT is free, with no price and no publishable key;
+  - the entitlement gate refuses nothing, whatever `enforcement` says, and `companyEntitled` answers `free`;
+  - seat changes after membership changes send nothing to Stripe;
+  - the console shows the lock and refuses to open subscriptions (`audience`) or turn `enforcement` on; switching
+    either off is allowed.
+- **Stays active:** the webhook verifies and records signed events, as before.
+- **Website:** `/pricing/` is withdrawn (301 to `/systems/`), the footer link is gone, and the Systems pages say every
+  system is free. `src/config/pricing.ts` stays as the record of the live price, and `tests/pricing.test.ts` checks
+  that production still names it and that no page shows it.
+- **Stripe, read 19 Nov 2026 (read only):** 0 customers, 0 subscriptions, 0 subscription schedules, 0 invoices and
+  0 charges, so nothing needed pausing or cancelling. The live webhook endpoint stays enabled.
+- **Not changed:** no Stripe product, price, webhook or key was created, changed or removed.
+
 **Status (15 Nov 2026):**
 - Built and tested; kevinjogin/bizomat-site#77 and #78, **deployed** (deploy run 40, d5ae6ca). Production billing is
   **off**: the run's summary says `WORK_STRIPE_SECRET_KEY`, `WORK_STRIPE_PUBLISHABLE_KEY` and

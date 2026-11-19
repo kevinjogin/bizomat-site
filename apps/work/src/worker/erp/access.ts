@@ -45,6 +45,7 @@
 import type { Context } from 'hono';
 import type { AppEnv } from '../env';
 import { HttpError, notFound } from '../lib/util';
+import type { CompanyRole } from '../company/access';
 
 export const ERP_ROLES = [
   'erp_admin',
@@ -166,7 +167,7 @@ export interface ErpAccess {
   companyId: string;
   kind: CompanyKind;
   companyName: string;
-  companyRole: 'owner' | 'admin' | 'member';
+  companyRole: CompanyRole;
   userId: string;
   userName: string;
   roles: ErpRole[];
@@ -244,7 +245,7 @@ export function assertCan(a: ErpAccess, cap: Capability) {
 }
 
 /** The roles a member holds: their own rows, else viewer; owners and administrators are always ERP administrators. */
-export function effectiveRoles(companyRole: 'owner' | 'admin' | 'member', chosen: string[]): ErpRole[] {
+export function effectiveRoles(companyRole: CompanyRole, chosen: string[]): ErpRole[] {
   if (companyRole === 'owner' || companyRole === 'admin') return ['erp_admin'];
   const valid = chosen.filter((r): r is ErpRole => (ERP_ROLES as readonly string[]).includes(r));
   return valid.length ? valid : ['viewer'];
@@ -265,7 +266,7 @@ export async function loadErpAccess(db: D1Database, companyId: string, user: { i
         WHERE co.id = ? AND co.deleted_at IS NULL`,
     )
     .bind(user.id, companyId)
-    .first<{ id: string; name: string; suspended_at: number | null; role: 'owner' | 'admin' | 'member'; erp_roles: string | null; people: number }>();
+    .first<{ id: string; name: string; suspended_at: number | null; role: CompanyRole; erp_roles: string | null; people: number }>();
   if (reg) {
     if (reg.suspended_at) throw new HttpError(423, 'This company account is suspended. Contact BIZOMAT support.');
     return {
@@ -300,7 +301,7 @@ export interface Person {
   id: string;
   name: string;
   email: string;
-  companyRole: 'owner' | 'admin' | 'member';
+  companyRole: CompanyRole;
   roles: ErpRole[];
   rolesAreDefault: boolean;
 }
@@ -322,10 +323,10 @@ export async function companyPeople(db: D1Database, a: Pick<ErpAccess, 'companyI
         WHERE m.company_id = ? AND u.disabled_at IS NULL ORDER BY u.name COLLATE NOCASE`,
     )
     .bind(a.companyId)
-    .all<{ id: string; name: string; email: string; company_role: 'owner' | 'admin' | 'member'; erp_roles: string | null }>();
+    .all<{ id: string; name: string; email: string; company_role: CompanyRole; erp_roles: string | null }>();
   return rows.results.map((r) => {
     const chosen = (r.erp_roles ?? '').split(',').filter(Boolean);
-    return { id: r.id, name: r.name, email: r.email, companyRole: r.company_role, roles: effectiveRoles(r.company_role, chosen), rolesAreDefault: r.company_role === 'member' ? !chosen.length : true };
+    return { id: r.id, name: r.name, email: r.email, companyRole: r.company_role, roles: effectiveRoles(r.company_role, chosen), rolesAreDefault: r.company_role === 'owner' || r.company_role === 'admin' ? true : !chosen.length };
   });
 }
 

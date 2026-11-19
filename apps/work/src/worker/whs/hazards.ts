@@ -8,7 +8,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now } from '../lib/util';
 import { assertPerson, assertWhs, hazardScope, requireWhs, type WhsAccess } from './access';
 import { actionsOf, alertAssigned, newActionStmts, zActionInput } from './actions';
 import {
@@ -135,7 +135,7 @@ hazardRoutes.get('/c/:company/hazards', async (c) => {
   const db = c.env.DB;
   const today = todayFrom(c.req.query('today'));
   const scope = hazardScope(a, 'h');
-  const where = ['h.company_id = ?', scope.sql];
+  const where: string[] = [scope.sql];
   const args: unknown[] = [a.companyId, ...scope.args];
   const add = (sql: string, ...xs: unknown[]) => {
     where.push(sql);
@@ -155,8 +155,8 @@ hazardRoutes.get('/c/:company/hazards', async (c) => {
   const limit = Math.min(Math.max(Number(c.req.query('limit')) || 100, 1), 500);
   const offset = Math.max(Number(c.req.query('offset')) || 0, 0);
   const [rows, total] = await db.batch([
-    db.prepare(`${HAZARD_SELECT} WHERE ${where.join(' AND ')} ORDER BY CASE WHEN h.status IN ('closed','cancelled') THEN 1 ELSE 0 END, COALESCE(h.risk_rank, 0) DESC, h.created_at DESC LIMIT ? OFFSET ?`).bind(...args, limit, offset),
-    db.prepare(`SELECT COUNT(*) AS n FROM whs_hazards h WHERE ${where.join(' AND ')}`).bind(...args),
+    db.prepare(`${HAZARD_SELECT} WHERE h.company_id = ?${andAll(where)} ORDER BY CASE WHEN h.status IN ('closed','cancelled') THEN 1 ELSE 0 END, COALESCE(h.risk_rank, 0) DESC, h.created_at DESC LIMIT ? OFFSET ?`).bind(...args, limit, offset),
+    db.prepare(`SELECT COUNT(*) AS n FROM whs_hazards h WHERE h.company_id = ?${andAll(where)}`).bind(...args),
   ]);
   const list = [];
   for (const h of rows.results as any[]) list.push(hazardDTO(h, await matrixById(db, a.companyId, h.matrix_id), a, today));
@@ -206,7 +206,7 @@ hazardRoutes.get('/c/:company/hazards/:id', async (c) => {
     hazard: hazardDTO(h, m, a, today),
     matrix: full ? (m ?? (await currentMatrix(db, a.companyId, a.userId)).matrix) : null,
     actions,
-    links: full ? await linksOf(db, a.companyId, 'hazard', h.id) : [],
+    links: full ? await linksOf(db, a, 'hazard', h.id) : [],
     files: await filesOf(db, a.companyId, 'hazard', h.id),
     comments: full ? await commentsOf(db, a.companyId, 'hazard', h.id) : [],
     history: full ? await historyOf(db, a.companyId, 'hazard', h.id) : [],
@@ -415,5 +415,5 @@ hazardRoutes.post('/c/:company/links', async (c) => {
       eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'link.added', entityType: input.fromType, entityId: input.fromId, summary: `Linked to a ${input.toType.replace('_', ' ')}`, after: { type: input.toType, id: input.toId }, at: t }),
     ]);
   }
-  return c.json({ links: await linksOf(db, a.companyId, input.fromType, input.fromId) });
+  return c.json({ links: await linksOf(db, a, input.fromType, input.fromId) });
 });

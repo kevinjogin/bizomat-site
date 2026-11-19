@@ -1,7 +1,7 @@
 import type { Context, MiddlewareHandler } from 'hono';
 import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
-import type { AppEnv, AuthUser, Env, SessionInfo } from '../env';
-import { HttpError, clientIp, newId, now, randomToken, sha256Hex, timingSafeEqual } from '../lib/util';
+import type { AppEnv, AppVariables, AuthUser, Env, SessionInfo } from '../env';
+import { HttpError, clientIp, newId, now, parseJson, randomToken, sha256Hex, timingSafeEqual } from '../lib/util';
 import { dailyActivityStmt, eventStmt } from '../services/analytics';
 import { parseUserAgent } from '../../shared/ua';
 
@@ -70,6 +70,7 @@ interface Resolved {
   user: AuthUser;
   session: SessionInfo | null;
   kind: 'session' | 'token';
+  tokenScope?: AppVariables['tokenScope'];
 }
 
 export async function resolveAuth(c: Context<AppEnv>): Promise<Resolved | null> {
@@ -83,14 +84,16 @@ export async function resolveAuth(c: Context<AppEnv>): Promise<Resolved | null> 
     if (!raw.startsWith('wos_')) return null;
     const row = await db
       .prepare(
-        `SELECT t.id AS token_id, u.id, u.email, u.name, u.password_reset_required FROM api_tokens t JOIN users u ON u.id = t.user_id
+        `SELECT t.id AS token_id, t.company_id, t.apps_json, t.read_only, u.id, u.email, u.name, u.password_reset_required FROM api_tokens t JOIN users u ON u.id = t.user_id
          WHERE t.token_hash = ? AND t.revoked_at IS NULL AND (t.expires_at IS NULL OR t.expires_at > ?) AND u.disabled_at IS NULL`,
       )
       .bind(await sha256Hex(raw), t)
-      .first<{ token_id: string; id: string; email: string; name: string; password_reset_required: number }>();
+      .first<{ token_id: string; company_id: string | null; apps_json: string | null; read_only: number; id: string; email: string; name: string; password_reset_required: number }>();
     if (!row) return null;
     c.executionCtx?.waitUntil?.(db.prepare('UPDATE api_tokens SET last_used_at = ? WHERE id = ?').bind(t, row.token_id).run());
-    return { user: { id: row.id, email: row.email, name: row.name, passwordResetRequired: !!row.password_reset_required }, session: null, kind: 'token' };
+    const apps = row.apps_json ? (parseJson<string[]>(row.apps_json, []) as NonNullable<AppVariables['tokenScope']>['apps']) : null;
+    const tokenScope = row.company_id || row.read_only || apps ? { companyId: row.company_id, apps, readOnly: !!row.read_only } : null;
+    return { user: { id: row.id, email: row.email, name: row.name, passwordResetRequired: !!row.password_reset_required }, session: null, kind: 'token', tokenScope };
   }
 
   // 2. Session cookie.
@@ -167,5 +170,6 @@ export const requireAuth: MiddlewareHandler<AppEnv> = async (c, next) => {
   c.set('user', auth.user);
   c.set('session', auth.session);
   c.set('authKind', auth.kind);
+  c.set('tokenScope', auth.tokenScope ?? null);
   await next();
 };

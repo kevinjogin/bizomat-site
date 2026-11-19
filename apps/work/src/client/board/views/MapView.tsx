@@ -38,7 +38,7 @@ export function MapView(props: BoardViewProps) {
     <div className="map-view">
       <div>
         {locCols.length > 1 ? (
-          <div className="row" style={{ marginBottom: 8 }}>
+          <div className="row" style={{ marginBottom: 'var(--ui-s8, 8px)' }}>
             <label className="label" htmlFor="map-col">Location column</label>
             <select id="map-col" className="select sm" style={{ width: 'auto' }} value={col.id} onChange={(e) => updateViewSettings({ mapColumnId: e.target.value })}>
               {locCols.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
@@ -87,7 +87,7 @@ export function MapView(props: BoardViewProps) {
             );
           })() : null}
         </svg>
-        <p className="muted small" style={{ marginTop: 6 }}>Schematic world projection (no external map tiles are loaded). Use “Open in OpenStreetMap” for street-level detail.</p>
+        <p className="muted small" style={{ marginTop: 'var(--ui-s6, 6px)' }}>Schematic world projection (no external map tiles are loaded). Use “Open in OpenStreetMap” for street-level detail.</p>
       </div>
       <div className="card">
         <div className="card-header"><h3 className="grow">Locations</h3><span className="muted small">{withCoords.length + addressOnly.length}/{items.length}</span></div>
@@ -114,14 +114,14 @@ export function MapView(props: BoardViewProps) {
               </div>
             </div>
           ))}
-          {missing.length ? <div className="menu-label" style={{ padding: '10px 14px 4px' }}>Missing location ({missing.length})</div> : null}
+          {missing.length ? <div className="menu-label" style={{ padding: 'var(--ui-s10, 10px) var(--ui-s14, 14px) var(--ui-s4, 4px)' }}>Missing location ({missing.length})</div> : null}
           {missing.slice(0, 50).map((i) => (
             <div key={i.id} className="list-row">
               <span className="grow ellipsis">{i.name}</span>
               <button className="btn sm" onClick={() => openItem(i.id)}>{canEdit ? 'Add location' : 'Open'}</button>
             </div>
           ))}
-          {items.length === 0 ? <div className="muted small" style={{ padding: 14 }}>No items match this view.</div> : null}
+          {items.length === 0 ? <div className="muted small" style={{ padding: 'var(--ui-s14, 14px)' }}>No items match this view.</div> : null}
         </div>
       </div>
     </div>

@@ -85,6 +85,10 @@ describe('CRM invitations', () => {
     expect(preview).toMatchObject({ orgName: 'Invite Co', role: 'sales', status: 'pending', email });
     // An unregistered invitee creates an account with the invited address, then accepts.
     const invitee = await signup('New Colleague', email);
+    // The list of pending invitations shows only once the address is proven (audit L4).
+    await env.DB.prepare('UPDATE users SET email_verified_at = NULL WHERE id = ?').bind(invitee.userId).run();
+    expect((await invitee.json('GET', '/api/crm/orgs')).invitations).toEqual([]);
+    await env.DB.prepare('UPDATE users SET email_verified_at = ? WHERE id = ?').bind(Date.now(), invitee.userId).run();
     const seen = await invitee.json('GET', '/api/crm/orgs');
     expect(seen.invitations).toEqual([expect.objectContaining({ orgName: 'Invite Co', role: 'sales' })]);
     const accepted = await invitee.json('POST', `/api/crm/invitations/${token}/accept`, {});

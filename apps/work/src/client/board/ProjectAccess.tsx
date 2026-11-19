@@ -61,7 +61,7 @@ export function AccessMatrix({ bundle }: { bundle: BoardBundle }) {
     }
   };
   return (
-    <div className="col" style={{ gap: 10 }}>
+    <div className="col" style={{ gap: 'var(--ui-s10, 10px)' }}>
       <p className="muted small">
         Each person's access to this project. "From organisation role" follows their role and the project's visibility ({bundle.board.visibility === 'private' ? 'private: only people added here' : 'shared with the organisation'}). Ticks are the defaults for the level; click to switch one on or off for this person. Organisation owners and admins always have full access. Guests see only what is shared with them.
       </p>
@@ -157,7 +157,7 @@ export function ProjectDetails({ bundle }: { bundle: BoardBundle }) {
   };
   const orgCurrency = bundle.finance?.workspaceCurrency;
   return (
-    <div className="col" style={{ gap: 4 }}>
+    <div className="col" style={{ gap: 'var(--ui-s4, 4px)' }}>
       <Field label="Project currency" hint={orgCurrency ? `Empty: the organisation's currency (${orgCurrency}). Changing it never changes amounts already entered.` : 'The organisation has no default currency yet (Settings > Finance). Changing it never changes amounts already entered.'}>
         <select className="select" value={currency} disabled={!canManage || !canFinance} onChange={(e) => setCurrency(e.target.value)}>
           <option value="">{orgCurrency ? `Organisation currency (${orgCurrency})` : 'Not set'}</option>

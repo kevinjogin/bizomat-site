@@ -157,7 +157,7 @@ export function CalendarView(props: BoardViewProps) {
         }}
         onDoubleClick={() => canEdit && setAdding(day)}
       >
-        <div className="row" style={{ gap: 4 }}>
+        <div className="row" style={{ gap: 'var(--ui-s4, 4px)' }}>
           <span className="cal-day">{Number(day.slice(8))}</span>
           {canEdit ? (
             <button className="btn ghost icon sm cal-add" aria-label={`Add item on ${day}`} onClick={() => setAdding(day)}>
@@ -231,8 +231,8 @@ export function CalendarView(props: BoardViewProps) {
       )}
       {undated.length ? (
         <div className="cal-undated card card-pad">
-          <h3 style={{ marginBottom: 8 }}>No {col.title.toLowerCase()} ({undated.length})</h3>
-          <div className="row wrap" style={{ gap: 6 }}>
+          <h3 style={{ marginBottom: 'var(--ui-s8, 8px)' }}>No {col.title.toLowerCase()} ({undated.length})</h3>
+          <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)' }}>
             {undated.slice(0, 40).map((it) => (
               <button
                 key={it.id}
@@ -247,7 +247,7 @@ export function CalendarView(props: BoardViewProps) {
               </button>
             ))}
           </div>
-          {canEdit ? <p className="muted small" style={{ marginTop: 6 }}>Drag an item onto a day to schedule it.</p> : null}
+          {canEdit ? <p className="muted small" style={{ marginTop: 'var(--ui-s6, 6px)' }}>Drag an item onto a day to schedule it.</p> : null}
         </div>
       ) : null}
     </div>

@@ -17,6 +17,7 @@ import { audit } from '../services/audit';
 import { utcDay } from '../services/analytics';
 import { auditStmt as crmAuditStmt } from '../crm/util';
 import { auditStmt as finAuditStmt } from '../fin/util';
+import { requireReauth } from '../platform/security';
 
 const DAY = 86_400_000;
 type Range = '7d' | '30d' | '90d' | 'all';
@@ -234,6 +235,8 @@ adminCrmRoutes.post('/orgs/:id/restore', async (c) => {
 
 adminCrmRoutes.post('/orgs/:id/transfer', async (c) => {
   requireFounder(c, 'hand over ownership');
+  // Dangerous: a fresh password and code (Admin Control Centre, src/worker/platform/security.ts).
+  await requireReauth(c);
   const db = c.env.DB;
   const o = await crmOrg(db, c.req.param('id'));
   const { userId } = await body(c, z.object({ userId: z.string().max(64) }));
@@ -514,6 +517,8 @@ adminFinRoutes.post('/workspaces/:id/restore', async (c) => {
 
 adminFinRoutes.post('/workspaces/:id/transfer', async (c) => {
   requireFounder(c, 'hand over ownership');
+  // Dangerous: a fresh password and code (Admin Control Centre, src/worker/platform/security.ts).
+  await requireReauth(c);
   const db = c.env.DB;
   const o = await finOrg(db, c.req.param('id'));
   const { userId } = await body(c, z.object({ userId: z.string().max(64) }));

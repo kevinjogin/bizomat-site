@@ -104,7 +104,7 @@ export default function SettingsTab({ bundle }: ControlsProps) {
             </select>
           </Field>
         </div>
-        {canManage ? <button className="btn primary" style={{ marginTop: 10 }}>Save settings</button> : <p className="small muted">Only project managers change these.</p>}
+        {canManage ? <button className="btn primary" style={{ marginTop: 'var(--ui-s10, 10px)' }}>Save settings</button> : <p className="small muted">Only project managers change these.</p>}
       </form>
 
       <div className="pc-section">
@@ -118,23 +118,23 @@ export default function SettingsTab({ bundle }: ControlsProps) {
           <Field label="Day starts" htmlFor="cal-start"><input id="cal-start" className="input" type="time" value={cal.dayStart} disabled={ro} onChange={(e) => setCal({ ...cal, dayStart: e.target.value })} /></Field>
           <Field label="Day ends" htmlFor="cal-end"><input id="cal-end" className="input" type="time" value={cal.dayEnd} disabled={ro} onChange={(e) => setCal({ ...cal, dayEnd: e.target.value })} /></Field>
         </div>
-        <div className="row wrap" style={{ gap: 6, margin: '10px 0' }} role="group" aria-label="Working days">
+        <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)', margin: 'var(--ui-s10, 10px) 0' }} role="group" aria-label="Working days">
           {DAYS.map((d, i) => (
-            <label key={d} className="row small" style={{ gap: 4 }}>
+            <label key={d} className="row small" style={{ gap: 'var(--ui-s4, 4px)' }}>
               <input type="checkbox" disabled={ro} checked={cal.workingDays.includes(i + 1)} onChange={(e) => setCal({ ...cal, workingDays: e.target.checked ? [...cal.workingDays, i + 1].sort() : cal.workingDays.filter((x) => x !== i + 1) })} /> {d}
             </label>
           ))}
         </div>
-        <div className="small" style={{ marginBottom: 6 }}>Breaks</div>
+        <div className="small" style={{ marginBottom: 'var(--ui-s6, 6px)' }}>Breaks</div>
         {cal.breaks.map((b, i) => (
-          <div key={i} className="row" style={{ gap: 6, marginBottom: 4 }}>
+          <div key={i} className="row" style={{ gap: 'var(--ui-s6, 6px)', marginBottom: 'var(--ui-s4, 4px)' }}>
             <input className="input" type="time" aria-label="Break start" value={b.start} disabled={ro} onChange={(e) => setCal({ ...cal, breaks: cal.breaks.map((x, j) => (j === i ? { ...x, start: e.target.value } : x)) })} />
             <input className="input" type="time" aria-label="Break end" value={b.end} disabled={ro} onChange={(e) => setCal({ ...cal, breaks: cal.breaks.map((x, j) => (j === i ? { ...x, end: e.target.value } : x)) })} />
             {!ro ? <button type="button" className="btn ghost icon sm" aria-label="Remove break" onClick={() => setCal({ ...cal, breaks: cal.breaks.filter((_, j) => j !== i) })}><Icon name="x" /></button> : null}
           </div>
         ))}
         {!ro ? <button type="button" className="btn sm" onClick={() => setCal({ ...cal, breaks: [...cal.breaks, { start: '12:00', end: '13:00' }] })}><Icon name="plus" /> Add break</button> : null}
-        <div className="small" style={{ margin: '12px 0 6px' }}>Holidays, shutdowns and exceptions</div>
+        <div className="small" style={{ margin: 'var(--ui-s12, 12px) 0 var(--ui-s6, 6px)' }}>Holidays, shutdowns and exceptions</div>
         <table className="pc-table">
           <thead><tr><th>From</th><th>To</th><th>Name</th><th>Type</th><th /></tr></thead>
           <tbody>
@@ -148,7 +148,7 @@ export default function SettingsTab({ bundle }: ControlsProps) {
           </tbody>
         </table>
         {!ro ? (
-          <div className="pc-form" style={{ marginTop: 8 }}>
+          <div className="pc-form" style={{ marginTop: 'var(--ui-s8, 8px)' }}>
             <Field label="From" htmlFor="ex-start"><input id="ex-start" className="input" type="date" value={ex.start} onChange={(e) => setEx({ ...ex, start: e.target.value, end: ex.end || e.target.value })} /></Field>
             <Field label="To" htmlFor="ex-end"><input id="ex-end" className="input" type="date" value={ex.end} onChange={(e) => setEx({ ...ex, end: e.target.value })} /></Field>
             <Field label="Name" htmlFor="ex-name"><input id="ex-name" className="input" value={ex.name} placeholder="Australia Day" onChange={(e) => setEx({ ...ex, name: e.target.value })} /></Field>
@@ -164,7 +164,7 @@ export default function SettingsTab({ bundle }: ControlsProps) {
           </div>
         ) : null}
         {canManage ? (
-          <div className="row wrap" style={{ gap: 8, marginTop: 12 }}>
+          <div className="row wrap" style={{ gap: 'var(--ui-s8, 8px)', marginTop: 'var(--ui-s12, 12px)' }}>
             <select className="select" aria-label="Save for" value={scope} onChange={(e) => setScope(e.target.value as 'project' | 'organisation')}>
               <option value="project">For this project only</option>
               {calQ.data!.canSetOrganisation ? <option value="organisation">For the organisation (projects without their own)</option> : null}

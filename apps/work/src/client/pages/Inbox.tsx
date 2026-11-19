@@ -124,7 +124,7 @@ export default function Inbox({ mode }: { mode: 'inbox' | 'all' }) {
         </div>
       ) : null}
       {q.hasNextPage ? (
-        <div className="center-fill" style={{ padding: 16 }}>
+        <div className="center-fill" style={{ padding: 'var(--ui-s16, 16px)' }}>
           <button className="btn" onClick={() => q.fetchNextPage()} disabled={q.isFetchingNextPage}>
             {q.isFetchingNextPage ? 'Loading…' : 'Load older notifications'}
           </button>

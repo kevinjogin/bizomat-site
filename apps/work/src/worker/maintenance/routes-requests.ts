@@ -7,7 +7,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now } from '../lib/util';
+import { HttpError, insertCompanyRow, body, newId, notFound, now } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { deny, isManager, requestScope, requireMt, workOrderScope, type MtAccess } from './access';
 import { requestDTO, workOrderDTO } from './dto';
@@ -142,9 +142,8 @@ requestRoutes.post('/c/:company/requests', async (c) => {
   const t = now();
   const row: Record<string, unknown> = { ...cols, id, company_id: a.companyId, number, status, requested_by: a.userId, created_at: t, updated_at: t };
   row.search = reqSearch(row);
-  const keys = Object.keys(row);
   await c.env.DB.batch([
-    c.env.DB.prepare(`INSERT INTO mt_requests (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => row[k])),
+    insertCompanyRow(c.env.DB, 'mt_requests', row),
     eventStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'request.created', assetId: (cols.asset_id as string) ?? null, requestId: id, summary: `Request ${number} raised${status === 'awaiting_approval' ? ', awaiting approval' : ''}`, after: { ...cols, status }, at: t }),
   ]);
   return c.json(requestDTO(await loadRequest(c.env.DB, a, id)), 201);

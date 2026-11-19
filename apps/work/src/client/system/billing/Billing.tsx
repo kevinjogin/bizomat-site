@@ -50,7 +50,7 @@ interface Summary {
   role: 'owner' | 'admin' | 'member';
   seats: { count: number; people: { id: string; name: string; email: string; role: string }[]; pendingInvitations: number; disabledMembers: number };
   enforcement: 'off' | 'shadow' | 'on';
-  billing: { enabled: boolean; environment: 'test' | 'live' | null; reason: string | null; canSubscribe: boolean; whyNot: string | null; duplicateSubscriptions?: boolean; priceError?: string | null };
+  billing: { enabled: boolean; free?: boolean; environment: 'test' | 'live' | null; reason: string | null; canSubscribe: boolean; whyNot: string | null; duplicateSubscriptions?: boolean; priceError?: string | null };
   prices: { month: PriceView | null; year: PriceView | null };
   subscription: SubView | null;
   invoices: { id: string; number: string | null; status: string; currency: string; subtotal: number; tax: number; total: number; amount_due: number; amount_paid: number; amount_remaining: number; period_start: number | null; period_end: number | null; hosted_invoice_url: string | null; invoice_pdf: string | null; stripe_created: number }[];
@@ -71,7 +71,7 @@ interface Preview {
   lines: { description: string; amount: number; quantity: number | null; proration: boolean }[];
 }
 
-const ROLE: Record<string, string> = { owner: 'Owner', admin: 'Administrator', member: 'Member' };
+const ROLE: Record<string, string> = { owner: 'Owner', admin: 'Administrator', manager: 'Manager', employee: 'Employee', read_only: 'Read-only', member: 'Employee' };
 const day = (ms: number | null | undefined) => (ms ? new Date(ms).toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }) : '');
 export function aud(cents: number | null | undefined, currency = 'aud'): string {
   if (typeof cents !== 'number') return '';
@@ -148,6 +148,32 @@ export function BillingPage({ companyId }: { companyId: string; companyName: str
     }
   };
 
+  // Free mode (BIZOMAT_BILLING_LOCK on the server): no price, nothing to subscribe to, nothing to pay.
+  if (d.billing.free) {
+    return (
+      <div className="page crm-page billing-page">
+        <PageHeader title="Billing" subtitle={`${d.company.name}: BIZOMAT is free.`} />
+        <section className="card card-pad stack">
+          <h2 className="crm-subhead">BIZOMAT is free for every company</h2>
+          <p>Your company uses BIZOMAT ERP and every tool in it without charge. There is no subscription to start and nothing to pay.</p>
+          {d.billing.reason ? <p className="small muted">For platform administrators: {d.billing.reason}</p> : null}
+        </section>
+        {open && sub ? (
+          <section className="card card-pad stack">
+            <p className="billing-banner warning">A subscription from before BIZOMAT became free is still open in Stripe ({statusLabel(sub.status)}). Cancel it so nothing more is charged; the company keeps full use either way.</p>
+            {sub.cancelAtPeriodEnd ? (
+              <p className="small muted">Cancellation is scheduled for the end of the paid period.</p>
+            ) : (
+              <div className="row">
+                <button className="btn danger" disabled={busy} onClick={() => { if (confirm('Cancel the subscription at the end of the paid period?')) void act(() => post(`${path}/cancel`, {}), 'Cancellation scheduled'); }}>Cancel subscription</button>
+              </div>
+            )}
+          </section>
+        ) : null}
+      </div>
+    );
+  }
+
   return (
     <div className="page crm-page billing-page">
       <PageHeader
@@ -160,14 +186,14 @@ export function BillingPage({ companyId }: { companyId: string; companyName: str
       {!d.billing.enabled ? (
         <section className="card card-pad stack">
           <h2 className="crm-subhead">Subscriptions are not open yet</h2>
-          <p>Nothing is charged today: your company keeps using BIZOMAT ERP as it does now. The price per user is on the pricing page, and is shown here, with how GST applies, before anyone can subscribe.</p>
+          <p>Nothing is charged today: your company keeps using BIZOMAT ERP as it does now. The price per user, and how GST applies, would be shown here before anyone could subscribe.</p>
           <ul className="billing-notes">
             <li>One subscription per registered company, priced per active user, billed monthly in Australian dollars.</li>
             <li>Every active member counts once, the owner and administrators included. Pending invitations and disabled or removed accounts are not counted.</li>
             <li>When someone joins, the time left in the month is charged on the next invoice; when someone leaves, the unused time is credited.</li>
             <li>Owners and administrators can cancel at any time; the company keeps full use until the end of the paid month.</li>
           </ul>
-          <p className="small muted">The example company, CAD Automation and the public Resources stay free. <a href="https://bizomat.ai/pricing/">Pricing and billing</a> · <a href="https://bizomat.ai/contact/">Questions about billing</a></p>
+          <p className="small muted">The example company, CAD Automation and the public Resources stay free. <a href="https://bizomat.ai/contact/">Questions about billing</a></p>
           {d.billing.reason ? <p className="small muted">For platform administrators: {d.billing.reason}</p> : null}
         </section>
       ) : null}

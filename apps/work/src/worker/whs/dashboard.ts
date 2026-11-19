@@ -9,6 +9,7 @@ import type { WhsAccess } from './access';
 import { actionScope, hazardScope, incidentScope } from './access';
 import { INCIDENT_KINDS, SEVERITIES, currentMatrix, isoDate, levelLabel, monthsBetween, validDate } from './util';
 import { frequencyRates } from './hours';
+import { andAll } from '../lib/util';
 
 export interface DashboardFilters {
   from: string;
@@ -38,9 +39,9 @@ export async function dashboard(db: D1Database, a: WhsAccess, f: DashboardFilter
   const hs = hazardScope(a, 'h');
   const is = incidentScope(a, 'i');
   const xs = actionScope(a, 'x');
-  const hWhere = ['h.company_id = ?', hs.sql];
+  const hWhere: string[] = [hs.sql];
   const hArgs: unknown[] = [a.companyId, ...hs.args];
-  const iWhere = ['i.company_id = ?', is.sql];
+  const iWhere: string[] = [is.sql];
   const iArgs: unknown[] = [a.companyId, ...is.args];
   const add = (where: string[], args: unknown[], sql: string, v: unknown) => {
     where.push(sql);
@@ -63,7 +64,7 @@ export async function dashboard(db: D1Database, a: WhsAccess, f: DashboardFilter
                 SUM(CASE WHEN h.status NOT IN ('closed','cancelled') AND h.risk_rank >= ? THEN 1 ELSE 0 END) AS high,
                 SUM(CASE WHEN h.status = 'reported' THEN 1 ELSE 0 END) AS to_assess,
                 SUM(CASE WHEN h.created_at BETWEEN ? AND ? THEN 1 ELSE 0 END) AS reported
-           FROM whs_hazards h WHERE ${hWhere.join(' AND ')}`,
+           FROM whs_hazards h WHERE h.company_id = ?${andAll(hWhere)}`,
       )
       .bind(matrix.highFrom, fromMs, toMs, ...hArgs),
     db
@@ -78,7 +79,7 @@ export async function dashboard(db: D1Database, a: WhsAccess, f: DashboardFilter
                 SUM(CASE WHEN ${inPeriod} AND i.outcome = 'lost_time' THEN 1 ELSE 0 END) AS lti,
                 SUM(CASE WHEN ${inPeriod} AND i.outcome = 'fatality' THEN 1 ELSE 0 END) AS fatalities,
                 SUM(CASE WHEN ${inPeriod} AND i.outcome IN ('medical_treatment','restricted_duties','lost_time','hospital_inpatient','fatality') THEN 1 ELSE 0 END) AS recordable
-           FROM whs_incidents i WHERE ${iWhere.join(' AND ')}`,
+           FROM whs_incidents i WHERE i.company_id = ?${andAll(iWhere)}`,
       )
       .bind(f.from, f.to, f.from, f.to, f.from, f.to, f.from, f.to, f.from, f.to, f.from, f.to, ...iArgs),
     db
@@ -101,32 +102,32 @@ export async function dashboard(db: D1Database, a: WhsAccess, f: DashboardFilter
            FROM whs_risk_assessments r WHERE r.company_id = ? ${a.can.confidential ? '' : 'AND r.confidential = 0'} ${f.site ? 'AND r.site_id = ?' : ''}`,
       )
       .bind(...(f.site ? [f.today, a.companyId, f.site] : [f.today, a.companyId])),
-    db.prepare(`SELECT strftime('%Y-%m', h.created_at / 1000, 'unixepoch') AS m, COUNT(*) AS n FROM whs_hazards h WHERE ${hWhere.join(' AND ')} AND h.created_at BETWEEN ? AND ? GROUP BY m`).bind(...hArgs, fromMs, toMs),
+    db.prepare(`SELECT strftime('%Y-%m', h.created_at / 1000, 'unixepoch') AS m, COUNT(*) AS n FROM whs_hazards h WHERE h.company_id = ?${andAll(hWhere)} AND h.created_at BETWEEN ? AND ? GROUP BY m`).bind(...hArgs, fromMs, toMs),
     db
       .prepare(
         `SELECT substr(i.occurred_date, 1, 7) AS m, COUNT(*) AS total, SUM(CASE WHEN i.kind = 'near_miss' THEN 1 ELSE 0 END) AS near_misses, SUM(CASE WHEN i.kind IN ('injury','illness') THEN 1 ELSE 0 END) AS injuries,
                 SUM(CASE WHEN i.serious = 1 THEN 1 ELSE 0 END) AS serious, SUM(CASE WHEN i.outcome = 'lost_time' THEN 1 ELSE 0 END) AS lti,
                 SUM(CASE WHEN i.severity = 'minor' THEN 1 ELSE 0 END) AS minor, SUM(CASE WHEN i.severity = 'moderate' THEN 1 ELSE 0 END) AS moderate, SUM(CASE WHEN i.severity = 'serious' THEN 1 ELSE 0 END) AS sev_serious, SUM(CASE WHEN i.severity = 'critical' THEN 1 ELSE 0 END) AS critical
-           FROM whs_incidents i WHERE ${iWhere.join(' AND ')} AND ${inPeriod} GROUP BY m`,
+           FROM whs_incidents i WHERE i.company_id = ?${andAll(iWhere)} AND ${inPeriod} GROUP BY m`,
       )
       .bind(...iArgs, f.from, f.to),
     db.prepare(`SELECT strftime('%Y-%m', x.closed_at / 1000, 'unixepoch') AS m, COUNT(*) AS n FROM whs_actions x WHERE x.company_id = ? AND ${xs.sql} AND x.status = 'closed' AND x.closed_at BETWEEN ? AND ? GROUP BY m`).bind(a.companyId, ...xs.args, fromMs, toMs),
     db
       .prepare(
         `SELECT s.id, s.name,
-                (SELECT COUNT(*) FROM whs_hazards h WHERE ${hWhere.join(' AND ')} AND h.site_id = s.id AND h.status NOT IN ('closed','cancelled')) AS hazards,
-                (SELECT COUNT(*) FROM whs_incidents i WHERE ${iWhere.join(' AND ')} AND i.site_id = s.id AND ${inPeriod}) AS incidents,
-                (SELECT COUNT(*) FROM whs_incidents i WHERE ${iWhere.join(' AND ')} AND i.site_id = s.id AND ${inPeriod} AND i.kind = 'near_miss') AS near_misses,
-                (SELECT COUNT(*) FROM whs_incidents i WHERE ${iWhere.join(' AND ')} AND i.site_id = s.id AND ${inPeriod} AND i.outcome = 'lost_time') AS lti
+                (SELECT COUNT(*) FROM whs_hazards h WHERE h.company_id = ?${andAll(hWhere)} AND h.site_id = s.id AND h.status NOT IN ('closed','cancelled')) AS hazards,
+                (SELECT COUNT(*) FROM whs_incidents i WHERE i.company_id = ?${andAll(iWhere)} AND i.site_id = s.id AND ${inPeriod}) AS incidents,
+                (SELECT COUNT(*) FROM whs_incidents i WHERE i.company_id = ?${andAll(iWhere)} AND i.site_id = s.id AND ${inPeriod} AND i.kind = 'near_miss') AS near_misses,
+                (SELECT COUNT(*) FROM whs_incidents i WHERE i.company_id = ?${andAll(iWhere)} AND i.site_id = s.id AND ${inPeriod} AND i.outcome = 'lost_time') AS lti
            FROM mt_sites s WHERE s.company_id = ? AND s.archived_at IS NULL ORDER BY s.name`,
       )
       .bind(...hArgs, ...iArgs, f.from, f.to, ...iArgs, f.from, f.to, ...iArgs, f.from, f.to, a.companyId),
     db
       .prepare(
         `SELECT d.id, d.name,
-                (SELECT COUNT(*) FROM whs_hazards h WHERE ${hWhere.join(' AND ')} AND h.department_id = d.id AND h.status NOT IN ('closed','cancelled')) AS hazards,
-                (SELECT COUNT(*) FROM whs_incidents i WHERE ${iWhere.join(' AND ')} AND i.department_id = d.id AND ${inPeriod}) AS incidents,
-                (SELECT COUNT(*) FROM whs_incidents i WHERE ${iWhere.join(' AND ')} AND i.department_id = d.id AND ${inPeriod} AND i.outcome = 'lost_time') AS lti
+                (SELECT COUNT(*) FROM whs_hazards h WHERE h.company_id = ?${andAll(hWhere)} AND h.department_id = d.id AND h.status NOT IN ('closed','cancelled')) AS hazards,
+                (SELECT COUNT(*) FROM whs_incidents i WHERE i.company_id = ?${andAll(iWhere)} AND i.department_id = d.id AND ${inPeriod}) AS incidents,
+                (SELECT COUNT(*) FROM whs_incidents i WHERE i.company_id = ?${andAll(iWhere)} AND i.department_id = d.id AND ${inPeriod} AND i.outcome = 'lost_time') AS lti
            FROM co_departments d WHERE d.company_id = ? AND d.archived_at IS NULL ORDER BY d.name`,
       )
       .bind(...hArgs, ...iArgs, f.from, f.to, ...iArgs, f.from, f.to, a.companyId),

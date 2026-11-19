@@ -9,6 +9,9 @@ import { auditStmt } from '../services/audit';
 import { coAuditStmt } from '../company/access';
 import { backfillOwnCompanies } from './system';
 import { companiesOfUser, requestSeatSync } from '../billing/seats';
+import { requireReauth } from '../platform/security';
+import { syncCompanyStatements } from '../company/identity';
+import { handoverOnDisable } from '../company/routes';
 
 export const adminSystemRoutes = new Hono<AppEnv>();
 
@@ -137,6 +140,8 @@ adminSystemRoutes.post('/users/:id/:action{disable|enable}', async (c) => {
   const id = c.req.param('id');
   const action = c.req.param('action');
   if (id === me.id) throw new HttpError(400, 'You cannot disable your own account.');
+  // Disabling is dangerous: a fresh password and code (src/worker/platform/security.ts). Enabling restores access.
+  if (action === 'disable') await requireReauth(c);
   const u = await c.env.DB.prepare('SELECT u.id, pa.role FROM users u LEFT JOIN platform_admins pa ON pa.user_id = u.id WHERE u.id = ?').bind(id).first<{ id: string; role: string | null }>();
   if (!u) throw notFound('Account');
   if (u.role === 'founder') throw new HttpError(400, 'A founder account cannot be disabled here.');
@@ -148,9 +153,11 @@ adminSystemRoutes.post('/users/:id/:action{disable|enable}', async (c) => {
   // A disabled account is signed out everywhere at once (sessions and API tokens stop at the next request anyway).
   if (action === 'disable') stmts.push(c.env.DB.prepare("UPDATE sessions SET revoked_at = ?, ended_at = COALESCE(ended_at, ?), end_reason = COALESCE(end_reason, 'revoked') WHERE user_id = ? AND revoked_at IS NULL").bind(t, t, id));
   await c.env.DB.batch(stmts);
+  // The companies a disabled owner owned pass to their longest-serving active administrator (Stage 1, R5).
+  const handovers = action === 'disable' ? await handoverOnDisable(c.env.DB, id, me.id, t) : [];
   // A disabled account is not billed; enabled again, it is (src/worker/billing/seats.ts).
   requestSeatSync(c, await companiesOfUser(c.env.DB, id), action === 'disable' ? 'user.disabled' : 'user.enabled');
-  return c.json({ ok: true });
+  return c.json({ ok: true, handovers });
 });
 
 adminSystemRoutes.post('/companies/:id/:action{suspend|resume}', async (c) => {
@@ -159,10 +166,13 @@ adminSystemRoutes.post('/companies/:id/:action{suspend|resume}', async (c) => {
   const action = c.req.param('action');
   const co = await c.env.DB.prepare('SELECT id FROM co_companies WHERE id = ? AND deleted_at IS NULL').bind(id).first<{ id: string }>();
   if (!co) throw notFound('Registered company');
+  // Suspending is dangerous: a fresh password and code. Resuming restores access.
+  if (action === 'suspend') await requireReauth(c);
   const t = now();
   await c.env.DB.batch([
     c.env.DB.prepare('UPDATE co_companies SET suspended_at = ?, updated_at = ? WHERE id = ?').bind(action === 'suspend' ? t : null, t, id),
     coAuditStmt(c.env.DB, { companyId: id, actorId: c.get('user').id, action: action === 'suspend' ? 'company.suspended' : 'company.resumed', ip: clientIp(c) }),
+    ...syncCompanyStatements(c.env.DB, id, t),
   ]);
   return c.json({ ok: true });
 });

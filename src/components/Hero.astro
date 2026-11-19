@@ -48,4 +48,8 @@ const { eyebrow, title, lead, size = 'page', class: className } = Astro.props;
     .hero__visual { justify-self: start; max-width: min(540px, 100%); }
   }
 
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .hero .eyebrow { margin: 0 0 var(--bz-space-4); }
+  :global(html[data-ui="new"]) .hero__actions { gap: var(--bz-space-3); }
+  /* ui-new:generated end */
 </style>

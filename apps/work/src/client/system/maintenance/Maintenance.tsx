@@ -207,7 +207,7 @@ function Overview({ companyId, me }: { companyId: string; me: MtMe }) {
 
 interface RolesData {
   kind: 'registered' | 'own' | 'demo';
-  people: { id: string; name: string; email: string; companyRole: 'owner' | 'admin' | 'member'; role: MtRole; roleIsDefault: boolean }[];
+  people: { id: string; name: string; email: string; companyRole: 'owner' | 'admin' | 'manager' | 'employee' | 'read_only'; role: MtRole; roleIsDefault: boolean }[];
 }
 
 function Settings({ companyId, me }: { companyId: string; me: MtMe }) {
@@ -263,7 +263,7 @@ function Settings({ companyId, me }: { companyId: string; me: MtMe }) {
                 {roles.data.people.map((p) => (
                   <tr key={p.id}>
                     <td data-label="Person"><strong>{p.name}</strong><div className="muted small">{p.email}</div></td>
-                    <td data-label="In the company">{{ owner: 'Owner', admin: 'Administrator', member: 'Member' }[p.companyRole]}</td>
+                    <td data-label="In the company">{({ owner: 'Owner', admin: 'Administrator', manager: 'Manager', employee: 'Employee', read_only: 'Read-only' } as Record<string, string>)[p.companyRole] ?? p.companyRole}</td>
                     <td data-label="Maintenance role">
                       {p.companyRole === 'owner' ? <span>{ROLE_LABELS.admin} <span className="muted small">(always)</span></span> : (
                         <select className="select" aria-label={`Maintenance role of ${p.name}`} disabled={busy === p.id} value={p.roleIsDefault ? 'default' : p.role} onChange={(e) => void setRole(p.id, e.target.value)}>

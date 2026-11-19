@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import type { AppConfigDTO, MemberDTO, UserDTO, WorkspaceDTO } from '../../shared/types';
 import { ApiError, get, setCsrfToken } from './api';
+import { applyUi, type UiSettings } from './ui';
 
 export interface Session {
   user: UserDTO;
@@ -10,6 +11,8 @@ export interface Session {
   workspaces: WorkspaceDTO[];
   /** Present only for platform administrators (server-verified). */
   platformRole?: 'founder' | 'admin' | null;
+  /** The new UI (flag new_ui_enabled) and the person's density (src/client/lib/ui.ts). */
+  ui?: UiSettings;
 }
 
 const SessionCtx = createContext<{ session: Session | null; loading: boolean; error: unknown; refresh: () => Promise<unknown> }>({
@@ -26,6 +29,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       try {
         const s = await get<Session>('/auth/me');
         setCsrfToken(s.csrfToken);
+        applyUi(s.ui);
         return s;
       } catch (e) {
         if (e instanceof ApiError && e.status === 401) {

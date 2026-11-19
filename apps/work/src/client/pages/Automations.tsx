@@ -55,7 +55,7 @@ export default function Automations() {
           </EmptyState>
         </div>
       ) : null}
-      <div className="col" style={{ gap: 14 }}>
+      <div className="col" style={{ gap: 'var(--ui-s14, 14px)' }}>
         {Array.from(byBoard.entries()).map(([boardId, autos]) => (
           <section key={boardId} className="card">
             <div className="card-header">

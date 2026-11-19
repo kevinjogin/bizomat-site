@@ -45,7 +45,7 @@ export function BoardSettingsDialog({ bundle, onClose, initialTab = 'general' }:
   const ctx = { members: bundle.members, items: bundle.items, boardId: b.id, memberName: (id: string) => bundle.members.find((m) => m.id === id)?.name };
   return (
     <Modal title="Board settings" onClose={onClose} wide>
-      <div className="tabs" style={{ marginBottom: 16 }}>
+      <div className="tabs" style={{ marginBottom: 'var(--ui-s16, 16px)' }}>
         {(['general', 'members', 'access', 'project', 'defaults', 'danger'] as Tab[]).filter((t) => t !== 'access' || b.caps?.manageMembers).map((t) => (
           <button key={t} className={`tab${tab === t ? ' active' : ''}`} onClick={() => setTab(t)}>{t === 'danger' ? 'Archive & delete' : t === 'access' ? 'Permissions' : t === 'project' ? 'Project details' : t[0].toUpperCase() + t.slice(1)}</button>
         ))}
@@ -62,7 +62,7 @@ export function BoardSettingsDialog({ bundle, onClose, initialTab = 'general' }:
               <label className="checkbox"><input type="radio" checked={visibility === 'private'} disabled={!isAdmin} onChange={() => setVisibility('private')} /> <Icon name="lock" /> Private — only board members (and workspace admins)</label>
             </Field>
           ) : <div className="info-box">Personal boards are always private to you.</div>}
-          <div className="row" style={{ marginTop: 12 }}>
+          <div className="row" style={{ marginTop: 'var(--ui-s12, 12px)' }}>
             <span className="spacer" />
             <button className="btn primary" disabled={b.access === 'view'} onClick={() => run(patch(`/boards/${b.id}`, { name, description, ...(isAdmin && visibility !== b.visibility ? { visibility } : {}) }), 'Board updated')}>Save</button>
           </div>
@@ -71,7 +71,7 @@ export function BoardSettingsDialog({ bundle, onClose, initialTab = 'general' }:
       {tab === 'members' ? (
         <div>
           <p className="muted small">Board roles: <strong>Owner</strong> manages settings, members and columns; <strong>Editor</strong> edits items; <strong>Viewer</strong> can only view and comment. Workspace admins always have full access.</p>
-          <div className="list card" style={{ marginBottom: 12 }}>
+          <div className="list card" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
             {bundle.boardMembers.map((bm) => {
               const m = bundle.members.find((x) => x.id === bm.userId);
               if (!m) return null;
@@ -116,7 +116,7 @@ export function BoardSettingsDialog({ bundle, onClose, initialTab = 'general' }:
               </div>
             ))}
           </div>
-          <div className="row" style={{ marginTop: 12 }}>
+          <div className="row" style={{ marginTop: 'var(--ui-s12, 12px)' }}>
             <span className="spacer" />
             <button className="btn primary" disabled={!isAdmin} onClick={() => run(patch(`/boards/${b.id}`, { settings: { defaultValues: defaults } }), 'Defaults saved')}>Save defaults</button>
           </div>

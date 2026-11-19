@@ -62,4 +62,12 @@ const { url } = SITE.booking;
   .booking__button svg { width: 1.05rem; height: 1.05rem; }
   .booking__note { margin: 0.6rem 0 0; font-size: 0.82rem; color: var(--muted); }
   @media (max-width: 420px) { .booking { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .booking { gap: var(--bz-space-4) var(--bz-space-4); }
+  :global(html[data-ui="new"]) .booking__icon { border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .booking__text { margin: var(--bz-space-2) 0 var(--bz-space-4); }
+  :global(html[data-ui="new"]) .booking__button { gap: var(--bz-space-2); padding: 0 var(--bz-space-5); border-radius: var(--bz-radius-full); }
+  :global(html[data-ui="new"]) .booking__note { margin: var(--bz-space-2) 0 0; font-size: var(--bz-text-sm); }
+  /* ui-new:generated end */
 </style>

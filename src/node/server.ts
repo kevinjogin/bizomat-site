@@ -28,9 +28,9 @@ export interface WebServerOptions {
 const MAX_BODY = 1024 * 1024; // the site's own API routes read at most a few tens of kilobytes
 
 /** Build the Worker's env from process settings: only the names the site's code reads are passed through. */
-export function buildEnv(distDir: string, settings: Record<string, string | undefined>): Env {
+export function buildEnv(distDir: string, settings: Record<string, string | undefined>, newUi?: () => boolean): Env {
   const env: Record<string, unknown> = {
-    ASSETS: createAssets({ dir: distDir }),
+    ASSETS: createAssets({ dir: distDir, newUi }),
     CHAT_LIMITER: memoryLimiter(10, 60),
     FORM_LIMITER: memoryLimiter(5, 60),
   };
@@ -85,6 +85,51 @@ export function toRequest(req: IncomingMessage, trustProxy: boolean): Request {
   return new Request(url, { method, headers, body, duplex: 'half' } as RequestInit);
 }
 
+/**
+ * The new UI (flag new_ui_enabled; docs/ui/README.md): pages from the built site are marked by the asset store
+ * (src/node/assets.ts, before it compresses them, under their own ETag). This marks the rest: HTML the Worker makes
+ * itself, which is never compressed. A compressed or already marked page passes unchanged.
+ */
+export async function markNewUi(response: Response): Promise<Response> {
+  if (!(response.headers.get('content-type') ?? '').includes('text/html') || !response.body) return response;
+  if (response.headers.has('content-encoding')) return response;
+  const html = await response.text();
+  const marked = html.replace(/<html\b(?![^>]*\bdata-ui=)/i, '<html data-ui="new"');
+  const headers = new Headers(response.headers);
+  if (marked !== html) {
+    headers.delete('content-length');
+    headers.delete('etag');
+    headers.delete('last-modified');
+  }
+  return new Response(marked, { status: response.status, statusText: response.statusText, headers });
+}
+
+/**
+ * Whether the new UI is on for everyone: asked of Project Management (GET /tasks/api/ui/public on Fly's private network)
+ * every minute. The address is WEB_UPSTREAM_WORK (the entrypoint gives the web role the proxy's UPSTREAM_WORK under this
+ * name), else UPSTREAM_WORK. WEB_NEW_UI = on or off decides instead (tests, a local run); without either it is off.
+ */
+export function newUiSwitch(settings: Record<string, string | undefined>, every = 60_000) {
+  const fixed = settings.WEB_NEW_UI;
+  let on = fixed === 'on';
+  let timer: ReturnType<typeof setInterval> | null = null;
+  const upstream = (settings.WEB_UPSTREAM_WORK || settings.UPSTREAM_WORK || '').replace(/\/$/, '');
+  const ask = async () => {
+    try {
+      const r = await fetch(`${upstream}/tasks/api/ui/public`, { signal: AbortSignal.timeout(3000), headers: { accept: 'application/json' } });
+      if (r.ok) on = ((await r.json()) as { newUi?: unknown }).newUi === true;
+    } catch {
+      // keep the last answer: a slow or restarting work process never changes the look
+    }
+  };
+  if (fixed !== 'on' && fixed !== 'off' && upstream) {
+    void ask();
+    timer = setInterval(() => void ask(), every);
+    timer.unref?.();
+  }
+  return { on: () => on, stop: () => timer && clearInterval(timer) };
+}
+
 async function send(res: ServerResponse, response: Response, method: string) {
   const headers: Record<string, string | string[]> = {};
   response.headers.forEach((value, key) => {
@@ -103,7 +148,8 @@ export function startWebServer(options: WebServerOptions = {}) {
   const distDir = options.distDir ?? settings.WEB_DIST_DIR ?? 'dist';
   const trustProxy = options.trustProxy ?? settings.WEB_TRUST_PROXY === '1';
   const version = settings.WEB_VERSION || 'dev';
-  const env = buildEnv(distDir, settings);
+  const newUi = newUiSwitch(settings);
+  const env = buildEnv(distDir, settings, newUi.on);
   const log = options.log ?? ((line) => console.log(JSON.stringify(line)));
   const inFlight = new Set<Promise<unknown>>();
 
@@ -119,7 +165,8 @@ export function startWebServer(options: WebServerOptions = {}) {
     }
     const task = (async () => {
       try {
-        const response = await worker.fetch(toRequest(req, trustProxy), env);
+        let response = await worker.fetch(toRequest(req, trustProxy), env);
+        if (newUi.on()) response = await markNewUi(response);
         await send(res, response, req.method ?? 'GET');
         done(response.status);
       } catch (err) {
@@ -146,6 +193,7 @@ export function startWebServer(options: WebServerOptions = {}) {
     listen(host);
   });
   const close = async () => {
+    newUi.stop();
     await new Promise<void>((resolve) => server.close(() => resolve()));
     await Promise.race([Promise.allSettled([...inFlight]), new Promise((r) => setTimeout(r, 10_000))]);
   };

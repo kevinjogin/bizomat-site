@@ -28,3 +28,11 @@
 /* The prompt the tools show to people who are not in a company yet (components/layout/CompanyPrompt.tsx). */
 .co-prompt { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 14px; padding: 10px 14px; border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: var(--radius); background: var(--surface); }
 .co-prompt p { margin: 0; flex: 1 1 320px; }
+/* The Members page (company/Members.tsx; flag company_members_v2). */
+.co-members-filters { display: flex; flex-wrap: wrap; gap: 8px; }
+.co-members-filters > .input { flex: 2 1 240px; width: auto; }
+.co-members-filters > .select { flex: 1 1 150px; width: auto; }
+.co-members-table td select.select { min-width: 150px; width: auto; }
+.co-members-actions { display: flex; flex-wrap: wrap; gap: 4px; }
+.co-members-pager { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.co-members-pager .co-members-leave { margin-left: auto; }

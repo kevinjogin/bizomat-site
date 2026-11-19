@@ -41,4 +41,9 @@ const pathways = book.volume === 1 ? pathwaysForBook(`collection/${book.topic}`)
 .contents{padding:clamp(3rem,6vw,5rem) 0 var(--space-section)}
 .note{color:var(--muted);font-size:.9rem;margin:2rem 0}
 .back{font-size:.9rem;color:var(--accent)}
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .note { font-size: var(--bz-text-base); margin: var(--bz-space-8) 0; }
+  :global(html[data-ui="new"]) .back { font-size: var(--bz-text-base); }
+  /* ui-new:generated end */
 </style>

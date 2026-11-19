@@ -99,11 +99,11 @@ async function inTool(db: D1Database, table: 'workspace_members' | 'crm_members'
  * Brings a department's teams in the tools in line with the department: creates the team (or Finance department)
  * when it is missing, renames it, and sets its members. Safe to run any number of times.
  */
-export async function syncDepartment(db: D1Database, tools: Partial<Record<ToolApp, string>>, deptId: string): Promise<void> {
-  const d = await db.prepare('SELECT * FROM co_departments WHERE id = ?').bind(deptId).first<DepartmentRow>();
+export async function syncDepartment(db: D1Database, tools: Partial<Record<ToolApp, string>>, companyId: string, deptId: string): Promise<void> {
+  const d = await db.prepare('SELECT * FROM co_departments WHERE company_id = ? AND id = ?').bind(companyId, deptId).first<DepartmentRow>();
   if (!d) return;
   const t = now();
-  const members = (await db.prepare('SELECT user_id FROM co_department_members WHERE department_id = ?').bind(deptId).all<{ user_id: string }>()).results.map((r) => r.user_id);
+  const members = (await db.prepare('SELECT user_id FROM co_department_members WHERE company_id = ? AND department_id = ?').bind(companyId, deptId).all<{ user_id: string }>()).results.map((r) => r.user_id);
   const stmts: D1PreparedStatement[] = [];
   const set: Record<string, string | null> = {};
 
@@ -160,18 +160,18 @@ export async function syncDepartment(db: D1Database, tools: Partial<Record<ToolA
   }
 
   const cols = Object.keys(set);
-  if (cols.length) stmts.push(db.prepare(`UPDATE co_departments SET ${cols.map((k) => `${k} = ?`).join(', ')} WHERE id = ?`).bind(...cols.map((k) => set[k]), deptId));
+  if (cols.length) stmts.push(db.prepare(`UPDATE co_departments SET ${cols.map((k) => `${k} = ?`).join(', ')} WHERE company_id = ? AND id = ?`).bind(...cols.map((k) => set[k]), companyId, deptId));
   if (stmts.length) await db.batch(stmts);
 }
 
 /** Every department of a company, after its people or tools changed. */
 export async function syncAllDepartments(db: D1Database, tools: Partial<Record<ToolApp, string>>, companyId: string): Promise<void> {
   const rows = await db.prepare('SELECT id FROM co_departments WHERE company_id = ?').bind(companyId).all<{ id: string }>();
-  for (const r of rows.results) await syncDepartment(db, tools, r.id);
+  for (const r of rows.results) await syncDepartment(db, tools, companyId, r.id);
 }
 
 /** The departments of a person's company they belong to, re-synced (after their tool roles changed). */
 export async function syncDepartmentsOf(db: D1Database, tools: Partial<Record<ToolApp, string>>, companyId: string, userId: string): Promise<void> {
   const rows = await db.prepare('SELECT department_id FROM co_department_members WHERE company_id = ? AND user_id = ?').bind(companyId, userId).all<{ department_id: string }>();
-  for (const r of rows.results) await syncDepartment(db, tools, r.department_id);
+  for (const r of rows.results) await syncDepartment(db, tools, companyId, r.department_id);
 }

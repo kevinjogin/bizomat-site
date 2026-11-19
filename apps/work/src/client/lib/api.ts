@@ -19,7 +19,15 @@ export class ApiError extends Error {
   }
 }
 
-type Opts = { method?: string; body?: unknown; form?: FormData; signal?: AbortSignal; allowStatuses?: number[] };
+type Opts = { method?: string; body?: unknown; form?: FormData; signal?: AbortSignal; allowStatuses?: number[]; reauthRetried?: boolean };
+
+// Re-authentication for dangerous platform-admin actions (Admin Control Centre, R2): when the server answers 403
+// REAUTH_REQUIRED, the registered handler (src/client/admin/reauth.tsx, ReauthHost, mounted by the consoles) asks for
+// the password and a code; once they are confirmed, the request is sent again, once.
+let reauthHandler: (() => Promise<boolean>) | null = null;
+export function setReauthHandler(h: (() => Promise<boolean>) | null) {
+  reauthHandler = h;
+}
 
 export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
   const method = opts.method ?? (opts.body !== undefined || opts.form ? 'POST' : 'GET');
@@ -50,6 +58,9 @@ export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
     // The account must choose a new password (founder reset or security reset): the session reloads and the app shows
     // the Choose a new password page.
     if (res.status === 403 && data?.details?.code === 'PASSWORD_RESET_REQUIRED') window.dispatchEvent(new CustomEvent('workos:password-reset-required'));
+    if (res.status === 403 && data?.details?.code === 'REAUTH_REQUIRED' && reauthHandler && !opts.reauthRetried && (await reauthHandler())) {
+      return api<T>(path, { ...opts, reauthRetried: true });
+    }
     throw new ApiError(res.status, (data && data.error) || `Request failed (${res.status})`, data?.details, data);
   }
   return data as T;

@@ -9,7 +9,7 @@ import { atLeast, loadAccess, type CompanyAccess } from '../company/access';
 import { ERP_MOUNT } from '../mount';
 import { body, HttpError, newId, now } from '../lib/util';
 import { getPlatformRole } from '../services/platform-admin';
-import { billingConfig, type BillingOn, type Interval } from './config';
+import { billingConfig, billingLocked, FREE_MESSAGE, type BillingOn, type Interval } from './config';
 import { companyEntitled } from './entitlements';
 import { accountOf, audience, currentSubscription, enforcement, historyStmt, money, OPEN_STATUSES, verifiedPrice, type AccountRow, type SubscriptionRow } from './store';
 import { billablePeople, notBilled, prorationWords, syncSeats } from './seats';
@@ -23,7 +23,11 @@ const INTEGRATION_ID = 'bizomat-erp-seats-qvkzrtwm';
 
 const intervalSchema = z.object({ interval: z.enum(['month', 'year']) });
 
-function on(c: Context<AppEnv>): BillingOn {
+/** Billing settings for a change that involves Stripe. In free mode (billingLocked) every such change is refused with
+ * 403 BILLING_LOCKED, for everyone, platform admins included; only cancelling an existing subscription stays possible,
+ * because it can only stop charges. */
+function on(c: Context<AppEnv>, opts: { evenWhenLocked?: boolean } = {}): BillingOn {
+  if (billingLocked(c.env) && !opts.evenWhenLocked) throw new HttpError(403, FREE_MESSAGE, { code: 'BILLING_LOCKED' });
   const cfg = billingConfig(c.env);
   if (!cfg.enabled) throw new HttpError(503, 'Billing is not available yet.', { code: 'BILLING_OFF' });
   return cfg;
@@ -105,6 +109,7 @@ async function mayStart(c: Context<AppEnv>, cfg: BillingOn): Promise<{ ok: boole
 billingRoutes.get('/config', async (c) => {
   const cfg = billingConfig(c.env);
   const role = c.get('authKind') === 'session' ? await getPlatformRole(c.env.DB, c.get('user').id) : null;
+  if (billingLocked(c.env)) return c.json({ enabled: false, free: true, environment: cfg.environment, ...(role ? { reason: 'Free mode: BIZOMAT_BILLING_LOCK is set, so billing is locked.' } : {}) });
   if (!cfg.enabled) return c.json({ enabled: false, environment: cfg.environment, ...(role ? { reason: cfg.reason } : {}) });
   return c.json({ enabled: true, environment: cfg.environment, publishableKey: cfg.publishableKey });
 });
@@ -123,6 +128,21 @@ billingRoutes.get('/c/:company', async (c) => {
     seats: { count: people.length, people, ...excluded },
     enforcement: await enforcement(db),
   };
+  if (billingLocked(c.env)) {
+    // Free mode: no price, no way to subscribe. A subscription made before free mode (there were none on 19 Nov 2026)
+    // is still shown, so nobody is charged without seeing it, and can be cancelled.
+    const earlier = cfg.enabled ? await currentSubscription(db, a.companyId, cfg.environment) : null;
+    return c.json({
+      ...base,
+      billing: { enabled: false, free: true, environment: cfg.environment, reason: platformRole ? 'Free mode: BIZOMAT_BILLING_LOCK is set, so billing is locked.' : null, canSubscribe: false, whyNot: FREE_MESSAGE },
+      prices: { month: null, year: null },
+      subscription: subView(earlier),
+      invoices: [],
+      history: [],
+      explanations: null,
+      entitled: { allowed: true, why: 'free' },
+    });
+  }
   if (!cfg.enabled) {
     return c.json({ ...base, billing: { enabled: false, environment: cfg.environment, reason: platformRole ? cfg.reason : null, canSubscribe: false, whyNot: 'Billing is not available yet.' }, prices: { month: null, year: null }, subscription: null, invoices: [], history: [], explanations: null, entitled: { allowed: true, why: 'off' } });
   }
@@ -278,7 +298,7 @@ billingRoutes.post('/c/:company/checkout', async (c) => {
     if (recent) {
       const s = checkMode(cfg, await stripe.checkout.sessions.retrieve(recent.id));
       if (s.status === 'open' && s.client_secret) return c.json({ clientSecret: s.client_secret, sessionId: s.id, reused: true });
-      await db.prepare('UPDATE billing_checkout_sessions SET status = ? WHERE id = ?').bind(s.status ?? 'expired', s.id).run();
+      await db.prepare('UPDATE billing_checkout_sessions SET status = ? WHERE company_id = ? AND id = ?').bind(s.status ?? 'expired', a.companyId, s.id).run();
     }
     // Any other open session for this company is closed, so only one can be completed.
     const others = await db.prepare("SELECT id FROM billing_checkout_sessions WHERE company_id = ? AND environment = ? AND mode = 'subscription' AND status = 'open'").bind(a.companyId, cfg.environment).all<{ id: string }>();
@@ -288,7 +308,7 @@ billingRoutes.post('/c/:company/checkout', async (c) => {
       } catch {
         // already completed or expired: the sync below records which
       }
-      await db.prepare("UPDATE billing_checkout_sessions SET status = 'expired' WHERE id = ? AND status = 'open'").bind(o.id).run();
+      await db.prepare("UPDATE billing_checkout_sessions SET status = 'expired' WHERE company_id = ? AND id = ? AND status = 'open'").bind(a.companyId, o.id).run();
     }
     const session = checkMode(
       cfg,
@@ -426,7 +446,7 @@ billingRoutes.post('/c/:company/interval', async (c) => {
       { items: [{ id: sub.item_id!, price: price.id, quantity }], proration_behavior: cfg.proration, expand: ['default_payment_method'] },
       { idempotencyKey: `interval:${sub.id}:v${sub.seat_version}:${interval}:${quantity}` },
     );
-    await c.env.DB.prepare('UPDATE billing_subscriptions SET seat_version = seat_version + 1 WHERE id = ? AND seat_version = ?').bind(sub.id, sub.seat_version).run();
+    await c.env.DB.prepare('UPDATE billing_subscriptions SET seat_version = seat_version + 1 WHERE company_id = ? AND id = ? AND seat_version = ?').bind(a.companyId, sub.id, sub.seat_version).run();
     const row = await applySubscription(c.env, cfg, updated);
     await historyStmt(c.env.DB, { companyId: a.companyId, environment: cfg.environment, kind: 'subscription.interval_request', summary: `${a.userName} changed billing to ${interval === 'year' ? 'annual' : 'monthly'}.`, ref: `${sub.id}:v${sub.seat_version}:${interval}`, actorId: a.userId }).run();
     return c.json({ ok: true, subscription: subView(row) });
@@ -439,7 +459,7 @@ billingRoutes.post('/c/:company/interval', async (c) => {
 for (const action of ['cancel', 'resume'] as const) {
   billingRoutes.post(`/c/:company/${action}`, async (c) => {
     const a = await manage(c, { money: true });
-    const cfg = on(c);
+    const cfg = on(c, { evenWhenLocked: action === 'cancel' });
     const { sub } = await liveSubscription(c, cfg, a);
     const want = action === 'cancel';
     if ((sub.cancel_at_period_end === 1) === want) return c.json({ ok: true, unchanged: true });

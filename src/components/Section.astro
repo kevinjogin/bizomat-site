@@ -41,4 +41,8 @@ const { label, index, id, tone = 'default', divider = true, class: className, la
   .section__index { color: var(--accent); font-variant-numeric: tabular-nums; }
   .section__label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
   .section--inverse .section__label::after { background: var(--inverse-line); }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .section__label { gap: var(--bz-space-3); font-size: var(--bz-text-xs); }
+  /* ui-new:generated end */
 </style>

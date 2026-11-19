@@ -254,4 +254,35 @@ const inSection = (item: (typeof NAV)[number]) =>
     :global(html:not(.js)) .site-header .site-nav__link { padding: 0 .5rem; font-size: .9rem; }
   }
   @media (prefers-reduced-motion: reduce) { .nav-menu__chevron { transition: none; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) :global(.site-header__inner) { gap: var(--bz-space-5); }
+  :global(html[data-ui="new"]) .site-header__brand { border-radius: var(--bz-radius-sm); }
+  :global(html[data-ui="new"]) .site-nav { margin-left: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .site-nav__link { gap: var(--bz-space-1); padding: 0 var(--bz-space-3); border-radius: var(--bz-radius-md); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .site-nav__link.is-current::after { border-radius: var(--bz-radius-sm); }
+  :global(html[data-ui="new"]) .nav-menu__panel { padding: var(--bz-space-2); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .nav-menu__link { padding: var(--bz-space-3) var(--bz-space-3); border-radius: var(--bz-radius-md); }
+  :global(html[data-ui="new"]) .nav-menu__title { gap: var(--bz-space-2); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .nav-menu__ext { font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .nav-menu__description { font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .nav-menu__status { padding: .1rem var(--bz-space-2); border-radius: var(--bz-radius-full); font-size: var(--bz-text-2xs); }
+  :global(html[data-ui="new"]) .nav-menu__list > li:last-child:not(:first-child) .nav-menu__link:not(:has(.nav-menu__description)) { margin-top: var(--bz-space-1); border-radius: 0 0 var(--bz-radius-md) var(--bz-radius-md); padding-block: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .nav-menu__list > li:last-child:not(:first-child) .nav-menu__link:not(:has(.nav-menu__description)) .nav-menu__title { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .site-header__tools { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .site-header__cta, :global(html[data-ui="new"]) .site-nav__cta { padding: 0 var(--bz-space-4); border-radius: var(--bz-radius-md); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .site-header__search { gap: var(--bz-space-2); padding: 0 var(--bz-space-3); border-radius: var(--bz-radius-md); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .site-nav__signin-label { margin: var(--bz-space-5) 0 var(--bz-space-1); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .site-nav__signin a { padding: var(--bz-space-2) var(--bz-space-1); }
+  :global(html[data-ui="new"]) .site-header__toggle { border-radius: var(--bz-radius-md); }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .site-nav__link { padding: 0 var(--bz-space-1); font-size: var(--bz-text-md); } }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .nav-menu__panel { padding: 0 0 var(--bz-space-2); } }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .nav-menu__link { padding: var(--bz-space-2) var(--bz-space-1); } }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .site-nav__mobile-action { margin: var(--bz-space-5) 0 0; } }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .site-nav__cta { font-size: var(--bz-text-md); } }
+  @media (max-width: 1300px) and (min-width: 1141px) { :global(html[data-ui="new"]) .site-nav { margin-left: var(--bz-space-2); } }
+  @media (max-width: 1300px) and (min-width: 1141px) { :global(html[data-ui="new"]) .site-nav__link { padding: 0 var(--bz-space-2); gap: var(--bz-space-1); } }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]:not(.js)) .site-header :global(.site-header__inner) { padding-block: var(--bz-space-2); } }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]:not(.js)) .site-header .site-nav__link { padding: 0 var(--bz-space-2); font-size: var(--bz-text-base); } }
+  /* ui-new:generated end */
 </style>

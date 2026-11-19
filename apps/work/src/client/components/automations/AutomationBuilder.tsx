@@ -228,7 +228,7 @@ function ConditionEditor({ value, onChange, columns, groups, members }: { value:
   const opsFor = (field: string): FilterOperator[] => (field === 'done' ? ['is', 'is_not'] : operatorsFor(field, colMap).filter((o) => o !== 'includes_me'));
   const setRule = (i: number, r: FilterRule) => onChange({ ...value, rules: rules.map((x, j) => (j === i ? r : x)) });
   return (
-    <div className="col" style={{ gap: 6, width: '100%' }}>
+    <div className="col" style={{ gap: 'var(--ui-s6, 6px)', width: '100%' }}>
       {rules.map((r, i) => {
         const col = colMap.get(r.field);
         const needs = r.field !== 'done' && opNeedsValue(r.op);
@@ -500,10 +500,10 @@ export function AutomationBuilder({
         </button>
       ) : null}
 
-      <div className="info-box" style={{ marginTop: 14 }}>
+      <div className="info-box" style={{ marginTop: 'var(--ui-s14, 14px)' }}>
         <Icon name="bolt" size={14} /> {describeAutomation(draft, columns, groups, members)}
       </div>
-      {error ? <div className="error-box" role="alert" style={{ marginTop: 10 }}>{error}</div> : null}
+      {error ? <div className="error-box" role="alert" style={{ marginTop: 'var(--ui-s10, 10px)' }}>{error}</div> : null}
     </Modal>
   );
 }
@@ -624,7 +624,7 @@ export function AutomationsPanel({ bundle }: { bundle: BoardBundle }) {
   };
   const list = q.data ?? [];
   return (
-    <div className="col" style={{ gap: 12 }}>
+    <div className="col" style={{ gap: 'var(--ui-s12, 12px)' }}>
       <div className="row wrap">
         <div className="grow">
           <h2>Automations</h2>

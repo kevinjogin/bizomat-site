@@ -97,7 +97,7 @@ export function WorkloadView(props: BoardViewProps) {
 
   return (
     <div className="workload">
-      <div className="row wrap" style={{ marginBottom: 12 }}>
+      <div className="row wrap" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
         <button className="btn ghost icon sm" aria-label="Previous week" onClick={() => setWeekStart(addDays(weekStart, -7))}><Icon name="chevronLeft" /></button>
         <button className="btn sm" onClick={() => setWeekStart(startOfWeek(today))}>This week</button>
         <button className="btn ghost icon sm" aria-label="Next week" onClick={() => setWeekStart(addDays(weekStart, 7))}><Icon name="chevronRight" /></button>
@@ -177,7 +177,7 @@ export function WorkloadView(props: BoardViewProps) {
           </tbody>
         </table>
       </div>
-      {!dateCol ? <p className="muted small" style={{ marginTop: 8 }}>Add a date or timeline column to spread work across the week.</p> : null}
+      {!dateCol ? <p className="muted small" style={{ marginTop: 'var(--ui-s8, 8px)' }}>Add a date or timeline column to spread work across the week.</p> : null}
       {menu ? (
         <Popover anchor={menu.el} onClose={() => setMenu(null)}>
           <MenuItem icon="eye" onClick={() => { const id = menu.itemId; setMenu(null); openItem(id); }}>Open item</MenuItem>

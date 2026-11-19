@@ -4,6 +4,7 @@ import type { AppEnv } from './env';
 import { HttpError } from './lib/util';
 import { isSecureEnv, requireAuth, resolveAuth, sessionCookieName } from './auth/session';
 import { authRoutes } from './routes/auth';
+import { passwordResetRoutes } from './routes/password-reset';
 import { workspaceRoutes } from './routes/workspaces';
 import { orgRoutes } from './routes/org';
 import { accessRoutes } from './routes/access';
@@ -37,7 +38,14 @@ import { adminSystemRoutes } from './system/admin';
 import { crmPublicRoutes, crmRoutes } from './crm';
 import { finPublicRoutes, finRoutes } from './fin';
 import { companyPublicRoutes, companyRoutes } from './company/routes';
+import { companyVerificationRoutes } from './company/verification-routes';
+import { membersRoutes, platformMembersRoutes } from './company/members-routes';
+import { complianceGate } from './compliance/core';
+import { memberAccessGate } from './company/members-gate';
+import { flagOn } from './platform/flags';
+import { userComplianceRoutes } from './compliance/routes';
 import { idPublicRoutes } from './company/id-provider';
+import { scanRoutes } from './company/scan';
 import { maintenanceRoutes } from './maintenance';
 import { erpRoutes } from './erp';
 import { whsRoutes } from './whs';
@@ -45,6 +53,10 @@ import { legalAdminRoutes as whsAdminRoutes } from './whs/legal';
 import { billingRoutes } from './billing/routes';
 import { billingWebhookRoutes } from './billing/webhook';
 import { adminBillingRoutes } from './billing/admin';
+import { platformRoutes } from './platform/routes';
+import { consoleMfaGate } from './platform/security';
+import { moduleGate } from './platform/module-gate';
+import { moduleSwitchGate, tokenScopeGate, verificationGate } from './platform/context';
 import { entitlementGate } from './billing/entitlements';
 
 export const CSP = [
@@ -128,6 +140,19 @@ export function createApp() {
   // No CORS: the API is same-origin only. Cross-origin preflights are refused.
   app.options('/api/*', (c) => c.body(null, 403));
 
+  // The website's server asks every minute whether the new UI is on for everyone (flag new_ui_enabled, global value
+  // only; src/node/server.ts in the website). No session, no personal data.
+  app.get('/api/ui/public', async (c) => {
+    c.header('Cache-Control', 'no-store');
+    let newUi = false;
+    try {
+      newUi = await flagOn(c.env.DB, 'new_ui_enabled');
+    } catch {
+      newUi = false;
+    }
+    return c.json({ newUi });
+  });
+
   app.get('/api/health', async (c) => {
     let db = 'ok';
     try {
@@ -139,6 +164,8 @@ export function createApp() {
   });
 
   app.route('/api/auth', authRoutes);
+  // Forgotten password (R7; flag self_service_password_reset, off): answers 404 until it is switched on.
+  app.route('/api/auth', passwordResetRoutes);
   // CRM invitation previews and calendar feeds: no session, the token in the address is the secret.
   app.route('/api/crm-public', crmPublicRoutes);
   // Finance invitation previews: no session, the token in the address is the secret.
@@ -147,6 +174,8 @@ export function createApp() {
   app.route('/api/company-public', companyPublicRoutes);
   // BIZOMAT sign-in for other BIZOMAT applications: their servers swap codes and read the account
   // (src/worker/company/id-provider.ts).
+  // CAD Automation's malware scanner fetches verification documents and returns verdicts (company/scan.ts).
+  app.route('/api/id/scan', scanRoutes);
   app.route('/api/id', idPublicRoutes);
 
   // Sessions from before the CRM (or Finance) existed have their cookie on /tasks only (or /tasks and /crm). A CRM or
@@ -182,9 +211,19 @@ export function createApp() {
   // Everything below requires authentication.
   const api = new Hono<AppEnv>();
   api.use('*', requireAuth);
+  // Company context (Stage 1, R4): an API token limited to one company stays in it, and every module's switch is
+  // enforced on the server (platform/context.ts).
+  api.use('*', tokenScopeGate);
+  api.use('*', moduleSwitchGate);
+  // Company members (flag company_members_v2, off): suspension, module access, role rules, scope, sensitive fields.
+  api.use('*', memberAccessGate);
+  api.use('*', verificationGate);
+  // The company rule for people in no registered company (R7; acts only while company_registration_required is on).
+  api.use('*', complianceGate);
   // Billing: writes to a registered company's paid tools need an active subscription when enforcement is on (off by
   // default; src/worker/billing/entitlements.ts). Reads always pass.
   api.use('*', entitlementGate);
+  api.route('/', userComplianceRoutes);
   api.route('/', workspaceRoutes);
   api.route('/', orgRoutes);
   api.route('/', accessRoutes);
@@ -211,20 +250,29 @@ export function createApp() {
   api.route('/fin', finRoutes);
   // BIZOMAT company accounts, the control centre at /company (src/worker/company).
   api.route('/company', companyRoutes);
+  // Verification and requests to join (Stage 1, R6; every part behind a flag that ships off).
+  api.route('/company', companyVerificationRoutes);
+  // Company members, roles and ownership transfer (flag company_members_v2, off): company/members-routes.ts.
+  api.route('/company', membersRoutes);
   // BIZOMAT System, every tool in one place by company, at /system (src/worker/system).
   api.route('/system', systemRoutes);
   // BIZOMAT ERP's Asset Management and Maintenance, Stage 1 (src/worker/maintenance): assets, requests, work orders.
+  // Module switches (Admin Control Centre, src/worker/platform): on unless a platform admin switched one off.
+  api.use('/maintenance/c/:company/*', moduleGate('maintenance'));
   api.route('/maintenance', maintenanceRoutes);
   // BIZOMAT ERP, Release 1 (src/worker/erp): products, variants, revisions and change control, bills of materials,
   // engineering documents and the supplier master.
   api.route('/erp', erpRoutes);
   // BIZOMAT WHS, Release 1 (src/worker/whs): hazards, risk assessments, incidents, investigations, regulatory
   // notification records and actions, with the jurisdiction packs.
+  api.use('/whs/c/:company/*', moduleGate('whs'));
   api.route('/whs', whsRoutes);
   api.route('/billing', billingRoutes);
   // Founder admin API: authenticated session + platform-admin role, enforced server-side.
   const admin = new Hono<AppEnv>();
   admin.use('*', requirePlatformAdmin);
+  // Two-factor sign-in: required for every console request once the admin has enrolled (src/worker/platform/security.ts).
+  admin.use('*', consoleMfaGate);
   admin.route('/', adminRoutes);
   admin.route('/', adminEmailRoutes);
   admin.route('/', adminSignupRoutes);
@@ -236,6 +284,10 @@ export function createApp() {
   // BIZOMAT WHS jurisdiction packs: drafts, review, activation and verification of legal rules (src/worker/whs/legal.ts).
   admin.route('/whs', whsAdminRoutes);
   admin.route('/billing', adminBillingRoutes);
+  // The Admin Control Centre: feature flags, the kill switch, rollout stages and two-factor sign-in (Stage 1, R2).
+  // A platform admin's recovery transfer of a company's ownership (two-factor sign-in and a fresh password and code).
+  admin.route('/platform/members', platformMembersRoutes);
+  admin.route('/platform', platformRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);
   app.route('/api', api);
@@ -250,7 +302,7 @@ export function createApp() {
     // The tool this page is: under the System (/system/crm, ...) the same as at its own address (/crm).
     const tool = appOf(c.env.BASE_PATH ?? '');
     const otherApp = !!c.env.BASE_PATH && c.env.BASE_PATH !== MOUNT;
-    const publicPaths = ['/login', '/signup', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : []), ...(tool === COMPANY_MOUNT ? ['/confirm-email'] : []), ...(tool === FIN_MOUNT ? ['/view/'] : [])];
+    const publicPaths = ['/login', '/signup', '/reset-password', '/invite/', '/privacy', '/verify-email', ...(otherApp ? ['/join/'] : []), ...(tool === COMPANY_MOUNT ? ['/confirm-email'] : []), ...(tool === FIN_MOUNT ? ['/view/'] : [])];
     const isPublic = publicPaths.some((p) => url.pathname === p || url.pathname.startsWith(p)) || /\.[a-z0-9]+$/i.test(url.pathname);
     if (isNavigation) {
       const hasCookie = !!getCookie(c, sessionCookieName(c.env));

@@ -41,7 +41,7 @@ export async function applySubscription(env: Env, cfg: BillingOn, sub: Stripe.Su
   const interval = (price?.recurring?.interval === 'year' ? 'year' : price?.recurring?.interval === 'month' ? 'month' : null) as Interval | null;
   const pm = typeof sub.default_payment_method === 'object' && sub.default_payment_method ? (sub.default_payment_method as Stripe.PaymentMethod) : null;
   const card = pm?.card ?? null;
-  const existing = await db.prepare('SELECT * FROM billing_subscriptions WHERE id = ?').bind(sub.id).first<SubscriptionRow>();
+  const existing = await db.prepare('SELECT * FROM billing_subscriptions WHERE company_id = ? AND id = ?').bind(account.company_id, sub.id).first<SubscriptionRow>();
   const t = now();
   const behind = sub.status === 'past_due' || sub.status === 'unpaid';
   const pastDueSince = behind ? (existing?.past_due_since ?? t) : null;
@@ -105,7 +105,7 @@ export async function applySubscription(env: Env, cfg: BillingOn, sub: Stripe.Su
     h('subscription.interval', `Billing frequency changed to ${interval === 'year' ? 'annual' : 'monthly'}.`, `${sub.id}:interval:${prevKey}`);
   }
   await db.batch(stmts);
-  return db.prepare('SELECT * FROM billing_subscriptions WHERE id = ?').bind(sub.id).first<SubscriptionRow>();
+  return db.prepare('SELECT * FROM billing_subscriptions WHERE company_id = ? AND id = ?').bind(account.company_id, sub.id).first<SubscriptionRow>();
 }
 
 export async function syncSubscription(env: Env, cfg: BillingOn, id: string): Promise<SubscriptionRow | null> {
@@ -183,10 +183,10 @@ export async function syncCheckoutSession(env: Env, cfg: BillingOn, id: string):
   if (status === 'complete' && session.mode === 'subscription') {
     const subId = idOf(session.subscription as any);
     if (subId) await syncSubscription(env, cfg, subId);
-    await db.prepare("UPDATE billing_checkout_sessions SET status = 'complete', subscription_id = ?, completed_at = COALESCE(completed_at, ?) WHERE id = ?").bind(subId, t, id).run();
+    await db.prepare("UPDATE billing_checkout_sessions SET status = 'complete', subscription_id = ?, completed_at = COALESCE(completed_at, ?) WHERE company_id = ? AND id = ?").bind(subId, t, account.company_id, id).run();
   } else if (status === 'complete' && session.mode === 'setup') {
     const setupId = idOf(session.setup_intent as any);
-    const row = await db.prepare('SELECT status FROM billing_checkout_sessions WHERE id = ?').bind(id).first<{ status: string }>();
+    const row = await db.prepare('SELECT status FROM billing_checkout_sessions WHERE company_id = ? AND id = ?').bind(account.company_id, id).first<{ status: string }>();
     if (setupId && row?.status !== 'complete') {
       const intent = checkMode(cfg, await stripe.setupIntents.retrieve(setupId));
       const pmId = idOf(intent.payment_method as any);
@@ -214,9 +214,9 @@ export async function syncCheckoutSession(env: Env, cfg: BillingOn, id: string):
         await historyStmt(db, { companyId: account.company_id, environment: account.environment, kind: 'payment_method.updated', summary: 'Payment method updated.', ref: id }).run();
       }
     }
-    await db.prepare("UPDATE billing_checkout_sessions SET status = 'complete', completed_at = COALESCE(completed_at, ?) WHERE id = ?").bind(t, id).run();
+    await db.prepare("UPDATE billing_checkout_sessions SET status = 'complete', completed_at = COALESCE(completed_at, ?) WHERE company_id = ? AND id = ?").bind(t, account.company_id, id).run();
   } else if (status === 'expired') {
-    await db.prepare("UPDATE billing_checkout_sessions SET status = 'expired' WHERE id = ? AND status = 'open'").bind(id).run();
+    await db.prepare("UPDATE billing_checkout_sessions SET status = 'expired' WHERE company_id = ? AND id = ? AND status = 'open'").bind(account.company_id, id).run();
   }
   return { status, mode: session.mode, companyId: account.company_id };
 }

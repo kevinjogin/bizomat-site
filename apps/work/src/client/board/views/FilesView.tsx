@@ -61,7 +61,7 @@ export function FilesView(props: BoardViewProps) {
 
   return (
     <div className="files-view">
-      <div className="row wrap" style={{ marginBottom: 12 }}>
+      <div className="row wrap" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
         <input className="input sm" style={{ maxWidth: 240 }} placeholder="Search files" aria-label="Search files" value={search} onChange={(e) => setSearch(e.target.value)} />
         <div className="seg" role="group" aria-label="File type">
           {(['all', 'image', 'pdf', 'doc', 'other'] as Kind[]).map((k) => (
@@ -92,7 +92,7 @@ export function FilesView(props: BoardViewProps) {
                 <span className="fname" title={f.fileName}>{f.fileName}</span>
                 <button className="btn ghost sm ellipsis" style={{ padding: 0, justifyContent: 'flex-start', height: 18 }} onClick={() => openItem(f.itemId)}>{f.itemName}</button>
                 <span className="muted">{formatBytes(f.size)} · {f.uploaderName} · {timeAgo(f.createdAt)}</span>
-                <div className="row" style={{ marginTop: 4 }}>
+                <div className="row" style={{ marginTop: 'var(--ui-s4, 4px)' }}>
                   <a className="btn sm" href={`${f.url}?download=1`}><Icon name="download" size={13} /> Download</a>
                   {canEdit ? <button className="btn ghost icon sm" aria-label={`Delete ${f.fileName}`} onClick={() => remove(f)}><Icon name="trash" size={14} /></button> : null}
                 </div>

@@ -5,7 +5,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now, parseJson } from '../lib/util';
+import { HttpError, andAll, insertCompanyRow, body, newId, notFound, now, parseJson } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { assertPerson, isManager, requestScope, requireMt, workOrderScope, type MtAccess } from './access';
 import { MAX_IMPORT_BYTES, importOrder, planImport, type ExistingAsset } from './csv';
@@ -217,7 +217,7 @@ function searchOf(r: Record<string, unknown>) {
 
 assetRoutes.get('/c/:company/assets', async (c) => {
   const a = await requireMt(c);
-  const where = ['a.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const archived = c.req.query('archived');
   if (archived === '1') where.push('a.archived_at IS NOT NULL');
@@ -259,8 +259,8 @@ assetRoutes.get('/c/:company/assets', async (c) => {
   const limit = Math.min(Math.max(Number(c.req.query('limit')) || 200, 1), 1000);
   const offset = Math.max(Number(c.req.query('offset')) || 0, 0);
   const [rows, total, cats] = await c.env.DB.batch([
-    c.env.DB.prepare(`${SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} LIMIT ? OFFSET ?`).bind(...args, limit, offset),
-    c.env.DB.prepare(`SELECT COUNT(*) AS n FROM mt_assets a WHERE ${where.join(' AND ')}`).bind(...args),
+    c.env.DB.prepare(`${SELECT} WHERE a.company_id = ?${andAll(where)} ORDER BY ${sort} LIMIT ? OFFSET ?`).bind(...args, limit, offset),
+    c.env.DB.prepare(`SELECT COUNT(*) AS n FROM mt_assets a WHERE a.company_id = ?${andAll(where)}`).bind(...args),
     c.env.DB.prepare("SELECT DISTINCT category FROM mt_assets WHERE company_id = ? AND category <> '' ORDER BY category COLLATE NOCASE LIMIT 200").bind(a.companyId),
   ]);
   return c.json({ assets: (rows.results as any[]).map(assetDTO), total: (total.results[0] as any)?.n ?? 0, categories: (cats.results as any[]).map((r) => r.category) });
@@ -294,11 +294,10 @@ assetRoutes.post('/c/:company/assets', async (c) => {
   const id = newId();
   const t = now();
   const row = { ...cols, id, company_id: a.companyId, search: searchOf(cols), created_by: a.userId, created_at: t, updated_at: t };
-  const keys = Object.keys(row);
   // The site given, else the parent's site.
   const site = input.siteId !== undefined ? await assertSite(c.env.DB, a.companyId, input.siteId) : cols.parent_id ? await c.env.DB.prepare('SELECT site_id AS id FROM mt_asset_sites WHERE company_id = ? AND asset_id = ?').bind(a.companyId, cols.parent_id).first<{ id: string }>() : null;
   await c.env.DB.batch([
-    c.env.DB.prepare(`INSERT INTO mt_assets (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => (row as any)[k])),
+    insertCompanyRow(c.env.DB, 'mt_assets', row),
     ...(site ? [c.env.DB.prepare('INSERT INTO mt_asset_sites (company_id, asset_id, site_id, set_by, set_at) VALUES (?, ?, ?, ?, ?)').bind(a.companyId, id, site.id, a.userId, t)] : []),
     eventStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'asset.created', assetId: id, summary: `Asset ${cols.number} ${input.name} created`, after: site ? { ...cols, siteId: site.id } : cols }),
   ]);
@@ -449,8 +448,7 @@ assetRoutes.post('/c/:company/assets/import', async (c) => {
       updated_at: t,
     };
     row.search = searchOf(row);
-    const keys = Object.keys(row);
-    stmts.push(db.prepare(`INSERT INTO mt_assets (${keys.join(', ')}) VALUES (${keys.map(() => '?').join(', ')})`).bind(...keys.map((k) => row[k])));
+    stmts.push(insertCompanyRow(db, 'mt_assets', row));
     stmts.push(eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'asset.imported', assetId: id, summary: `Asset ${v.number} ${v.name} imported from a CSV file (line ${r.line})`, at: t }));
   }
   // Parents are inserted before their children; a batch is one transaction.

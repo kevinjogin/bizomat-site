@@ -52,7 +52,7 @@ export function MembersSettings() {
   const ws = useWorkspace();
   const admin = isAdmin(ws.role);
   return (
-    <div className="col" style={{ gap: 16 }}>
+    <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
       {ROLE_RANK[ws.role] >= ROLE_RANK.project_manager || ws.role === 'member' ? <InviteCard /> : null}
       {admin ? <Directory /> : <SimpleList />}
       {admin ? <Invitations /> : null}
@@ -64,13 +64,13 @@ export function MembersSettings() {
 function RoleGuide() {
   return (
     <section className="card card-pad">
-      <h2 style={{ marginBottom: 8 }}>Roles</h2>
+      <h2 style={{ marginBottom: 'var(--ui-s8, 8px)' }}>Roles</h2>
       <table className="data-table">
         <tbody>
           {ROLES.map((r) => <tr key={r}><td style={{ width: 170 }}><strong>{ROLE_LABELS[r]}</strong></td><td className="small">{ROLE_HELP[r]}</td></tr>)}
         </tbody>
       </table>
-      <p className="muted small" style={{ marginTop: 8 }}>Project access can be adjusted per person on each project (board settings, Permissions), and single tasks can be shared from a task's Access tab.</p>
+      <p className="muted small" style={{ marginTop: 'var(--ui-s8, 8px)' }}>Project access can be adjusted per person on each project (board settings, Permissions), and single tasks can be shared from a task's Access tab.</p>
     </section>
   );
 }
@@ -154,7 +154,7 @@ function Directory() {
                 return (
                   <tr key={m.id}>
                     <td>
-                      <div className="row" style={{ gap: 8 }}>
+                      <div className="row" style={{ gap: 'var(--ui-s8, 8px)' }}>
                         <Avatar name={m.name} id={m.id} url={m.avatarUrl} size="sm" />
                         <div style={{ minWidth: 0 }}>
                           <strong>{m.name}</strong> {self ? <span className="badge accent">You</span> : null}
@@ -171,13 +171,13 @@ function Directory() {
                       ) : <span className="badge" title={ROLE_HELP[m.role]}>{ROLE_LABELS[m.role]}</span>}
                     </td>
                     <td className="small">
-                      {m.projects.length ? m.projects.slice(0, 4).map((p) => <span key={p.id} className="badge" style={{ marginRight: 4 }} title={`${p.role}`}>{p.name}</span>) : <span className="muted">{m.role === 'guest' ? 'None shared' : 'Organisation projects'}</span>}
+                      {m.projects.length ? m.projects.slice(0, 4).map((p) => <span key={p.id} className="badge" style={{ marginRight: 'var(--ui-s4, 4px)' }} title={`${p.role}`}>{p.name}</span>) : <span className="muted">{m.role === 'guest' ? 'None shared' : 'Organisation projects'}</span>}
                       {m.projects.length > 4 ? <span className="muted"> +{m.projects.length - 4}</span> : null}
                       {m.taskGrants ? <div className="muted">{m.taskGrants} shared task(s)</div> : null}
                     </td>
                     <td>{m.status === 'suspended' ? <span className="badge danger">Suspended</span> : <span className="badge success">Active</span>}</td>
                     <td>
-                      <div className="row" style={{ gap: 4, justifyContent: 'flex-end' }}>
+                      <div className="row" style={{ gap: 'var(--ui-s4, 4px)', justifyContent: 'flex-end' }}>
                         {self ? <button className="btn sm" onClick={() => leave(m.id)}>Leave</button> : null}
                         {canTouch ? (
                           <button className="btn ghost sm" onClick={async () => {
@@ -235,7 +235,7 @@ function InviteCard() {
   };
   return (
     <form className="card card-pad" onSubmit={submit}>
-      <h2 style={{ marginBottom: 12 }}>Invite people</h2>
+      <h2 style={{ marginBottom: 'var(--ui-s12, 12px)' }}>Invite people</h2>
       <div className="row wrap" style={{ alignItems: 'flex-end' }}>
         <div className="grow" style={{ minWidth: 220 }}>
           <Field label="Email address" htmlFor="inv-email"><input id="inv-email" className="input" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@company.com" required /></Field>
@@ -247,16 +247,16 @@ function InviteCard() {
         </Field>
         <div className="field"><button className="btn primary" disabled={busy || !email.trim()}><Icon name="plus" /> Invite</button></div>
       </div>
-      <p className="muted small" style={{ marginTop: -4 }}>{ROLE_HELP[role]}</p>
+      <p className="muted small" style={{ marginTop: 'calc(-1 * var(--ui-s4, 4px))' }}>{ROLE_HELP[role]}</p>
       <Field label="Personal message (optional)" htmlFor="inv-msg"><textarea id="inv-msg" className="textarea" rows={2} maxLength={600} value={message} onChange={(e) => setMessage(e.target.value)} /></Field>
       {error ? <div className="error-box" role="alert">{error}</div> : null}
       {result ? (
         <div className="info-box">
-          <p style={{ marginBottom: 6 }}>Invitation to {result.email} created, valid for 7 days and usable once. {DELIVERY[result.delivery] ?? result.delivery}.</p>
+          <p style={{ marginBottom: 'var(--ui-s6, 6px)' }}>Invitation to {result.email} created, valid for 7 days and usable once. {DELIVERY[result.delivery] ?? result.delivery}.</p>
           {result.delivery !== 'queued' ? (
             <>
               <div className="token-reveal">{result.link}</div>
-              <button type="button" className="btn sm" style={{ marginTop: 8 }} onClick={() => navigator.clipboard?.writeText(result.link).then(() => toast('Link copied'))}><Icon name="copy" size={14} /> Copy link</button>
+              <button type="button" className="btn sm" style={{ marginTop: 'var(--ui-s8, 8px)' }} onClick={() => navigator.clipboard?.writeText(result.link).then(() => toast('Link copied'))}><Icon name="copy" size={14} /> Copy link</button>
             </>
           ) : null}
         </div>
@@ -297,7 +297,7 @@ function Invitations() {
                 {i.grants?.length ? <span className="badge">{i.grants.length} shared item(s)</span> : null}
                 <div className="muted small">Invited by {i.invited_by_name} {timeAgo(i.created_at)}{i.send_count > 1 ? `, sent ${i.send_count} times` : ''} · expires {new Date(i.expires_at).toLocaleDateString()}</div>
                 {status ? <div className="muted small">Email: {status.status}{status.event ? ` (${status.event})` : ''}{status.error ? ` - ${status.error}` : ''}</div> : null}
-                {link?.id === i.id ? <div className="token-reveal" style={{ marginTop: 6 }}>{link.url}</div> : null}
+                {link?.id === i.id ? <div className="token-reveal" style={{ marginTop: 'var(--ui-s6, 6px)' }}>{link.url}</div> : null}
               </span>
               {i.status === 'pending' || i.status === 'expired' ? (
                 <>

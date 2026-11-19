@@ -37,6 +37,8 @@ export default defineConfig(async () => {
     },
     test: {
       provide: { TEST_MIGRATIONS: migrations, WORKER_VARS: vars },
+      // scrypt at its lowest allowed cost in tests (production uses 2^15; test-node/password-hashing.test.ts checks it).
+      env: { WORK_SCRYPT_LOG_N: '10' },
       testTimeout: 30_000,
       hookTimeout: 60_000,
       projects: [

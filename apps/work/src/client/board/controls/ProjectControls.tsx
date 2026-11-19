@@ -113,7 +113,7 @@ export function Tile({ label, value, sub, tone, title }: { label: string; value:
 
 function TaskLink({ t, onOpen }: { t: TaskRef; onOpen: (id: string) => void }) {
   return (
-    <button className="btn ghost sm" style={{ justifyContent: 'flex-start', gap: 6 }} onClick={() => onOpen(t.itemId)}>
+    <button className="btn ghost sm" style={{ justifyContent: 'flex-start', gap: 'var(--ui-s6, 6px)' }} onClick={() => onOpen(t.itemId)}>
       <TaskKey value={t.key} /> <span className="ellipsis">{t.name}</span>
     </button>
   );
@@ -148,7 +148,7 @@ function Overview({ bundle, onOpenItem, onTab }: ControlsProps & { onTab: (t: Ta
       </div>
       {d.evm?.earlyStage ? <p className="small muted">Early in the project: little work is earned yet, so CPI and SPI can change a lot.</p> : null}
 
-      <div className="pc-section" style={{ marginBottom: 14 }}>
+      <div className="pc-section" style={{ marginBottom: 'var(--ui-s14, 14px)' }}>
         <h3>Management summary</h3>
         <ul className="pc-qa">
           <li><b>Are we on schedule?</b><span>{fv == null ? (d.baseline ? 'The baseline has no finish date to compare.' : 'No approved baseline yet: approve one in Baselines to measure against.') : fv > 0 ? `No: the forecast finish is ${fv} working days after baseline ${d.baseline!.number}.` : fv < 0 ? `Yes: ${-fv} working days ahead of baseline ${d.baseline!.number}.` : `Yes: on baseline ${d.baseline!.number}'s finish date.`}{spiWord ? ` SPI ${d.evm!.spi!.toFixed(2)}: ${spiWord}.` : ''}</span></li>
@@ -165,7 +165,7 @@ function Overview({ bundle, onOpenItem, onTab }: ControlsProps & { onTab: (t: Ta
       <div className="pc-grid-2">
         <div className="pc-section">
           <h3>Needs attention</h3>
-          {d.intervention.length ? d.intervention.map((t) => <div key={t.itemId}><TaskLink t={t} onOpen={onOpenItem} /><div className="small muted" style={{ marginLeft: 10 }}>{t.reason}</div></div>) : <p className="muted small">Nothing needs intervention.</p>}
+          {d.intervention.length ? d.intervention.map((t) => <div key={t.itemId}><TaskLink t={t} onOpen={onOpenItem} /><div className="small muted" style={{ marginLeft: 'var(--ui-s10, 10px)' }}>{t.reason}</div></div>) : <p className="muted small">Nothing needs intervention.</p>}
         </div>
         <div className="pc-section">
           <h3>Critical activities</h3>

@@ -13,7 +13,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now } from '../lib/util';
 import { assertPerson, assertWhs, raScope, requireWhs, segregation, type WhsAccess } from './access';
 import { actionsOf } from './actions';
 import {
@@ -242,7 +242,7 @@ riskRoutes.get('/c/:company/risk-assessments', async (c) => {
   const db = c.env.DB;
   const today = todayFrom(c.req.query('today'));
   const scope = raScope(a, 'r');
-  const where = ['r.company_id = ?', scope.sql];
+  const where: string[] = [scope.sql];
   const args: unknown[] = [a.companyId, ...scope.args];
   const add = (sql: string, ...xs: unknown[]) => {
     where.push(sql);
@@ -257,7 +257,7 @@ riskRoutes.get('/c/:company/risk-assessments', async (c) => {
   if (c.req.query('reviewDue') === '1') add("r.status = 'approved' AND r.review_date IS NOT NULL AND r.review_date < ?", today);
   const q = c.req.query('q');
   if (q?.trim()) add('r.search LIKE ?', likeOf(q));
-  const rows = await db.prepare(`${RA_SELECT} WHERE ${where.join(' AND ')} ORDER BY r.number DESC, r.revision DESC LIMIT 500`).bind(...args).all<any>();
+  const rows = await db.prepare(`${RA_SELECT} WHERE r.company_id = ?${andAll(where)} ORDER BY r.number DESC, r.revision DESC LIMIT 500`).bind(...args).all<any>();
   const list = rows.results.map((r) => raDTO(r, today));
   if (c.req.query('format') === 'csv') {
     const { csvResponse } = await import('../erp/util');
@@ -302,7 +302,7 @@ async function detail(db: D1Database, a: WhsAccess, id: string, today: string) {
     ...body2,
     revisions: revisions.results.map((x) => ({ id: x.id, revision: x.revision, status: x.status, statusLabel: WHS_KIND_LABEL(RA_STATUS, x.status), trigger: WHS_KIND_LABEL(REVIEW_TRIGGERS, x.review_trigger), reason: x.review_reason, approvedAt: x.approved_at, createdAt: x.created_at })),
     actions: await actionsOf(db, a, 'risk_assessment', r.id, today),
-    links: await linksOf(db, a.companyId, 'risk_assessment', r.id),
+    links: await linksOf(db, a, 'risk_assessment', r.id),
     files: await filesOf(db, a.companyId, 'risk_assessment', r.id),
     comments: await commentsOf(db, a.companyId, 'risk_assessment', r.id),
     history: await historyOf(db, a.companyId, 'risk_assessment', r.id),

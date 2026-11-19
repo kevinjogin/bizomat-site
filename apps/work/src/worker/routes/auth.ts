@@ -5,7 +5,7 @@ import type { AppConfigDTO } from '../../shared/types';
 import { PRODUCT } from '../../shared/brand';
 import type { AppEnv } from '../env';
 import { HttpError, body, clientIp, newId, now, randomToken, sha256Hex } from '../lib/util';
-import { hashPassword, passwordProblems, verifyPassword } from '../auth/password';
+import { hashPassword, needsRehash, passwordProblems, verifyPassword } from '../auth/password';
 import { rateLimit, resetRateLimit } from '../auth/rate-limit';
 import { checkOrigin, createSession, destroySession, isSecureEnv, requireAuth, resolveAuth } from '../auth/session';
 // Inside the System (/system/tasks, ...) a provider returns to the tool's own address, the one registered with it.
@@ -22,6 +22,7 @@ import type { WorkspaceRole } from '../../shared/types';
 import { checkAddress, loadPolicy, refusalMetadata, type AddressCheck } from '../services/signup-guard';
 import { confirmEmail, sendVerification, verificationActive } from '../services/email-verification';
 import { getPlatformRole } from '../services/platform-admin';
+import { flagOn } from '../platform/flags';
 
 /** A refused address: logged with its domain and reason only, answered with the reason in plain words. */
 async function refuse(c: any, check: Extract<AddressCheck, { ok: false }>, where: 'signup' | 'login' | 'oauth', actorId: string | null = null): Promise<never> {
@@ -67,8 +68,9 @@ const LOCK_MS = 15 * 60_000;
 
 const signupAllowed = (env: AppEnv['Bindings']) => env.ALLOW_SIGNUP === 'true';
 
-authRoutes.get('/config', (c) => {
+authRoutes.get('/config', async (c) => {
   const cfg: AppConfigDTO = {
+    passwordReset: await flagOn(c.env.DB, 'self_service_password_reset').catch(() => false),
     appName: c.env.APP_NAME || PRODUCT.full,
     environment: c.env.ENVIRONMENT,
     allowSignup: signupAllowed(c.env),
@@ -120,12 +122,13 @@ authRoutes.post('/signup', async (c) => {
   // An invitation was sent to this address (and its token was presented), so the address counts as confirmed.
   const mustConfirm = !hasInvite && (await verificationActive(c.env, policy));
   const stmts = [
-    c.env.DB.prepare('INSERT INTO users (id, email, name, password_hash, email_verified_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(
+    c.env.DB.prepare('INSERT INTO users (id, email, name, password_hash, email_verified_at, email_verified_via, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(
       userId,
       input.email,
       input.name,
       await hashPassword(input.password),
       hasInvite ? t : null,
+      hasInvite ? 'invitation' : null,
       t,
       t,
     ),
@@ -170,6 +173,10 @@ authRoutes.post('/login', async (c) => {
     throw new HttpError(401, 'Invalid email or password');
   }
   await c.env.DB.prepare('UPDATE users SET failed_logins = 0, locked_until = NULL WHERE id = ?').bind(user.id).run();
+  // A hash from before the stronger hashing (audit S7) is replaced now that the password is known to be right.
+  if (needsRehash(user.password_hash ?? null)) {
+    await c.env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ? AND password_hash = ?').bind(await hashPassword(input.password), user.id, user.password_hash).run();
+  }
   await resetRateLimit(c.env.DB, `login:email:${input.email}`);
   // Only after the password is right, so these answers never reveal whether an account exists. Platform admins are
   // never refused here, so a policy change cannot lock the founder out.
@@ -234,8 +241,33 @@ authRoutes.get('/me', async (c) => {
   const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(auth.user.id).first<UserRow>();
   const { getPlatformRole } = await import('../services/platform-admin');
   const platformRole = auth.kind === 'session' ? await getPlatformRole(c.env.DB, auth.user.id) : null;
-  return c.json({ user: userDTO(user!), csrfToken: auth.session?.csrfToken ?? null, workspaces: await listWorkspaces(c.env.DB, auth.user.id), platformRole });
+  return c.json({ user: userDTO(user!), csrfToken: auth.session?.csrfToken ?? null, workspaces: await listWorkspaces(c.env.DB, auth.user.id), platformRole, ui: await uiFor(c.env.DB, user!) });
 });
+
+/**
+ * The new UI for this person (flag new_ui_enabled): on for everyone, or for a company they belong to (by the company or
+ * its rollout stage). Their density is a preference on their account (Comfortable unless they chose Compact).
+ */
+async function uiFor(db: D1Database, user: { id: string; preferences_json?: string | null }): Promise<{ newUi: boolean; density: 'comfortable' | 'compact' }> {
+  const { flagOn } = await import('../platform/flags');
+  let newUi = false;
+  try {
+    newUi = await flagOn(db, 'new_ui_enabled');
+    if (!newUi) {
+      const companies = await db.prepare('SELECT company_id FROM co_members WHERE user_id = ? LIMIT 20').bind(user.id).all<{ company_id: string }>();
+      for (const r of companies.results) if (await flagOn(db, 'new_ui_enabled', { companyId: r.company_id })) { newUi = true; break; }
+    }
+  } catch {
+    newUi = false;
+  }
+  let density: 'comfortable' | 'compact' = 'comfortable';
+  try {
+    density = JSON.parse(user.preferences_json || '{}').density === 'compact' ? 'compact' : 'comfortable';
+  } catch {
+    density = 'comfortable';
+  }
+  return { newUi, density };
+}
 
 // ------------------------------------------------------------------ OAuth
 
@@ -296,9 +328,21 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
     await db.prepare('INSERT INTO user_identities (id, user_id, provider, provider_subject, email, created_at) VALUES (?, ?, ?, ?, ?, ?)').bind(newId(), userId, provider.id, profile.subject, profile.email, t).run();
   } else {
     if (!profile.emailVerified) return fail('email_not_verified');
-    const existing = await db.prepare('SELECT id FROM users WHERE email = ?').bind(profile.email).first<{ id: string }>();
-    if (existing) userId = existing.id;
-    else {
+    const existing = await db.prepare('SELECT id, email_verified_at, password_hash FROM users WHERE email = ?').bind(profile.email).first<{ id: string; email_verified_at: number | null; password_hash: string | null }>();
+    if (existing) {
+      userId = existing.id;
+      // Account pre-hijack (audit L1 and S3): someone may have signed up first with this address and a password,
+      // without proving it. Google proves the address belongs to the person signing in now, so that password, its
+      // sessions and its API tokens end before the account is linked: only the address's owner keeps access.
+      if (!existing.email_verified_at && existing.password_hash) {
+        await db.batch([
+          db.prepare("UPDATE users SET password_hash = NULL, password_reset_required = 0, email_verified_at = ?, email_verified_via = 'google', updated_at = ? WHERE id = ?").bind(t, t, existing.id),
+          db.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'unproven_password_removed' WHERE user_id = ?2 AND revoked_at IS NULL").bind(t, existing.id),
+          db.prepare("UPDATE api_tokens SET revoked_at = ?1, revoked_reason = 'unproven_password_removed' WHERE user_id = ?2 AND revoked_at IS NULL").bind(t, existing.id),
+        ]);
+        await audit(db, { actorId: existing.id, action: 'auth.unproven_password_removed', metadata: { provider: provider.id }, ip: clientIp(c) });
+      }
+    } else {
       const check = await checkAddress(c.env, profile.email, policy);
       if (!check.ok) {
         await audit(db, { action: 'signup.refused', metadata: refusalMetadata(check, 'oauth'), ip: clientIp(c) });
@@ -311,7 +355,7 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
       userId = newId();
       const stmts = [
         // Google verified the address.
-        db.prepare('INSERT INTO users (id, email, name, email_verified_at, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)').bind(userId, profile.email, profile.name.slice(0, 100), t, t, t),
+        db.prepare("INSERT INTO users (id, email, name, email_verified_at, email_verified_via, created_at, updated_at) VALUES (?, ?, ?, ?, 'google', ?, ?)").bind(userId, profile.email, profile.name.slice(0, 100), t, t, t),
         eventStmt(db, { type: 'user.registered', userId, entityType: 'user', entityId: userId, metadata: { provider: provider.id, invited: !!invited }, at: t }),
       ];
       if (!invited) stmts.push(...createWorkspaceStmts(db, { name: `${profile.name.split(' ')[0]}'s workspace`, ownerId: userId }).stmts);
@@ -323,7 +367,7 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
   if (!user || user.disabled_at) return fail('account_disabled');
   // Google vouches for the address it signed in with: that confirms the account's address when they are the same.
   if (!user.email_verified_at && profile.emailVerified && profile.email.toLowerCase() === user.email.toLowerCase()) {
-    await db.prepare('UPDATE users SET email_verified_at = ?, updated_at = ? WHERE id = ?').bind(t, t, user.id).run();
+    await db.prepare("UPDATE users SET email_verified_at = ?, email_verified_via = 'google', updated_at = ? WHERE id = ?").bind(t, t, user.id).run();
     user = { ...user, email_verified_at: t };
   }
   if (!row.link_user_id && !(await getPlatformRole(db, user.id))) {

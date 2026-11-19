@@ -19,10 +19,11 @@ import { crmNumbers, financeNumbers, tasksNumbers, type CrmNumbers, type Finance
 import { loadAccess as crmAccess } from '../crm/access';
 import { hasPerm, loadAccess as finAccess } from '../fin/access';
 import { exampleSpaces } from './example';
+import { syncCompany } from '../company/identity';
 
 export type SysApp = 'tasks' | 'crm' | 'finance';
 export const SYS_APPS: SysApp[] = ['tasks', 'crm', 'finance'];
-export type SysRole = 'owner' | 'admin' | 'member' | 'guest';
+export type SysRole = 'owner' | 'admin' | 'manager' | 'employee' | 'read_only' | 'member' | 'guest';
 /** registered: co_companies; own: the person's own company; demo: their example company (system/example.ts). */
 export type SysKind = 'registered' | 'own' | 'demo';
 
@@ -64,6 +65,7 @@ export async function ensureOwnCompany(db: D1Database, user: { id: string; name?
   const t = now();
   await db.prepare('INSERT OR IGNORE INTO sys_companies (id, owner_id, name, created_via, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)').bind(newId(), user.id, ownName(user), via, t, t).run();
   const row = await db.prepare('SELECT id FROM sys_companies WHERE owner_id = ?').bind(user.id).first<{ id: string }>();
+  await syncCompany(db, row!.id, t);
   return row!.id;
 }
 

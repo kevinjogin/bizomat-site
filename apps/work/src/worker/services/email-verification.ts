@@ -86,6 +86,6 @@ export async function confirmEmail(db: D1Database, token: string): Promise<Confi
   // Single use: only the first request to mark the link used confirms.
   const used = await db.prepare('UPDATE email_verifications SET used_at = ? WHERE token_hash = ? AND used_at IS NULL').bind(t, hash).run();
   if (!used.meta.changes) return { ok: true, email: row.email, already: true, userId: row.user_id };
-  await db.prepare('UPDATE users SET email_verified_at = COALESCE(email_verified_at, ?), updated_at = ? WHERE id = ?').bind(t, t, row.user_id).run();
+  await db.prepare("UPDATE users SET email_verified_via = CASE WHEN email_verified_at IS NULL THEN 'link' ELSE email_verified_via END, email_verified_at = COALESCE(email_verified_at, ?), updated_at = ? WHERE id = ?").bind(t, t, row.user_id).run();
   return { ok: true, email: row.email, already: !!row.email_verified_at, userId: row.user_id };
 }

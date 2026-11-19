@@ -6,7 +6,7 @@ import { addDays } from '../../shared/fin/dates';
 import { SUBTYPES } from '../../shared/fin/charts';
 import type { TaxMode } from '../../shared/fin/tax';
 import { type FinAccess, assertMember, assertRecord, canRecord, deny, hasPerm, membersWithPerm } from './access';
-import { type AmountLineInput, type Chart, chartOf, journalStmts, priceLines, reversalStmts, transactionLines, validateJournal } from './ledger';
+import { type AmountLineInput, type Chart, assertLineRefs, chartOf, journalStmts, priceLines, reversalStmts, transactionLines, validateJournal } from './ledger';
 import { auditStmt, finNotify, runBatch, searchText } from './util';
 import type { Env } from '../env';
 
@@ -96,6 +96,8 @@ export async function prepareTransaction(db: D1Database, a: FinAccess, input: Tx
       const cat = chart.accounts.get(l.accountId);
       if (cat && SUBTYPES[cat.subtype]?.money && cat.id === acc.id) throw new HttpError(400, 'A line cannot go to the same account as the transaction');
     }
+    // Tracking on each line from this workspace, of the right kind (audit E4).
+    await assertLineRefs(db, a.orgId, input.lines);
     priced = priceLines(a, chart, input.lines, input.taxMode ?? 'inclusive', input.kind === 'receive' ? 'sales' : 'purchases');
     if (priced.total <= 0) throw new HttpError(400, input.kind === 'receive' ? 'Money in must be more than zero (record a refund as money out)' : 'Money out must be more than zero (record a refund as money in)');
   }

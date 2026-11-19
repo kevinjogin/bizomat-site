@@ -13,7 +13,7 @@
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
-import { HttpError, body, newId, notFound, now } from '../lib/util';
+import { HttpError, andAll, body, newId, notFound, now } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { assertCan, can, requireErp, segregation, type ErpAccess } from './access';
 import { ECO_STATUS, ECR_STATUS, badState, csvResponse, eventStmt, eventStmtIf, historyOf, likeOf, nextNumber, paging, searchText, wantsCsv, zId, zText } from './util';
@@ -78,7 +78,7 @@ async function checkProducts(db: D1Database, companyId: string, ids: string[]) {
 changeRoutes.get('/c/:company/change-requests', async (c) => {
   const a = await requireErp(c, 'products.view');
   const db = c.env.DB;
-  const where = ['r.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const status = c.req.query('status');
   if (status && (ECR_STATUS as readonly string[]).includes(status)) {
@@ -99,14 +99,14 @@ changeRoutes.get('/c/:company/change-requests', async (c) => {
   const sql = `SELECT r.*, u.name AS requested_by_name, d.name AS decided_by_name,
                       (SELECT COUNT(*) FROM erp_change_request_products x WHERE x.company_id = r.company_id AND x.request_id = r.id) AS product_count
                  FROM erp_change_requests r LEFT JOIN users u ON u.id = r.requested_by LEFT JOIN users d ON d.id = r.decided_by
-                WHERE ${where.join(' AND ')} ORDER BY r.created_at DESC, r.rowid DESC`;
+                WHERE r.company_id = ?${andAll(where)} ORDER BY r.created_at DESC, r.rowid DESC`;
   if (wantsCsv(c)) {
     const rows = await db.prepare(`${sql} LIMIT 10000`).bind(...args).all<any>();
     return csvResponse('change-requests', [['Number', 'Title', 'Status', 'Requested by', 'Products', 'Raised', 'Decided by', 'Decision note'], ...rows.results.map((r) => [r.number, r.title, ECR_LABELS[r.status as keyof typeof ECR_LABELS], r.requested_by_name ?? '', r.product_count, new Date(r.created_at).toISOString().slice(0, 10), r.decided_by_name ?? '', r.decision_note])]);
   }
   const [rows, total] = await Promise.all([
     db.prepare(`${sql} LIMIT ? OFFSET ?`).bind(...args, limit, offset).all<any>(),
-    db.prepare(`SELECT COUNT(*) AS n FROM erp_change_requests r WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>(),
+    db.prepare(`SELECT COUNT(*) AS n FROM erp_change_requests r WHERE r.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>(),
   ]);
   return c.json({ requests: rows.results.map(ecrDTO), total: total?.n ?? 0 });
 });
@@ -261,7 +261,7 @@ function ecoCan(a: ErpAccess, o: any) {
 changeRoutes.get('/c/:company/change-orders', async (c) => {
   const a = await requireErp(c, 'products.view');
   const db = c.env.DB;
-  const where = ['o.company_id = ?'];
+  const where: string[] = [];
   const args: unknown[] = [a.companyId];
   const status = c.req.query('status');
   if (status && (ECO_STATUS as readonly string[]).includes(status)) {
@@ -279,7 +279,7 @@ changeRoutes.get('/c/:company/change-orders', async (c) => {
     args.push(product.slice(0, 64));
   }
   const { limit, offset } = paging(c);
-  const sql = `${ECO_SELECT} WHERE ${where.join(' AND ')} ORDER BY o.created_at DESC, o.rowid DESC`;
+  const sql = `${ECO_SELECT} WHERE o.company_id = ?${andAll(where)} ORDER BY o.created_at DESC, o.rowid DESC`;
   if (wantsCsv(c)) {
     const rows = await db.prepare(`${sql} LIMIT 10000`).bind(...args).all<any>();
     return csvResponse('change-orders', [
@@ -287,7 +287,7 @@ changeRoutes.get('/c/:company/change-orders', async (c) => {
       ...rows.results.map((o) => [o.number, o.title, ECO_LABELS[o.status as keyof typeof ECO_LABELS], o.request_number ?? '', o.revision_count, o.created_by_name ?? '', o.approved_by_name ?? '', o.released_by_name ?? '', o.released_at ? new Date(o.released_at).toISOString().slice(0, 10) : '', o.sod_exception ? 'one-person company' : '']),
     ]);
   }
-  const [rows, total] = await Promise.all([db.prepare(`${sql} LIMIT ? OFFSET ?`).bind(...args, limit, offset).all<any>(), db.prepare(`SELECT COUNT(*) AS n FROM erp_change_orders o WHERE ${where.join(' AND ')}`).bind(...args).first<{ n: number }>()]);
+  const [rows, total] = await Promise.all([db.prepare(`${sql} LIMIT ? OFFSET ?`).bind(...args, limit, offset).all<any>(), db.prepare(`SELECT COUNT(*) AS n FROM erp_change_orders o WHERE o.company_id = ?${andAll(where)}`).bind(...args).first<{ n: number }>()]);
   return c.json({ orders: rows.results.map(ecoDTO), total: total?.n ?? 0 });
 });
 

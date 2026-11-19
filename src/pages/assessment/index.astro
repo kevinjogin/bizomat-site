@@ -1,5 +1,6 @@
 ---
-// /assessment/: BIZOMAT Engineering Problem Assessment, a fixed-price A$195 remote review of one defined problem.
+// /assessment/: BIZOMAT Engineering Problem Assessment, a fixed-scope remote review of one defined problem (no price shown:
+// prices are withdrawn for now, owner 19 Nov 2026).
 // Content comes from src/config/assessment.ts; the PDFs, QR code and images come from scripts/assessment/.
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Container from '../../components/Container.astro';
@@ -36,8 +37,6 @@ const service = {
   offers: {
     '@type': 'Offer',
     name: ASSESSMENT.name,
-    price: ASSESSMENT.price.toFixed(2),
-    priceCurrency: ASSESSMENT.currency,
     url,
     availability: 'https://schema.org/InStock',
     eligibleRegion: { '@type': 'Country', name: 'Australia' },
@@ -58,8 +57,6 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
   title={ASSESSMENT.seo.title}
   description={ASSESSMENT.seo.description}
   canonical={ASSESSMENT.path}
-  image={ASSETS.social}
-  imageAlt="BIZOMAT Engineering Problem Assessment: A$195 for one defined engineering or manufacturing problem"
   breadcrumbs={crumbs}
   schema={[service]}
 >
@@ -105,8 +102,8 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
 
   <Section index="02" label="What you receive" id="included" tone="alt" labelledby="included-title">
     <div class="section-head">
-      <h2 id="included-title">Five things, for one fixed price.</h2>
-      <p>Everything below is included in {ASSESSMENT.priceLabel}. The assessment gives a preliminary view; it does not promise root-cause identification, certification or a guaranteed solution.</p>
+      <h2 id="included-title">Five things, in one fixed scope.</h2>
+      <p>Everything below is included in the assessment. The assessment gives a preliminary view; it does not promise root-cause identification, certification or a guaranteed solution.</p>
     </div>
     <ol class="inc">
       {
@@ -149,7 +146,7 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
     <AssessmentReportPreview />
   </Section>
 
-  <Section index="06" label="Price and conditions" id="terms" tone="alt" labelledby="terms-title">
+  <Section index="06" label="Fee and conditions" id="terms" tone="alt" labelledby="terms-title">
     <div class="pricing">
       <div class="price-card">
         <p class="price-card__eyebrow">{ASSESSMENT.shortName}</p>
@@ -187,13 +184,13 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
     </div>
     <div class="choose">
       <article class="choose__card choose__card--a">
-        <p class="choose__price">{ASSESSMENT.priceLabel} · fixed</p>
+        <p class="choose__price">Fixed scope</p>
         <h3>{ASSESSMENT.shortName}</h3>
         <ul>{CHOOSING.assessment.map((c) => <li>{c}</li>)}</ul>
         <Button href="#request" arrow>Request an Assessment</Button>
       </article>
       <article class="choose__card">
-        <p class="choose__price">{FACTORY_FIX.price} · scoped</p>
+        <p class="choose__price">Quoted to scope</p>
         <h3>{FACTORY_FIX.name}</h3>
         <ul>{CHOOSING.factoryFix.map((c) => <li>{c}</li>)}</ul>
         <Button href="/factory-fix/" variant="secondary" arrow>Explore Factory Fix</Button>
@@ -206,7 +203,7 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
     <div class="request">
       <div class="request__intro">
         <h2 id="request-title">Request an assessment.</h2>
-        <p class="request__lead">Tell BIZOMAT about the problem. You will hear back whether it suits the fixed-price assessment before anything is paid or booked.</p>
+        <p class="request__lead">Tell BIZOMAT about the problem. You will hear back whether it suits the assessment, and the fee, before anything is paid or booked.</p>
         <ol class="request__next">
           <li>BIZOMAT reviews your enquiry and may ask for more information.</li>
           <li>If it is suitable, you receive the confirmed scope and payment instructions.</li>
@@ -238,12 +235,9 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
     <div class="share">
       <div>
         <h2 id="share-title">Take the assessment with you.</h2>
-        <p class="muted">A one-page brochure for email or print, the fictional sample report and a printable QR code that opens this page.</p>
+        <p class="muted">A QR code that opens this page, for print or a slide.</p>
       </div>
       <ul class="share__list">
-        <li><a href={ASSETS.brochure} download>Service brochure <span>PDF · A4</span></a></li>
-        <li><a href={ASSETS.sampleReport} download>Sample report <span>PDF · A4 · fictional</span></a></li>
-        <li><a href={ASSETS.qrCard} download>Printable QR card <span>PDF · A6</span></a></li>
         <li><a href={ASSETS.qrPng} download>QR code <span>PNG · high resolution</span></a></li>
         <li><a href={ASSETS.qrSvg} download>QR code <span>SVG · vector</span></a></li>
       </ul>
@@ -253,7 +247,7 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
 
   <CallToAction
     title="One problem. A clear next step."
-    text={`Describe the problem. BIZOMAT confirms whether it suits the ${ASSESSMENT.priceLabel} assessment before anything is paid or booked.`}
+    text="Describe the problem. BIZOMAT confirms whether it suits the assessment, and the fee, before anything is paid or booked."
     href="#request"
     label="Request an Assessment"
   />
@@ -377,4 +371,61 @@ const included = ['One defined problem', 'Up to 30 minutes of remote technical d
   .share__list span { font-family: var(--font-mono); font-size: 0.75rem; font-weight: 400; color: var(--muted); }
   .share__qr { width: 180px; height: 180px; padding: 10px; background: #fff; border-radius: 10px; }
   @media (max-width: 960px) { .share { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .ah__eyebrow { margin-top: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .ah__title { margin: var(--bz-space-4) 0 0; }
+  :global(html[data-ui="new"]) .ah__sub { margin: var(--bz-space-6) 0 0; }
+  :global(html[data-ui="new"]) .ah__price { gap: var(--bz-space-4) var(--bz-space-5); margin-top: var(--bz-space-8); padding: var(--bz-space-4) var(--bz-space-5); }
+  :global(html[data-ui="new"]) .ah__caption small { font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .ah__actions { gap: var(--bz-space-3); margin-top: var(--bz-space-8); }
+  :global(html[data-ui="new"]) .ah__tertiary { margin: var(--bz-space-4) 0 0; font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .intro { gap: var(--bz-space-8) calc(var(--bz-space-1) * 20); }
+  :global(html[data-ui="new"]) .facts { margin: var(--bz-space-10) 0 0; }
+  :global(html[data-ui="new"]) .facts li { gap: var(--bz-space-1); padding: var(--bz-space-5) var(--bz-space-6); }
+  :global(html[data-ui="new"]) .facts__label { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .section-head { gap: var(--bz-space-4) var(--bz-space-16); }
+  :global(html[data-ui="new"]) .inc { gap: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .inc__card { gap: var(--bz-space-2); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .inc__card--wide { column-gap: var(--bz-space-12); }
+  :global(html[data-ui="new"]) .inc__num { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .inc__text { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .inc__points { margin: var(--bz-space-1) 0 0; }
+  :global(html[data-ui="new"]) .inc__points li { padding: var(--bz-space-2) 0 var(--bz-space-2) var(--bz-space-5); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .pricing { gap: var(--bz-space-10) calc(var(--bz-space-1) * 18); }
+  :global(html[data-ui="new"]) .price-card { border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .price-card__eyebrow { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .price-card__amount { margin: var(--bz-space-2) 0 0; }
+  :global(html[data-ui="new"]) .price-card__caption { margin: var(--bz-space-2) 0 var(--bz-space-5); }
+  :global(html[data-ui="new"]) .price-card__list { margin: 0 0 var(--bz-space-6); }
+  :global(html[data-ui="new"]) .price-card__list li { padding: var(--bz-space-3) 0 var(--bz-space-3) var(--bz-space-6); }
+  :global(html[data-ui="new"]) .price-card__note { margin: var(--bz-space-4) 0 0; font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .conditions h2 { margin-bottom: var(--bz-space-8); }
+  :global(html[data-ui="new"]) .conditions__label { margin: var(--bz-space-8) 0 var(--bz-space-3); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .exclusions { gap: var(--bz-space-2); margin: 0 0 var(--bz-space-4); }
+  :global(html[data-ui="new"]) .exclusions li { padding: var(--bz-space-1) var(--bz-space-3) var(--bz-space-1) var(--bz-space-8); border-radius: var(--bz-radius-full); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .cond div { gap: var(--bz-space-2) var(--bz-space-8); padding: var(--bz-space-4) 0; }
+  :global(html[data-ui="new"]) .conditions > p.muted { margin-top: var(--bz-space-4); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .choose { gap: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .choose__card { gap: var(--bz-space-4); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .choose__price { font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .choose__card ul { margin: 0 0 var(--bz-space-2); padding-left: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .choose__card li { margin-bottom: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .choose__quote { margin: var(--bz-space-6) 0 0; }
+  :global(html[data-ui="new"]) .request { gap: var(--bz-space-10) calc(var(--bz-space-1) * 18); }
+  :global(html[data-ui="new"]) .request__lead { margin: var(--bz-space-4) 0 var(--bz-space-6); }
+  :global(html[data-ui="new"]) .request__next li { padding: var(--bz-space-3) 0; }
+  :global(html[data-ui="new"]) .request__next li::before { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .request__note { margin-top: var(--bz-space-5); padding: var(--bz-space-4) var(--bz-space-4); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .faq-title { margin-bottom: var(--bz-space-8); }
+  :global(html[data-ui="new"]) .faq__item summary { padding: var(--bz-space-5) var(--bz-space-10) var(--bz-space-5) 0; font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .faq__item summary::after { font-size: var(--bz-text-2xl); }
+  :global(html[data-ui="new"]) .faq__item p { margin: 0 0 var(--bz-space-5); }
+  :global(html[data-ui="new"]) .share { gap: var(--bz-space-8) var(--bz-space-12); }
+  :global(html[data-ui="new"]) .share h2 { margin-bottom: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .share__list { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .share__list a { gap: var(--bz-space-4); padding: var(--bz-space-3) var(--bz-space-4); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .share__list span { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .share__qr { padding: var(--bz-space-3); border-radius: var(--bz-radius-lg); }
+  /* ui-new:generated end */
 </style>

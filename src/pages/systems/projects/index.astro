@@ -496,4 +496,18 @@ const schema = [
   .pp-card h3 a { color: inherit; }
   @media (max-width: 1000px) { .pp-steps--2 { grid-template-columns: 1fr; } .pp-list--3 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
   @media (max-width: 640px) { .pp-list--cols, .pp-list--3 { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .pp-head-lead { margin: var(--bz-space-4) 0 0; }
+  :global(html[data-ui="new"]) .pp-subhead { gap: var(--bz-space-2); margin-bottom: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .pp-list--cols { column-gap: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .pp-card__status { margin: 0 0 var(--bz-space-3); }
+  :global(html[data-ui="new"]) .pp-status-line { gap: var(--bz-space-2); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .pp-flow { margin: var(--bz-space-3) 0 0; padding-left: var(--bz-space-5); gap: var(--bz-space-2); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .pp-faq { gap: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .pp-faq > div { padding: var(--bz-space-4) var(--bz-space-5); }
+  :global(html[data-ui="new"]) .pp-faq dd { margin: var(--bz-space-2) 0 0; }
+  :global(html[data-ui="new"]) .pp-band__note { margin: var(--bz-space-2) 0 0; }
+  :global(html[data-ui="new"]) .pp-related__kind { margin: 0 0 var(--bz-space-2); font-size: var(--bz-text-sm); }
+  /* ui-new:generated end */
 </style>

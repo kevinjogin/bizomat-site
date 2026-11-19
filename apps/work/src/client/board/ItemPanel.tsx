@@ -85,10 +85,10 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
     <>
       <div className="sidepanel-overlay" onClick={onClose} />
       <aside className="sidepanel" role="dialog" aria-modal="true" aria-label={item ? `Item ${item.name}` : 'Item'} ref={ref} tabIndex={-1}>
-        {unsaved ? <Loading label="Saving the item…" /> : detail.isLoading && !item ? <Loading /> : detail.error && !item ? <div style={{ padding: 20 }}><ErrorBox error={detail.error} /></div> : item ? (
+        {unsaved ? <Loading label="Saving the item…" /> : detail.isLoading && !item ? <Loading /> : detail.error && !item ? <div style={{ padding: 'var(--ui-s20, 20px)' }}><ErrorBox error={detail.error} /></div> : item ? (
           <>
             <div className="panel-head">
-              <div className="row small muted" style={{ marginBottom: 6 }}>
+              <div className="row small muted" style={{ marginBottom: 'var(--ui-s6, 6px)' }}>
                 <span className="icon-dot" style={{ background: group?.color }} />
                 <span>{bundle.board.name}</span> <Icon name="chevronRight" size={12} /> <span>{group?.name}</span>
                 {detail.data?.parent ? (<><Icon name="chevronRight" size={12} /><button className="btn ghost sm" onClick={() => onOpen(detail.data!.parent!.id)}>{detail.data.parent.name}</button></>) : null}
@@ -107,7 +107,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
                 onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()}
                 maxLength={500}
               />
-              <div className="tabs" role="tablist" style={{ marginTop: 8 }}>
+              <div className="tabs" role="tablist" style={{ marginTop: 'var(--ui-s8, 8px)' }}>
                 {(['updates', 'details', 'schedule', 'subitems', 'files', 'activity', 'time', 'docs', 'access'] as Tab[]).filter((t) => !(t === 'subitems' && item.parentItemId) && (t !== 'access' || canShare) && (t !== 'docs' || caps?.via !== 'task') && (t !== 'schedule' || !item.id.startsWith('tmp-'))).map((t) => (
                   <button key={t} role="tab" aria-selected={tab === t} className={`tab${tab === t ? ' active' : ''}`} onClick={() => setTab(t)}>
                     {t === 'access' ? 'Access' : t === 'updates' ? `Updates${item.updateCount ? ` (${item.updateCount})` : ''}` : t === 'subitems' ? `Subitems (${subitems.length})` : t === 'files' ? `Files (${detail.data?.attachments.length ?? 0})` : t[0].toUpperCase() + t.slice(1)}
@@ -318,7 +318,7 @@ function UpdatesTab({ itemId, members, onPosted, canComment = true }: { itemId: 
   };
   const renderOne = (u: UpdateDTO, isReply = false) => (
     <div key={u.id} className={isReply ? '' : 'update'}>
-      <div className="row" style={{ marginBottom: 6 }}>
+      <div className="row" style={{ marginBottom: 'var(--ui-s6, 6px)' }}>
         <Avatar id={u.authorId} name={u.authorName} url={members.find((m) => m.id === u.authorId)?.avatarUrl} size="sm" />
         <strong>{u.authorName}</strong>
         <span className="muted small">{timeAgo(u.createdAt)}{u.editedAt ? ' · edited' : ''}</span>
@@ -339,11 +339,11 @@ function UpdatesTab({ itemId, members, onPosted, canComment = true }: { itemId: 
         <>
           {u.replies?.length ? <div className="replies">{u.replies.map((r) => renderOne(r, true))}</div> : null}
           {replyTo === u.id ? (
-            <div style={{ marginTop: 10 }}>
+            <div style={{ marginTop: 'var(--ui-s10, 10px)' }}>
               <MentionComposer members={members} placeholder="Write a reply…" autoFocus submitLabel="Reply" onSubmit={(b) => post_(b, u.id)} />
             </div>
           ) : canComment ? (
-            <button className="btn ghost sm" style={{ marginTop: 6 }} onClick={() => setReplyTo(u.id)}><Icon name="message" size={13} /> Reply</button>
+            <button className="btn ghost sm" style={{ marginTop: 'var(--ui-s6, 6px)' }} onClick={() => setReplyTo(u.id)}><Icon name="message" size={13} /> Reply</button>
           ) : null}
         </>
       ) : null}
@@ -423,7 +423,7 @@ function FilesTab({ item, attachments, canEdit, refresh }: { item: ItemDTO; atta
         >
           <input ref={input} type="file" multiple hidden onChange={(e) => send(e.target.files)} />
           <button className="btn" disabled={busy} onClick={() => input.current?.click()}>{busy ? <Spinner /> : <Icon name="upload" />} Upload files</button>
-          <div className="muted small" style={{ marginTop: 6 }}>or drop files here · max 25 MB · images, PDF, Office, text, CSV, ZIP</div>
+          <div className="muted small" style={{ marginTop: 'var(--ui-s6, 6px)' }}>or drop files here · max 25 MB · images, PDF, Office, text, CSV, ZIP</div>
         </div>
       ) : null}
       {attachments.length === 0 ? <EmptyState icon="paperclip" title="No files">Files attached to this item appear here.</EmptyState> : (
@@ -480,7 +480,7 @@ function ActivityTab({ itemId, columns, ctx }: { itemId: string; columns: Column
           {a.actorId ? <Avatar id={a.actorId} name={a.actorName ?? '?'} size="sm" /> : <span className="avatar sm" style={{ background: 'var(--warning)' }}><Icon name="bolt" size={12} /></span>}
           <div className="grow">
             <strong>{a.actorName ?? 'Automation'}</strong> {describe(a, columns, ctx)}
-            {a.action.endsWith(':automation') ? <span className="badge warning" style={{ marginLeft: 6 }}>automation</span> : null}
+            {a.action.endsWith(':automation') ? <span className="badge warning" style={{ marginLeft: 'var(--ui-s6, 6px)' }}>automation</span> : null}
           </div>
           <span className="muted small" title={new Date(a.createdAt).toLocaleString()}>{timeAgo(a.createdAt)}</span>
         </div>
@@ -536,7 +536,7 @@ function TimeTab({ item, entries, canEdit, refresh }: { item: ItemDTO; entries: 
         </form>
       ) : null}
       <div className="list card">
-        {entries.length === 0 ? <div className="muted small" style={{ padding: 12 }}>No time logged yet.</div> : entries.map((e) => (
+        {entries.length === 0 ? <div className="muted small" style={{ padding: 'var(--ui-s12, 12px)' }}>No time logged yet.</div> : entries.map((e) => (
           <div key={e.id} className="list-row">
             <Avatar id={e.user_id} name={e.user_name} size="sm" />
             <div className="grow">

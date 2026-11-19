@@ -46,6 +46,12 @@ const WhsArea = lazy(() => import('./whs/Whs').then((m) => ({ default: m.WhsArea
 const WhsLegalAdmin = lazy(() => import('./whs/LegalAdmin').then((m) => ({ default: m.LegalAdmin })));
 const BillingPage = lazy(() => import('./billing/Billing').then((m) => ({ default: m.BillingPage })));
 const BillingAdmin = lazy(() => import('./billing/BillingAdmin').then((m) => ({ default: m.BillingAdmin })));
+// The Admin Control Centre and two-factor sign-in (Stage 1, R2; src/client/admin/pages).
+const ControlCentre = lazy(() => import('../admin/pages/Controls'));
+const SecurityPage = lazy(() => import('../admin/pages/Security'));
+const UiKit = lazy(() => import('../admin/pages/UiKit'));
+const MfaGate = lazy(() => import('../admin/pages/Security').then((m) => ({ default: m.MfaGate })));
+const ReauthHost = lazy(() => import('../admin/reauth').then((m) => ({ default: m.ReauthHost })));
 
 /** The ERP's products, engineering and supplier reports (src/client/system/erp/Reports.tsx keeps the same list). */
 const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
@@ -131,7 +137,7 @@ function WhsCard({ companyId, demo }: { companyId: string; demo: boolean }) {
 // ------------------------------------------------------------------ data
 
 type SysApp = 'tasks' | 'crm' | 'finance';
-type SysRole = 'owner' | 'admin' | 'member' | 'guest';
+type SysRole = 'owner' | 'admin' | 'manager' | 'employee' | 'read_only' | 'member' | 'guest';
 interface CompanyLite {
   id: string;
   /** demo: the person's example company (invented data, only for them). */
@@ -179,7 +185,7 @@ interface CadPerson {
 // The ERP's module names (the tools underneath keep their own names).
 const APP_NAMES: Record<SysApp, string> = { tasks: 'Projects and Tasks', crm: 'Sales and CRM', finance: 'Finance and Accounting' };
 const APP_ICONS: Record<SysApp, string> = { tasks: 'grid', crm: 'briefcase', finance: 'dollar' };
-const ROLE_LABELS: Record<SysRole, string> = { owner: 'Owner', admin: 'Administrator', member: 'Member', guest: 'Shared with you' };
+const ROLE_LABELS: Record<SysRole, string> = { owner: 'Owner', admin: 'Administrator', manager: 'Manager', employee: 'Employee', read_only: 'Read-only', member: 'Employee', guest: 'Shared with you' };
 const CAD = {
   app: 'https://bizomat.ai/cad/',
   assistant: 'https://bizomat.ai/cad/assistant',
@@ -405,8 +411,27 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
         <PlatformFooter />
       </nav>
       <main className="main" id="main">
+        <ComplianceBanner />
         {children}
       </main>
+    </div>
+  );
+}
+
+/** The company rule's notice (R7): only for people it concerns, while it is switched on. Showing it is recorded. */
+function ComplianceBanner() {
+  const q = useQuery({ queryKey: ['compliance', 'me'], queryFn: () => get<{ required: boolean; title?: string; body?: string; deadlineAt?: number | null; suspended?: boolean }>('/compliance/me'), staleTime: 5 * 60_000 });
+  const c = q.data;
+  if (!c?.required) return null;
+  return (
+    <div className={c.suspended ? 'error-box' : 'info-box'} role="status">
+      <strong>{c.suspended ? 'Your account is suspended' : c.title}</strong>
+      <p className="small">{c.body}</p>
+      {c.deadlineAt ? <p className="small">Deadline: {new Date(c.deadlineAt).toLocaleString()}</p> : null}
+      <div className="row">
+        <a className="btn sm primary" href={`${PLATFORM_URLS.company}new`}>Register a company</a>
+        <a className="btn sm" href={toolUrl('/tasks/settings/security#export')}>Export your data</a>
+      </div>
     </div>
   );
 }
@@ -414,13 +439,20 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
 function CompanySwitcher({ current }: { current?: string }) {
   const me = useMe().data;
   const navigate = useNavigate();
+  const qc = useQueryClient();
+  // Switching company (brief 3.4): every cached record of the old company goes, so nothing of it shows in the new one;
+  // leaving its pages closes their live connections and open forms. Only the list of companies is kept.
+  const switchTo = (id: string) => {
+    if (id !== current) qc.removeQueries({ predicate: (q) => !(q.queryKey[0] === 'system' && q.queryKey[1] === 'me') });
+    navigate(`/c/${id}/home`);
+  };
   const list = me?.companies ?? [];
   const active = list.find((c) => c.id === current);
   const yours = list.filter((c) => c.role !== 'guest' && c.kind !== 'demo');
   const shared = list.filter((c) => c.role === 'guest');
   const examples = list.filter((c) => c.kind === 'demo');
   const item = (c: CompanyLite, close: () => void) => (
-    <MenuItem key={c.id} active={c.id === current} onClick={() => { close(); navigate(`/c/${c.id}/home`); }}>
+    <MenuItem key={c.id} active={c.id === current} onClick={() => { close(); switchTo(c.id); }}>
       <span className="grow ellipsis">{c.name}</span>
       <span className="muted small">{c.role === 'guest' ? `${c.toolCount} ${c.toolCount === 1 ? 'tool' : 'tools'}` : c.kind === 'demo' ? 'Example' : c.kind === 'own' ? 'Own' : ROLE_LABELS[c.role]}</span>
     </MenuItem>
@@ -1183,6 +1215,9 @@ const ADMIN_NAV = [
   { to: 'activity', label: 'Activity' },
   { to: 'whs', label: 'WHS legal packs' },
   { to: 'billing', label: 'Billing' },
+  { to: 'controls', label: 'Control Centre' },
+  { to: 'security', label: 'Security' },
+  { to: 'ui-kit', label: 'UI kit' },
 ];
 
 function AdminArea() {
@@ -1192,6 +1227,9 @@ function AdminArea() {
   if (!me.data.platformRole) return <Navigate to="/" replace />;
   const founder = me.data.platformRole === 'founder';
   return (
+    <Suspense fallback={<Loading />}>
+    <MfaGate>
+    <ReauthHost />
     <div className="page crm-page">
       <PageHeader title="ERP console" subtitle="Every account and company on BIZOMAT, with their activity across the tools. Usage only: never the contents of anyone's records." />
       <nav className="tabs sys-tabs" aria-label="Console sections">
@@ -1204,9 +1242,14 @@ function AdminArea() {
         <Route path="activity" element={<AdminActivity />} />
         <Route path="whs/*" element={<Suspense fallback={<Loading />}><WhsLegalAdmin /></Suspense>} />
         <Route path="billing" element={<Suspense fallback={<Loading />}><BillingAdmin founder={founder} /></Suspense>} />
+        <Route path="controls" element={<Suspense fallback={<Loading />}><ControlCentre /></Suspense>} />
+        <Route path="security" element={<Suspense fallback={<Loading />}><SecurityPage /></Suspense>} />
+        <Route path="ui-kit" element={<Suspense fallback={<Loading />}><UiKit /></Suspense>} />
         <Route path="*" element={<Navigate to="overview" replace />} />
       </Routes>
     </div>
+    </MfaGate>
+    </Suspense>
   );
 }
 

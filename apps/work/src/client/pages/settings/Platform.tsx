@@ -76,10 +76,10 @@ export function FinanceSettings() {
   };
   const review = (d.columns ?? []).filter((c) => (c.type === 'currency' && c.currencySource === 'column' && !c.confirmed) || (c.type === 'number' && !c.financial));
   return (
-    <div className="col" style={{ gap: 16 }}>
+    <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
       <section className="card card-pad">
-        <h2 style={{ marginBottom: 6 }}>Currency</h2>
-        <p className="muted small" style={{ marginBottom: 12 }}>
+        <h2 style={{ marginBottom: 'var(--ui-s6, 6px)' }}>Currency</h2>
+        <p className="muted small" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
           The organisation's default currency for amounts on its projects. A project can use its own (board settings, Project details). Choosing a currency states what the stored numbers mean; it never changes them, and amounts in different currencies are never added together.
         </p>
         <div className="row wrap" style={{ alignItems: 'flex-end' }}>
@@ -104,7 +104,7 @@ export function FinanceSettings() {
       <section className="card">
         <div className="card-header"><h2 className="grow">Review existing amount columns</h2><span className="badge">{review.length}</span></div>
         <div className="card-pad">
-          <p className="muted small" style={{ marginBottom: 10 }}>
+          <p className="muted small" style={{ marginBottom: 'var(--ui-s10, 10px)' }}>
             Columns made before currency settings existed keep the code they were created with (often USD, the old default), and number columns such as "Finance" are not yet marked as money. Nothing is assumed: decide for each column. The amounts themselves are never changed.
           </p>
           {!review.length ? <EmptyState icon="check" title="Nothing to review">Every amount column has a confirmed currency.</EmptyState> : (
@@ -119,7 +119,7 @@ export function FinanceSettings() {
                       <td className="small">{c.type === 'currency' ? `Stored code ${c.storedCurrency ?? 'none'}, not confirmed` : 'Plain number, not marked as money'}</td>
                       <td>{c.valueCount}</td>
                       <td>
-                        <div className="row wrap" style={{ gap: 4 }}>
+                        <div className="row wrap" style={{ gap: 'var(--ui-s4, 4px)' }}>
                           {c.type === 'currency' ? (
                             <>
                               <button className="btn sm" onClick={() => colAction(c, { action: 'confirm' }, `${c.title}: ${c.storedCurrency} confirmed`)}>Keep {c.storedCurrency}</button>
@@ -146,7 +146,7 @@ export function FinanceSettings() {
       <section className="card">
         <div className="card-header"><h2 className="grow">Amount columns and their finance roles</h2></div>
         <div className="card-pad">
-          <p className="muted small" style={{ marginBottom: 10 }}>A finance role tells summaries and reports what the amounts are, so they can show remaining budget (approved - actual - committed), variance (approved - actual) and utilisation.</p>
+          <p className="muted small" style={{ marginBottom: 'var(--ui-s10, 10px)' }}>A finance role tells summaries and reports what the amounts are, so they can show remaining budget (approved - actual - committed), variance (approved - actual) and utilisation.</p>
           <div className="table-scroll">
             <table className="data-table">
               <thead><tr><th>Project</th><th>Column</th><th>Currency</th><th>Finance role</th></tr></thead>
@@ -155,7 +155,7 @@ export function FinanceSettings() {
                   <tr key={c.id}>
                     <td>{c.boardName}</td>
                     <td>{c.title}</td>
-                    <td className="small">{c.currency ?? 'Not set'} <span className="muted">({c.currencySource === 'column' ? 'column' : c.currencySource === 'project' ? 'project' : c.currencySource === 'organisation' ? 'organisation' : 'none'})</span>{c.currencySource === 'column' && !c.confirmed ? <span className="badge warning" style={{ marginLeft: 4 }}>Unconfirmed</span> : null}</td>
+                    <td className="small">{c.currency ?? 'Not set'} <span className="muted">({c.currencySource === 'column' ? 'column' : c.currencySource === 'project' ? 'project' : c.currencySource === 'organisation' ? 'organisation' : 'none'})</span>{c.currencySource === 'column' && !c.confirmed ? <span className="badge warning" style={{ marginLeft: 'var(--ui-s4, 4px)' }}>Unconfirmed</span> : null}</td>
                     <td>
                       <select className="select sm" value={c.financeRole ?? ''} aria-label={`Finance role of ${c.title}`} onChange={(e) => colAction(c, { action: 'role', financeRole: e.target.value || null }, 'Finance role saved')}>
                         <option value="">Not set</option>
@@ -215,9 +215,9 @@ export function EmailSettings() {
     }
   };
   return (
-    <div className="col" style={{ gap: 16 }}>
+    <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
       <section className="card card-pad">
-        <h2 style={{ marginBottom: 8 }}>Email delivery</h2>
+        <h2 style={{ marginBottom: 'var(--ui-s8, 8px)' }}>Email delivery</h2>
         <table className="data-table">
           <tbody>
             <tr><td style={{ width: 220 }}>Provider</td><td><span className={`status-dot ${s.configured ? 'ok' : s.developmentMode ? 'warn' : 'bad'}`} />{s.configured ? (s.provider === 'brevo' ? 'Brevo (transactional API)' : s.provider) : s.developmentMode ? 'Development mode: messages are stored, not sent' : 'Not configured: invitations show a link to share instead'}</td></tr>
@@ -230,19 +230,19 @@ export function EmailSettings() {
           </tbody>
         </table>
         {!s.configured && !s.developmentMode ? (
-          <p className="small" style={{ marginTop: 12 }}>
+          <p className="small" style={{ marginTop: 'var(--ui-s12, 12px)' }}>
             Email is not connected yet, so the test button is off. The founder connects Brevo once for the whole platform in the founder console:{' '}
             <a href={appUrl('/admin/email')}>Founder console, Email (Brevo)</a>.
           </p>
         ) : null}
-        <div className="row" style={{ marginTop: 12 }}>
+        <div className="row" style={{ marginTop: 'var(--ui-s12, 12px)' }}>
           <button className="btn primary" onClick={test} disabled={testing || (!s.configured && !s.developmentMode)}><Icon name="message" /> Send a test email to me</button>
           <button className="btn" onClick={() => q.refetch()}><Icon name="refresh" /> Refresh</button>
         </div>
       </section>
       {s.suppressed.length ? (
         <section className="card card-pad">
-          <h2 style={{ marginBottom: 8 }}>Addresses not emailed</h2>
+          <h2 style={{ marginBottom: 'var(--ui-s8, 8px)' }}>Addresses not emailed</h2>
           <p className="muted small">These members' addresses bounced, were blocked or complained, so nothing more is sent to them.</p>
           <ul>{s.suppressed.map((x) => <li key={x.email}>{x.email}: {x.reason} ({timeAgo(x.created_at)})</li>)}</ul>
         </section>
@@ -302,7 +302,7 @@ export function AuditTrail() {
     <section className="card">
       <div className="card-header"><h2 className="grow">Audit trail</h2></div>
       <div className="card-pad">
-        <p className="muted small" style={{ marginBottom: 10 }}>The permanent record of task, project, membership, permission, invitation, finance, report and workspace name and colour events. Nobody can edit or delete it from the application.</p>
+        <p className="muted small" style={{ marginBottom: 'var(--ui-s10, 10px)' }}>The permanent record of task, project, membership, permission, invitation, finance, report and workspace name and colour events. Nobody can edit or delete it from the application.</p>
         <div className="row wrap" style={{ alignItems: 'flex-end' }}>
           <Field label="Event type">
             <select className="select" value={type} onChange={(e) => setType(e.target.value)}>

@@ -259,6 +259,8 @@ export interface AppConfigDTO {
   environment: string;
   allowSignup: boolean;
   providers: { id: string; name: string; enabled: boolean }[];
+  /** Self-service password reset is switched on (flag self_service_password_reset, R7). */
+  passwordReset?: boolean;
 }
 
 export interface FolderDTO {

@@ -12,7 +12,7 @@ import { BAS_ORDER, basOf } from '../../shared/fin/tax';
 import { NUMBERED_KINDS, type NumberedKind } from '../../shared/fin/settings';
 import { todayIn } from '../../shared/fin/dates';
 import { type FinAccess, assertRecord, deny, hasPerm, requireBusiness, requireOrg, requirePerm, scopeSql } from './access';
-import { type AccountRow, type LedgerLine, accountBalances, chartOf, forgetChart, journalStmts, natural, reversalStmts, side, validateJournal } from './ledger';
+import { type AccountRow, type LedgerLine, accountBalances, assertLineRefs, chartOf, forgetChart, journalStmts, natural, reversalStmts, side, validateJournal } from './ledger';
 import { auditStmt, csvOf, runBatch, searchText } from './util';
 import { type RenderDoc, pdfResponse, renderBasics, renderLine, renderPdf } from './render';
 
@@ -701,6 +701,7 @@ setupRoutes.post('/orgs/:org/rules', async (c) => {
   const a = await requireOrg(c);
   if (!hasPerm(a, 'banking', 'approve') && !a.perms.accounting.manage) deny('You cannot change categorisation rules');
   const input = await body(c, ruleInput);
+  await assertLineRefs(c.env.DB, a.orgId, [], [input.contactId]);
   const rid = newId();
   await runBatch(c.env.DB, [c.env.DB.prepare('INSERT INTO fin_rules (id, org_id, match_text, direction, account_id, tax_code_id, contact_id, position, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(rid, a.orgId, input.matchText.toLowerCase(), input.direction ?? 'any', input.accountId, a.gst ? (input.taxCodeId ?? null) : null, input.contactId ?? null, input.position ?? 0, a.userId, now())]);
   return c.json({ id: rid }, 201);
@@ -712,6 +713,7 @@ setupRoutes.patch('/orgs/:org/rules/:id', async (c) => {
   const input = await body(c, ruleInput.partial());
   const r = await c.env.DB.prepare('SELECT * FROM fin_rules WHERE id = ? AND org_id = ?').bind(c.req.param('id'), a.orgId).first<any>();
   if (!r) throw notFound('Rule');
+  await assertLineRefs(c.env.DB, a.orgId, [], [input.contactId]);
   await runBatch(c.env.DB, [
     c.env.DB.prepare('UPDATE fin_rules SET match_text = ?, direction = ?, account_id = ?, tax_code_id = ?, contact_id = ?, position = ? WHERE id = ? AND org_id = ?').bind(
       (input.matchText ?? r.match_text).toLowerCase(),
@@ -862,6 +864,7 @@ setupRoutes.post('/orgs/:org/journals', async (c) => {
     costCentreId: l.costCentreId ?? null,
   }));
   validateJournal(a, chart, input.date, lines);
+  await assertLineRefs(c.env.DB, a.orgId, lines);
   const jid = newId();
   await runBatch(c.env.DB, [
     ...journalStmts(c.env.DB, { id: jid, orgId: a.orgId, date: input.date, sourceType: 'manual', memo: input.memo, createdBy: a.userId, lines }),

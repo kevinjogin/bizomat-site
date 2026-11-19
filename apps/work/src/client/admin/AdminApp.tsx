@@ -8,6 +8,8 @@ import { useAdmin } from './api';
 import { PageSkeleton } from './ui';
 import '../styles/admin-console.css';
 import { appUrl, toolUrl } from '../lib/base';
+import { MfaGate } from './pages/Security';
+import { ReauthHost } from './reauth';
 
 const Overview = lazy(() => import('./pages/Overview'));
 const Users = lazy(() => import('./pages/Users'));
@@ -20,6 +22,9 @@ const Health = lazy(() => import('./pages/Health'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Email = lazy(() => import('./pages/Email'));
 const SignupProtection = lazy(() => import('./pages/SignupProtection'));
+const Controls = lazy(() => import('./pages/Controls'));
+const UiKit = lazy(() => import('./pages/UiKit'));
+const Security = lazy(() => import('./pages/Security'));
 
 interface AdminMe {
   user: { id: string; name: string; email: string };
@@ -38,6 +43,9 @@ const NAV: { to: string; label: string; icon: string; end?: boolean }[] = [
   { to: '/admin/health', label: 'System Health', icon: 'shield' },
   { to: '/admin/email', label: 'Email (Brevo)', icon: 'message' },
   { to: '/admin/signup', label: 'Sign-up Protection', icon: 'shield' },
+  { to: '/admin/controls', label: 'Control Centre', icon: 'target' },
+  { to: '/admin/security', label: 'Security', icon: 'shield' },
+  { to: '/admin/ui-kit', label: 'UI kit', icon: 'grid' },
   { to: '/admin/settings', label: 'Settings', icon: 'settings' },
 ];
 
@@ -74,6 +82,8 @@ export default function AdminApp() {
   const current = NAV.find((n) => (n.end ? location.pathname === n.to || location.pathname === n.to + '/' : location.pathname.startsWith(n.to)));
 
   return (
+    <MfaGate>
+    <ReauthHost />
     <div className={`ac-shell${navOpen ? ' nav-open' : ''}`}>
       <aside className="ac-side" aria-label="Founder console navigation">
         <Link to="/admin" className="ac-brand" aria-label={`${BRAND.full} founder console`}>
@@ -134,6 +144,9 @@ export default function AdminApp() {
               <Route path="health" element={<Health />} />
               <Route path="email" element={<Email />} />
               <Route path="signup" element={<SignupProtection />} />
+              <Route path="controls" element={<Controls />} />
+              <Route path="security" element={<Security />} />
+              <Route path="ui-kit" element={<UiKit />} />
               <Route path="settings" element={<Settings role={admin.role} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
@@ -142,5 +155,6 @@ export default function AdminApp() {
       </div>
       {navOpen ? <div className="ac-scrim" onClick={() => setNavOpen(false)} aria-hidden /> : null}
     </div>
+    </MfaGate>
   );
 }

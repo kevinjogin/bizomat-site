@@ -23,10 +23,10 @@ const steps = [
   { title: 'Action plan', text: 'You receive the observations, improvement opportunities and a practical, prioritised action plan, plus one agreed supporting document where appropriate.' },
 ];
 const faq = [
-  { q: 'What does “from A$990” cover?', a: 'It is the starting point for a single, well-defined problem. Larger, less defined or multi-site problems are quoted to scope. The final price is confirmed before any work begins.' },
+  { q: 'How is a Factory Fix priced?', a: 'It is quoted to scope: one well-defined problem, or a larger, less defined or multi-site one. The price is confirmed in writing before any work begins.' },
   { q: 'Is the implementation included?', a: 'The Factory Fix produces a clear action plan and, where agreed, one supporting document. Implementation support can be quoted separately if you would like help carrying out the plan.' },
   { q: 'Do I need to share confidential information?', a: 'Only what is needed to understand the problem. If you need a confidentiality agreement before sharing drawings or information, say so in your enquiry.' },
-  { q: 'Should I start with the A$195 Engineering Problem Assessment?', a: 'Choose the assessment when you want an engineering view of one defined problem, its likely causes, up to three options and a recommended next step, before committing to more. Choose a Factory Fix when the problem is known to be worth solving now and needs current-state analysis and an action plan. The Factory Fix price and scope are unchanged.' },
+  { q: 'Should I start with the Engineering Problem Assessment?', a: 'Choose the assessment when you want an engineering view of one defined problem, its likely causes, up to three options and a recommended next step, before committing to more. Choose a Factory Fix when the problem is known to be worth solving now and needs current-state analysis and an action plan. The Factory Fix price and scope are unchanged.' },
   { q: 'Does it include engineering certification?', a: 'No. A Factory Fix is practical improvement and documentation work. Work that requires statutory approval or certification by a registered professional engineer is outside its scope.' },
 ];
 const offer = {
@@ -34,18 +34,17 @@ const offer = {
   name: FACTORY_FIX.name,
   description: FACTORY_FIX.summary,
   url: `${SITE.url}/factory-fix/`,
-  priceSpecification: { '@type': 'PriceSpecification', minPrice: FACTORY_FIX.minPrice, priceCurrency: 'AUD' },
   seller: { '@id': `${SITE.url}/#organization` },
 };
 ---
 
 <BaseLayout
   title="Factory Fix"
-  description="BIZOMAT Factory Fix: one defined production, workflow, documentation or engineering problem reviewed, documented and turned into a practical action plan, from A$990."
+  description="BIZOMAT Factory Fix: one defined production, workflow, documentation or engineering problem reviewed, documented and turned into a practical action plan, quoted to scope."
   breadcrumbs={crumbs}
   schema={[offer]}
 >
-  <Hero eyebrow="BIZOMAT Factory Fix · From A$990" title="One problem. A <em>practical</em> plan to fix it." lead={FACTORY_FIX.summary}>
+  <Hero eyebrow="BIZOMAT Factory Fix · Quoted to scope" title="One problem. A <em>practical</em> plan to fix it." lead={FACTORY_FIX.summary}>
     <FactoryFixArt slot="visual" />
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
@@ -97,8 +96,8 @@ const offer = {
   <Section index="04" label="Start smaller?" id="assessment" labelledby="choose-title">
     <div class="split">
       <div class="split__intro">
-        <h2 id="choose-title">Not sure yet? Start with a {ASSESSMENT.priceLabel} assessment.</h2>
-        <p class="muted">A Factory Fix stays the right choice when a problem clearly needs solving now. When you first need an engineering view, the fixed-price assessment is the smaller step.</p>
+        <h2 id="choose-title">Not sure yet? Start with an assessment.</h2>
+        <p class="muted">A Factory Fix stays the right choice when a problem clearly needs solving now. When you first need an engineering view, the fixed-scope assessment is the smaller step.</p>
       </div>
       <div>
         <h3 class="docs-title">Choose the assessment when</h3>
@@ -154,4 +153,21 @@ const offer = {
   .faq dt { font-weight: 560; font-size: 1.08rem; }
   .faq dd { margin: 0; color: var(--ink-2); line-height: 1.6; }
   @media (max-width: 760px) { .faq div { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .split { gap: var(--bz-space-10) calc(var(--bz-space-1) * 20); }
+  :global(html[data-ui="new"]) .split__intro h2 { margin-bottom: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .check-list li { padding: var(--bz-space-4) 0 var(--bz-space-4) var(--bz-space-8); }
+  :global(html[data-ui="new"]) .docs-title { margin: var(--bz-space-8) 0 var(--bz-space-3); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .pill-list { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .pill-list li { padding: var(--bz-space-2) var(--bz-space-3); border-radius: var(--bz-radius-full); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .ff-steps li { padding: var(--bz-space-6) var(--bz-space-6) var(--bz-space-8) 0; }
+  :global(html[data-ui="new"]) .ff-steps li:not(:first-child) { padding-left: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .ff-steps span { margin-bottom: var(--bz-space-5); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .ff-steps p { margin: var(--bz-space-2) 0 0; font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .ff-assessment { margin-top: var(--bz-space-10); }
+  :global(html[data-ui="new"]) .terms { margin: var(--bz-space-8) 0 0; font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .faq div { gap: var(--bz-space-2) var(--bz-space-16); padding: var(--bz-space-6) 0; }
+  :global(html[data-ui="new"]) .faq dt { font-size: var(--bz-text-lg); }
+  /* ui-new:generated end */
 </style>

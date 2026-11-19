@@ -300,4 +300,23 @@ const other = SERVICE_OPTIONS.find((o) => o.slug === 'other')!;
   .contact-form__more summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
   .contact-form__more-body { display: grid; gap: 1.5rem; padding: 0.25rem 0 1.4rem; }
   @media (max-width: 640px) { .contact-form__row { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .contact-form { gap: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .contact-form__row { gap: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .field { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .field label, :global(html[data-ui="new"]) .field legend { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .field__hint { font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .field input[type='text'], :global(html[data-ui="new"]) .field input[type='email'], :global(html[data-ui="new"]) .field input[type='tel'], :global(html[data-ui="new"]) .field select, :global(html[data-ui="new"]) .field textarea { padding: var(--bz-space-3) var(--bz-space-4); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .field select { padding-right: var(--bz-space-10); }
+  :global(html[data-ui="new"]) .field__error { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .field--radios legend { margin-bottom: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .radios { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .radio { gap: var(--bz-space-2); padding: var(--bz-space-2) var(--bz-space-4); border-radius: var(--bz-radius-full); }
+  :global(html[data-ui="new"]) .field--check { column-gap: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .contact-form__status { padding: var(--bz-space-4) var(--bz-space-4); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .contact-form__more summary { gap: var(--bz-space-1) var(--bz-space-2); padding: var(--bz-space-4) 0; font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .contact-form__more summary span { font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .contact-form__more-body { gap: var(--bz-space-6); padding: var(--bz-space-1) 0 var(--bz-space-6); }
+  /* ui-new:generated end */
 </style>

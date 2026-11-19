@@ -68,7 +68,7 @@ export function CreateBoardDialog({ wsId, onClose, templateId: initialTemplate, 
           </select>
         </Field>
         {templateId !== 'blank' ? (
-          <label className="checkbox" style={{ marginBottom: 12 }}>
+          <label className="checkbox" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
             <input type="checkbox" checked={withSample} onChange={(e) => setWithSample(e.target.checked)} /> Include sample items
           </label>
         ) : null}
@@ -161,7 +161,7 @@ export function CreateDashboardDialog({ wsId, onClose, folderId }: { wsId: strin
           <input id="dash-name" className="input" value={name} onChange={(e) => setName(e.target.value)} maxLength={200} placeholder="e.g. Delivery overview" />
         </Field>
         <Field label="Source boards" hint="Leave empty to include every board you can access.">
-          <div className="col" style={{ maxHeight: 220, overflow: 'auto', gap: 4 }}>
+          <div className="col" style={{ maxHeight: 220, overflow: 'auto', gap: 'var(--ui-s4, 4px)' }}>
             {(boards.data ?? []).map((b) => (
               <label key={b.id} className="checkbox">
                 <input type="checkbox" checked={selected.includes(b.id)} onChange={(e) => setSelected(e.target.checked ? [...selected, b.id] : selected.filter((x) => x !== b.id))} /> {b.name}

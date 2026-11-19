@@ -105,22 +105,24 @@ export interface ServicePackage {
 }
 
 export const PACKAGES: ServicePackage[] = [
-  { title: 'Drawing and CAD Update', price: 'From A$250', minPrice: 250, service: 'Engineering / CAD', description: 'Revisions, updates or clean-up of existing models and drawings.' },
-  { title: 'Manufacturing Documentation Package', price: 'From A$600', minPrice: 600, service: 'Manufacturing Support', description: 'Drawings and documentation prepared so a part or assembly can be made consistently.' },
-  { title: 'Procedures and Work Instructions', price: 'From A$350', minPrice: 350, service: 'Operations Improvement', description: 'Clear, usable standard operating procedures or work instructions for a defined task.' },
-  { title: 'Process Improvement Review', price: 'From A$750', minPrice: 750, service: 'Operations Improvement', description: 'A structured review of a process, with findings and practical recommendations.' },
-  { title: 'Jig or Fixture Concept Package', price: 'From A$700', minPrice: 700, service: 'Manufacturing Support', description: 'Concept design for a jig or fixture to improve repeatability, speed or safety.' },
-  { title: 'Engineering Support Day', price: 'From approx. A$750', minPrice: 750, service: 'Engineering / CAD', description: 'A day of engineering, CAD, documentation or improvement support on agreed tasks.' },
+  { title: 'Drawing and CAD Update', price: 'Quoted to scope', minPrice: 250, service: 'Engineering / CAD', description: 'Revisions, updates or clean-up of existing models and drawings.' },
+  { title: 'Manufacturing Documentation Package', price: 'Quoted to scope', minPrice: 600, service: 'Manufacturing Support', description: 'Drawings and documentation prepared so a part or assembly can be made consistently.' },
+  { title: 'Procedures and Work Instructions', price: 'Quoted to scope', minPrice: 350, service: 'Operations Improvement', description: 'Clear, usable standard operating procedures or work instructions for a defined task.' },
+  { title: 'Process Improvement Review', price: 'Quoted to scope', minPrice: 750, service: 'Operations Improvement', description: 'A structured review of a process, with findings and practical recommendations.' },
+  { title: 'Jig or Fixture Concept Package', price: 'Quoted to scope', minPrice: 700, service: 'Manufacturing Support', description: 'Concept design for a jig or fixture to improve repeatability, speed or safety.' },
+  { title: 'Engineering Support Day', price: 'Quoted to scope', minPrice: 750, service: 'Engineering / CAD', description: 'A day of engineering, CAD, documentation or improvement support on agreed tasks.' },
   { title: 'Small Engineering Improvement Project', price: 'Quoted to scope', service: 'Project Support', description: 'A defined improvement project, scoped and quoted before work begins.' },
   { title: 'Ongoing Technical Support', price: 'Monthly retainer available', service: 'Ongoing Support', description: 'Regular engineering and documentation support on an agreed monthly basis.' },
 ];
 
+// Prices withdrawn (owner, 19 Nov 2026: "remove all pricings for now"): no amount is shown; minPrice stays as a record
+// and is not published (no page or structured data uses it).
 export const PRICING_NOTE =
-  'Package pricing is indicative only and depends on scope, complexity, site requirements and deliverables. The Engineering Problem Assessment is a fixed A$195 for one defined problem. GST applies where applicable.';
+  'Prices are not published at the moment. Every package is scoped and quoted in writing before work begins, depending on scope, complexity, site requirements and deliverables. GST applies where applicable.';
 
 export const FACTORY_FIX = {
   name: 'BIZOMAT Factory Fix',
-  price: 'From A$990',
+  price: 'Quoted to scope',
   minPrice: 990,
   summary:
     'A focused engineering or manufacturing improvement engagement for businesses with one defined production, workflow, documentation or engineering problem that needs to be moved forward.',

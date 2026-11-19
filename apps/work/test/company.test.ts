@@ -210,7 +210,7 @@ describe('company accounts', () => {
     const preview = await raw('GET', `/api/company-public/invitations/${token}`);
     expect(preview.status).toBe(200);
     const p = (await preview.json()) as any;
-    expect(p).toMatchObject({ company: company.name, status: 'pending', role: 'member', hasAccount: true });
+    expect(p).toMatchObject({ company: company.name, status: 'pending', role: 'employee', roleLabel: 'Employee', hasAccount: true });
     expect(p.tools).toContain('Customer Relationship Management');
     expect(JSON.stringify(p)).not.toContain(bob.email);
 

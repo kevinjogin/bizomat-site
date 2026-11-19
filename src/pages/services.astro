@@ -18,15 +18,14 @@ const crumbs = [
   { label: 'Home', href: '/' },
   { label: 'Services', href: '/services/' },
 ];
-const priced = (min?: number) => (min ? { priceSpecification: { '@type': 'PriceSpecification', minPrice: min, priceCurrency: 'AUD' } } : {});
 const catalog = {
   '@type': 'OfferCatalog',
   name: 'BIZOMAT services and indicative packages',
   url: `${SITE.url}/services/`,
   itemListElement: [
-    { '@type': 'Offer', name: ASSESSMENT.name, description: ASSESSMENT.summary, url: `${SITE.url}${ASSESSMENT.path}`, price: ASSESSMENT.price.toFixed(2), priceCurrency: ASSESSMENT.currency },
-    { '@type': 'Offer', name: FACTORY_FIX.name, description: FACTORY_FIX.summary, url: `${SITE.url}/factory-fix/`, ...priced(FACTORY_FIX.minPrice) },
-    ...PACKAGES.map((p) => ({ '@type': 'Offer', name: p.title, description: p.description, ...priced(p.minPrice) })),
+    { '@type': 'Offer', name: ASSESSMENT.name, description: ASSESSMENT.summary, url: `${SITE.url}${ASSESSMENT.path}`, },
+    { '@type': 'Offer', name: FACTORY_FIX.name, description: FACTORY_FIX.summary, url: `${SITE.url}/factory-fix/` },
+    ...PACKAGES.map((p) => ({ '@type': 'Offer', name: p.title, description: p.description })),
   ],
 };
 ---
@@ -46,16 +45,16 @@ const catalog = {
     <Breadcrumb items={crumbs} slot="before" />
     <Fragment slot="actions">
       <Button href="/contact/" arrow data-cta="services-hero-quote">Get a Quote</Button>
-      <Button href="#pricing" variant="secondary">Indicative pricing</Button>
+      <Button href="#packages" variant="secondary">Common packages</Button>
     </Fragment>
   </Hero>
 
   <nav class="service-jump" aria-label="Service groups">
     <ul>
       {SERVICE_GROUPS.map((g) => <li><a href={`#${g.id}`}>{g.title}</a></li>)}
-      <li><a href="#assessment">A$195 Assessment</a></li>
+      <li><a href="#assessment">Assessment</a></li>
       <li><a href="#factory-fix">Factory Fix</a></li>
-      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#packages">Packages</a></li>
     </ul>
   </nav>
 
@@ -84,14 +83,14 @@ const catalog = {
   <Section index="05" label="Fixed-scope offers" id="factory-fix" labelledby="ff-section-title">
     <h2 id="ff-section-title" class="visually-hidden">BIZOMAT Engineering Problem Assessment and Factory Fix</h2>
     <AssessmentFeature headingLevel="h3" id="assessment" />
-    <p class="offer-note">Start with the {ASSESSMENT.priceLabel} assessment when you need an engineering view of one problem and a clear next step. Choose a Factory Fix when the problem is known to be worth solving now. <a href={`${ASSESSMENT.path}#choose`}>Compare the two</a>.</p>
+    <p class="offer-note">Start with the assessment when you need an engineering view of one problem and a clear next step. Choose a Factory Fix when the problem is known to be worth solving now. <a href={`${ASSESSMENT.path}#choose`}>Compare the two</a>.</p>
     <FactoryFixFeature headingLevel="h3" />
   </Section>
 
-  <Section index="06" label="Indicative pricing" id="pricing" tone="alt" labelledby="pricing-title">
+  <Section index="06" label="Packages" id="packages" tone="alt" labelledby="packages-title">
     <div class="section-head">
-      <h2 id="pricing-title">Common packages and starting points.</h2>
-      <p class="section-head__lead">Use these as a guide. Every assignment is scoped, and the final price is confirmed in a written proposal before work begins. Online checkout is not offered; send an enquiry for a quote.</p>
+      <h2 id="packages-title">Common packages.</h2>
+      <p class="section-head__lead">Prices are not published at the moment. Every assignment is scoped and quoted in writing before work begins. Online checkout is not offered; send an enquiry for a quote.</p>
     </div>
     <PackageGrid />
   </Section>
@@ -156,4 +155,23 @@ const catalog = {
   .offer-note { margin: 1.5rem 0; max-width: 80ch; color: var(--ink-2); }
   .offer-note a { color: var(--ink); text-decoration-color: var(--accent); }
   .scope-note { margin: 2rem 0 0; max-width: 80ch; color: var(--muted); font-size: 0.95rem; }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .service-jump ul { gap: var(--bz-space-1) var(--bz-space-6); }
+  :global(html[data-ui="new"]) .service-jump a { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .group { gap: var(--bz-space-10) calc(var(--bz-space-1) * 20); }
+  :global(html[data-ui="new"]) .group__summary { margin: var(--bz-space-4) 0 var(--bz-space-8); }
+  :global(html[data-ui="new"]) .group__label { margin: 0 0 var(--bz-space-3); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .group__items { gap: 0 var(--bz-space-8); margin: 0 0 var(--bz-space-10); }
+  :global(html[data-ui="new"]) .group__items li { padding: var(--bz-space-3) 0; }
+  :global(html[data-ui="new"]) .group__deliverables { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .group__deliverables li { padding: var(--bz-space-2) var(--bz-space-3); border-radius: var(--bz-radius-full); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .section-head { gap: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .models li { padding: var(--bz-space-6) var(--bz-space-6) var(--bz-space-8) 0; }
+  :global(html[data-ui="new"]) .models li:not(:first-child) { padding-left: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .models h3 { font-size: var(--bz-text-lg); }
+  :global(html[data-ui="new"]) .models p { margin: var(--bz-space-2) 0 0; font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .offer-note { margin: var(--bz-space-6) 0; }
+  :global(html[data-ui="new"]) .scope-note { margin: var(--bz-space-8) 0 0; font-size: var(--bz-text-md); }
+  /* ui-new:generated end */
 </style>
