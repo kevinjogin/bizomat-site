@@ -61,13 +61,13 @@ production.
 
 ## Verifying a release
 
-After a deploy, run **Verify staging (bizomat-staging)** (`.github/workflows/bizomat-staging-verify.yml`, by hand) on
-the same branch. It walks staging as a tester, through the gate, in a real browser (`infrastructure/staging/verify.mjs`):
+After a deploy, run the staging workflow (`.github/workflows/bizomat-staging.yml`) again on the same branch with action
+**`verify`** (or `verify-flags-off` for step 2 alone). It walks staging as a tester, through the gate, in a real browser (`infrastructure/staging/verify.mjs`):
 
 1. **Prepare**: staging's own sign-up policy accepts invented `example.com` addresses (staging sends email to the log).
 2. **Every flag off**: the website's pages (each must answer 200 and decode as sent), the old addresses that answer 301,
    sign-up, the example company and every ERP module, an invented company registered, no browser errors.
-3. **Flags on** (`with-flags`, the default): `new_ui_enabled` and `company_members_v2` on in staging only. The website must
+3. **Flags on** (action `verify`): `new_ui_enabled` and `company_members_v2` on in staging only. The website must
    follow within 150 s (it asks Project Management every minute), every page and module must show the new UI, Compact
    density must be saved on the account and applied, and the Members page and an invitation must work.
 4. **Flags off again**, always, even after a failed check, and the old look must come back.
