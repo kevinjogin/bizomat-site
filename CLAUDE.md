@@ -102,6 +102,11 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   and no page shows a price. Stripe stays intact and untouched (code, product, prices, tables, webhook still recording
   events); on 19 Nov 2026 Stripe held no customers, subscriptions or charges. Never unlock billing, show a price or
   add an upgrade prompt without the owner's approval (`docs/billing/README.md`, "Free mode"; `tests/pricing.test.ts`).
+  **Every price is withdrawn for now** (owner, 19 Nov 2026: "remove all pricings for now"), engineering services
+  included: the Engineering Problem Assessment shows "Fee on request", Factory Fix and the packages "Quoted to scope",
+  their structured data names no price, the marketing files that showed the fee answer 301 to `/assessment/`, and the
+  website assistant never quotes an amount. The figures stay as unpublished records in `src/config/assessment.ts` and
+  `src/data/services.ts`; `tests/pricing.test.ts` fails on any amount in the website's pages, components or data.
   **Billing** (owner's brief of 15 Nov 2026; `docs/billing/README.md`; migration 0027, kevinjogin/bizomat-site#77):
   one Stripe customer and subscription per registered company, charged per active member, monthly, AUD; prices only
   from Stripe Price ids in `WORK_STRIPE_*`; embedded Checkout on the ERP's billing page; signed idempotent webhook; seat
