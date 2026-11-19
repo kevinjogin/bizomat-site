@@ -146,6 +146,12 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   password change or security reset; the module switches act for every module; realtime re-checks access at every
   event; an integrity check in the Control Centre; and `test-node/company-queries.test.ts` fails on any new SQL
   statement on a company table without `company_id` (the list of older ones may only shrink).
+  **Company roles** (Stage 1, R5, 19 Nov 2026; `docs/platform/roles.md`; migration 0032): owner, admin, manager,
+  employee (formerly member) and read_only, each a preset of tool roles that can be changed tool by tool; only the owner
+  makes administrators of the company or a tool, and nobody but the owner changes their own role; a disabled owner's
+  companies pass to their longest-serving active administrator; pending invitations are listed only to proven
+  addresses; support access is time-limited (72 hours at most), needs a reason and a re-authentication, never signs in
+  as anyone, and shows to the company's owner and administrators, who can end it.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
