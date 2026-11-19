@@ -462,4 +462,36 @@ const prompts = SITE.assistant.starters;
     .assistant__launcher { padding: 0; width: 54px; justify-content: center; }
   }
   @media print { .assistant { display: none; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .assistant { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .assistant__launcher { gap: var(--bz-space-2); padding: 0 var(--bz-space-5) 0 var(--bz-space-2); border-radius: var(--bz-radius-full); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .assistant__launcher img { border-radius: var(--bz-radius-md); }
+  :global(html[data-ui="new"]) .assistant__panel { border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .assistant__header { gap: var(--bz-space-3); padding: var(--bz-space-3) var(--bz-space-3) var(--bz-space-3) var(--bz-space-4); }
+  :global(html[data-ui="new"]) .assistant__avatar { border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .assistant__heading h1, :global(html[data-ui="new"]) .assistant__heading h2 { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .assistant__heading p { gap: var(--bz-space-2); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .assistant__actions { gap: var(--bz-space-1); }
+  :global(html[data-ui="new"]) .assistant__log { gap: var(--bz-space-2); padding: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .assistant__log :global(.msg) { padding: var(--bz-space-3) var(--bz-space-3); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .assistant__log :global(.msg p + p) { margin-top: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .assistant__log :global(.msg ul) { margin: var(--bz-space-1) 0 0; padding-left: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .assistant__log :global(.msg--typing) { gap: var(--bz-space-1); padding: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .assistant__prompts { gap: var(--bz-space-2); padding: 0 var(--bz-space-4) var(--bz-space-3); }
+  :global(html[data-ui="new"]) .chip { padding: 0 var(--bz-space-3); border-radius: var(--bz-radius-full); font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .assistant__log :global(.msg__button) { padding: 0 var(--bz-space-4); border-radius: var(--bz-radius-full); }
+  :global(html[data-ui="new"]) .assistant__composer { gap: var(--bz-space-2); margin: 0 var(--bz-space-3); padding: var(--bz-space-2) var(--bz-space-2) var(--bz-space-2) var(--bz-space-3); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .assistant__composer textarea { padding: var(--bz-space-2) 0; font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .assistant__submit { border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .assistant__note { padding: var(--bz-space-2) var(--bz-space-4) var(--bz-space-3); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .assistant__handoff { gap: var(--bz-space-2); margin: 0 var(--bz-space-3) var(--bz-space-2); padding: var(--bz-space-4); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .assistant__handoff label { gap: var(--bz-space-1); font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .assistant__handoff input[type='text'], :global(html[data-ui="new"]) .assistant__handoff input[type='email'], :global(html[data-ui="new"]) .assistant__handoff textarea { padding: var(--bz-space-2) var(--bz-space-3); border-radius: var(--bz-radius-md); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .assistant .assistant__consent { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .assistant__handoff-error { font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .assistant__handoff-actions { gap: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .assistant__send-btn { padding: 0 var(--bz-space-4); border-radius: var(--bz-radius-full); }
+  @media (max-width: 520px) { :global(html[data-ui="new"]) .assistant--floating .assistant__panel { border-radius: var(--bz-radius-lg) var(--bz-radius-lg) 0 0; } }
+  /* ui-new:generated end */
 </style>

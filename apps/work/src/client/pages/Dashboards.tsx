@@ -64,7 +64,7 @@ export default function Dashboards() {
         subtitle="Live overviews built from your boards' real data."
         actions={editable ? <button className="btn primary" onClick={() => setCreating(true)}><Icon name="plus" /> New dashboard</button> : null}
       />
-      <div className="tabs" role="tablist" style={{ marginBottom: 16 }}>
+      <div className="tabs" role="tablist" style={{ marginBottom: 'var(--ui-s16, 16px)' }}>
         <button role="tab" aria-selected={tab === 'active'} className={`tab${tab === 'active' ? ' active' : ''}`} onClick={() => setTab('active')}>Active</button>
         <button role="tab" aria-selected={tab === 'archived'} className={`tab${tab === 'archived' ? ' active' : ''}`} onClick={() => setTab('archived')}>Archived</button>
       </div>
@@ -125,7 +125,7 @@ export default function Dashboards() {
                   </Dropdown>
                 ) : null}
               </div>
-              {folder === 'all' && d.folderId && folderById.get(d.folderId) ? <span className="badge" style={{ gap: 5, alignSelf: 'flex-start' }}><FolderIcon color={folderById.get(d.folderId)!.color} size={13} /> {folderById.get(d.folderId)!.name}</span> : null}
+              {folder === 'all' && d.folderId && folderById.get(d.folderId) ? <span className="badge" style={{ gap: 'var(--ui-s5, 5px)', alignSelf: 'flex-start' }}><FolderIcon color={folderById.get(d.folderId)!.color} size={13} /> {folderById.get(d.folderId)!.name}</span> : null}
               {d.description ? <div className="muted small">{d.description}</div> : null}
               <div className="muted small">
                 {d.boardIds.length ? plural(d.boardIds.length, 'source board') : 'All accessible boards'} · updated {timeAgo(d.updatedAt)}

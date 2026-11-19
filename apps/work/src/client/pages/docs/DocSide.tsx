@@ -53,7 +53,7 @@ export function MentionInput({ value, onChange, members, placeholder, onSubmit, 
     setTimeout(() => el?.focus(), 0);
   };
   return (
-    <div className="col" style={{ gap: 6 }}>
+    <div className="col" style={{ gap: 'var(--ui-s6, 6px)' }}>
       <textarea
         ref={ref}
         className="textarea"
@@ -118,16 +118,16 @@ export function CommentsPanel({ docId, wsId, canModerate }: { docId: string; wsI
   const resolvedCount = (q.data ?? []).filter((c) => !c.parentId && c.resolvedAt).length;
   return (
     <section aria-label="Comments">
-      <div className="row" style={{ marginBottom: 8 }}>
+      <div className="row" style={{ marginBottom: 'var(--ui-s8, 8px)' }}>
         <h3 className="grow">Comments</h3>
         {resolvedCount ? <button className="btn ghost sm" onClick={() => setShowResolved((s) => !s)}>{showResolved ? 'Hide' : 'Show'} resolved ({resolvedCount})</button> : null}
       </div>
       <MentionInput label="New comment" value={text} onChange={setText} members={members.data ?? []} placeholder="Add a comment… (Ctrl+Enter to post)" onSubmit={() => run(async () => { await post(`/documents/${docId}/comments`, { body: text.trim() }); setText(''); })} />
-      {q.isLoading ? <Loading /> : q.error ? <ErrorBox error={q.error} /> : !top.length ? <p className="muted small" style={{ marginTop: 12 }}>No comments yet.</p> : null}
+      {q.isLoading ? <Loading /> : q.error ? <ErrorBox error={q.error} /> : !top.length ? <p className="muted small" style={{ marginTop: 'var(--ui-s12, 12px)' }}>No comments yet.</p> : null}
       {top.map((c) => (
         <div key={c.id} className={`comment${c.resolvedAt ? ' resolved' : ''}`}>
           <CommentLine c={c} />
-          <div className="row" style={{ marginTop: 4 }}>
+          <div className="row" style={{ marginTop: 'var(--ui-s4, 4px)' }}>
             <button className="btn ghost sm" onClick={() => { setReplyTo(replyTo === c.id ? null : c.id); setReplyText(''); }}>Reply</button>
             {canModerate || c.authorId === user.id ? (
               <button className="btn ghost sm" onClick={() => run(() => patch(`/document-comments/${c.id}`, { resolved: !c.resolvedAt }))}>{c.resolvedAt ? 'Reopen' : 'Resolve'}</button>
@@ -204,8 +204,8 @@ export function AttachmentsPanel({ docId, attachments, editable, onChanged }: { 
     onChanged();
   };
   return (
-    <section aria-label="Attachments" style={{ marginBottom: 20 }}>
-      <div className="row" style={{ marginBottom: 8 }}>
+    <section aria-label="Attachments" style={{ marginBottom: 'var(--ui-s20, 20px)' }}>
+      <div className="row" style={{ marginBottom: 'var(--ui-s8, 8px)' }}>
         <h3 className="grow">Attachments</h3>
         {editable ? (
           <>
@@ -217,7 +217,7 @@ export function AttachmentsPanel({ docId, attachments, editable, onChanged }: { 
       {!attachments.length ? <p className="muted small">No files attached. Max 25 MB per file.</p> : (
         <div className="list">
           {attachments.map((a) => (
-            <div key={a.id} className="row small" style={{ padding: '6px 0', borderBottom: '1px solid var(--border)' }}>
+            <div key={a.id} className="row small" style={{ padding: 'var(--ui-s6, 6px) 0', borderBottom: '1px solid var(--border)' }}>
               <Icon name="file" size={14} />
               <a className="grow ellipsis" href={a.url} target="_blank" rel="noopener noreferrer">{a.fileName}</a>
               <span className="muted">{formatBytes(a.size)}</span>
@@ -254,7 +254,7 @@ export function HistoryDialog({ docId, canRestore, onClose, onRestored }: { docI
   return (
     <Modal wide title="Version history" onClose={onClose}>
       {list.isLoading ? <Loading /> : list.error ? <ErrorBox error={list.error} /> : (
-        <div className="row" style={{ alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
+        <div className="row" style={{ alignItems: 'flex-start', gap: 'var(--ui-s16, 16px)', flexWrap: 'wrap' }}>
           <div style={{ width: 230, maxHeight: '55vh', overflow: 'auto' }} role="listbox" aria-label="Versions">
             {(list.data ?? []).map((v) => (
               <button key={v.id} role="option" aria-selected={selected === v.id} className={`version-row${selected === v.id ? ' active' : ''}`} onClick={() => setSelected(v.id)}>
@@ -269,12 +269,12 @@ export function HistoryDialog({ docId, canRestore, onClose, onRestored }: { docI
           <div className="grow" style={{ minWidth: 260 }}>
             {!selected ? <p className="muted">Select a version to preview it.</p> : preview.isLoading ? <Loading /> : (
               <>
-                <h3 style={{ marginBottom: 8 }}>{preview.data?.title}</h3>
+                <h3 style={{ marginBottom: 'var(--ui-s8, 8px)' }}>{preview.data?.title}</h3>
                 <div className="version-preview ProseMirror" dangerouslySetInnerHTML={{ __html: html }} />
                 {canRestore ? (
                   <button
                     className="btn primary"
-                    style={{ marginTop: 12 }}
+                    style={{ marginTop: 'var(--ui-s12, 12px)' }}
                     onClick={async () => {
                       if (!(await confirm({ title: `Restore version ${preview.data?.version}?`, message: 'The current content is kept in history, so you can undo this.', confirmLabel: 'Restore' }))) return;
                       try {
@@ -322,7 +322,7 @@ export function ShareDialog({ docId, wsId, visibility, docMembers, createdBy, on
         </select>
       </Field>
       <Field label="People with explicit access">
-        <div className="col" style={{ gap: 6 }}>
+        <div className="col" style={{ gap: 'var(--ui-s6, 6px)' }}>
           {docMembers.length ? docMembers.map((m) => (
             <div key={m.user_id} className="row">
               <Avatar name={m.name} id={m.user_id} size="sm" />

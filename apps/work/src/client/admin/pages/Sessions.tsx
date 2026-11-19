@@ -38,7 +38,7 @@ function SecurityReset() {
     <Card title="Security reset">
       <div className="ac-stack">
         <p className="muted small">If sessions or passwords may have been exposed, sign everyone out at once. Accounts and data stay as they are; people sign in again. For a password that is known to be compromised, set a temporary one for that person on their page instead: their old password then stops working at once.</p>
-        <label className="row small" style={{ gap: 8 }}><input type="checkbox" checked={requireNew} onChange={(e) => setRequireNew(e.target.checked)} /> Also require everyone else who signs in with a password to choose a new one</label>
+        <label className="row small" style={{ gap: 'var(--ui-s8, 8px)' }}><input type="checkbox" checked={requireNew} onChange={(e) => setRequireNew(e.target.checked)} /> Also require everyone else who signs in with a password to choose a new one</label>
         <div><button className="btn danger sm" onClick={run} disabled={state.kind === 'busy'}>{state.kind === 'busy' ? 'Working…' : 'End every session'}</button></div>
         {state.message ? <p role="status" className={state.kind === 'error' ? 'danger-text small' : 'muted small'}>{state.message}</p> : null}
       </div>

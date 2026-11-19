@@ -132,11 +132,11 @@ export default function BoardPage() {
           {sched.data && !sched.data.summary.valid ? <span className="crit-badge critical">Dependency loop: open Project controls</span> : null}
         </div>
       ) : null}
-      {bundle.board.archivedAt ? <div className="info-box" style={{ margin: '8px 24px' }}><Icon name="archive" /> This board is archived and read-only. {bundle.board.access === 'admin' ? 'Restore it from board settings.' : ''}</div> : null}
+      {bundle.board.archivedAt ? <div className="info-box" style={{ margin: 'var(--ui-s8, 8px) var(--ui-s24, 24px)' }}><Icon name="archive" /> This board is archived and read-only. {bundle.board.access === 'admin' ? 'Restore it from board settings.' : ''}</div> : null}
       <div className="view-body">
         <Suspense fallback={<Loading />}>
           {items.length === 0 && computed.filter((i) => !i.parentItemId).length > 0 && view.type !== 'form' ? (
-            <div className="info-box" style={{ margin: '12px 24px' }}>No items match the current filters. <button className="btn sm" onClick={() => { setQuick({ search: '', personId: null }); updateViewSettings({ filter: { op: 'and', rules: [] } }); }}>Clear filters</button></div>
+            <div className="info-box" style={{ margin: 'var(--ui-s12, 12px) var(--ui-s24, 24px)' }}>No items match the current filters. <button className="btn sm" onClick={() => { setQuick({ search: '', personId: null }); updateViewSettings({ filter: { op: 'and', rules: [] } }); }}>Clear filters</button></div>
           ) : null}
           <ViewComp {...viewProps} />
         </Suspense>
@@ -219,7 +219,7 @@ function BoardHeader({ bundle, canEdit, live, onOpen, actions, wsId }: { bundle:
         {b.caps?.generateReports ? <button className="btn ghost sm" onClick={() => onOpen('reports')} aria-label="Project reports"><Icon name="file" /> <span className="desktop-only">Reports</span></button> : null}
         <button className="btn ghost icon sm" aria-label="Board settings" onClick={() => onOpen('settings')}><Icon name="settings" /></button>
       </div>
-      {b.description ? <p className="muted small" style={{ margin: '2px 0 0' }}>{b.description}</p> : null}
+      {b.description ? <p className="muted small" style={{ margin: 'var(--ui-s2, 2px) 0 0' }}>{b.description}</p> : null}
     </div>
   );
 }
@@ -235,7 +235,7 @@ function ViewTabs({ views, activeId, wsId, boardId, canEdit, actions, userId, na
   };
   const tabRef = useRef<HTMLDivElement>(null);
   return (
-    <div className="board-header" style={{ paddingTop: 4 }}>
+    <div className="board-header" style={{ paddingTop: 'var(--ui-s4, 4px)' }}>
       <div className="tabs" role="tablist" ref={tabRef} style={{ borderBottom: 0 }}>
         {views.map((v) => (
           <div key={v.id} className="row" style={{ gap: 0 }}>

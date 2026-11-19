@@ -114,7 +114,7 @@ export default function Goals() {
               </div>
             </div>
           </div>
-          <div className="col" style={{ gap: 2 }}>
+          <div className="col" style={{ gap: 'var(--ui-s2, 2px)' }}>
             <ProgressBar value={g.progress.percent} color={st.color} />
             <span className="small muted">{g.progress.percent}%</span>
           </div>
@@ -152,12 +152,12 @@ export default function Goals() {
         actions={editable ? <button className="btn primary" onClick={() => { setParentForNew(null); setEditing('new'); }}><Icon name="plus" /> New goal</button> : null}
       />
       {goals.length && tab === 'active' ? (
-        <div className="row wrap" style={{ marginBottom: 14, gap: 10 }}>
+        <div className="row wrap" style={{ marginBottom: 'var(--ui-s14, 14px)', gap: 'var(--ui-s10, 10px)' }}>
           <span className="badge">Average progress {summary.avg}%</span>
           {(Object.keys(GOAL_STATUS) as GoalStatus[]).filter((k) => summary.s[k]).map((k) => <span key={k} className={`badge ${GOAL_STATUS[k].cls}`}>{GOAL_STATUS[k].label}: {summary.s[k]}</span>)}
         </div>
       ) : null}
-      <div className="tabs" role="tablist" style={{ marginBottom: 12 }}>
+      <div className="tabs" role="tablist" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
         <button role="tab" aria-selected={tab === 'active'} className={`tab${tab === 'active' ? ' active' : ''}`} onClick={() => setTab('active')}>Active</button>
         <button role="tab" aria-selected={tab === 'archived'} className={`tab${tab === 'archived' ? ' active' : ''}`} onClick={() => setTab('archived')}>Archived</button>
       </div>
@@ -244,7 +244,7 @@ function GoalDialog({ wsId, goal, parentId, goals, onClose, onSaved }: { wsId: s
       <form id="goal-form" onSubmit={save}>
         <Field label="Title" htmlFor="g-title"><input id="g-title" className="input" value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Launch v2 to all customers" /></Field>
         <Field label="Description" htmlFor="g-desc"><textarea id="g-desc" className="textarea" value={description} maxLength={5000} onChange={(e) => setDescription(e.target.value)} /></Field>
-        <div className="row wrap" style={{ gap: 16, alignItems: 'flex-start' }}>
+        <div className="row wrap" style={{ gap: 'var(--ui-s16, 16px)', alignItems: 'flex-start' }}>
           <Field label="Owner" htmlFor="g-owner">
             <select id="g-owner" className="select" value={ownerId ?? ''} onChange={(e) => setOwnerId(e.target.value)}>
               <option value="">No owner</option>
@@ -263,18 +263,18 @@ function GoalDialog({ wsId, goal, parentId, goals, onClose, onSaved }: { wsId: s
             </select>
           </Field>
         </div>
-        <div className="row wrap" style={{ gap: 16, alignItems: 'flex-start' }}>
+        <div className="row wrap" style={{ gap: 'var(--ui-s16, 16px)', alignItems: 'flex-start' }}>
           <Field label="Start date" htmlFor="g-start"><input id="g-start" className="input" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} /></Field>
           <Field label="Due date" htmlFor="g-due"><input id="g-due" className="input" type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} /></Field>
         </div>
         <Field label="Progress">
-          <div className="row" style={{ gap: 16 }}>
+          <div className="row" style={{ gap: 'var(--ui-s16, 16px)' }}>
             <label className="checkbox"><input type="radio" name="g-mode" checked={mode === 'manual'} onChange={() => setMode('manual')} /> Manual target</label>
             <label className="checkbox"><input type="radio" name="g-mode" checked={mode === 'boards'} onChange={() => setMode('boards')} /> From linked boards</label>
           </div>
         </Field>
         {mode === 'manual' ? (
-          <div className="row wrap" style={{ gap: 16, alignItems: 'flex-start' }}>
+          <div className="row wrap" style={{ gap: 'var(--ui-s16, 16px)', alignItems: 'flex-start' }}>
             <Field label="Start value" htmlFor="g-sv"><input id="g-sv" className="input" type="number" value={startValue} onChange={(e) => setStartValue(Number(e.target.value))} /></Field>
             <Field label="Current value" htmlFor="g-cv"><input id="g-cv" className="input" type="number" value={currentValue} onChange={(e) => setCurrentValue(Number(e.target.value))} /></Field>
             <Field label="Target value" htmlFor="g-tv"><input id="g-tv" className="input" type="number" value={targetValue} onChange={(e) => setTargetValue(Number(e.target.value))} /></Field>
@@ -282,7 +282,7 @@ function GoalDialog({ wsId, goal, parentId, goals, onClose, onSaved }: { wsId: s
           </div>
         ) : (
           <Field label="Linked boards" hint="Progress = share of top-level items with a Done status across these boards.">
-            <div className="row wrap" style={{ gap: 6 }}>
+            <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)' }}>
               {(boards.data ?? []).map((b) => (
                 <button key={b.id} type="button" className={`chip${boardIds.includes(b.id) ? ' on' : ''}`} aria-pressed={boardIds.includes(b.id)} onClick={() => setBoardIds(boardIds.includes(b.id) ? boardIds.filter((x) => x !== b.id) : [...boardIds, b.id])}>{b.name}</button>
               ))}

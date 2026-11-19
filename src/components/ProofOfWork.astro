@@ -338,4 +338,70 @@ const latest = PROJECTS[0].years.slice(-4);
   @media(max-width:1050px){.work-card__top{grid-template-columns:minmax(0,13rem) minmax(0,1fr)}.work-card__aside{grid-column:2}}
   @media(max-width:860px){.case__body{grid-template-columns:1fr}.work-invite{flex-direction:column;align-items:flex-start}}
   @media(max-width:640px){.work-card__top{grid-template-columns:1fr}.work-card__aside{grid-column:auto}}
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .work-stats { margin: 0 0 var(--bz-space-8); }
+  :global(html[data-ui="new"]) .work-stats div { padding: var(--bz-space-4) var(--bz-space-5); }
+  :global(html[data-ui="new"]) .work-stats dt { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .work-stats dd { margin: var(--bz-space-1) 0 0; }
+  :global(html[data-ui="new"]) .work-tools { gap: var(--bz-space-4); margin-bottom: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .work-search { gap: var(--bz-space-1); }
+  :global(html[data-ui="new"]) .work-search label { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .work-search input { font-size: var(--bz-text-md); padding: var(--bz-space-3) var(--bz-space-3); }
+  :global(html[data-ui="new"]) .work-filter { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .work-filter button { font-size: var(--bz-text-sm); padding: var(--bz-space-2) var(--bz-space-3); gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .work-count { font-size: var(--bz-text-base); margin: 0 0 var(--bz-space-5); }
+  :global(html[data-ui="new"]) .work-empty { margin: 0 0 var(--bz-space-5); padding: var(--bz-space-4) var(--bz-space-5); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .work-card__top { gap: var(--bz-space-4) var(--bz-space-8); }
+  :global(html[data-ui="new"]) .work-card__meta { gap: var(--bz-space-2) var(--bz-space-4); margin: 0 0 var(--bz-space-2); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .work-card__meta .work-card__featured { padding: 0 var(--bz-space-1); }
+  :global(html[data-ui="new"]) .work-card__name { margin: var(--bz-space-2) 0 0; font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .work-card__client { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .work-card__summary { margin: var(--bz-space-3) 0 0; font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .work-card__aside { gap: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .work-card__skills { gap: var(--bz-space-1); }
+  :global(html[data-ui="new"]) .work-card__skills li { padding: .2rem var(--bz-space-2); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .work-status { font-size: var(--bz-text-xs); padding: .22rem var(--bz-space-2); }
+  :global(html[data-ui="new"]) .case { margin-top: var(--bz-space-4); padding-top: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .case summary { gap: var(--bz-space-2); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__body { gap: var(--bz-space-8) var(--bz-space-12); margin-top: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .case h4 { font-size: var(--bz-text-sm); margin: 0 0 var(--bz-space-2); }
+  :global(html[data-ui="new"]) .case__main section { margin-top: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .case__main p { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .case__steps { gap: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .case__steps li { gap: 0 var(--bz-space-3); }
+  :global(html[data-ui="new"]) .case__steps li::before { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .case__steps strong { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .case__steps p { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__main .case__value { margin-top: var(--bz-space-4); padding: var(--bz-space-3) var(--bz-space-4); }
+  :global(html[data-ui="new"]) .case__value span { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .case__main .case__note { margin-top: var(--bz-space-3); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__main .case__context { margin-top: var(--bz-space-5); padding: var(--bz-space-3) var(--bz-space-4); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__context span { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .case__list { padding-left: var(--bz-space-4); gap: var(--bz-space-1); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__main p + .case__list { margin-top: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .case__list--tick li { padding-left: var(--bz-space-5); }
+  :global(html[data-ui="new"]) .case__path { padding: 0 0 0 var(--bz-space-4); gap: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .case__path-period { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .case__path strong { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .case__main .case__path p { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__challenges { gap: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .case__challenges div { padding-left: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .case__challenges dt { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__challenges dd { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__related { gap: var(--bz-space-2); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__side { gap: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .case__panel { padding: var(--bz-space-4) var(--bz-space-5); }
+  :global(html[data-ui="new"]) .case__facts { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .case__facts div { gap: var(--bz-space-2); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__deliverables { padding-left: var(--bz-space-4); font-size: var(--bz-text-base); gap: var(--bz-space-1); }
+  :global(html[data-ui="new"]) .case__cta p { margin: 0 0 var(--bz-space-2); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .case__cta ul { margin: 0 0 var(--bz-space-4); padding-left: var(--bz-space-4); font-size: var(--bz-text-base); gap: var(--bz-space-1); }
+  :global(html[data-ui="new"]) .case__button { gap: var(--bz-space-2); font-size: var(--bz-text-base); padding: var(--bz-space-3) var(--bz-space-4); }
+  :global(html[data-ui="new"]) .case__service { margin-top: var(--bz-space-3); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .work-more { margin: var(--bz-space-6) auto 0; font-size: var(--bz-text-base); padding: var(--bz-space-3) var(--bz-space-6); }
+  :global(html[data-ui="new"]) .work-invite { gap: var(--bz-space-6) var(--bz-space-12); margin-top: var(--bz-space-10); }
+  :global(html[data-ui="new"]) .work-invite p { margin: var(--bz-space-2) 0 0; font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .work-note { font-size: var(--bz-text-base); margin: var(--bz-space-8) 0 0; }
+  /* ui-new:generated end */
 </style>

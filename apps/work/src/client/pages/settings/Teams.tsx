@@ -107,7 +107,7 @@ function TeamDialog({ team, onClose }: { team: Team | null; onClose: () => void 
         <Field label="Colour"><ColorSwatches value={color} onChange={setColor} /></Field>
         <Field label={`Members (${memberIds.length})`}>
           <input className="input sm" placeholder="Filter members…" value={filter} onChange={(e) => setFilter(e.target.value)} aria-label="Filter members" />
-          <div className="col" style={{ maxHeight: 220, overflow: 'auto', gap: 4, marginTop: 6 }}>
+          <div className="col" style={{ maxHeight: 220, overflow: 'auto', gap: 'var(--ui-s4, 4px)', marginTop: 'var(--ui-s6, 6px)' }}>
             {list.map((m) => (
               <label key={m.id} className="checkbox">
                 <input type="checkbox" checked={memberIds.includes(m.id)} onChange={(e) => setMemberIds(e.target.checked ? [...memberIds, m.id] : memberIds.filter((x) => x !== m.id))} />

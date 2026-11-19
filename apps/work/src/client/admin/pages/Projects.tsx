@@ -81,7 +81,7 @@ export default function Projects() {
                           <td>{p.ownerId ? <Link to={`/admin/users/${p.ownerId}`}>{p.ownerEmail}</Link> : <span className="muted">—</span>}</td>
                           <td className="num">{num(p.tasks)}</td>
                           <td>
-                            <div className="row" style={{ gap: 8 }}>
+                            <div className="row" style={{ gap: 'var(--ui-s8, 8px)' }}>
                               <div style={{ flex: 1 }}><Bar value={p.completed} max={p.tasks} color="var(--success)" /></div>
                               <span className="small num" style={{ width: 70 }}>{num(p.completed)} · {pct}%</span>
                             </div>

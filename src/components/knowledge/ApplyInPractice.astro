@@ -77,4 +77,20 @@ const related = items.filter((x) => x.type === 'complements');
   .ka__open a { color: var(--accent); }
   .ka a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
   @media print { .ka { display: none; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .ka { padding: var(--bz-space-10) 0; }
+  :global(html[data-ui="new"]) .ka h2 { margin: 0 0 var(--bz-space-2); }
+  :global(html[data-ui="new"]) .ka h2 + .ka__list { margin-top: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .ka__list + h2 { margin-top: var(--bz-space-10); }
+  :global(html[data-ui="new"]) .ka__lead { margin: 0 0 var(--bz-space-5); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .ka__list { gap: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .ka__card { padding: var(--bz-space-4) var(--bz-space-5); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .ka__label { margin: 0 0 var(--bz-space-1); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .ka__title { margin: 0 0 var(--bz-space-2); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .ka__note { margin: 0 0 var(--bz-space-2); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .ka__where { margin: 0 0 var(--bz-space-2); font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .ka__open { padding-top: var(--bz-space-1); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .ka a:focus-visible { border-radius: var(--bz-radius-sm); }
+  /* ui-new:generated end */
 </style>

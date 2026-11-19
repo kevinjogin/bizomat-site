@@ -42,7 +42,7 @@ export default function EarnedValueTab({ bundle, onOpenItem }: ControlsProps) {
   const defs: Record<string, string> = d.definitions ?? {};
 
   const controls = (
-    <div className="row wrap" style={{ gap: 10, marginBottom: 12 }}>
+    <div className="row wrap" style={{ gap: 'var(--ui-s10, 10px)', marginBottom: 'var(--ui-s12, 12px)' }}>
       <label className="small">Status date <input className="input" type="date" value={statusDate} max={todayISO()} onChange={(e) => e.target.value && setStatusDate(e.target.value)} /></label>
       <label className="small">Baseline{' '}
         <select className="select" value={baseline} onChange={(e) => setBaseline(e.target.value)}>
@@ -114,7 +114,7 @@ export default function EarnedValueTab({ bundle, onOpenItem }: ControlsProps) {
         <Tile label="VAC" value={m(vac)} title={defs.VAC} tone={vac == null ? undefined : vacNeg ? 'bad' : 'good'} sub="BAC − EAC" />
         <Tile label="TCPI" value={r2(mt.tcpiBac)} title={defs.TCPI} sub={`To meet BAC; to meet EAC: ${mt.tcpiEac == null ? 'unavailable' : mt.tcpiEac.toFixed(2)}`} tone={mt.tcpiBac != null && mt.tcpiBac > 1.1 ? 'bad' : undefined} />
       </div>
-      <div className="row wrap" style={{ gap: 8, marginBottom: 12 }}>
+      <div className="row wrap" style={{ gap: 'var(--ui-s8, 8px)', marginBottom: 'var(--ui-s12, 12px)' }}>
         <label className="small" htmlFor="evm-method">Forecast method</label>
         <select id="evm-method" className="select" value={method} onChange={(e) => setMethod(e.target.value as Method)}>
           {(Object.keys(METHOD_LABELS) as Method[]).map((k) => <option key={k} value={k}>{METHOD_LABELS[k]}</option>)}
@@ -149,7 +149,7 @@ export default function EarnedValueTab({ bundle, onOpenItem }: ControlsProps) {
         </div>
       </div>
 
-      <h3 style={{ marginTop: 16 }}>Tasks</h3>
+      <h3 style={{ marginTop: 'var(--ui-s16, 16px)' }}>Tasks</h3>
       <div className="pc-table-wrap">
         <table className="pc-table">
           <thead><tr><th>ID</th><th>Task</th><th>Earning method</th><th className="num">BAC</th><th className="num">Planned %</th><th className="num">Earned %</th><th className="num">PV</th><th className="num">EV</th><th className="num">AC</th><th className="num">CV</th><th className="num">SV</th></tr></thead>
@@ -172,9 +172,9 @@ export default function EarnedValueTab({ bundle, onOpenItem }: ControlsProps) {
           </tbody>
         </table>
       </div>
-      <details style={{ marginTop: 12 }}>
+      <details style={{ marginTop: 'var(--ui-s12, 12px)' }}>
         <summary>Definitions and formulas</summary>
-        <dl className="pc-defs" style={{ marginTop: 8 }}>
+        <dl className="pc-defs" style={{ marginTop: 'var(--ui-s8, 8px)' }}>
           {Object.entries(defs).map(([k, v]) => <Fragment key={k}><dt>{k}</dt><dd>{v}</dd></Fragment>)}
         </dl>
       </details>

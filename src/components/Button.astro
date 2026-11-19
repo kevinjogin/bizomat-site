@@ -53,4 +53,10 @@ const classes = ['button', `button--${variant}`, size === 'small' && 'button--sm
   .button[disabled] { opacity: 0.55; cursor: progress; }
   .button__arrow { display: inline-block; flex: none; transition: transform 0.2s var(--ease); }
   .button:hover .button__arrow { transform: translateX(2px); }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .button { gap: var(--bz-space-2); padding: var(--bz-space-2) var(--bz-space-5); border-radius: var(--bz-radius-md); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .button--small { padding: var(--bz-space-2) var(--bz-space-4); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .button--text { padding: var(--bz-space-1) 0; }
+  /* ui-new:generated end */
 </style>

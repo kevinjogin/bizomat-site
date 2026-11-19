@@ -95,16 +95,16 @@ export function WorkspaceSettings() {
   };
 
   return (
-    <div className="col" style={{ gap: 16 }}>
+    <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
       <form className="card card-pad" onSubmit={save}>
-        <h2 style={{ marginBottom: 12 }}>Workspace</h2>
-        {!admin ? <div className="info-box" style={{ marginBottom: 12 }}>Only workspace admins can change these settings.</div> : null}
-        <div className="row" style={{ marginBottom: 16, gap: 14 }}>
+        <h2 style={{ marginBottom: 'var(--ui-s12, 12px)' }}>Workspace</h2>
+        {!admin ? <div className="info-box" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>Only workspace admins can change these settings.</div> : null}
+        <div className="row" style={{ marginBottom: 'var(--ui-s16, 16px)', gap: 'var(--ui-s14, 14px)' }}>
           <div className="ws-swatch" style={{ background: color, width: 52, height: 52 }}>
             {ws.logoUrl ? <img src={ws.logoUrl} alt="" /> : ws.name[0]?.toUpperCase()}
           </div>
           {admin ? (
-            <div className="col" style={{ gap: 4 }}>
+            <div className="col" style={{ gap: 'var(--ui-s4, 4px)' }}>
               <button type="button" className="btn sm" onClick={() => fileRef.current?.click()}><Icon name="upload" size={14} /> Upload logo</button>
               <span className="muted small">Square image, up to 5 MB.</span>
               <input ref={fileRef} type="file" hidden accept="image/png,image/jpeg,image/gif,image/webp" onChange={(e) => onLogo(e.target.files?.[0])} aria-label="Logo file" />
@@ -120,7 +120,7 @@ export function WorkspaceSettings() {
             {/* Remounted when the saved colour loads, so a custom colour shows in the text field. */}
             <WorkspaceColorPicker key={`${q.data?.color ?? ''}:${resets}`} value={color} onChange={setColor} onValidityChange={setColorOk} disabled={!admin} />
           </Field>
-          <div className="row" style={{ marginBottom: 12 }}>
+          <div className="row" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
             <Switch label="Allow members to invite" checked={allowInvite} onChange={setAllowInvite} />
             <span>Allow members (not just admins) to invite people</span>
           </div>
@@ -153,7 +153,7 @@ export function WorkspaceSettings() {
       </form>
       {ws.role === 'owner' ? (
         <section className="card card-pad" style={{ borderColor: 'var(--danger)' }}>
-          <h2 className="danger-text" style={{ marginBottom: 8 }}>Danger zone</h2>
+          <h2 className="danger-text" style={{ marginBottom: 'var(--ui-s8, 8px)' }}>Danger zone</h2>
           <p className="muted">Deleting the workspace removes access for every member. Export your data first from Administration.</p>
           <button className="btn danger" onClick={remove}><Icon name="trash" /> Delete workspace</button>
         </section>

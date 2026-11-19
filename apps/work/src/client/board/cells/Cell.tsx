@@ -67,7 +67,7 @@ export function CellDisplay({ column, value, item, ctx }: { column: ColumnDTO; v
       const ids = Array.isArray(value) ? (value as string[]) : [];
       const labels = labelsOf(column);
       return ids.length ? (
-        <span className="row" style={{ gap: 4, overflow: 'hidden' }}>
+        <span className="row" style={{ gap: 'var(--ui-s4, 4px)', overflow: 'hidden' }}>
           {ids.map((id) => {
             const l = labels.find((x) => x.id === id);
             return l ? <span key={id} className="badge" style={{ background: l.color, color: '#fff' }}>{l.label}</span> : null;
@@ -94,7 +94,7 @@ export function CellDisplay({ column, value, item, ctx }: { column: ColumnDTO; v
       // The label is drawn twice: dark over the track, white over the elapsed part (clipped to it), so every
       // character stays readable whatever the progress, in both themes.
       return (
-        <div style={{ width: '100%', padding: '0 4px' }}>
+        <div style={{ width: '100%', padding: '0 var(--ui-s4, 4px)' }}>
           <div style={{ position: 'relative', height: 22, borderRadius: 11, background: 'var(--surface-3)', overflow: 'hidden' }}>
             <span style={text('var(--text)')}>{label}</span>
             <span aria-hidden style={{ position: 'absolute', inset: 0, background: 'var(--accent-fill)', clipPath: `inset(0 ${100 - pct}% 0 0)` }}>
@@ -108,7 +108,7 @@ export function CellDisplay({ column, value, item, ctx }: { column: ColumnDTO; v
       return value ? <Icon name="check" size={18} className="success-text" /> : <span style={{ width: 16, height: 16, border: '1.5px solid var(--border-strong)', borderRadius: 4, display: 'inline-block' }} />;
     case 'tags':
       return Array.isArray(value) ? (
-        <span className="row" style={{ gap: 4, overflow: 'hidden' }}>{(value as string[]).map((t) => <span key={t} className="badge accent">{t}</span>)}</span>
+        <span className="row" style={{ gap: 'var(--ui-s4, 4px)', overflow: 'hidden' }}>{(value as string[]).map((t) => <span key={t} className="badge accent">{t}</span>)}</span>
       ) : null;
     case 'link':
       return typeof value === 'string' ? (
@@ -121,7 +121,7 @@ export function CellDisplay({ column, value, item, ctx }: { column: ColumnDTO; v
     case 'progress': {
       if (typeof value !== 'number') return <span className="muted small">–</span>;
       return (
-        <div className="row" style={{ width: '100%', padding: '0 6px', gap: 6 }}>
+        <div className="row" style={{ width: '100%', padding: '0 var(--ui-s6, 6px)', gap: 'var(--ui-s6, 6px)' }}>
           <div className="progress-bar"><span style={{ width: `${value}%` }} /></div>
           <span className="small muted" style={{ width: 32, textAlign: 'right' }}>{Math.round(value)}%</span>
         </div>
@@ -238,7 +238,7 @@ function PopoverEditor({ column, value, item, ctx, onChange, close }: { column: 
       const multi = column.type === 'dropdown' && column.settings.multiple !== false;
       const current = Array.isArray(value) ? (value as string[]) : value ? [value as string] : [];
       return (
-        <div className="col" style={{ gap: 4, padding: 4 }}>
+        <div className="col" style={{ gap: 'var(--ui-s4, 4px)', padding: 'var(--ui-s4, 4px)' }}>
           {labels.map((l) => (
             <button
               key={l.id}
@@ -267,7 +267,7 @@ function PopoverEditor({ column, value, item, ctx, onChange, close }: { column: 
       return <PeoplePicker multi={column.type === 'people'} value={value} ctx={ctx} itemId={item.id} onChange={(v) => { onChange(v); if (column.type === 'person') close(); }} />;
     case 'date':
       return (
-        <div className="col" style={{ padding: 6 }}>
+        <div className="col" style={{ padding: 'var(--ui-s6, 6px)' }}>
           <input className="input" type="date" autoFocus defaultValue={typeof value === 'string' ? value.slice(0, 10) : ''} aria-label={column.title} onChange={(e) => onChange(e.target.value || null)} />
           <div className="row">
             <button className="btn sm" onClick={() => { onChange(todayISO()); close(); }}>Today</button>
@@ -288,7 +288,7 @@ function PopoverEditor({ column, value, item, ctx, onChange, close }: { column: 
     case 'rating': {
       const max = Number(column.settings.max ?? 5);
       return (
-        <div className="row" style={{ padding: 8 }} role="radiogroup" aria-label={column.title}>
+        <div className="row" style={{ padding: 'var(--ui-s8, 8px)' }} role="radiogroup" aria-label={column.title}>
           {Array.from({ length: max }, (_, i) => (
             <button key={i} className="btn ghost icon sm" aria-label={`${i + 1} stars`} style={{ color: (value as number) > i ? '#f5a524' : 'var(--border-strong)', fontSize: 18 }} onClick={() => { onChange(i + 1); close(); }}>★</button>
           ))}
@@ -298,7 +298,7 @@ function PopoverEditor({ column, value, item, ctx, onChange, close }: { column: 
     }
     case 'progress':
       return (
-        <div className="col" style={{ padding: 8 }}>
+        <div className="col" style={{ padding: 'var(--ui-s8, 8px)' }}>
           <input type="range" min={0} max={100} step={5} defaultValue={typeof value === 'number' ? value : 0} aria-label={column.title} onChange={(e) => onChange(Number(e.target.value))} />
           <button className="btn primary sm" onClick={close}>Done</button>
         </div>
@@ -310,7 +310,7 @@ function PopoverEditor({ column, value, item, ctx, onChange, close }: { column: 
     case 'files':
       return <FilesEditor value={Array.isArray(value) ? (value as string[]) : []} item={item} column={column} ctx={ctx} close={close} />;
     default:
-      return <div className="muted small" style={{ padding: 8 }}>This column is read-only.</div>;
+      return <div className="muted small" style={{ padding: 'var(--ui-s8, 8px)' }}>This column is read-only.</div>;
   }
 }
 
@@ -343,14 +343,14 @@ function PeoplePicker({ multi, value, ctx, itemId, onChange }: { multi: boolean;
     }
   };
   return (
-    <div className="col" style={{ gap: 2, padding: 4, minWidth: 280 }}>
+    <div className="col" style={{ gap: 'var(--ui-s2, 2px)', padding: 'var(--ui-s4, 4px)', minWidth: 280 }}>
       <input className="input sm" placeholder="Search people by name or email" value={q} onChange={(e) => setQ(e.target.value)} autoFocus aria-label="Search people" />
       {list.map((m) => {
         const on = current.includes(m.id);
         const access = accessOf(m.id);
         const blocked = access === 'none' && !on;
         return (
-          <div key={m.id} className={`row${blocked ? ' picker-row-disabled' : ''}`} style={{ gap: 4 }}>
+          <div key={m.id} className={`row${blocked ? ' picker-row-disabled' : ''}`} style={{ gap: 'var(--ui-s4, 4px)' }}>
             <button className={`menu-item grow${on ? ' active' : ''}`} disabled={blocked} title={blocked ? 'No access to this project or task' : undefined} onClick={() => pick(m.id)}>
               <Avatar id={m.id} name={m.name} url={m.avatarUrl} size="sm" />
               <span className="grow" style={{ minWidth: 0, textAlign: 'left' }}>
@@ -377,7 +377,7 @@ function TimelineEditor({ value, onChange, close }: { value: { start: string; en
   const [end, setEnd] = useState(value.end);
   const invalid = !!start && !!end && end < start;
   return (
-    <div className="col" style={{ padding: 6 }}>
+    <div className="col" style={{ padding: 'var(--ui-s6, 6px)' }}>
       <label className="label">Start<input className="input" type="date" value={start} onChange={(e) => setStart(e.target.value)} /></label>
       <label className="label">End<input className="input" type="date" value={end} min={start} onChange={(e) => setEnd(e.target.value)} /></label>
       {invalid ? <span className="error small danger-text">End must be after start</span> : null}
@@ -393,7 +393,7 @@ function TimelineEditor({ value, onChange, close }: { value: { start: string; en
 function LongTextEditor({ value, onSave }: { value: string; onSave: (v: string) => void }) {
   const [text, setText] = useState(value);
   return (
-    <div className="col" style={{ padding: 6 }}>
+    <div className="col" style={{ padding: 'var(--ui-s6, 6px)' }}>
       <textarea className="textarea" autoFocus value={text} onChange={(e) => setText(e.target.value)} rows={6} maxLength={20000} aria-label="Text" />
       <button className="btn primary sm" onClick={() => onSave(text.trim())}>Save</button>
     </div>
@@ -409,8 +409,8 @@ function TagsEditor({ value, onChange }: { value: string[]; onChange: (v: unknow
     setText('');
   };
   return (
-    <div className="col" style={{ padding: 6 }}>
-      <div className="row wrap" style={{ gap: 4 }}>
+    <div className="col" style={{ padding: 'var(--ui-s6, 6px)' }}>
+      <div className="row wrap" style={{ gap: 'var(--ui-s4, 4px)' }}>
         {value.map((t) => (
           <span key={t} className="badge accent">
             {t}
@@ -428,7 +428,7 @@ function LocationEditor({ value, onSave }: { value: { address?: string; lat?: nu
   const [lat, setLat] = useState(value?.lat?.toString() ?? '');
   const [lng, setLng] = useState(value?.lng?.toString() ?? '');
   return (
-    <div className="col" style={{ padding: 6 }}>
+    <div className="col" style={{ padding: 'var(--ui-s6, 6px)' }}>
       <input className="input sm" placeholder="Address" value={address} onChange={(e) => setAddress(e.target.value)} aria-label="Address" autoFocus />
       <div className="row">
         <input className="input sm" placeholder="Latitude" value={lat} onChange={(e) => setLat(e.target.value)} aria-label="Latitude" inputMode="decimal" />
@@ -448,7 +448,7 @@ function DependencyPicker({ value, item, ctx, onChange }: { value: string[]; ite
   const [q, setQ] = useState('');
   const options = ctx.items.filter((i) => i.id !== item.id && !i.parentItemId && (!q || i.name.toLowerCase().includes(q.toLowerCase()))).slice(0, 40);
   return (
-    <div className="col" style={{ gap: 2, padding: 4 }}>
+    <div className="col" style={{ gap: 'var(--ui-s2, 2px)', padding: 'var(--ui-s4, 4px)' }}>
       <input className="input sm" placeholder="Search items" value={q} onChange={(e) => setQ(e.target.value)} autoFocus aria-label="Search items" />
       {options.map((o) => {
         const on = value.includes(o.id);
@@ -486,7 +486,7 @@ function FilesEditor({ value, item, column, ctx, close }: { value: string[]; ite
     }
   };
   return (
-    <div className="col" style={{ padding: 6 }}>
+    <div className="col" style={{ padding: 'var(--ui-s6, 6px)' }}>
       {value.map((id) => (
         <a key={id} className="menu-item" href={appUrl(`/api/files/${id}`)} target="_blank" rel="noopener noreferrer"><Icon name="file" /> File {id.slice(0, 6)}</a>
       ))}

@@ -263,7 +263,7 @@ export function TimelineView(props: BoardViewProps) {
   const leftCells = (it: ItemDTO, depth: number, hasKids: boolean) => {
     const s: TaskScheduleDTO | undefined = byItem.get(it.id);
     const nameBtn = (
-      <span className="row" style={{ minWidth: 0, gap: 4, paddingLeft: depth * 14 }}>
+      <span className="row" style={{ minWidth: 0, gap: 'var(--ui-s4, 4px)', paddingLeft: depth * 14 }}>
         {hasKids ? (
           <button className="btn ghost icon sm" aria-label={expanded.has(it.id) ? 'Collapse subtasks' : 'Expand subtasks'} aria-expanded={expanded.has(it.id)} onClick={() => setExpanded((e) => { const n = new Set(e); if (n.has(it.id)) n.delete(it.id); else n.add(it.id); return n; })}>
             <Icon name={expanded.has(it.id) ? 'chevronDown' : 'chevronRight'} size={12} />
@@ -298,7 +298,7 @@ export function TimelineView(props: BoardViewProps) {
 
   return (
     <div className="gantt-wrap">
-      <div className="view-header" style={{ padding: '0 0 8px', flexWrap: 'wrap', gap: 8 }}>
+      <div className="view-header" style={{ padding: '0 0 var(--ui-s8, 8px)', flexWrap: 'wrap', gap: 'var(--ui-s8, 8px)' }}>
         {tlCols.length > 1 && col ? (
           <select className="select sm" aria-label="Timeline column" value={col.id} onChange={(e) => updateViewSettings({ timelineColumnId: e.target.value })}>
             {tlCols.map((c) => <option key={c.id} value={c.id}>{c.title}</option>)}
@@ -322,7 +322,7 @@ export function TimelineView(props: BoardViewProps) {
         <span className="muted small">{linking ? 'Esc or the button again to stop.' : canEdit ? 'Drag bars to reschedule, edges to resize. Click a line to remove a link.' : 'Read-only'}</span>
       </div>
       {summary ? (
-        <div className="gantt-summary" style={{ marginBottom: 8 }}>
+        <div className="gantt-summary" style={{ marginBottom: 'var(--ui-s8, 8px)' }}>
           <span>Project start <b>{summary.projectStart ?? '—'}</b></span>
           <span>Forecast finish <b>{summary.projectFinish ?? '—'}</b></span>
           <span>Critical path <b>{fmtDays(summary.criticalDurationDays)}</b> (working)</span>
@@ -330,7 +330,7 @@ export function TimelineView(props: BoardViewProps) {
           {!summary.valid ? <span className="crit-badge critical">Dependency loop: the critical path cannot be calculated (see Project controls)</span> : null}
         </div>
       ) : null}
-      <div className="gantt-legend" style={{ marginBottom: 8 }} aria-label="Legend">
+      <div className="gantt-legend" style={{ marginBottom: 'var(--ui-s8, 8px)' }} aria-label="Legend">
         <span><i className="sw critical" />Critical path (red, flag)</span>
         <span><i className="sw near" />Near-critical (amber, clock)</span>
         <span><i className="sw std" />Non-critical</span>
@@ -444,8 +444,8 @@ export function TimelineView(props: BoardViewProps) {
         </div>
       )}
       {undated.length ? (
-        <div className="card card-pad" style={{ marginTop: 16 }}>
-          <h3 style={{ marginBottom: 8 }}>Without dates ({undated.length})</h3>
+        <div className="card card-pad" style={{ marginTop: 'var(--ui-s16, 16px)' }}>
+          <h3 style={{ marginBottom: 'var(--ui-s8, 8px)' }}>Without dates ({undated.length})</h3>
           <div className="list">
             {undated.slice(0, 50).map((it) => (
               <div key={it.id} className="list-row">

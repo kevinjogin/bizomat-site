@@ -123,4 +123,15 @@ const sections: [string, string[] | undefined][] = [
   .tool-page__open span { color: var(--muted); font-size: .85rem; }
   .tool-page__related { margin: 3rem 0; }
   .tool-page__related h2 { margin-bottom: 1rem; }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .tool-page { padding-top: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .tool-page__crumbs { font-size: var(--bz-text-base); margin-bottom: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .tool-page__head { margin-bottom: var(--bz-space-10); }
+  :global(html[data-ui="new"]) .tool-page__head h1 { margin: var(--bz-space-3) 0; }
+  :global(html[data-ui="new"]) .tool-page__open { gap: var(--bz-space-3) var(--bz-space-4); margin: var(--bz-space-6) 0; }
+  :global(html[data-ui="new"]) .tool-page__open span { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .tool-page__related { margin: var(--bz-space-12) 0; }
+  :global(html[data-ui="new"]) .tool-page__related h2 { margin-bottom: var(--bz-space-4); }
+  /* ui-new:generated end */
 </style>

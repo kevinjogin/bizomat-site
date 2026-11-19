@@ -132,7 +132,7 @@ export default function MyDay() {
         setDropDay(null);
       }}
     >
-      <input type="checkbox" checked={e.done} onChange={() => toggle(e)} aria-label={`Mark ${e.itemName} ${e.done ? 'not done' : 'done'}`} style={{ marginTop: 2, accentColor: 'var(--accent)' }} />
+      <input type="checkbox" checked={e.done} onChange={() => toggle(e)} aria-label={`Mark ${e.itemName} ${e.done ? 'not done' : 'done'}`} style={{ marginTop: 'var(--ui-s2, 2px)', accentColor: 'var(--accent)' }} />
       <div className="planner-name">
         <Link to={`/w/${ws.id}/boards/${e.boardId}?item=${e.itemId}`} style={{ color: 'inherit' }}>{e.itemName}</Link>
         {!compact ? <div className="muted small ellipsis">{e.boardName}</div> : null}
@@ -165,8 +165,8 @@ export default function MyDay() {
       <PageHeader icon="sun" title="My Day" subtitle="Plan what you'll focus on today and through the week." />
       <RunningTimer />
 
-      <section className="card card-pad" style={{ marginBottom: 20 }} aria-labelledby="today-h">
-        <div className="row" style={{ marginBottom: 10 }}>
+      <section className="card card-pad" style={{ marginBottom: 'var(--ui-s20, 20px)' }} aria-labelledby="today-h">
+        <div className="row" style={{ marginBottom: 'var(--ui-s10, 10px)' }}>
           <h2 id="today-h" className="grow">
             Today · {dayLabel(today)} <span className="muted small">{todays.length ? `${doneToday}/${todays.length} done` : ''}</span>
           </h2>
@@ -175,12 +175,12 @@ export default function MyDay() {
         {todays.length === 0 ? (
           <EmptyState icon="sun" title="Your day is wide open">Pick items assigned to you and plan them for today.</EmptyState>
         ) : (
-          <div className="col" style={{ gap: 6 }}>{todays.map((e) => card(e))}</div>
+          <div className="col" style={{ gap: 'var(--ui-s6, 6px)' }}>{todays.map((e) => card(e))}</div>
         )}
       </section>
 
       <section aria-labelledby="week-h">
-        <div className="row" style={{ marginBottom: 10 }}>
+        <div className="row" style={{ marginBottom: 'var(--ui-s10, 10px)' }}>
           <h2 id="week-h" className="grow">Weekly planning</h2>
           <button className="btn icon sm" aria-label="Previous week" onClick={() => setWeekStart(addDays(weekStart, -7))}><Icon name="chevronLeft" /></button>
           <button className="btn sm" onClick={() => setWeekStart(startOfWeek(today))}>This week</button>
@@ -213,7 +213,7 @@ export default function MyDay() {
                   <button className="btn ghost icon sm" aria-label={`Add item to ${DOW[i]}`} onClick={() => setPicker(d)}><Icon name="plus" size={14} /></button>
                 </div>
                 {list.map((e) => card(e, true))}
-                {!list.length ? <div className="muted small" style={{ padding: 4 }}>Drop items here</div> : null}
+                {!list.length ? <div className="muted small" style={{ padding: 'var(--ui-s4, 4px)' }}>Drop items here</div> : null}
               </div>
             );
           })}
@@ -241,7 +241,7 @@ function ItemPicker({ wsId, day, planned, onClose, onAdded }: { wsId: string; da
   };
   return (
     <Modal title={`Plan for ${dayLabel(day)}`} onClose={onClose} wide footer={<button className="btn" onClick={onClose}>Done</button>}>
-      <input className="input" placeholder="Filter your assigned items…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter items" style={{ marginBottom: 10 }} />
+      <input className="input" placeholder="Filter your assigned items…" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Filter items" style={{ marginBottom: 'var(--ui-s10, 10px)' }} />
       {work.isLoading ? <Loading /> : null}
       {work.data && items.length === 0 ? <EmptyState icon="checkSquare" title="No open items assigned to you" /> : null}
       <div className="list">

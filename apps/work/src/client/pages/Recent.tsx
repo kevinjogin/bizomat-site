@@ -31,7 +31,7 @@ export default function Recent() {
     <div className="page">
       <PageHeader title="Recent" icon="clock" subtitle="Everything you opened lately in this workspace." />
       {types.length > 1 ? (
-        <div className="row wrap" style={{ marginBottom: 12, gap: 6 }} role="group" aria-label="Filter by type">
+        <div className="row wrap" style={{ marginBottom: 'var(--ui-s12, 12px)', gap: 'var(--ui-s6, 6px)' }} role="group" aria-label="Filter by type">
           <button className={`chip${type === 'all' ? ' on' : ''}`} aria-pressed={type === 'all'} onClick={() => setType('all')}>All</button>
           {types.map((t) => <button key={t} className={`chip${type === t ? ' on' : ''}`} aria-pressed={type === t} onClick={() => setType(t)}>{ENTITY_LABEL[t] ?? t}</button>)}
         </div>

@@ -63,11 +63,11 @@ function InlineCreate() {
   };
   return (
     <form onSubmit={submit} className="card card-pad">
-      <h2 style={{ marginBottom: 10 }}>Create a workspace</h2>
+      <h2 style={{ marginBottom: 'var(--ui-s10, 10px)' }}>Create a workspace</h2>
       <Field label="Workspace name" htmlFor="new-ws">
         <input id="new-ws" className="input" value={name} onChange={(e) => setName(e.target.value)} maxLength={100} placeholder="e.g. Acme Operations" />
       </Field>
-      {error ? <div className="error-box" style={{ marginBottom: 10 }}>{error}</div> : null}
+      {error ? <div className="error-box" style={{ marginBottom: 'var(--ui-s10, 10px)' }}>{error}</div> : null}
       <button className="btn primary" disabled={busy || !name.trim()}>{busy ? 'Creating…' : 'Create workspace'}</button>
     </form>
   );
@@ -103,7 +103,7 @@ export default function Workspaces({ standalone }: { standalone?: boolean }) {
     return (
       <div className="auth-wrap">
         <div style={{ width: '100%', maxWidth: 520 }} className="col">
-          <div className="auth-brand" style={{ marginBottom: 8 }}>
+          <div className="auth-brand" style={{ marginBottom: 'var(--ui-s8, 8px)' }}>
             <ProductLockup height={20} />
           </div>
           <h1>Welcome{session ? `, ${session.user.name.split(' ')[0]}` : ''}</h1>
@@ -136,7 +136,7 @@ export default function Workspaces({ standalone }: { standalone?: boolean }) {
         actions={<button className="btn primary" onClick={() => setCreating(true)}><Icon name="plus" /> New workspace</button>}
       />
       {workspaces.length === 0 ? <EmptyState icon="layers" title="No workspaces" /> : null}
-      <div className="col" style={{ gap: 10 }}>
+      <div className="col" style={{ gap: 'var(--ui-s10, 10px)' }}>
         {workspaces.map((w) => <WorkspaceRow key={w.id} w={w} current={w.id === wsId} onLeave={leave} onRename={setRenaming} />)}
       </div>
       {creating ? <CreateWorkspaceDialog onClose={() => setCreating(false)} /> : null}

@@ -9,6 +9,11 @@ import { THEME_KEY, applyTheme, storedTheme } from './lib/hooks';
 import { ApiError } from './lib/api';
 import { BASE } from './lib/base';
 import './styles/app.css';
+// The new UI (flag new_ui_enabled): tokens, the generated scale conversion, then the components. All scoped to
+// html[data-ui="new"] (src/client/lib/ui.ts), so they do nothing while the flag is off.
+import './styles/bizomat-ui-tokens.css';
+import './styles/ui-new-generated.css';
+import './styles/ui-new.css';
 
 // The theme of this computer (src/client/lib/hooks.ts): its system theme until a choice is made here.
 applyTheme(storedTheme(), false);

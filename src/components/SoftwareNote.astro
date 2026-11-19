@@ -28,4 +28,11 @@ const points = ['Licensed SolidWorks/CAD software', 'Microsoft Office-compatible
   .sw__points li { padding: 0.8rem 0; border-bottom: 1px solid var(--line); font-weight: 520; }
   .sw__tm { grid-column: 1 / -1; margin: 0; font-size: 0.78rem; color: var(--muted); max-width: 90ch; }
   @media (max-width: 860px) { .sw { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .sw { gap: var(--bz-space-6) var(--bz-space-16); }
+  :global(html[data-ui="new"]) .sw__text { margin: var(--bz-space-4) 0 0; }
+  :global(html[data-ui="new"]) .sw__points li { padding: var(--bz-space-3) 0; }
+  :global(html[data-ui="new"]) .sw__tm { font-size: var(--bz-text-xs); }
+  /* ui-new:generated end */
 </style>

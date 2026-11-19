@@ -79,4 +79,22 @@ const gates: Record<string, string> = {
     .jr__phase:not(:first-child) { margin-top: 1.5rem; border-top: 2px solid var(--brand-orange); }
     .jr__phase:not(:first-child)::before { left: 0; }
   }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .jr__phase { padding: var(--bz-space-6) var(--bz-space-5) 0 0; }
+  :global(html[data-ui="new"]) .jr__phase:not(:first-child) { padding-left: var(--bz-space-5); }
+  :global(html[data-ui="new"]) .jr__phase-num { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .jr__phase-title { margin: var(--bz-space-1) 0 var(--bz-space-4); }
+  :global(html[data-ui="new"]) .jr__steps { gap: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .jr__step { gap: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .jr__marker { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .jr__body { padding-bottom: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .jr__actor { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .jr__text { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .jr__gate { margin: var(--bz-space-2) 0 0; padding: var(--bz-space-2) var(--bz-space-3); font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .jr__legend { gap: var(--bz-space-5); margin: var(--bz-space-6) 0 0; font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .jr__key { gap: var(--bz-space-2); }
+  @media (max-width: 1050px) { :global(html[data-ui="new"]) .jr__phase:nth-child(n + 3) { margin-top: var(--bz-space-6); } }
+  @media (max-width: 600px) { :global(html[data-ui="new"]) .jr__phase:not(:first-child) { margin-top: var(--bz-space-6); } }
+  /* ui-new:generated end */
 </style>

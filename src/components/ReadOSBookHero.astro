@@ -39,4 +39,14 @@ const { crumbs, eyebrow, title, subtitle, description, meta, startHref, draft = 
 .book-start:hover{color:var(--on-accent);background:var(--accent-strong)}
 .book-art{width:100%}
 @media(max-width:680px){.book-intro{grid-template-columns:1fr}.book-art{order:-1;max-width:220px}}
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .book-crumb { gap: var(--bz-space-2); font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .book-copy h1 { margin: var(--bz-space-4) 0; }
+  :global(html[data-ui="new"]) .book-subtitle { margin: 0 0 var(--bz-space-4); }
+  :global(html[data-ui="new"]) .book-lead { margin: 0 0 var(--bz-space-4); }
+  :global(html[data-ui="new"]) .book-meta { margin: 0 0 var(--bz-space-6); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .book-draft { margin: var(--bz-space-3) 0 0; padding: .2rem var(--bz-space-2); font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .book-start { gap: var(--bz-space-2); padding: 0 var(--bz-space-5); border-radius: var(--bz-radius-md); }
+  /* ui-new:generated end */
 </style>

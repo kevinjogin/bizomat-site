@@ -324,21 +324,21 @@ function WidgetBody({ widget, data, wsId }: { widget: WidgetDTO; data: any; wsId
     case 'overdue':
       return (
         <div>
-          <div className="row" style={{ marginBottom: 4 }}><span className="big-number danger-text" style={{ fontSize: 28 }}>{data.count}</span><span className="muted small">overdue</span></div>
+          <div className="row" style={{ marginBottom: 'var(--ui-s4, 4px)' }}><span className="big-number danger-text" style={{ fontSize: 28 }}>{data.count}</span><span className="muted small">overdue</span></div>
           <ItemList items={data.items} wsId={wsId} empty="Nothing overdue 🎉" />
         </div>
       );
     case 'upcoming':
       return (
         <div>
-          <div className="row" style={{ marginBottom: 4 }}><span className="big-number" style={{ fontSize: 28 }}>{data.count}</span><span className="muted small">due in the next {widget.config.days ?? 7} days</span></div>
+          <div className="row" style={{ marginBottom: 'var(--ui-s4, 4px)' }}><span className="big-number" style={{ fontSize: 28 }}>{data.count}</span><span className="muted small">due in the next {widget.config.days ?? 7} days</span></div>
           <ItemList items={data.items} wsId={wsId} empty="No upcoming deadlines" />
         </div>
       );
     case 'progress':
       if (!data.boards?.length) return <div className="muted small chart-empty">No items yet</div>;
       return (
-        <div className="col" style={{ gap: 10 }}>
+        <div className="col" style={{ gap: 'var(--ui-s10, 10px)' }}>
           {data.boards.map((b: any) => (
             <div key={b.id}>
               <div className="row small">
@@ -511,14 +511,14 @@ function WidgetDialog({ wsId, dashboard, widget, onClose, onSaved }: { wsId: str
     >
       {!widget ? (
         <Field label="Widget type">
-          <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 8 }}>
+          <div className="grid-cards" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: 'var(--ui-s8, 8px)' }}>
             {WIDGET_TYPES.map((t) => (
               <button
                 key={t.type}
                 type="button"
                 className={`tile${type === t.type ? ' active' : ''}`}
                 aria-pressed={type === t.type}
-                style={{ padding: 10, borderColor: type === t.type ? 'var(--accent)' : undefined, background: type === t.type ? 'var(--accent-soft)' : undefined, textAlign: 'left' }}
+                style={{ padding: 'var(--ui-s10, 10px)', borderColor: type === t.type ? 'var(--accent)' : undefined, background: type === t.type ? 'var(--accent-soft)' : undefined, textAlign: 'left' }}
                 onClick={() => {
                   setType(t.type);
                   setW(t.w);
@@ -536,7 +536,7 @@ function WidgetDialog({ wsId, dashboard, widget, onClose, onSaved }: { wsId: str
       <Field label="Title" htmlFor="w-title">
         <input id="w-title" className="input" value={title} maxLength={200} onChange={(e) => { setTitle(e.target.value); setTitleTouched(true); }} />
       </Field>
-      <div className="row wrap" style={{ alignItems: 'flex-start', gap: 16 }}>
+      <div className="row wrap" style={{ alignItems: 'flex-start', gap: 'var(--ui-s16, 16px)' }}>
         <Field label="Width (columns)" htmlFor="w-w">
           <select id="w-w" className="select" value={w} onChange={(e) => setW(Number(e.target.value))}>{[1, 2, 3, 4].map((n) => <option key={n}>{n}</option>)}</select>
         </Field>
@@ -566,7 +566,7 @@ function WidgetDialog({ wsId, dashboard, widget, onClose, onSaved }: { wsId: str
         ) : null}
       </div>
       {usesMetric ? (
-        <div className="row wrap" style={{ alignItems: 'flex-start', gap: 16 }}>
+        <div className="row wrap" style={{ alignItems: 'flex-start', gap: 'var(--ui-s16, 16px)' }}>
           <Field label="Metric" htmlFor="w-mk">
             <select id="w-mk" className="select" value={metricKind} onChange={(e) => setMetricKind(e.target.value as any)}>
               <option value="count">Count items</option>
@@ -583,7 +583,7 @@ function WidgetDialog({ wsId, dashboard, widget, onClose, onSaved }: { wsId: str
         </div>
       ) : null}
       <Field label="Source boards" hint={dashboard.boardIds.length ? 'Limited to this dashboard’s boards. Leave empty for all of them.' : 'Leave empty for every board you can access.'}>
-        <div className="row wrap" style={{ gap: 6 }}>
+        <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)' }}>
           {available.map((b) => (
             <button key={b.id} type="button" className={`chip${boardIds.includes(b.id) ? ' on' : ''}`} aria-pressed={boardIds.includes(b.id)} onClick={() => setBoardIds(boardIds.includes(b.id) ? boardIds.filter((x) => x !== b.id) : [...boardIds, b.id])}>
               {b.name}
@@ -594,7 +594,7 @@ function WidgetDialog({ wsId, dashboard, widget, onClose, onSaved }: { wsId: str
       </Field>
       {usesFilter ? (
         <>
-          <div className="row wrap" style={{ alignItems: 'flex-start', gap: 16 }}>
+          <div className="row wrap" style={{ alignItems: 'flex-start', gap: 'var(--ui-s16, 16px)' }}>
             <Field label="Items" htmlFor="w-done">
               <select id="w-done" className="select" value={done} onChange={(e) => setDone(e.target.value as any)}>
                 <option value="any">All items</option>
@@ -617,12 +617,12 @@ function WidgetDialog({ wsId, dashboard, widget, onClose, onSaved }: { wsId: str
               </Field>
             ) : null}
           </div>
-          <label className="checkbox" style={{ marginBottom: 12 }}>
+          <label className="checkbox" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
             <input type="checkbox" checked={includeSubitems} onChange={(e) => setIncludeSubitems(e.target.checked)} /> Include subitems
           </label>
           {statusLabels.length ? (
             <Field label="Only these statuses (optional)">
-              <div className="row wrap" style={{ gap: 6 }}>
+              <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)' }}>
                 {statusLabels.map((s) => (
                   <button key={s} type="button" className={`chip${statuses.includes(s) ? ' on' : ''}`} aria-pressed={statuses.includes(s)} onClick={() => setStatuses(statuses.includes(s) ? statuses.filter((x) => x !== s) : [...statuses, s])}>
                     {s}
@@ -666,7 +666,7 @@ function DashboardSettingsDialog({ wsId, dashboard, onClose, onSaved }: { wsId: 
       <Field label="Name" htmlFor="d-name"><input id="d-name" className="input" value={name} maxLength={200} onChange={(e) => setName(e.target.value)} /></Field>
       <Field label="Description" htmlFor="d-desc"><textarea id="d-desc" className="textarea" value={description} maxLength={2000} onChange={(e) => setDescription(e.target.value)} /></Field>
       <Field label="Source boards" hint="Leave empty to include every board each viewer can access. Viewers only ever see data from boards they have access to.">
-        <div className="col" style={{ maxHeight: 220, overflow: 'auto', gap: 4 }}>
+        <div className="col" style={{ maxHeight: 220, overflow: 'auto', gap: 'var(--ui-s4, 4px)' }}>
           {(boards.data ?? []).map((b) => (
             <label key={b.id} className="checkbox">
               <input type="checkbox" checked={selected.includes(b.id)} onChange={(e) => setSelected(e.target.checked ? [...selected, b.id] : selected.filter((x) => x !== b.id))} /> {b.name}

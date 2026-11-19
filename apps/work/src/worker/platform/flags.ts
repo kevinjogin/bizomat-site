@@ -106,6 +106,15 @@ const BASE: Record<string, FlagDef> = {
     enforcement: false,
     release: 'R7',
   },
+  new_ui_enabled: {
+    label: 'New UI (design system)',
+    description: 'The new look of the website and BIZOMAT ERP: one spacing and type scale, buttons and links with depth and motion, skeleton loading, the density choice. Off: everything looks as before.',
+    values: ONOFF,
+    scopes: ['global', 'stage', 'company'],
+    risk: 'low',
+    enforcement: false,
+    release: 'UI',
+  },
   company_members_v2: {
     label: 'Company members, roles and ownership transfer',
     description: 'The Members page and the central permission service: module access, own and team scopes, sensitive fields, suspension, invitations with modules and a message, and ownership transfer the new owner accepts.',

@@ -222,6 +222,9 @@ case "$ROLE" in
     pass "${EXACT[@]}"
     pass_prefix "${PREFIXES[@]}"
     map WEB_VERSION WEB_VERSION "$VERSION"
+    # The new UI's flag (docs/ui/README.md): the website asks Project Management for it every minute over Fly's private
+    # network, at the address the proxy uses. Only the address: nothing else of the proxy's or work's settings.
+    map UPSTREAM_WORK WEB_UPSTREAM_WORK
     ;;
   work)
     EXACT=(APP_URL APP_NAME ENVIRONMENT ALLOW_SIGNUP SESSION_TTL_HOURS CANONICAL_URL GOOGLE_CLIENT_ID GOOGLE_CLIENT_SECRET

@@ -91,7 +91,7 @@ export default function ScheduleTab({ bundle, onOpenItem }: ControlsProps) {
       </div>
       {d.warnings.length ? <ul className="pc-warnings">{d.warnings.map((w, i) => <li key={i} className={w.code}>{w.message}</li>)}</ul> : null}
       {d.summary.criticalPaths.length ? (
-        <div className="pc-section" style={{ marginBottom: 12 }}>
+        <div className="pc-section" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
           <h3>Critical path{d.summary.criticalPaths.length > 1 ? `s (${d.summary.criticalPaths.length})` : ''}</h3>
           {d.summary.criticalPaths.map((p, i) => (
             <div key={i} className="small" style={{ lineHeight: 1.9 }}>
@@ -105,7 +105,7 @@ export default function ScheduleTab({ bundle, onOpenItem }: ControlsProps) {
           ))}
         </div>
       ) : null}
-      <div className="row wrap" style={{ marginBottom: 8, gap: 8 }}>
+      <div className="row wrap" style={{ marginBottom: 'var(--ui-s8, 8px)', gap: 'var(--ui-s8, 8px)' }}>
         <input className="input" style={{ maxWidth: 220 }} placeholder="Search ID, WBS or name" aria-label="Search tasks" value={search} onChange={(e) => setSearch(e.target.value)} />
         <select className="select" aria-label="Filter" value={filter} onChange={(e) => setFilter(e.target.value as ScheduleFilter)}>
           {Object.entries(SCHEDULE_FILTERS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
@@ -154,7 +154,7 @@ export default function ScheduleTab({ bundle, onOpenItem }: ControlsProps) {
         </table>
       </div>
       <p className="small muted">Early and late dates and float come from the critical path calculation (forward and backward passes over the dependencies on the project calendar). Critical: total float at or below {d.settings.criticalDays} working days; near-critical: up to {d.settings.nearCriticalDays}. Change these in Calendar and settings.</p>
-      <div className="pc-grid-2" style={{ marginTop: 12 }}>
+      <div className="pc-grid-2" style={{ marginTop: 'var(--ui-s12, 12px)' }}>
         <div className="pc-section">
           <h3>Critical and non-critical tasks</h3>
           <Bars rows={(['critical', 'near_critical', 'non_critical', 'unscheduled', 'invalid'] as const).filter((k) => d.summary.counts[k]).map((k) => ({ label: CRITICALITY_LABELS[k], value: d.summary.counts[k] }))} danger={(l) => l === 'Critical'} />

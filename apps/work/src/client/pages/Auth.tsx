@@ -111,7 +111,7 @@ export function AuthLayout({ title, subtitle, children }: { title: string; subti
         </div>
         <h1>{title}</h1>
         {subtitle ? <p className="muted">{subtitle}</p> : null}
-        <div style={{ marginTop: 16 }}>{children}</div>
+        <div style={{ marginTop: 'var(--ui-s16, 16px)' }}>{children}</div>
         <footer className="auth-foot">
           <span>Part of the {BRAND.platform} platform</span>
           <PlatformLegalLinks />
@@ -179,21 +179,21 @@ export function LoginPage() {
         <Field label="Password" htmlFor="password">
           <input id="password" className="input" type="password" autoComplete="current-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </Field>
-        {error ? <div className={unconfirmed ? 'info-box' : 'error-box'} role="alert" style={{ marginBottom: 12 }}>{error}</div> : null}
+        {error ? <div className={unconfirmed ? 'info-box' : 'error-box'} role="alert" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>{error}</div> : null}
         {unconfirmed ? <ResendLink email={unconfirmed} /> : null}
         <button className="btn primary block lg" disabled={busy || !email || !password}>{busy ? 'Signing in…' : 'Sign in'}</button>
       </form>
       {config.data?.passwordReset ? (
-        <p className="muted small" style={{ marginTop: 12, textAlign: 'center' }}>
+        <p className="muted small" style={{ marginTop: 'var(--ui-s12, 12px)', textAlign: 'center' }}>
           <Link to={`/reset-password${email ? `?email=${encodeURIComponent(email)}` : ''}`}>Forgot your password?</Link>
         </p>
       ) : null}
       {config.data?.allowSignup ? (
-        <p className="muted small" style={{ marginTop: 16, textAlign: 'center' }}>
+        <p className="muted small" style={{ marginTop: 'var(--ui-s16, 16px)', textAlign: 'center' }}>
           New here? <Link to={`/signup${params.get('next') ? `?next=${encodeURIComponent(next)}` : ''}`}>Create an account</Link>
         </p>
       ) : (
-        <p className="muted small" style={{ marginTop: 16, textAlign: 'center' }}>Accounts are created by invitation.</p>
+        <p className="muted small" style={{ marginTop: 'var(--ui-s16, 16px)', textAlign: 'center' }}>Accounts are created by invitation.</p>
       )}
     </AuthLayout>
   );
@@ -251,10 +251,10 @@ export function SignupPage() {
           <label htmlFor="website">Website</label>
           <input id="website" name="website" tabIndex={-1} autoComplete="off" value={website} onChange={(e) => setWebsite(e.target.value)} />
         </div>
-        {error ? <div className="error-box" role="alert" style={{ marginBottom: 12 }}>{error}</div> : null}
+        {error ? <div className="error-box" role="alert" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>{error}</div> : null}
         <button className="btn primary block lg" disabled={busy || !name || !email || password.length < 10}>{busy ? 'Creating account…' : 'Create account'}</button>
       </form>
-      <p className="muted small" style={{ marginTop: 16, textAlign: 'center' }}>
+      <p className="muted small" style={{ marginTop: 'var(--ui-s16, 16px)', textAlign: 'center' }}>
         Already have an account? <Link to="/login">Sign in</Link>
       </p>
     </AuthLayout>
@@ -276,7 +276,7 @@ export function InvitePage() {
         <div className="info-box" role="status">
           You arrived at <strong style={{ wordBreak: 'break-all' }}>{here}</strong>. Invitation links in emails open this same page with the invitation’s own code instead of “link-check”.
         </div>
-        <p className="muted small" style={{ marginTop: 12 }}>If the address above does not start with the BIZOMAT address you expected, check the link tracking settings of the email service (founder console, Email).</p>
+        <p className="muted small" style={{ marginTop: 'var(--ui-s12, 12px)' }}>If the address above does not start with the BIZOMAT address you expected, check the link tracking settings of the email service (founder console, Email).</p>
         <Link className="btn block lg" to="/login">Go to sign in</Link>
       </AuthLayout>
     );
@@ -299,9 +299,9 @@ export function InvitePage() {
       {d.status !== 'pending' ? <div className="info-box">This invitation is {d.status}.</div> : session ? (
         <>
           {session.user.email.toLowerCase() !== d.email.toLowerCase() ? (
-            <div className="error-box" style={{ marginBottom: 12 }}>You are signed in as {session.user.email}. Sign in as {d.email} to accept.</div>
+            <div className="error-box" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>You are signed in as {session.user.email}. Sign in as {d.email} to accept.</div>
           ) : null}
-          {error ? <div className="error-box" style={{ marginBottom: 12 }}>{error}</div> : null}
+          {error ? <div className="error-box" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>{error}</div> : null}
           <button className="btn primary block lg" onClick={accept}>Accept invitation</button>
         </>
       ) : (

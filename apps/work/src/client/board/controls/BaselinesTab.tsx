@@ -129,8 +129,8 @@ export default function BaselinesTab({ bundle, onOpenItem }: ControlsProps) {
       </div>
 
       {baselines.length ? (
-        <div style={{ marginTop: 14 }}>
-          <div className="row wrap" style={{ gap: 8, marginBottom: 8 }}>
+        <div style={{ marginTop: 'var(--ui-s14, 14px)' }}>
+          <div className="row wrap" style={{ gap: 'var(--ui-s8, 8px)', marginBottom: 'var(--ui-s8, 8px)' }}>
             <label className="small" htmlFor="bl-compare">Compare with</label>
             <select id="bl-compare" className="select" value={selected} onChange={(e) => setSelected(e.target.value)}>
               <option value="">Latest approved baseline</option>

@@ -3,8 +3,12 @@ import '@fontsource-variable/inter-tight';
 import '@fontsource-variable/source-serif-4';
 import '@fontsource-variable/source-serif-4/wght-italic.css';
 import '../styles/bizomat/tokens.css';
+// The new UI (flag new_ui_enabled, read by the server): scoped to html[data-ui="new"], nothing changes while it is off.
+import '../styles/bizomat/ui-tokens.css';
 import '../styles/bizomat/components.css';
 import '../styles/global.css';
+import '../styles/ui-new-generated.css';
+import '../styles/ui-new.css';
 import interTight from '@fontsource-variable/inter-tight/files/inter-tight-latin-wght-normal.woff2?url';
 import SEO, { type Props as SEOProps } from '../components/SEO.astro';
 import Header from '../components/Header.astro';

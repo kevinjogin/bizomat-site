@@ -7,7 +7,9 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { createAssets, parseHeaders, parseRedirects } from '../src/node/assets.ts';
 import { memoryLimiter, workersAiRest } from '../src/node/bindings.ts';
-import { startWebServer } from '../src/node/server.ts';
+import { markNewUi, newUiSwitch, startWebServer } from '../src/node/server.ts';
+import { createServer, request as httpRequest } from 'node:http';
+import { brotliDecompressSync, gunzipSync } from 'node:zlib';
 
 function fixture(): string {
   const dir = mkdtempSync(join(tmpdir(), 'bz-web-'));
@@ -135,4 +137,107 @@ test('server: without proxy trust a client cannot choose its own address for rat
   } finally {
     await close();
   }
+});
+
+
+test('the new UI: HTML the Worker makes itself is marked, without validators; compressed answers pass unchanged', async () => {
+  const html = new Response('<!doctype html><html lang="en-AU" data-theme="light"><body>x</body></html>', { headers: { 'content-type': 'text/html; charset=utf-8', etag: '"1"', 'last-modified': 'x' } });
+  const marked = await markNewUi(html);
+  const text = await marked.text();
+  assert.match(text, /<html data-ui="new" lang="en-AU" data-theme="light">/);
+  assert.equal(marked.headers.get('etag'), null);
+  assert.equal(marked.headers.get('last-modified'), null);
+  // Not twice, and never on anything but HTML.
+  assert.equal((await (await markNewUi(new Response(text, { headers: { 'content-type': 'text/html' } }))).text()).match(/data-ui=/g)?.length, 1);
+  const css = new Response('html{}', { headers: { 'content-type': 'text/css', etag: '"2"' } });
+  assert.equal((await markNewUi(css)).headers.get('etag'), '"2"');
+  const packed = new Response(new Uint8Array([1, 2, 3]), { headers: { 'content-type': 'text/html', 'content-encoding': 'br', etag: '"3"' } });
+  const passed = await markNewUi(packed);
+  assert.equal(passed, packed);
+});
+
+test('the new UI: the asset store marks pages before it compresses them, under their own ETag', async () => {
+  const dir = fixture();
+  writeFileSync(join(dir, 'index.html'), `<!doctype html><html lang="en-AU"><title>Home</title>${'<p>BIZOMAT</p>'.repeat(200)}</html>`);
+  writeFileSync(join(dir, '404.html'), '<!doctype html><html lang="en-AU"><title>Not found</title></html>');
+  let on = false;
+  const assets = createAssets({ dir, newUi: () => on });
+  const offTag = (await assets.fetch(req('/', { headers: { 'Accept-Encoding': 'gzip, br' } }))).headers.get('ETag')!;
+  on = true;
+  let onTag = '';
+  for (const enc of ['br', 'gzip', '']) {
+    const r = await assets.fetch(req('/', { headers: enc ? { 'Accept-Encoding': enc } : {} }));
+    const bytes = Buffer.from(await r.arrayBuffer());
+    const text = enc === 'br' ? brotliDecompressSync(bytes).toString() : enc === 'gzip' ? gunzipSync(bytes).toString() : bytes.toString();
+    assert.equal(r.headers.get('Content-Encoding'), enc || null, enc);
+    assert.match(text, /^<!doctype html><html data-ui="new" lang="en-AU"><title>Home<\/title>/, enc);
+    assert.equal(Number(r.headers.get('Content-Length')), bytes.length, enc);
+    onTag = r.headers.get('ETag')!;
+  }
+  assert.notEqual(onTag, offTag);
+  // A page kept from before the flag changed is sent again in full; a marked page revalidates as before.
+  assert.equal((await assets.fetch(req('/', { headers: { 'If-None-Match': offTag } }))).status, 200);
+  assert.equal((await assets.fetch(req('/', { headers: { 'If-None-Match': onTag } }))).status, 304);
+  on = false;
+  assert.equal((await assets.fetch(req('/', { headers: { 'If-None-Match': onTag } }))).status, 200);
+  on = true;
+  // The 404 page too; never scripts or other files.
+  const missing = await assets.fetch(req('/nope/'));
+  assert.equal(missing.status, 404);
+  assert.match(await missing.text(), /<html data-ui="new" lang="en-AU">/);
+  assert.doesNotMatch(await (await assets.fetch(req('/_astro/app.123.js'))).text(), /data-ui/);
+});
+
+test('the new UI through the server: a browser asking for Brotli gets a page that decodes, marked', async () => {
+  const dir = fixture();
+  writeFileSync(join(dir, 'index.html'), `<!doctype html><html lang="en-AU"><title>Home</title>${'<p>BIZOMAT</p>'.repeat(200)}</html>`);
+  const { ready, close } = startWebServer({ port: 0, host: '127.0.0.1', distDir: dir, env: { WEB_NEW_UI: 'on' }, log: () => {} });
+  const port = await ready;
+  try {
+    for (const enc of ['br', 'gzip']) {
+      // node:http, not fetch: fetch would decode on its own and hide a body that is not what its header says.
+      const { headers, body } = await new Promise<{ headers: Record<string, unknown>; body: Buffer }>((done, fail) => {
+        httpRequest({ host: '127.0.0.1', port, path: '/', headers: { 'Accept-Encoding': enc } }, (res) => {
+          const parts: Buffer[] = [];
+          res.on('data', (c: Buffer) => parts.push(c));
+          res.on('end', () => done({ headers: res.headers, body: Buffer.concat(parts) }));
+        }).on('error', fail).end();
+      });
+      assert.equal(headers['content-encoding'], enc);
+      const text = (enc === 'br' ? brotliDecompressSync(body) : gunzipSync(body)).toString();
+      assert.match(text, /^<!doctype html><html data-ui="new" lang="en-AU">/, enc);
+    }
+  } finally {
+    await close();
+  }
+});
+
+test('the new UI switch: asks Project Management, keeps the last answer when it cannot, and obeys WEB_NEW_UI', async () => {
+  let answer: unknown = { newUi: true };
+  let calls = 0;
+  const upstream = createServer((req, res) => {
+    calls++;
+    assert.equal(req.url, '/tasks/api/ui/public');
+    if (answer === 'down') { res.writeHead(503); res.end(); return; }
+    res.writeHead(200, { 'content-type': 'application/json' });
+    res.end(JSON.stringify(answer));
+  });
+  await new Promise<void>((r) => upstream.listen(0, '127.0.0.1', () => r()));
+  const port = (upstream.address() as { port: number }).port;
+  // The address the entrypoint gives the web role (WEB_UPSTREAM_WORK) wins over UPSTREAM_WORK.
+  const sw = newUiSwitch({ WEB_UPSTREAM_WORK: `http://127.0.0.1:${port}`, UPSTREAM_WORK: 'http://127.0.0.1:9' }, 50);
+  const until = async (fn: () => boolean) => { for (let i = 0; i < 100 && !fn(); i++) await new Promise((r) => setTimeout(r, 20)); };
+  await until(() => sw.on());
+  assert.equal(sw.on(), true);
+  answer = 'down';
+  const before = calls;
+  await until(() => calls > before + 1);
+  assert.equal(sw.on(), true, 'an unreachable upstream keeps the last answer');
+  answer = { newUi: false };
+  await until(() => !sw.on());
+  assert.equal(sw.on(), false);
+  sw.stop();
+  upstream.close();
+  assert.equal(newUiSwitch({ WEB_NEW_UI: 'on', UPSTREAM_WORK: 'http://127.0.0.1:9' }).on(), true);
+  assert.equal(newUiSwitch({}).on(), false);
 });

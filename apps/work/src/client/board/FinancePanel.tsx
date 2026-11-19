@@ -26,7 +26,7 @@ export function FinancePanel({ bundle, onClose }: { bundle: BoardBundle; onClose
   return (
     <Modal title={`Finance · ${bundle.board.name}`} onClose={onClose} wide>
       {q.isLoading ? <Loading /> : q.error ? <ErrorBox error={q.error} /> : s ? (
-        <div className="col" style={{ gap: 12 }}>
+        <div className="col" style={{ gap: 'var(--ui-s12, 12px)' }}>
           <p className="muted small">
             Currency: {s.boardCurrency ? `${s.boardCurrency} (project)` : s.workspaceCurrency ? `${s.workspaceCurrency} (organisation)` : 'not set yet: an administrator chooses it in Settings > Finance'}. Totals add top-level tasks only (a parent's amount is its total), are exact to the cent, and are never added across currencies.
           </p>
@@ -36,7 +36,7 @@ export function FinancePanel({ bundle, onClose }: { bundle: BoardBundle; onClose
           ) : null}
           {s.byRole.map((r) => (
             <section key={r.currency ?? 'none'}>
-              <h3 style={{ marginBottom: 6 }}>{r.currency ?? 'No currency'}</h3>
+              <h3 style={{ marginBottom: 'var(--ui-s6, 6px)' }}>{r.currency ?? 'No currency'}</h3>
               <div className="money-grid">
                 <Tile label="Approved budget" f={r.approvedBudget} />
                 <Tile label="Estimated cost" f={r.estimatedCost} note="estimate" />

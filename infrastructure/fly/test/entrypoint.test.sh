@@ -137,6 +137,7 @@ run_role web /app/web/dist-server/server.mjs >"$tmp/web.json"
 [ "$(uid "$tmp/web.json")" = 10002 ] || bad "web uid"
 [ "$(val "$tmp/web.json" PORT)" = 8003 ] && [ "$(val "$tmp/web.json" WEB_DIST_DIR)" = /app/web/dist ] && [ "$(val "$tmp/web.json" WEB_TRUST_PROXY)" = 1 ] || bad "web fixed settings"
 [ "$(val "$tmp/web.json" CF_AI_TOKEN)" = throwaway-web-token ] && [ "$(val "$tmp/web.json" WEB_EXTRA)" = web-setting ] || bad "web settings"
+[ "$(val "$tmp/web.json" WEB_UPSTREAM_WORK)" = http://work:8002 ] || bad "web: the work address for the new UI's flag"
 for n in OPENSKETCH_KEY_SECRET WORK_GOOGLE_CLIENT_SECRET CAD_GOOGLE_CLIENT_SECRET GOOGLE_CLIENT_SECRET UPSTREAM_CAD LD_PRELOAD NODE_OPTIONS WORK_BREVO_API_KEY BREVO_API_KEY \
   WORK_ABR_GUID ABR_GUID WORK_BIZOMAT_ID_CLIENTS BIZOMAT_ID_CLIENTS GATE_PASSWORD; do
   if has "$tmp/web.json" "$n"; then bad "web holds $n"; fi

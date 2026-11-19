@@ -293,4 +293,17 @@ const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, s
   .guide-faq dd { margin: .4rem 0 0; color: var(--ink-2); }
   @media (max-width: 1000px) { .guide-shot { position: static; } }
   @media (max-width: 640px) { .guide-toc ol { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .guide-toc { margin-top: var(--bz-space-8); padding: var(--bz-space-5) var(--bz-space-6); }
+  :global(html[data-ui="new"]) .guide-toc__title { font-size: var(--bz-text-md); margin-bottom: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .guide-toc ol { gap: var(--bz-space-1) var(--bz-space-8); padding-left: var(--bz-space-5); }
+  :global(html[data-ui="new"]) .guide-lead { margin: var(--bz-space-3) 0 0; }
+  :global(html[data-ui="new"]) .guide-steps { margin-top: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .guide-roles { margin-top: var(--bz-space-6); }
+  :global(html[data-ui="new"]) .guide-roles h3 { font-size: var(--bz-text-md); margin-bottom: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .guide-faq { gap: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .guide-faq > div { padding: var(--bz-space-4) var(--bz-space-5); }
+  :global(html[data-ui="new"]) .guide-faq dd { margin: var(--bz-space-2) 0 0; }
+  /* ui-new:generated end */
 </style>

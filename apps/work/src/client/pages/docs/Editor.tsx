@@ -144,7 +144,7 @@ export function EditorToolbar({ editor, documentId }: { editor: TiptapEditor; do
           <TB label="Delete table" icon="trash" onClick={() => c().deleteTable().run()} />
         </>
       ) : null}
-      {uploading ? <span className="muted small" style={{ alignSelf: 'center', marginLeft: 6 }}>Uploading…</span> : null}
+      {uploading ? <span className="muted small" style={{ alignSelf: 'center', marginLeft: 'var(--ui-s6, 6px)' }}>Uploading…</span> : null}
       {linkOpen ? <LinkDialog editor={editor} onClose={() => setLinkOpen(false)} /> : null}
     </div>
   );

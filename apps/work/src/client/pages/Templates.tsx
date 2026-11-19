@@ -48,9 +48,9 @@ export default function Templates() {
       {q.isLoading ? <Loading /> : q.error ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : (
         <div className="stack-lg">
           <section>
-            <div className="row wrap" style={{ marginBottom: 12 }}>
+            <div className="row wrap" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
               <h2 className="grow">Built-in templates</h2>
-              <div className="row wrap" role="group" aria-label="Filter by category" style={{ gap: 6 }}>
+              <div className="row wrap" role="group" aria-label="Filter by category" style={{ gap: 'var(--ui-s6, 6px)' }}>
                 {categories.map((c) => <button key={c} className={`chip${category === c ? ' on' : ''}`} aria-pressed={category === c} onClick={() => setCategory(c)}>{c}</button>)}
               </div>
             </div>
@@ -76,7 +76,7 @@ export default function Templates() {
             </div>
           </section>
           <section>
-            <h2 style={{ marginBottom: 12 }}>Workspace templates</h2>
+            <h2 style={{ marginBottom: 'var(--ui-s12, 12px)' }}>Workspace templates</h2>
             {!q.data?.workspace.length ? (
               <EmptyState icon="template" title="No custom templates yet">
                 Open any board and choose <strong>Save as template</strong> from its menu to reuse its structure and automations.

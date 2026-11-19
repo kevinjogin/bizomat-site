@@ -241,8 +241,33 @@ authRoutes.get('/me', async (c) => {
   const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(auth.user.id).first<UserRow>();
   const { getPlatformRole } = await import('../services/platform-admin');
   const platformRole = auth.kind === 'session' ? await getPlatformRole(c.env.DB, auth.user.id) : null;
-  return c.json({ user: userDTO(user!), csrfToken: auth.session?.csrfToken ?? null, workspaces: await listWorkspaces(c.env.DB, auth.user.id), platformRole });
+  return c.json({ user: userDTO(user!), csrfToken: auth.session?.csrfToken ?? null, workspaces: await listWorkspaces(c.env.DB, auth.user.id), platformRole, ui: await uiFor(c.env.DB, user!) });
 });
+
+/**
+ * The new UI for this person (flag new_ui_enabled): on for everyone, or for a company they belong to (by the company or
+ * its rollout stage). Their density is a preference on their account (Comfortable unless they chose Compact).
+ */
+async function uiFor(db: D1Database, user: { id: string; preferences_json?: string | null }): Promise<{ newUi: boolean; density: 'comfortable' | 'compact' }> {
+  const { flagOn } = await import('../platform/flags');
+  let newUi = false;
+  try {
+    newUi = await flagOn(db, 'new_ui_enabled');
+    if (!newUi) {
+      const companies = await db.prepare('SELECT company_id FROM co_members WHERE user_id = ? LIMIT 20').bind(user.id).all<{ company_id: string }>();
+      for (const r of companies.results) if (await flagOn(db, 'new_ui_enabled', { companyId: r.company_id })) { newUi = true; break; }
+    }
+  } catch {
+    newUi = false;
+  }
+  let density: 'comfortable' | 'compact' = 'comfortable';
+  try {
+    density = JSON.parse(user.preferences_json || '{}').density === 'compact' ? 'compact' : 'comfortable';
+  } catch {
+    density = 'comfortable';
+  }
+  return { newUi, density };
+}
 
 // ------------------------------------------------------------------ OAuth
 

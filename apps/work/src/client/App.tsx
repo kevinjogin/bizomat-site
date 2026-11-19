@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, type ReactNode } from 'react';
 import { Navigate, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useUiRouteEffects } from './lib/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { lastWorkspace, useSession } from './lib/session';
 import { Loading, ErrorBox } from './components/ui/ui';
@@ -86,6 +87,8 @@ export function App() {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { session } = useSession();
+  // The new UI's route fade and company-switch cover (flag new_ui_enabled; nothing happens while it is off).
+  useUiRouteEffects(useLocation().pathname);
 
   useEffect(() => {
     const onUnauthorized = () => {

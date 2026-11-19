@@ -55,4 +55,10 @@ const external = !hasWorkDetail(entry) && Boolean(externalUrl);
   .work-card__title a::after { content: ''; position: absolute; inset: 0; }
   .work-card__summary { margin: 1rem 0 0; max-width: 46ch; color: var(--ink-2); font-size: var(--step-1); line-height: 1.5; }
   @media (max-width: 760px) { .work-card { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .work-card__placeholder { padding: var(--bz-space-4) var(--bz-space-5); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .work-card__meta { gap: var(--bz-space-4); margin-bottom: var(--bz-space-4); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .work-card__summary { margin: var(--bz-space-4) 0 0; }
+  /* ui-new:generated end */
 </style>

@@ -61,4 +61,17 @@ const slugFor = (service: string) => SERVICE_OPTIONS.find((o) => o.value === ser
   .packages__note { margin: 1rem 0 0; font-size: 0.88rem; color: var(--muted); max-width: 70ch; }
   @media (max-width: 1000px) { .packages__grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 560px) { .packages__grid { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .packages__fixed { gap: var(--bz-space-2) var(--bz-space-6); margin-bottom: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .packages__fixed-tag { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .packages__fixed-title { font-size: var(--bz-text-lg); }
+  :global(html[data-ui="new"]) .packages__fixed-text { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .packages__fixed-link { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .package { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .package__title { font-size: var(--bz-text-lg); }
+  :global(html[data-ui="new"]) .package__text { font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .package__link { margin-top: var(--bz-space-2); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .packages__note { margin: var(--bz-space-4) 0 0; font-size: var(--bz-text-base); }
+  /* ui-new:generated end */
 </style>

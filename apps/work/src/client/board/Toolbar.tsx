@@ -133,12 +133,12 @@ export function FilterBuilder({ bundle, members, value, onChange, depth = 0 }: {
   const setRule = (i: number, r: FilterRule | FilterGroup) => onChange({ ...value, rules: value.rules.map((x, j) => (j === i ? r : x)) });
   const remove = (i: number) => onChange({ ...value, rules: value.rules.filter((_, j) => j !== i) });
   return (
-    <div className="col" style={{ padding: depth ? 8 : 6, gap: 8, border: depth ? '1px solid var(--border)' : undefined, borderRadius: 8 }}>
+    <div className="col" style={{ padding: depth ? 8 : 6, gap: 'var(--ui-s8, 8px)', border: depth ? '1px solid var(--border)' : undefined, borderRadius: 8 }}>
       {depth === 0 ? <div className="menu-label">Show items where…</div> : null}
       {value.rules.length === 0 ? <div className="muted small">No conditions — all items are shown.</div> : null}
       {value.rules.map((r, i) => (
         <div key={i} className="row" style={{ alignItems: 'flex-start' }}>
-          <div style={{ width: 54, paddingTop: 4 }} className="small muted">
+          <div style={{ width: 54, paddingTop: 'var(--ui-s4, 4px)' }} className="small muted">
             {i === 0 ? 'Where' : i === 1 ? (
               <select className="select sm" value={value.op} onChange={(e) => onChange({ ...value, op: e.target.value as 'and' | 'or' })} aria-label="Combine conditions">
                 <option value="and">and</option>
@@ -169,7 +169,7 @@ function RuleEditor({ rule, fields, cols, bundle, members, onChange }: { rule: F
   const ops = rule.field === 'done' ? (['is', 'is_not'] as const) : operatorsFor(rule.field, cols);
   const col = cols.get(rule.field);
   return (
-    <div className="row wrap" style={{ gap: 6 }}>
+    <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)' }}>
       <select className="select sm" style={{ width: 150 }} value={rule.field} aria-label="Field" onChange={(e) => {
         const f = e.target.value;
         const nextOps = f === 'done' ? ['is'] : operatorsFor(f, cols);
@@ -196,7 +196,7 @@ function RuleValue({ rule, col, bundle, members, onChange }: { rule: FilterRule;
     if (multi) {
       const cur = Array.isArray(rule.value) ? (rule.value as string[]) : [];
       return (
-        <div className="row wrap" style={{ gap: 4 }}>
+        <div className="row wrap" style={{ gap: 'var(--ui-s4, 4px)' }}>
           {options.map((o) => (
             <label key={o.id} className="badge" style={{ cursor: 'pointer', background: cur.includes(o.id) ? 'var(--accent-soft)' : undefined }}>
               <input type="checkbox" checked={cur.includes(o.id)} onChange={() => onChange(cur.includes(o.id) ? cur.filter((x) => x !== o.id) : [...cur, o.id])} style={{ width: 12, height: 12 }} /> {o.label}
@@ -240,7 +240,7 @@ function RuleValue({ rule, col, bundle, members, onChange }: { rule: FilterRule;
 function SortBuilder({ columns, value, onChange }: { columns: ColumnDTO[]; value: { field: string; dir: 'asc' | 'desc' }[]; onChange: (v: { field: string; dir: 'asc' | 'desc' }[]) => void }) {
   const fields = [{ id: 'name', title: 'Name' }, { id: 'created_at', title: 'Created' }, { id: 'updated_at', title: 'Last updated' }, ...columns.map((c) => ({ id: c.id, title: c.title }))];
   return (
-    <div className="col" style={{ padding: 6 }}>
+    <div className="col" style={{ padding: 'var(--ui-s6, 6px)' }}>
       <div className="menu-label">Sort by</div>
       {value.map((s, i) => (
         <div key={i} className="row">

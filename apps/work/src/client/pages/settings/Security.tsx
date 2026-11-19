@@ -28,7 +28,7 @@ function describeAgent(ua: string | null) {
 
 export function SecuritySettings() {
   return (
-    <div className="col" style={{ gap: 16 }}>
+    <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
       <PasswordCard />
       <SessionsCard />
       <ProvidersCard />
@@ -109,7 +109,7 @@ function PasswordCard() {
   };
   return (
     <form className="card card-pad" onSubmit={submit}>
-      <h2 style={{ marginBottom: 12 }}>{hasPassword ? 'Change password' : 'Set a password'}</h2>
+      <h2 style={{ marginBottom: 'var(--ui-s12, 12px)' }}>{hasPassword ? 'Change password' : 'Set a password'}</h2>
       {hasPassword ? (
         <Field label="Current password" htmlFor="pw-current">
           <input id="pw-current" className="input" type="password" autoComplete="current-password" value={current} onChange={(e) => setCurrent(e.target.value)} required />
@@ -123,7 +123,7 @@ function PasswordCard() {
       <Field label="Confirm new password" htmlFor="pw-confirm">
         <input id="pw-confirm" className="input" type="password" autoComplete="new-password" value={confirmPw} onChange={(e) => setConfirmPw(e.target.value)} required />
       </Field>
-      {error ? <div className="error-box" style={{ marginBottom: 12 }} role="alert">{error}</div> : null}
+      {error ? <div className="error-box" style={{ marginBottom: 'var(--ui-s12, 12px)' }} role="alert">{error}</div> : null}
       <button className="btn primary" disabled={busy || next.length < 10}>{busy ? 'Saving…' : 'Update password'}</button>
     </form>
   );
@@ -280,7 +280,7 @@ function TokensCard() {
         Use tokens with <code>Authorization: Bearer &lt;token&gt;</code> to call the BIZOMAT API. A token acts as you, with your permissions, in one company only, and can be limited to some applications or to reading. Changing your password ends every token.
       </div>
       {q.isLoading ? <Loading /> : null}
-      <div className="list" style={{ marginTop: 8 }}>
+      <div className="list" style={{ marginTop: 'var(--ui-s8, 8px)' }}>
         {(q.data ?? []).map((t) => (
           <div key={t.id} className="list-row">
             <Icon name="key" />
@@ -319,7 +319,7 @@ function TokensCard() {
             <>
               <p>Copy this token now. It will not be shown again.</p>
               <div className="token-reveal" aria-label="New token">{created}</div>
-              <button className="btn sm" style={{ marginTop: 10 }} onClick={() => navigator.clipboard?.writeText(created).then(() => toast('Copied'))}><Icon name="copy" size={14} /> Copy</button>
+              <button className="btn sm" style={{ marginTop: 'var(--ui-s10, 10px)' }} onClick={() => navigator.clipboard?.writeText(created).then(() => toast('Copied'))}><Icon name="copy" size={14} /> Copy</button>
             </>
           ) : (
             <form id="token-form" onSubmit={create}>

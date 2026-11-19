@@ -78,11 +78,11 @@ export default function Documents() {
         subtitle="Rich documents for specs, notes and plans — linkable to boards and items."
         actions={editable ? <button className="btn primary" onClick={() => createDoc({ folderId: newDocFolder })}><Icon name="plus" /> New document{newDocFolder ? ' here' : ''}</button> : null}
       />
-      <div className="tabs" role="tablist" style={{ marginBottom: 12 }}>
+      <div className="tabs" role="tablist" style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
         <button role="tab" aria-selected={tab === 'active'} className={`tab${tab === 'active' ? ' active' : ''}`} onClick={() => setTab('active')}>All documents</button>
         <button role="tab" aria-selected={tab === 'archived'} className={`tab${tab === 'archived' ? ' active' : ''}`} onClick={() => setTab('archived')}>Archived</button>
       </div>
-      <div className="row wrap" style={{ marginBottom: 14 }}>
+      <div className="row wrap" style={{ marginBottom: 'var(--ui-s14, 14px)' }}>
         <div className="row" style={{ flex: '1 1 240px', maxWidth: 360 }}>
           <input className="input" placeholder="Filter by title or content…" aria-label="Filter documents" value={q} onChange={(e) => setQ(e.target.value)} />
         </div>
@@ -113,7 +113,7 @@ export default function Documents() {
                 <div className="muted small ellipsis">{d.excerpt.replace(/^[^\n]*\n/, '') || 'Empty document'}</div>
               </div>
               {folder === 'all' && d.folderId && folderById.get(d.folderId) ? (
-                <span className="badge desktop-only" style={{ gap: 5 }}><FolderIcon color={folderById.get(d.folderId)!.color} size={13} /> {folderById.get(d.folderId)!.name}</span>
+                <span className="badge desktop-only" style={{ gap: 'var(--ui-s5, 5px)' }}><FolderIcon color={folderById.get(d.folderId)!.color} size={13} /> {folderById.get(d.folderId)!.name}</span>
               ) : null}
               {d.visibility === 'private' ? <span className="badge"><Icon name="lock" size={11} /> Private</span> : null}
               {d.boardId ? <span className="badge accent desktop-only"><Icon name="grid" size={11} /> {boardName.get(d.boardId) ?? 'Board'}</span> : null}

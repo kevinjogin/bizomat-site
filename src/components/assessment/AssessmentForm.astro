@@ -296,4 +296,25 @@ const action = provider === 'web3forms' ? web3formsEndpoint : '/api/assessment';
   .af__actions { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.25rem; }
   .af__fine { margin: 0; font-size: 0.86rem; color: var(--muted); max-width: 40ch; }
   @media (max-width: 640px) { .af__row { grid-template-columns: 1fr; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .af { gap: var(--bz-space-8); }
+  :global(html[data-ui="new"]) .af__group { gap: var(--bz-space-5); }
+  :global(html[data-ui="new"]) .af__legend { gap: var(--bz-space-2); margin-bottom: var(--bz-space-1); }
+  :global(html[data-ui="new"]) .af__legend span { font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .af__row { gap: var(--bz-space-5); }
+  :global(html[data-ui="new"]) .field { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .field label, :global(html[data-ui="new"]) .field legend { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .field__hint { font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .field input[type='text'], :global(html[data-ui="new"]) .field input[type='email'], :global(html[data-ui="new"]) .field input[type='tel'], :global(html[data-ui="new"]) .field select, :global(html[data-ui="new"]) .field textarea { padding: var(--bz-space-3) var(--bz-space-4); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .field select { padding-right: var(--bz-space-10); }
+  :global(html[data-ui="new"]) .field__error { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .field--choices legend { margin-bottom: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .choices { gap: var(--bz-space-2); }
+  :global(html[data-ui="new"]) .choice { gap: var(--bz-space-2); padding: var(--bz-space-2) var(--bz-space-4); border-radius: var(--bz-radius-full); }
+  :global(html[data-ui="new"]) .field--check { column-gap: var(--bz-space-3); }
+  :global(html[data-ui="new"]) .af__status { padding: var(--bz-space-4) var(--bz-space-4); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .af__actions { gap: var(--bz-space-3) var(--bz-space-5); }
+  :global(html[data-ui="new"]) .af__fine { font-size: var(--bz-text-base); }
+  /* ui-new:generated end */
 </style>

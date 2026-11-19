@@ -30,4 +30,9 @@ const { items } = Astro.props;
   .breadcrumb a { color: var(--muted); text-decoration: none; }
   .breadcrumb a:hover { color: var(--ink); text-decoration: underline; }
   .breadcrumb [aria-current] { color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 40ch; }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .breadcrumb ol { gap: var(--bz-space-1); font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .breadcrumb li { gap: var(--bz-space-1); }
+  /* ui-new:generated end */
 </style>

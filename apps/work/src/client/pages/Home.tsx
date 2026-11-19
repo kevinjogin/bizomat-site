@@ -100,7 +100,7 @@ export default function Home() {
         ) : null}
       </div>
 
-      <div className="stat-tiles" style={{ marginBottom: 20 }}>
+      <div className="stat-tiles" style={{ marginBottom: 'var(--ui-s20, 20px)' }}>
         {stats.map((s) => (
           <Link key={s.label} to={s.to} className="stat-tile">
             <span className="stat-label">{s.label}</span>
@@ -110,7 +110,7 @@ export default function Home() {
       </div>
 
       <div className="home-grid">
-        <div className="col" style={{ gap: 16 }}>
+        <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
           <section className="card" aria-labelledby="focus-h">
             <div className="card-header">
               <h2 id="focus-h" className="grow">Needs your attention</h2>
@@ -142,7 +142,7 @@ export default function Home() {
           </section>
         </div>
 
-        <div className="col" style={{ gap: 16 }}>
+        <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
           <section className="card" aria-labelledby="myday-h">
             <div className="card-header">
               <h2 id="myday-h" className="grow">My Day</h2>

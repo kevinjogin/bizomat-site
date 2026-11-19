@@ -118,7 +118,7 @@ export function FolderDialog({ title, initial, onSave, onClose }: { title: strin
         <Field label="Colour">
           <FolderColorPicker value={color} onChange={setColor} />
         </Field>
-        <div className="row" style={{ gap: 10 }}>
+        <div className="row" style={{ gap: 'var(--ui-s10, 10px)' }}>
           <FolderIcon color={color} size={36} /> <strong>{name || 'Preview'}</strong>
         </div>
       </form>
@@ -128,7 +128,7 @@ export function FolderDialog({ title, initial, onSave, onClose }: { title: strin
 
 export function FolderColorPicker({ value, onChange }: { value: string; onChange: (c: string) => void }) {
   return (
-    <div className="row wrap" style={{ gap: 6 }} role="radiogroup" aria-label="Folder colour">
+    <div className="row wrap" style={{ gap: 'var(--ui-s6, 6px)' }} role="radiogroup" aria-label="Folder colour">
       {FOLDER_COLORS.map((c) => (
         <button
           key={c}
@@ -234,7 +234,7 @@ export function FolderPanel({
 
   return (
     <nav className="folder-panel card" aria-label={`${label} folders`}>
-      <div className="row" style={{ padding: '10px 10px 6px' }}>
+      <div className="row" style={{ padding: 'var(--ui-s10, 10px) var(--ui-s10, 10px) var(--ui-s6, 6px)' }}>
         <strong className="grow small" style={{ textTransform: 'uppercase', letterSpacing: '.05em', color: 'var(--text-3)' }}>Folders</strong>
         {canEdit ? (
           <button className="btn ghost icon sm" aria-label="New folder" title="New folder" onClick={() => setDialog({ mode: 'create', parentId: null })}>
@@ -242,12 +242,12 @@ export function FolderPanel({
           </button>
         ) : null}
       </div>
-      <div className={`folder-row${selected === 'all' ? ' active' : ''}`} style={{ paddingLeft: 6 }}>
+      <div className={`folder-row${selected === 'all' ? ' active' : ''}`} style={{ paddingLeft: 'var(--ui-s6, 6px)' }}>
         <span style={{ width: 18 }} />
         <button className="folder-name" onClick={() => onSelect('all')}><Icon name="layers" /> All {label.toLowerCase()}</button>
         <span className="folder-count">{counts.all}</span>
       </div>
-      <div className={`folder-row${selected === 'unfiled' ? ' active' : ''}${over === '__root' ? ' drop' : ''}`} style={{ paddingLeft: 6 }} {...dropHandlers(null)}>
+      <div className={`folder-row${selected === 'unfiled' ? ' active' : ''}${over === '__root' ? ' drop' : ''}`} style={{ paddingLeft: 'var(--ui-s6, 6px)' }} {...dropHandlers(null)}>
         <span style={{ width: 18 }} />
         <button className="folder-name" onClick={() => onSelect('unfiled')}><Icon name="inbox" /> Not in a folder</button>
         <span className="folder-count">{counts.unfiled}</span>
@@ -255,18 +255,18 @@ export function FolderPanel({
       {tree.length ? <div className="menu-sep" /> : null}
       {tree.map(renderNode)}
       {q.data && !q.data.length && canEdit ? (
-        <button className="btn ghost sm" style={{ margin: '6px 8px 10px' }} onClick={() => setDialog({ mode: 'create', parentId: null })}>
+        <button className="btn ghost sm" style={{ margin: 'var(--ui-s6, 6px) var(--ui-s8, 8px) var(--ui-s10, 10px)' }} onClick={() => setDialog({ mode: 'create', parentId: null })}>
           <Icon name="folder" /> Create your first folder
         </button>
       ) : null}
-      {canEdit && q.data?.length ? <p className="muted small" style={{ padding: '6px 12px 10px', margin: 0 }}>Drag items onto a folder to file them.</p> : null}
+      {canEdit && q.data?.length ? <p className="muted small" style={{ padding: 'var(--ui-s6, 6px) var(--ui-s12, 12px) var(--ui-s10, 10px)', margin: 0 }}>Drag items onto a folder to file them.</p> : null}
 
       {menu ? (
         <Popover anchor={menu.el} onClose={() => setMenu(null)} width={250}>
           <MenuItem icon="plus" onClick={() => { const f = menu.folder; setMenu(null); setDialog({ mode: 'create', parentId: f.id }); }}>New subfolder</MenuItem>
           <MenuItem icon="edit" onClick={() => { const f = menu.folder; setMenu(null); setDialog({ mode: 'edit', folder: f }); }}>Rename & colour</MenuItem>
           <div className="menu-label">Colour</div>
-          <div style={{ padding: '2px 10px 8px' }}>
+          <div style={{ padding: 'var(--ui-s2, 2px) var(--ui-s10, 10px) var(--ui-s8, 8px)' }}>
             <FolderColorPicker value={menu.folder.color} onChange={(c) => { void actions.update(menu.folder.id, { color: c }); setMenu({ ...menu, folder: { ...menu.folder, color: c } }); }} />
           </div>
           {menu.folder.parentId ? <MenuItem icon="upload" onClick={() => { const f = menu.folder; setMenu(null); void actions.update(f.id, { parentId: null }); }}>Move to top level</MenuItem> : null}
@@ -317,11 +317,11 @@ export function FolderHeader({ folders, selected, onSelect, counts }: { folders:
   const path = folderPath(folders, selected);
   const children = folders.filter((f) => f.parentId === selected).sort((a, b) => a.position - b.position || a.name.localeCompare(b.name));
   return (
-    <div style={{ marginBottom: 12 }}>
-      <div className="row wrap small" style={{ gap: 4, marginBottom: children.length ? 10 : 0 }} aria-label="Folder path">
+    <div style={{ marginBottom: 'var(--ui-s12, 12px)' }}>
+      <div className="row wrap small" style={{ gap: 'var(--ui-s4, 4px)', marginBottom: children.length ? 10 : 0 }} aria-label="Folder path">
         <button className="btn ghost sm" onClick={() => onSelect('all')}>All</button>
         {path.map((f) => (
-          <span key={f.id} className="row" style={{ gap: 4 }}>
+          <span key={f.id} className="row" style={{ gap: 'var(--ui-s4, 4px)' }}>
             <Icon name="chevronRight" size={12} className="muted" />
             <button className="btn ghost sm" onClick={() => onSelect(f.id)}><FolderIcon color={f.color} size={15} /> {f.name}</button>
           </span>

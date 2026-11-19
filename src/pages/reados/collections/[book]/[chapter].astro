@@ -31,4 +31,9 @@ const tools=knowledgeGraph().toolsFor(`collection/${book.topic}`,chapter.id);
     <p class="origin" slot="after">Part of <a href={readosCollectionHref(book)}>{book.title}</a> in BIZOMAT Library.</p>
   </ReadOSChapterReader>
 </BaseLayout>
-<style>.origin{color:var(--muted);font-size:.83rem;margin:3rem 0 0}</style>
+<style>.origin{color:var(--muted);font-size:.83rem;margin:3rem 0 0}
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .origin { font-size: var(--bz-text-sm); margin: var(--bz-space-12) 0 0; }
+  /* ui-new:generated end */
+</style>

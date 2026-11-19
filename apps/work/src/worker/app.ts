@@ -42,6 +42,7 @@ import { companyVerificationRoutes } from './company/verification-routes';
 import { membersRoutes, platformMembersRoutes } from './company/members-routes';
 import { complianceGate } from './compliance/core';
 import { memberAccessGate } from './company/members-gate';
+import { flagOn } from './platform/flags';
 import { userComplianceRoutes } from './compliance/routes';
 import { idPublicRoutes } from './company/id-provider';
 import { scanRoutes } from './company/scan';
@@ -138,6 +139,19 @@ export function createApp() {
 
   // No CORS: the API is same-origin only. Cross-origin preflights are refused.
   app.options('/api/*', (c) => c.body(null, 403));
+
+  // The website's server asks every minute whether the new UI is on for everyone (flag new_ui_enabled, global value
+  // only; src/node/server.ts in the website). No session, no personal data.
+  app.get('/api/ui/public', async (c) => {
+    c.header('Cache-Control', 'no-store');
+    let newUi = false;
+    try {
+      newUi = await flagOn(c.env.DB, 'new_ui_enabled');
+    } catch {
+      newUi = false;
+    }
+    return c.json({ newUi });
+  });
 
   app.get('/api/health', async (c) => {
     let db = 'ok';

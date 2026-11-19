@@ -92,10 +92,10 @@ export default function Integrations() {
     <div className="page">
       <PageHeader icon="plug" title="Integrations" subtitle="Connect Project Management to the tools your team already uses. An integration is shown as connected only after a real delivery succeeds." />
       {list.error ? <ErrorBox error={list.error} retry={() => list.refetch()} /> : null}
-      {!admin ? <div className="info-box" style={{ marginBottom: 16 }}>Only workspace admins can add or change integrations.</div> : null}
+      {!admin ? <div className="info-box" style={{ marginBottom: 'var(--ui-s16, 16px)' }}>Only workspace admins can add or change integrations.</div> : null}
 
-      <section style={{ marginBottom: 24 }} aria-labelledby="connected-h">
-        <h2 id="connected-h" style={{ marginBottom: 10 }}>Your integrations</h2>
+      <section style={{ marginBottom: 'var(--ui-s24, 24px)' }} aria-labelledby="connected-h">
+        <h2 id="connected-h" style={{ marginBottom: 'var(--ui-s10, 10px)' }}>Your integrations</h2>
         {list.data && list.data.length === 0 ? (
           <div className="card"><EmptyState icon="plug" title="No integrations yet">Add a webhook, Slack or Teams connection below.</EmptyState></div>
         ) : (
@@ -137,7 +137,7 @@ export default function Integrations() {
       </section>
 
       <section aria-labelledby="catalog-h">
-        <h2 id="catalog-h" style={{ marginBottom: 10 }}>Available connections</h2>
+        <h2 id="catalog-h" style={{ marginBottom: 'var(--ui-s10, 10px)' }}>Available connections</h2>
         <div className="grid-cards">
           {(providers.data?.providers ?? []).map((p) => (
             <div key={p.id} className="card integration-card">
@@ -203,7 +203,7 @@ function ConnectDialog({ provider, events, onClose, onDone }: { provider: Provid
           <>
             <p>Signing secret — copy it now, it will not be shown again. Verify requests with HMAC-SHA256 over <code>{'${X-WorkOS-Timestamp}.${body}'}</code> compared to the <code>X-WorkOS-Signature</code> header.</p>
             <div className="token-reveal">{created.signingSecret}</div>
-            <button className="btn sm" style={{ marginTop: 8 }} onClick={() => navigator.clipboard?.writeText(created.signingSecret!).then(() => toast('Copied'))}><Icon name="copy" size={14} /> Copy secret</button>
+            <button className="btn sm" style={{ marginTop: 'var(--ui-s8, 8px)' }} onClick={() => navigator.clipboard?.writeText(created.signingSecret!).then(() => toast('Copied'))}><Icon name="copy" size={14} /> Copy secret</button>
           </>
         ) : null}
       </Modal>
@@ -224,7 +224,7 @@ function ConnectDialog({ provider, events, onClose, onDone }: { provider: Provid
           </select>
         </Field>
         <Field label="Events">
-          <div className="col" style={{ gap: 4 }}>
+          <div className="col" style={{ gap: 'var(--ui-s4, 4px)' }}>
             {events.filter((ev) => ev !== 'test').map((ev) => (
               <label key={ev} className="checkbox">
                 <input type="checkbox" checked={selected.includes(ev)} onChange={(e) => setSelected(e.target.checked ? [...selected, ev] : selected.filter((x) => x !== ev))} /> {EVENT_LABELS[ev] ?? ev}

@@ -84,7 +84,7 @@ export function TaskAccessTab({ item, bundle, canViewFinance }: { item: ItemDTO;
               <div className="grow" style={{ minWidth: 0 }}>
                 <strong>{g.name}</strong> <span className="badge">{ROLE_LABELS[g.orgRole]}</span>
                 <div className="muted small ellipsis">{g.email}</div>
-                <div className="check-grid" style={{ marginTop: 6 }}>
+                <div className="check-grid" style={{ marginTop: 'var(--ui-s6, 6px)' }}>
                   {KEYS.filter((k) => k !== 'canViewFinance' || canViewFinance).map((k) => (
                     <label key={k} className="checkbox"><input type="checkbox" checked={g.grant[k]} onChange={(e) => save(g.userId, { ...g.grant, [k]: e.target.checked })} /> {TASK_GRANT_LABELS[k]}</label>
                   ))}
@@ -97,8 +97,8 @@ export function TaskAccessTab({ item, bundle, canViewFinance }: { item: ItemDTO;
         </div>
       )}
       <div className="card card-pad">
-        <h3 style={{ marginBottom: 8 }}>Give a member access to this task</h3>
-        <div className="check-grid" style={{ marginBottom: 8 }}>
+        <h3 style={{ marginBottom: 'var(--ui-s8, 8px)' }}>Give a member access to this task</h3>
+        <div className="check-grid" style={{ marginBottom: 'var(--ui-s8, 8px)' }}>
           {KEYS.filter((k) => k !== 'canViewFinance' || canViewFinance).filter((k) => k !== 'canManageAssignments').map((k) => (
             <label key={k} className="checkbox"><input type="checkbox" checked={grant[k]} onChange={(e) => setGrant({ ...grant, [k]: e.target.checked })} /> {TASK_GRANT_LABELS[k]}</label>
           ))}
@@ -110,14 +110,14 @@ export function TaskAccessTab({ item, bundle, canViewFinance }: { item: ItemDTO;
           </select>
           <button className="btn primary" disabled={!userId} onClick={async () => { await save(userId, grant); setUserId(''); }}>Add</button>
         </div>
-        <form onSubmit={invite} style={{ marginTop: 12 }}>
+        <form onSubmit={invite} style={{ marginTop: 'var(--ui-s12, 12px)' }}>
           <Field label="Or invite someone new (as a guest with access to this task only)" htmlFor="ta-email">
             <div className="row">
               <input id="ta-email" className="input grow" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="contractor@company.com" required />
               <button className="btn" disabled={!email.trim()}><Icon name="plus" /> Invite</button>
             </div>
           </Field>
-          {inviteLink ? <div className="info-box"><p style={{ marginBottom: 6 }}>Email is not configured, so share this link with them (valid 7 days, works once):</p><div className="token-reveal">{inviteLink}</div></div> : null}
+          {inviteLink ? <div className="info-box"><p style={{ marginBottom: 'var(--ui-s6, 6px)' }}>Email is not configured, so share this link with them (valid 7 days, works once):</p><div className="token-reveal">{inviteLink}</div></div> : null}
         </form>
       </div>
     </div>

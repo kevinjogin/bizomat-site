@@ -144,7 +144,7 @@ export function ChartView(props: BoardViewProps) {
       ) : (
         <>
           <div className="card chart-card">
-            <div className="row" style={{ marginBottom: 8 }}>
+            <div className="row" style={{ marginBottom: 'var(--ui-s8, 8px)' }}>
               <h3 className="grow">{metricLabel} by {groupOptions.find((o) => o.id === groupBy)?.label.replace('Column: ', '') ?? groupBy}</h3>
               <span className="muted small">{items.length} items</span>
             </div>

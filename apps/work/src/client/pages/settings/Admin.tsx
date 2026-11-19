@@ -23,7 +23,7 @@ export function AdminOverview() {
     ['File storage', formatBytes(d.storageBytes), 'paperclip'],
   ];
   return (
-    <div className="col" style={{ gap: 16 }}>
+    <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
       <div className="stat-tiles">
         {stats.map(([label, value, icon]) => (
           <div key={label} className="stat-tile">
@@ -33,7 +33,7 @@ export function AdminOverview() {
         ))}
       </div>
       <section className="card card-pad">
-        <h2 style={{ marginBottom: 8 }}>Data export & backups</h2>
+        <h2 style={{ marginBottom: 'var(--ui-s8, 8px)' }}>Data export & backups</h2>
         <p className="muted">
           Download a complete JSON export of this workspace: boards, groups, columns, items, updates, documents, dashboards, goals, automations, teams, time entries and file metadata.
           File contents remain in secure storage. Exports are rate-limited and recorded in the audit log.
@@ -41,12 +41,12 @@ export function AdminOverview() {
         <a className="btn primary" href={appUrl(`/api/workspaces/${ws.id}/export`)} download>
           <Icon name="download" /> Export workspace data
         </a>
-        <p className="muted small" style={{ marginTop: 12 }}>
+        <p className="muted small" style={{ marginTop: 'var(--ui-s12, 12px)' }}>
           Point-in-time database recovery and scheduled backups are handled at the platform level (see DEPLOYMENT.md).
         </p>
       </section>
       <section className="card card-pad">
-        <h2 style={{ marginBottom: 8 }}>Administration</h2>
+        <h2 style={{ marginBottom: 'var(--ui-s8, 8px)' }}>Administration</h2>
         <div className="row wrap">
           <Link className="btn" to={`/w/${ws.id}/settings/members`}><Icon name="users" /> Users & roles</Link>
           <Link className="btn" to={`/w/${ws.id}/settings/audit`}><Icon name="history" /> Audit log</Link>
@@ -104,7 +104,7 @@ export function AuditLog() {
         </div>
       )}
       {q.hasNextPage ? (
-        <div className="center-fill" style={{ padding: 12 }}>
+        <div className="center-fill" style={{ padding: 'var(--ui-s12, 12px)' }}>
           <button className="btn" onClick={() => q.fetchNextPage()} disabled={q.isFetchingNextPage}>{q.isFetchingNextPage ? 'Loading…' : 'Load older events'}</button>
         </div>
       ) : null}

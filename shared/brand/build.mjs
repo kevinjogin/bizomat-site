@@ -111,6 +111,7 @@ files.set('tokens.css', copyFrom('tokens.css'));
 // beside its own folder (/ui/bizomat-tokens.css -> /fonts/..., /cad/ui/bizomat-tokens.css -> /cad/fonts/...).
 files.set('tokens-fonts-relative.css', Buffer.from(copyFrom('tokens.css').toString().replaceAll("url('/fonts/", "url('../fonts/")));
 files.set('components.css', copyFrom('components.css'));
+files.set('ui-tokens.css', copyFrom('ui-tokens.css'));
 files.set('oxanium-latin.woff2', copyFrom('fonts/oxanium-latin.woff2'));
 files.set('inter-tight-latin.woff2', copyFrom('fonts/inter-tight-latin.woff2'));
 files.set('OFL-InterTight.txt', copyFrom('fonts/OFL-InterTight.txt'));
@@ -142,6 +143,7 @@ const targets = [
   T('inter-tight-latin.woff2', 'public/fonts/inter-tight-latin.woff2'),
   T('tokens.css', 'src/styles/bizomat/tokens.css'),
   T('components.css', 'src/styles/bizomat/components.css'),
+  T('ui-tokens.css', 'src/styles/bizomat/ui-tokens.css'),
   T('bizomat-brand.ts', 'src/data/bizomat-brand.ts'),
   // CAD Automation (apps/cad, Python server)
   T('bizomat-mark.svg', 'apps/cad/opensketch/static/favicon.svg'),
@@ -161,6 +163,7 @@ const targets = [
   T('inter-tight-latin.woff2', 'apps/work/public/fonts/inter-tight-latin.woff2'),
   T('OFL-InterTight.txt', 'apps/work/public/fonts/OFL-InterTight.txt'),
   T('tokens.css', 'apps/work/src/client/styles/bizomat-tokens.css'),
+  T('ui-tokens.css', 'apps/work/src/client/styles/bizomat-ui-tokens.css'),
   T('bizomat-brand.ts', 'apps/work/src/client/lib/bizomat-brand.ts'),
 ];
 

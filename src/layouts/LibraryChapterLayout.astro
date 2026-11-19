@@ -24,4 +24,9 @@ const minutes=source?readingTime(source.replace(/^---[\s\S]*?---/,'')):undefined
     <aside class="chapter-note" slot="after" data-pagefind-ignore>General educational information only, not personal financial advice. Figures and company names in examples are fictional unless otherwise identified. Refer to original company filings before making decisions.</aside>
   </ReadOSChapterReader>
 </BaseLayout>
-<style>.chapter-note{margin:4rem 0 0;padding:1.3rem 0 0;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted)}</style>
+<style>.chapter-note{margin:4rem 0 0;padding:1.3rem 0 0;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted)}
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .chapter-note { margin: var(--bz-space-16) 0 0; padding: var(--bz-space-5) 0 0; font-size: var(--bz-text-sm); }
+  /* ui-new:generated end */
+</style>

@@ -161,7 +161,7 @@ export default function Settings({ role }: { role: 'founder' | 'admin' }) {
                 <div className="ac-exports">
                   <a className="btn" href={appUrl('/api/admin/export/users.csv')} download><Icon name="download" /> Registered users</a>
                   <a className="btn" href={appUrl('/api/admin/export/activity.csv')} download><Icon name="download" /> Activity log</a>
-                  <span className="row" style={{ gap: 6 }}>
+                  <span className="row" style={{ gap: 'var(--ui-s6, 6px)' }}>
                     <select className="select" aria-label="Summary range" value={summaryRange} onChange={(e) => setSummaryRange(e.target.value as Range)} style={{ width: 'auto' }}>
                       {(Object.keys(RANGE_LABELS) as Range[]).map((r) => (
                         <option key={r} value={r}>{RANGE_LABELS[r]}</option>

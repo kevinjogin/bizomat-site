@@ -19,10 +19,20 @@ export function Spinner({ label = 'Loading' }: { label?: string }) {
 }
 
 export function Loading({ label = 'Loading…' }: { label?: string }) {
+  // The new UI shows a skeleton of a page instead of the spinner (styles/ui-new.css); otherwise the skeleton is hidden.
   return (
-    <div className="center-fill" aria-busy="true">
-      <div className="row muted">
-        <Spinner /> {label}
+    <div className="ui-loading" aria-busy="true">
+      <div className="ui-skeleton" aria-hidden="true">
+        <div className="ui-skeleton-line title" />
+        <div className="ui-skeleton-line w-90" />
+        <div className="ui-skeleton-line w-75" />
+        <div className="ui-skeleton-line w-90" />
+        <div className="ui-skeleton-line w-60" />
+      </div>
+      <div className="center-fill ui-spinner">
+        <div className="row muted">
+          <Spinner /> {label}
+        </div>
       </div>
     </div>
   );
@@ -36,7 +46,7 @@ export function EmptyState({ icon = 'grid', title, children, action }: { icon?: 
       </div>
       <h3>{title}</h3>
       {children ? <div className="muted" style={{ maxWidth: 420 }}>{children}</div> : null}
-      {action ? <div style={{ marginTop: 8 }}>{action}</div> : null}
+      {action ? <div style={{ marginTop: 'var(--ui-s8, 8px)' }}>{action}</div> : null}
     </div>
   );
 }

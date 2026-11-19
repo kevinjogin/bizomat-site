@@ -23,6 +23,7 @@ const Settings = lazy(() => import('./pages/Settings'));
 const Email = lazy(() => import('./pages/Email'));
 const SignupProtection = lazy(() => import('./pages/SignupProtection'));
 const Controls = lazy(() => import('./pages/Controls'));
+const UiKit = lazy(() => import('./pages/UiKit'));
 const Security = lazy(() => import('./pages/Security'));
 
 interface AdminMe {
@@ -44,6 +45,7 @@ const NAV: { to: string; label: string; icon: string; end?: boolean }[] = [
   { to: '/admin/signup', label: 'Sign-up Protection', icon: 'shield' },
   { to: '/admin/controls', label: 'Control Centre', icon: 'target' },
   { to: '/admin/security', label: 'Security', icon: 'shield' },
+  { to: '/admin/ui-kit', label: 'UI kit', icon: 'grid' },
   { to: '/admin/settings', label: 'Settings', icon: 'settings' },
 ];
 
@@ -144,6 +146,7 @@ export default function AdminApp() {
               <Route path="signup" element={<SignupProtection />} />
               <Route path="controls" element={<Controls />} />
               <Route path="security" element={<Security />} />
+              <Route path="ui-kit" element={<UiKit />} />
               <Route path="settings" element={<Settings role={admin.role} />} />
               <Route path="*" element={<NotFound />} />
             </Routes>

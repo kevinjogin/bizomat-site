@@ -49,6 +49,7 @@ const BillingAdmin = lazy(() => import('./billing/BillingAdmin').then((m) => ({ 
 // The Admin Control Centre and two-factor sign-in (Stage 1, R2; src/client/admin/pages).
 const ControlCentre = lazy(() => import('../admin/pages/Controls'));
 const SecurityPage = lazy(() => import('../admin/pages/Security'));
+const UiKit = lazy(() => import('../admin/pages/UiKit'));
 const MfaGate = lazy(() => import('../admin/pages/Security').then((m) => ({ default: m.MfaGate })));
 const ReauthHost = lazy(() => import('../admin/reauth').then((m) => ({ default: m.ReauthHost })));
 
@@ -1216,6 +1217,7 @@ const ADMIN_NAV = [
   { to: 'billing', label: 'Billing' },
   { to: 'controls', label: 'Control Centre' },
   { to: 'security', label: 'Security' },
+  { to: 'ui-kit', label: 'UI kit' },
 ];
 
 function AdminArea() {
@@ -1242,6 +1244,7 @@ function AdminArea() {
         <Route path="billing" element={<Suspense fallback={<Loading />}><BillingAdmin founder={founder} /></Suspense>} />
         <Route path="controls" element={<Suspense fallback={<Loading />}><ControlCentre /></Suspense>} />
         <Route path="security" element={<Suspense fallback={<Loading />}><SecurityPage /></Suspense>} />
+        <Route path="ui-kit" element={<Suspense fallback={<Loading />}><UiKit /></Suspense>} />
         <Route path="*" element={<Navigate to="overview" replace />} />
       </Routes>
     </div>

@@ -40,4 +40,17 @@ const { items, id = 'learn-concepts' } = Astro.props;
   .kl__learn-label { font-weight: 600; color: var(--ink); }
   .kl a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
   @media print { .kl { display: none; } }
+
+  /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .kl { margin: var(--bz-space-10) 0; }
+  :global(html[data-ui="new"]) .kl h2 { margin: 0 0 var(--bz-space-2); }
+  :global(html[data-ui="new"]) .kl__lead { margin: 0 0 var(--bz-space-5); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .kl__list { gap: var(--bz-space-4); }
+  :global(html[data-ui="new"]) .kl__card { padding: var(--bz-space-4) var(--bz-space-5); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .kl__label { margin: 0 0 var(--bz-space-1); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .kl__title { margin: 0 0 var(--bz-space-1); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .kl__book, :global(html[data-ui="new"]) .kl__more { margin: 0 0 var(--bz-space-2); font-size: var(--bz-text-sm); }
+  :global(html[data-ui="new"]) .kl__learn { font-size: var(--bz-text-base); }
+  :global(html[data-ui="new"]) .kl a:focus-visible { border-radius: var(--bz-radius-sm); }
+  /* ui-new:generated end */
 </style>
