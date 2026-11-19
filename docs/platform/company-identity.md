@@ -26,7 +26,7 @@ Every company of every kind now has one row in the table `companies`, with the i
   legal entity per country, registration type and number (a unique index; deleted companies excluded).
 - **Statuses** (brief 5.3): `not_registered`, `registration_pending`, `verification_in_progress`, `verified`,
   `verification_failed`, `manual_review`, `status_changed`, `suspended`, `deregistered`. `status_source` says what set
-  it: `none`, `format`, `registry`, `manual` or `migration`.
+  it: `none`, `format`, `registry`, `manual`, `system` or `migration`.
 - **No claim beyond the checks.** Until R6's verification service takes over, a registered company's status comes from
   its ABN checks. An ABN whose format was checked, or that the register found active, is `registration_pending`: the
   register was never compared with the company's name, so nothing is `verified`. A cancelled ABN is `deregistered`; an

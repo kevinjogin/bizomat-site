@@ -152,6 +152,12 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   companies pass to their longest-serving active administrator; pending invitations are listed only to proven
   addresses; support access is time-limited (72 hours at most), needs a reason and a re-authentication, never signs in
   as anyone, and shows to the company's owner and administrators, who can end it.
+  **Registration and verification** (Stage 1, R6, 19 Nov 2026; `docs/platform/verification.md`; migration 0033): every
+  part is behind a flag that ships off (`registry_verification_enabled`, `scheduled_reverification`,
+  `verification_enforcement`, `international_registration`, `join_requests`). The nine statuses live in the company
+  registry and change only through the service (ABN Lookup, Companies House) or a platform admin's decision with a
+  reason; a register that cannot be reached is never a failure; similar names go to manual review; evidence is PDF or
+  image only and not yet malware-scanned. Never call a company verified unless its status says so.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is

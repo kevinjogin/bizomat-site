@@ -44,6 +44,8 @@ migration `0029_platform_controls.sql` (reverse: `apps/work/migrations-reverse/0
 | `registry_verification_enabled` | off, on | everyone, country | low | no | R6 |
 | `verification_enforcement` | off, on | everyone, stage, country, company | high | yes | R6 |
 | `scheduled_reverification` | off, on | everyone | low | no | R6 |
+| `international_registration` | off, on | everyone, country | medium | no | R6 |
+| `join_requests` | off, on | everyone, country | low | no | R6 |
 | `migration_notifications` | off, on | everyone, stage, company | medium | yes | R7 |
 | `compliance_countdown` | off, on | everyone, stage, company | high | yes | R7 |
 | `auto_suspension` | off, on | everyone, stage | high | yes | R7 |
