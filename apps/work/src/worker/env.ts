@@ -54,6 +54,11 @@ export interface Env {
    */
   COMPANIES_HOUSE_API_KEY?: string;
   /**
+   * Optional: the email of the account to make the founder (platform owner) when no founder exists yet (Stage 1, R7).
+   * Acts only on an active account with a confirmed email, and never while a founder exists. Remove it once used.
+   */
+  PLATFORM_ADMIN_BOOTSTRAP?: string;
+  /**
    * Secret, optional: the BIZOMAT applications that may use BIZOMAT sign-in (src/worker/company/id-provider.ts), as
    * JSON: [{"id":"cad","name":"CAD Automation","secretSha256":"<hex>","redirectUris":["https://bizomat.ai/cad/..."]}].
    */

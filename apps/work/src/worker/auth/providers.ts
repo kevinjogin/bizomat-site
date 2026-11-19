@@ -25,6 +25,12 @@ export interface OAuthProvider {
   exchange(env: Env, params: { code: string; codeVerifier: string; redirectUri: string }): Promise<ExternalProfile>;
 }
 
+let exchangeForTests: ((code: string) => Promise<ExternalProfile>) | null = null;
+/** Tests only: what Google would answer for a code. */
+export function setGoogleExchangeForTests(f: ((code: string) => Promise<ExternalProfile>) | null) {
+  exchangeForTests = f;
+}
+
 export const googleProvider: OAuthProvider = {
   id: 'google',
   name: 'Google',
@@ -42,6 +48,7 @@ export const googleProvider: OAuthProvider = {
     return u.toString();
   },
   async exchange(env, { code, codeVerifier, redirectUri }) {
+    if (exchangeForTests) return exchangeForTests(code);
     const res = await fetch('https://oauth2.googleapis.com/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },

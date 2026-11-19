@@ -33,7 +33,48 @@ export function SecuritySettings() {
       <SessionsCard />
       <ProvidersCard />
       <TokensCard />
+      <ExportCard />
     </div>
+  );
+}
+
+interface ExportDTO { id: string; scope: string; status: string; size: number | null; expires_at: number | null; created_at: number }
+
+/** Export your data (R7): at any time; built in the background; the link works for 7 days, only for you. */
+function ExportCard() {
+  const qc = useQueryClient();
+  const toast = useToast();
+  const q = useQuery({ queryKey: ['exports'], queryFn: () => get<ExportDTO[]>('/exports'), refetchInterval: (query) => ((query.state.data ?? []).some((x) => x.status === 'queued' || x.status === 'running') ? 30_000 : false) });
+  const ask = async () => {
+    try {
+      await post('/me/export', {});
+      await qc.invalidateQueries({ queryKey: ['exports'] });
+      toast('Your export is being prepared. You get an email when it is ready.');
+    } catch (e) {
+      toast(errorMessage(e), 'error');
+    }
+  };
+  return (
+    <section className="card" id="export">
+      <div className="card-header">
+        <h2 className="grow">Export your data</h2>
+        <button className="btn sm" onClick={ask}>Prepare an export</button>
+      </div>
+      <div className="card-pad muted small">
+        Your profile, settings, sign-ins, activity and notifications, and the records you made where your company allows it, as JSON and CSV in a ZIP file. It is ready within about 15 minutes and can be downloaded for 7 days, only while you are signed in.
+      </div>
+      <div className="list">
+        {(q.data ?? []).map((x) => (
+          <div key={x.id} className="list-row">
+            <span className="grow small">
+              {x.scope === 'company' ? 'Company export' : 'Personal export'} · {timeAgo(x.created_at)} ·{' '}
+              {x.status === 'ready' && x.expires_at ? `ready until ${new Date(x.expires_at).toLocaleDateString()}` : x.status === 'queued' || x.status === 'running' ? 'being prepared' : x.status}
+            </span>
+            {x.status === 'ready' ? <a className="btn sm" href={appUrl(`/api/exports/${x.id}/download`)}>Download</a> : null}
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }
 

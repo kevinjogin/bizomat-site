@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { lastWorkspace, useSession } from './lib/session';
 import { Loading, ErrorBox } from './components/ui/ui';
 import { AppShell } from './components/layout/AppShell';
-import { LoginPage, SignupPage, InvitePage, VerifyEmailPage } from './pages/Auth';
+import { LoginPage, SignupPage, InvitePage, VerifyEmailPage, ResetPasswordPage } from './pages/Auth';
 import { ChoosePasswordPage } from './pages/ChoosePassword';
 import { useHeartbeat } from './lib/heartbeat';
 import { BRAND, IS_COMPANY, IS_CRM, IS_FINANCE, IS_SYSTEM } from './lib/brand';
@@ -106,6 +106,7 @@ export function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
@@ -121,6 +122,7 @@ export function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
@@ -137,6 +139,7 @@ export function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
@@ -151,6 +154,7 @@ export function App() {
     return (
       <Routes>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/signup" element={<SignupPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/privacy" element={page(<Privacy />)} />
@@ -164,6 +168,7 @@ export function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/invite/:token" element={<InvitePage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />

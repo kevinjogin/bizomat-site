@@ -5,8 +5,9 @@
 import { companyDrift, type CompanyDrift } from '../company/identity';
 
 // A company's own tables: those with a company_id column, apart from the CRM's (there company_id is a CRM company), API
-// tokens, the legacy id record and the platform's rollout list (the same rule as test-node/company-queries.ts).
-const NOT_COMPANY = /^(crm_|api_tokens$|legacy_company_id_map$|company_rollout$|sys_demo$|d1_|_cf_|sqlite_)/;
+// tokens, the legacy id record, the platform's rollout list and people's exports (the same rule as
+// test-node/company-queries.ts).
+const NOT_COMPANY = /^(crm_|api_tokens$|legacy_company_id_map$|company_rollout$|sys_demo$|data_exports$|d1_|_cf_|sqlite_)/;
 
 export interface IntegrityReport {
   checkedAt: number;

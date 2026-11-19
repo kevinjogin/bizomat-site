@@ -97,6 +97,15 @@ const BASE: Record<string, FlagDef> = {
     enforcement: false,
     release: 'R6',
   },
+  self_service_password_reset: {
+    label: 'Forgotten password',
+    description: 'People can reset a forgotten password with a one-hour link sent to their proven email address.',
+    values: ONOFF,
+    scopes: ['global'],
+    risk: 'low',
+    enforcement: false,
+    release: 'R7',
+  },
   join_requests: {
     label: 'Request to join',
     description: 'Someone registering a company that already exists can ask its owner to join it instead.',

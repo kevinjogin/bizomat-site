@@ -410,8 +410,27 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
         <PlatformFooter />
       </nav>
       <main className="main" id="main">
+        <ComplianceBanner />
         {children}
       </main>
+    </div>
+  );
+}
+
+/** The company rule's notice (R7): only for people it concerns, while it is switched on. Showing it is recorded. */
+function ComplianceBanner() {
+  const q = useQuery({ queryKey: ['compliance', 'me'], queryFn: () => get<{ required: boolean; title?: string; body?: string; deadlineAt?: number | null; suspended?: boolean }>('/compliance/me'), staleTime: 5 * 60_000 });
+  const c = q.data;
+  if (!c?.required) return null;
+  return (
+    <div className={c.suspended ? 'error-box' : 'info-box'} role="status">
+      <strong>{c.suspended ? 'Your account is suspended' : c.title}</strong>
+      <p className="small">{c.body}</p>
+      {c.deadlineAt ? <p className="small">Deadline: {new Date(c.deadlineAt).toLocaleString()}</p> : null}
+      <div className="row">
+        <a className="btn sm primary" href={`${PLATFORM_URLS.company}new`}>Register a company</a>
+        <a className="btn sm" href={toolUrl('/tasks/settings/security#export')}>Export your data</a>
+      </div>
     </div>
   );
 }

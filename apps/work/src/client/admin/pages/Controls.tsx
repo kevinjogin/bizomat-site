@@ -285,6 +285,98 @@ function VerificationCard() {
   );
 }
 
+/** Existing users and the company rule (R7): the report, notices, exemptions, extensions, the legal review and deletion. */
+function ComplianceCard() {
+  const toast = useToast();
+  const qc = useQueryClient();
+  const q = useAdmin<any>('/platform/compliance', { retry: false });
+  const [review, setReview] = useState<{ id: string; people: { id: string; name: string; email: string }[]; text: { title: string; body: string } } | null>(null);
+  const [ex, setEx] = useState({ email: '', reason: '' });
+  const [ext, setExt] = useState({ scope: 'global', scopeId: '', days: '7', reason: '' });
+  const [legal, setLegal] = useState({ reviewer: '', reviewedOn: '', jurisdictions: 'Australia, UK/EU, India, US', retention: '', notes: '' });
+  const refresh = () => void qc.invalidateQueries({ queryKey: ['admin'] });
+  const go = (p: Promise<unknown>, done: string) => p.then(() => { toast(done); refresh(); }).catch((err) => toast(errorMessage(err), 'error'));
+  const d = q.data;
+  if (!d) return <Card title="Existing users and the company rule"><p className="muted small">Loading</p></Card>;
+  const r = d.report;
+  return (
+    <Card title="Existing users and the company rule" subtitle="Who the rule concerns, the notices (a dry run first, approved before sending), exemptions, extensions, the legal review and deletion batches. Every step follows its flag.">
+      <div className="ac-stack">
+        <p className="small">
+          Flags: registration required {d.flags.required ? 'on' : 'off'} · notices {d.flags.notifications ? 'on' : 'off'} · countdown {d.flags.countdown ? 'on' : 'off'} · suspension {d.flags.suspension ? 'on' : 'off'} · legal review {d.flags.legalReview ? 'recorded' : 'not recorded'} · deletion {d.flags.deletion ? 'on' : 'off'} · policy {r.policy}
+        </p>
+        <p className="small">
+          {r.activeAccounts} active accounts: {r.owners} company owners, {r.admins} administrators, {r.members} other members, {r.inSeveralCompanies} in several companies. In no company: {r.noCompany} ({r.noCompanyInvited} with a pending invitation, {r.noCompanyWithOwnTools} with tools of their own). {r.exempt} exempt, {r.platformAdmins} platform admins, {r.suspended} suspended. {r.companiesWithIncompleteInfo} registered companies are not verified.
+        </p>
+        <div className="row">
+          <button className="btn sm" type="button" onClick={() => post<{ id: string }>('/admin/platform/compliance/recipient-lists', {}).then((l) => get<any>(`/admin/platform/compliance/recipient-lists/${l.id}`).then((v) => setReview({ id: l.id, ...v }))).catch((err) => toast(errorMessage(err), 'error'))}>Who would be told (dry run)</button>
+          <button className="btn sm" type="button" onClick={() => go(post('/admin/platform/compliance/deletion/dry-run', {}), 'Deletion dry run recorded; nothing deleted')}>Deletion dry run</button>
+        </div>
+        {review ? (
+          <div className="ac-stack">
+            <p className="small"><strong>{review.people.length} people</strong> would get "{review.text.title}".</p>
+            <p className="muted small">{review.text.body}</p>
+            <p className="small">{review.people.slice(0, 50).map((p) => p.email).join(', ')}{review.people.length > 50 ? ` and ${review.people.length - 50} more` : ''}</p>
+            <div className="row">
+              <button className="btn sm" type="button" onClick={() => go(post(`/admin/platform/compliance/recipient-lists/${review.id}/approve`, {}), 'List approved')}>Approve this list</button>
+              <button className="btn sm" type="button" onClick={() => go(post(`/admin/platform/compliance/recipient-lists/${review.id}/send`, {}), 'Notices sent')}>Send (needs notices on)</button>
+            </div>
+          </div>
+        ) : null}
+        {d.batches.length ? (
+          <TableWrap label="Deletion batches">
+            <thead><tr><th>When</th><th>Status</th><th>To delete</th><th>Held back</th><th /></tr></thead>
+            <tbody>
+              {d.batches.map((b: any) => (
+                <tr key={b.id}>
+                  <td><When ts={b.created_at} /></td><td>{b.status}</td><td>{b.report?.toDelete ?? 0} of at most {b.max_accounts}</td>
+                  <td className="small">{Object.entries(b.report?.held ?? {}).map(([k, n]) => `${k}: ${n}`).join(', ') || 'none'}</td>
+                  <td>{b.status === 'dry_run' && b.report?.toDelete ? <button className="btn sm" type="button" onClick={() => go(post(`/admin/platform/compliance/deletion/${b.id}/approve`, {}), 'Batch approved; the maintenance run deletes it while deletion is on')}>Approve</button> : null}</td>
+                </tr>
+              ))}
+            </tbody>
+          </TableWrap>
+        ) : null}
+        <form className="ac-form ac-stack" onSubmit={(e) => { e.preventDefault(); go(post('/admin/platform/compliance/exemptions', { email: ex.email, reason: ex.reason }), 'Exempted'); setEx({ email: '', reason: '' }); }}>
+          <div className="ac-grid-2">
+            <Field label="Exempt someone (email)" htmlFor="ex-email"><input id="ex-email" className="input" type="email" value={ex.email} onChange={(e) => setEx({ ...ex, email: e.target.value })} required /></Field>
+            <Field label="Why" htmlFor="ex-reason"><input id="ex-reason" className="input" value={ex.reason} onChange={(e) => setEx({ ...ex, reason: e.target.value })} minLength={3} required /></Field>
+          </div>
+          <div className="row"><button className="btn sm" type="submit">Exempt</button></div>
+        </form>
+        {d.exemptions.length ? <p className="small">Exempt: {d.exemptions.map((e: any) => `${e.name} (${e.reason})`).join(', ')}</p> : null}
+        <form className="ac-form ac-stack" onSubmit={(e) => { e.preventDefault(); go(post('/admin/platform/compliance/extensions', { scope: ext.scope, scopeId: ext.scopeId, days: Number(ext.days), reason: ext.reason }), 'Deadline extended'); }}>
+          <div className="ac-grid-2">
+            <Field label="Extend deadlines for" htmlFor="ext-scope">
+              <select id="ext-scope" className="select" value={ext.scope} onChange={(e) => setExt({ ...ext, scope: e.target.value })}>
+                <option value="global">Everyone</option><option value="company">One company (id)</option><option value="user">One person (id)</option>
+              </select>
+            </Field>
+            <Field label="Id (company or person)" htmlFor="ext-id"><input id="ext-id" className="input" value={ext.scopeId} onChange={(e) => setExt({ ...ext, scopeId: e.target.value })} disabled={ext.scope === 'global'} /></Field>
+            <Field label="Days" htmlFor="ext-days"><input id="ext-days" className="input" inputMode="numeric" value={ext.days} onChange={(e) => setExt({ ...ext, days: e.target.value })} /></Field>
+            <Field label="Why" htmlFor="ext-reason"><input id="ext-reason" className="input" value={ext.reason} onChange={(e) => setExt({ ...ext, reason: e.target.value })} minLength={3} required /></Field>
+          </div>
+          <div className="row"><button className="btn sm" type="submit">Extend</button></div>
+        </form>
+        <form className="ac-form ac-stack" onSubmit={(e) => {
+          e.preventDefault();
+          const retention = Object.fromEntries(legal.retention.split('\n').map((l) => l.split(':')).filter((p) => p.length >= 2).map(([k, ...v]) => [k.trim(), v.join(':').trim()]));
+          go(post('/admin/platform/compliance/legal-review', { reviewer: legal.reviewer, reviewedOn: legal.reviewedOn, jurisdictions: legal.jurisdictions.split(',').map((s) => s.trim()).filter(Boolean), retention, notes: legal.notes }), 'Legal review recorded');
+        }}>
+          <p className="small"><strong>Privacy and legal review</strong> (founder; needed before automatic deletion can be switched on){d.legalReviews.length ? `: last recorded ${d.legalReviews[0].reviewed_on} by ${d.legalReviews[0].reviewer}` : ': none recorded'}.</p>
+          <div className="ac-grid-2">
+            <Field label="Reviewer" htmlFor="lr-reviewer"><input id="lr-reviewer" className="input" value={legal.reviewer} onChange={(e) => setLegal({ ...legal, reviewer: e.target.value })} required /></Field>
+            <Field label="Date (YYYY-MM-DD)" htmlFor="lr-date"><input id="lr-date" className="input" value={legal.reviewedOn} onChange={(e) => setLegal({ ...legal, reviewedOn: e.target.value })} pattern="\d{4}-\d{2}-\d{2}" required /></Field>
+          </div>
+          <Field label="Jurisdictions covered (comma separated)" htmlFor="lr-j"><input id="lr-j" className="input" value={legal.jurisdictions} onChange={(e) => setLegal({ ...legal, jurisdictions: e.target.value })} required /></Field>
+          <Field label="Approved retention periods (one per line, record: period)" htmlFor="lr-r"><textarea id="lr-r" className="input ac-textarea" value={legal.retention} onChange={(e) => setLegal({ ...legal, retention: e.target.value })} required /></Field>
+          <div className="row"><button className="btn sm" type="submit">Record the review</button></div>
+        </form>
+      </div>
+    </Card>
+  );
+}
+
 interface SupportGrant { id: string; company_id: string; company: string | null; reason: string; starts_at: number; ends_at: number; revoked_at: number | null; admin: string | null }
 
 /** Support access (R5): time-limited, with a reason, logged in the company's own activity and visible to its owner. */
@@ -444,6 +536,7 @@ export default function Controls() {
         </div>
       ))}
       <VerificationCard />
+      <ComplianceCard />
       <IntegrityCard />
       <SupportCard />
       <Card title="Kill switch" subtitle="Every enforcement flag back to its default (off, free, personal workspaces allowed), for everyone, at once.">

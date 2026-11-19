@@ -4,6 +4,7 @@ import type { AppEnv } from './env';
 import { HttpError } from './lib/util';
 import { isSecureEnv, requireAuth, resolveAuth, sessionCookieName } from './auth/session';
 import { authRoutes } from './routes/auth';
+import { passwordResetRoutes } from './routes/password-reset';
 import { workspaceRoutes } from './routes/workspaces';
 import { orgRoutes } from './routes/org';
 import { accessRoutes } from './routes/access';
@@ -38,6 +39,8 @@ import { crmPublicRoutes, crmRoutes } from './crm';
 import { finPublicRoutes, finRoutes } from './fin';
 import { companyPublicRoutes, companyRoutes } from './company/routes';
 import { companyVerificationRoutes } from './company/verification-routes';
+import { complianceGate } from './compliance/core';
+import { userComplianceRoutes } from './compliance/routes';
 import { idPublicRoutes } from './company/id-provider';
 import { maintenanceRoutes } from './maintenance';
 import { erpRoutes } from './erp';
@@ -144,6 +147,8 @@ export function createApp() {
   });
 
   app.route('/api/auth', authRoutes);
+  // Forgotten password (R7; flag self_service_password_reset, off): answers 404 until it is switched on.
+  app.route('/api/auth', passwordResetRoutes);
   // CRM invitation previews and calendar feeds: no session, the token in the address is the secret.
   app.route('/api/crm-public', crmPublicRoutes);
   // Finance invitation previews: no session, the token in the address is the secret.
@@ -192,9 +197,12 @@ export function createApp() {
   api.use('*', tokenScopeGate);
   api.use('*', moduleSwitchGate);
   api.use('*', verificationGate);
+  // The company rule for people in no registered company (R7; acts only while company_registration_required is on).
+  api.use('*', complianceGate);
   // Billing: writes to a registered company's paid tools need an active subscription when enforcement is on (off by
   // default; src/worker/billing/entitlements.ts). Reads always pass.
   api.use('*', entitlementGate);
+  api.route('/', userComplianceRoutes);
   api.route('/', workspaceRoutes);
   api.route('/', orgRoutes);
   api.route('/', accessRoutes);

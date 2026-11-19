@@ -15,6 +15,10 @@ import { runBillingScheduled } from './billing/admin';
 import { alertFailures } from './platform/alerts';
 import { syncAllCompanies } from './company/identity';
 import { runScheduledVerification } from './company/verification';
+import { runCompliance } from './compliance/core';
+import { runExports } from './compliance/export';
+import { runDeletion } from './compliance/deletion';
+import { bootstrapFounder } from './services/platform-admin';
 
 export { BoardRoom } from './realtime/board-room';
 
@@ -75,9 +79,16 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
     results.companies = { error: e instanceof Error ? e.message : 'failed' };
   }
   // The registry of every company (Stage 1, R3): put right anything a write missed, and mark companies whose source is gone.
+  // The first founder from PLATFORM_ADMIN_BOOTSTRAP, only while there is none (R7).
+  await step('founder', () => bootstrapFounder(env));
   await step('companyRegistry', () => syncAllCompanies(env.DB, at));
   // Registration checks due (first checks and the 30-day re-check), only while scheduled re-verification is on (R6).
   await step('verification', () => runScheduledVerification(env, at));
+  // Existing users (R7): deliveries, deadlines, reminders, suspension and restoring; exports; deletion. Each acts only
+  // while its flag is on (exports always: a person may export at any time).
+  await step('compliance', () => runCompliance(env, at));
+  await step('exports', () => runExports(env, at));
+  await step('deletion', () => runDeletion(env, at));
   // BIZOMAT System: a company of their own for every account that has none yet (system/system.ts), a batch a run.
   try {
     // Every account has its own company in the System (migration 0017 made them for the accounts that existed then).

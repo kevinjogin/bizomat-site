@@ -897,6 +897,22 @@ export function Settings() {
         </section>
       )}
       {admin ? <VerificationCard companyId={c.id} /> : null}
+      {admin ? (
+        <section className="card card-pad stack">
+          <h2 className="crm-subhead">Export the company’s data</h2>
+          <p className="muted small">Every module of this company (projects, CRM, Finance, ERP, maintenance and safety records) as JSON and CSV, with attached files, in a ZIP file. It is prepared within about 15 minutes; download it from your account settings (Export your data) for 7 days.</p>
+          <div>
+            <button className="btn sm" onClick={async () => {
+              try {
+                await post(co(c.id, '/export'), {});
+                toast('The company export is being prepared. You get an email when it is ready.');
+              } catch (e) {
+                toast(errorMessage(e), 'error');
+              }
+            }}>Prepare a company export</button>
+          </div>
+        </section>
+      ) : null}
       {admin ? <SupportAccess companyId={c.id} /> : null}
       {view.me.role === 'owner' ? (
         <section className="card card-pad stack">

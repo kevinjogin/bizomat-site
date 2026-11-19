@@ -22,6 +22,7 @@ import type { WorkspaceRole } from '../../shared/types';
 import { checkAddress, loadPolicy, refusalMetadata, type AddressCheck } from '../services/signup-guard';
 import { confirmEmail, sendVerification, verificationActive } from '../services/email-verification';
 import { getPlatformRole } from '../services/platform-admin';
+import { flagOn } from '../platform/flags';
 
 /** A refused address: logged with its domain and reason only, answered with the reason in plain words. */
 async function refuse(c: any, check: Extract<AddressCheck, { ok: false }>, where: 'signup' | 'login' | 'oauth', actorId: string | null = null): Promise<never> {
@@ -67,8 +68,9 @@ const LOCK_MS = 15 * 60_000;
 
 const signupAllowed = (env: AppEnv['Bindings']) => env.ALLOW_SIGNUP === 'true';
 
-authRoutes.get('/config', (c) => {
+authRoutes.get('/config', async (c) => {
   const cfg: AppConfigDTO = {
+    passwordReset: await flagOn(c.env.DB, 'self_service_password_reset').catch(() => false),
     appName: c.env.APP_NAME || PRODUCT.full,
     environment: c.env.ENVIRONMENT,
     allowSignup: signupAllowed(c.env),
@@ -297,9 +299,21 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
     await db.prepare('INSERT INTO user_identities (id, user_id, provider, provider_subject, email, created_at) VALUES (?, ?, ?, ?, ?, ?)').bind(newId(), userId, provider.id, profile.subject, profile.email, t).run();
   } else {
     if (!profile.emailVerified) return fail('email_not_verified');
-    const existing = await db.prepare('SELECT id FROM users WHERE email = ?').bind(profile.email).first<{ id: string }>();
-    if (existing) userId = existing.id;
-    else {
+    const existing = await db.prepare('SELECT id, email_verified_at, password_hash FROM users WHERE email = ?').bind(profile.email).first<{ id: string; email_verified_at: number | null; password_hash: string | null }>();
+    if (existing) {
+      userId = existing.id;
+      // Account pre-hijack (audit L1 and S3): someone may have signed up first with this address and a password,
+      // without proving it. Google proves the address belongs to the person signing in now, so that password, its
+      // sessions and its API tokens end before the account is linked: only the address's owner keeps access.
+      if (!existing.email_verified_at && existing.password_hash) {
+        await db.batch([
+          db.prepare("UPDATE users SET password_hash = NULL, password_reset_required = 0, email_verified_at = ?, email_verified_via = 'google', updated_at = ? WHERE id = ?").bind(t, t, existing.id),
+          db.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'unproven_password_removed' WHERE user_id = ?2 AND revoked_at IS NULL").bind(t, existing.id),
+          db.prepare("UPDATE api_tokens SET revoked_at = ?1, revoked_reason = 'unproven_password_removed' WHERE user_id = ?2 AND revoked_at IS NULL").bind(t, existing.id),
+        ]);
+        await audit(db, { actorId: existing.id, action: 'auth.unproven_password_removed', metadata: { provider: provider.id }, ip: clientIp(c) });
+      }
+    } else {
       const check = await checkAddress(c.env, profile.email, policy);
       if (!check.ok) {
         await audit(db, { action: 'signup.refused', metadata: refusalMetadata(check, 'oauth'), ip: clientIp(c) });

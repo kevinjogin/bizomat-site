@@ -9,7 +9,8 @@ import { join, relative } from 'node:path';
 import { DatabaseSync } from 'node:sqlite';
 import { applyMigrations, readMigrationsDir } from '../src/node/store/migrations.ts';
 
-const NOT_COMPANY = /^(crm_|api_tokens$|legacy_company_id_map$|company_rollout$|sys_demo$)/;
+// data_exports: a person's own exports (company_id is set only for a company export, and the person is checked).
+const NOT_COMPANY = /^(crm_|api_tokens$|legacy_company_id_map$|company_rollout$|sys_demo$|data_exports$)/;
 
 export function companyTables(migrationsDir: string): Set<string> {
   const db = new DatabaseSync(':memory:');

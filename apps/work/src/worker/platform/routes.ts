@@ -23,6 +23,7 @@ import { requireMfa, requireReauth, securityRoutes } from './security';
 import { integrityReport } from './integrity';
 import { supportRoutes } from './support';
 import { platformVerificationRoutes } from '../company/verification-routes';
+import { platformComplianceRoutes } from '../compliance/routes';
 
 export const platformRoutes = new Hono<AppEnv>();
 
@@ -31,6 +32,8 @@ platformRoutes.route('/security', securityRoutes);
 platformRoutes.route('/support', supportRoutes);
 // Registration checks: the dashboard, the review queue and decisions (R6).
 platformRoutes.route('/verification', platformVerificationRoutes);
+// Existing users, notices, deadlines, exemptions, the legal review and deletion batches (R7).
+platformRoutes.route('/compliance', platformComplianceRoutes);
 platformRoutes.use('/flags', requireMfa);
 platformRoutes.use('/flags/*', requireMfa);
 platformRoutes.use('/kill-switch', requireMfa);
