@@ -140,6 +140,12 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   status live there for every country (unique per country, type and number); nothing is `verified` until R6's service
   compares a register's answer with the company's name. A migration whose first line is `-- bizomat:foreign-keys-off`
   runs with foreign keys off and commits only when `PRAGMA foreign_key_check` is clean (on D1: empty databases only).
+  **Company context** (Stage 1, R4, 19 Nov 2026; `docs/platform/company-context.md`; migration 0031): the company of a
+  request is worked out from its address on the server (`apps/work/src/worker/platform/context.ts`); API tokens are
+  limited to one company (optionally some applications, or reading), expire in 90 days by default and end at a
+  password change or security reset; the module switches act for every module; realtime re-checks access at every
+  event; an integrity check in the Control Centre; and `test-node/company-queries.test.ts` fails on any new SQL
+  statement on a company table without `company_id` (the list of older ones may only shrink).
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
