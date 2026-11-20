@@ -20,7 +20,7 @@ import '../../styles/product.css';
 import '../../styles/visuals.css';
 import '../../styles/systems.css';
 import { screenshots, type Screenshot } from '../../data/screenshots.ts';
-import { SITE } from '../../config/site.ts';
+import { LEARN_LINKS, SITE } from '../../config/site.ts';
 import { APP_LINKS } from '../../config/platform.ts';
 import { STATUS_LABEL, SYSTEMS, SYSTEMS_HOME, type FeatureStatus, type SystemInfo } from '../../config/systems.ts';
 import { CAD, CRM, FINANCE, WORK } from '../../data/platform-catalog.ts';
@@ -442,6 +442,7 @@ const schema = [
         <div class="pp-hero__actions">
           <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="systems-open-erp">Open BIZOMAT ERP</Button>
           <Button href="#compare" variant="secondary" data-cta="systems-compare">Compare the systems</Button>
+          <Button href="#learn" variant="text" data-cta="systems-learn">Guides and tutorials</Button>
         </div>
         <p class="pp-hero__note">Systems are software you sign in to. <a href="#resources-free">Resources</a> (tools, the Library and guides) are separate: free and open to everyone, without signing in. Every system is free to use: nothing is charged.</p>
       </div>
@@ -458,6 +459,7 @@ const schema = [
             </li>
           ))}
         </ol>
+        <a class="sys-glance__learn" href="#learn"><strong>Learn</strong><span>Guides, tutorials and questions for every module.</span></a>
       </nav>
     </Container>
   </section>
@@ -611,7 +613,22 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="faq" aria-labelledby="faq-title">
+  {/* Learn (owner, 20 Nov 2026: Learn under Systems): the Knowledge Centre's parts, from the same list as the Systems
+      menu's Learn group (LEARN_LINKS in src/config/site.ts). The Knowledge Centre itself stays one page at /learn/. */}
+  <section class="pp-section" id="learn" aria-labelledby="learn-title">
+    <Container>
+      <div class="pp-head">
+        <p class="bz-eyebrow">Learn</p>
+        <h2 id="learn-title">Learn every system, step by step</h2>
+        <p>The Knowledge Centre is one page: a guide to every module of BIZOMAT ERP, workflows from the first record to the last, tutorials with a screen outline and answered questions. Open to everyone, without signing in.</p>
+      </div>
+      <ul class="sys-free sys-learn" role="list">
+        {LEARN_LINKS.map((l) => <li><a href={l.href} data-cta={`systems-learn-${l.href?.split('#')[1] ?? 'home'}`}><strong>{l.label}</strong><span>{l.description}</span></a></li>)}
+      </ul>
+    </Container>
+  </section>
+
+  <section class="pp-section pp-section--tint" id="faq" aria-labelledby="faq-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Questions</p>
@@ -624,7 +641,7 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="resources-free" aria-labelledby="free-title">
+  <section class="pp-section" id="resources-free" aria-labelledby="free-title">
     <Container>
       <div class="sys-free-lead">
         <div>

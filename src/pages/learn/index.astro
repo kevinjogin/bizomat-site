@@ -21,7 +21,8 @@ import { GUIDES, LEARN_HOME, LEARN_TITLE, SECTIONS, WORKFLOWS, guideById, guideU
 
 const title = LEARN_TITLE;
 const description = 'Learn BIZOMAT ERP on one page: every module and workflow with step-by-step tutorials, screen outlines, the buttons explained and answered questions.';
-const crumbs = [{ label: 'Home', href: '/' }, { label: 'Knowledge Centre', href: LEARN_HOME }];
+// Learn is under Systems (owner, 20 Nov 2026: the Systems menu holds Learn), so the trail goes through /systems/.
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: '/systems/' }, { label: 'Knowledge Centre', href: LEARN_HOME }];
 const popular = ['create a purchase order', 'invite someone', 'import contacts', 'why can\'t I see', 'connect Claude', 'convert a lead'];
 // A few questions people ask first, from the guides themselves.
 const firstQuestions = (['account-and-sign-in', 'navigation', 'roles-and-permissions', 'trouble-access'] as const)
