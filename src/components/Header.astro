@@ -1,10 +1,11 @@
 ---
 // Global header: BIZOMAT wordmark (home), Home, Systems, Resources, About and Contact, AI Search, the theme switch and
-// one Sign in (BIZOMAT ERP, where every system opens; owner, 20 Nov 2026).
+// one Sign in (BIZOMAT ERP, where every system opens; owner, 20 Nov 2026). The Systems menu holds two groups side by
+// side, the systems and Learn (the Knowledge Centre), with Open BIZOMAT ERP across its foot (owner, 20 Nov 2026).
 // Menus are <details> elements, so they open without JavaScript; the script below adds one-at-a-time behaviour,
 // Escape and outside-click closing, and the phone/tablet menu button. Without JavaScript the phone layout shows the
 // links as a wrapped row instead of a collapsed menu.
-import { NAV, AI_SEARCH, SIGN_IN } from '../config/site.ts';
+import { NAV, AI_SEARCH, SIGN_IN, menuLinks, type NavItem } from '../config/site.ts';
 import Container from './Container.astro';
 import SiteWordmark from './SiteWordmark.astro';
 import ThemeToggle from './ThemeToggle.astro';
@@ -12,8 +13,11 @@ import ThemeToggle from './ThemeToggle.astro';
 const path = Astro.url.pathname;
 const internal = (href?: string) => Boolean(href && href.startsWith('/') && !href.includes('#'));
 const isCurrent = (href?: string) => internal(href) && path === href;
-const inSection = (item: (typeof NAV)[number]) =>
-  (item.href !== '/' && path.startsWith(item.href)) || Boolean(item.children?.some((c) => internal(c.href) && path.startsWith(c.href as string)));
+const inSection = (item: NavItem) =>
+  (item.href !== '/' && path.startsWith(item.href)) || menuLinks(item).some((c) => internal(c.href) && path.startsWith(c.href as string));
+// A menu's lists: its groups, or its one list without a heading.
+const listsOf = (item: NavItem) => item.groups ?? (item.children ? [{ label: '', children: item.children }] : []);
+const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 ---
 <header class="site-header" data-header>
   <Container class="site-header__inner">
@@ -23,31 +27,44 @@ const inSection = (item: (typeof NAV)[number]) =>
 
     <nav class="site-nav" id="site-nav" aria-label="Main" data-site-nav>
       <ul class="site-nav__list">
-        {NAV.map((item) => item.children ? (
+        {NAV.map((item) => listsOf(item).length ? (
           <li class="site-nav__item">
             <details class="nav-menu" data-nav-menu>
               <summary class:list={['site-nav__link', { 'is-current': inSection(item) }]}>
                 {item.short ? <><span class="site-nav__long">{item.label}</span><abbr class="site-nav__short" title={item.label}>{item.short}</abbr></> : item.label}
                 <svg class="nav-menu__chevron" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5" /></svg>
               </summary>
-              <div class="nav-menu__panel">
-                <ul class="nav-menu__list">
-                  {item.children.map((child) => (
-                    <li>
-                      {child.href ? (
-                        <a class="nav-menu__link" href={child.href} aria-current={isCurrent(child.href) ? 'page' : undefined} rel={child.external ? 'noopener' : undefined}>
-                          <span class="nav-menu__title">{child.label}{child.external && <span class="nav-menu__ext" aria-hidden="true">↗</span>}</span>
-                          {child.description && <span class="nav-menu__description">{child.description}</span>}
-                        </a>
-                      ) : (
-                        <span class="nav-menu__link nav-menu__link--disabled">
-                          <span class="nav-menu__title">{child.label}{child.status && <span class="nav-menu__status">{child.status}</span>}</span>
-                          {child.description && <span class="nav-menu__description">{child.description}</span>}
-                        </span>
-                      )}
-                    </li>
+              <div class:list={['nav-menu__panel', { 'nav-menu__panel--groups': item.groups }]}>
+                <div class="nav-menu__groups">
+                  {listsOf(item).map((list) => (
+                    <div class="nav-menu__group">
+                      {list.label && <p class="nav-menu__group-title" id={`nav-${slug(item.label)}-${slug(list.label)}`}>{list.label}</p>}
+                      <ul class="nav-menu__list" aria-labelledby={list.label ? `nav-${slug(item.label)}-${slug(list.label)}` : undefined}>
+                        {list.children.map((child) => (
+                          <li>
+                            {child.href ? (
+                              <a class="nav-menu__link" href={child.href} aria-current={isCurrent(child.href) ? 'page' : undefined} rel={child.external ? 'noopener' : undefined}>
+                                <span class="nav-menu__title">{child.label}{child.status && <span class="nav-menu__status">{child.status}</span>}{child.external && <span class="nav-menu__ext" aria-hidden="true">↗</span>}</span>
+                                {child.description && <span class="nav-menu__description">{child.description}</span>}
+                              </a>
+                            ) : (
+                              <span class="nav-menu__link nav-menu__link--disabled">
+                                <span class="nav-menu__title">{child.label}{child.status && <span class="nav-menu__status">{child.status}</span>}</span>
+                                {child.description && <span class="nav-menu__description">{child.description}</span>}
+                              </span>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
-                </ul>
+                </div>
+                {item.action && (
+                  <a class="nav-menu__action" href={item.action.href} rel={item.action.external ? 'noopener' : undefined}>
+                    <span class="nav-menu__title">{item.action.label}{item.action.external && <span class="nav-menu__ext" aria-hidden="true">↗</span>}</span>
+                    {item.action.description && <span class="nav-menu__description">{item.action.description}</span>}
+                  </a>
+                )}
               </div>
             </details>
           </li>
@@ -145,6 +162,17 @@ const inSection = (item: (typeof NAV)[number]) =>
     background: var(--surface); border: 1px solid var(--line); border-radius: 12px; box-shadow: var(--shadow-menu);
   }
   .nav-menu__list { display: grid; gap: .1rem; margin: 0; padding: 0; list-style: none; }
+  /* A menu with groups (Systems: the systems and Learn) shows them side by side, each under a small heading, with its
+     action across the foot. It never runs past the bottom of the window. */
+  .nav-menu__groups { display: grid; gap: .1rem; }
+  .nav-menu__panel--groups { width: 600px; max-height: calc(100dvh - var(--header-h) - 1.25rem); overflow-y: auto; overscroll-behavior: contain; }
+  .nav-menu__panel--groups .nav-menu__groups { grid-template-columns: 1fr 1fr; gap: 0 .35rem; }
+  .nav-menu__panel--groups .nav-menu__group + .nav-menu__group { padding-left: .35rem; border-left: 1px solid var(--line); }
+  .nav-menu__panel--groups .nav-menu__link { padding: .5rem .8rem; }
+  .nav-menu__group-title { margin: .4rem .8rem .3rem; color: var(--muted); font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
+  .nav-menu__action { display: flex; flex-wrap: wrap; align-items: baseline; gap: .15rem .6rem; margin-top: .35rem; padding: .7rem .8rem; border-top: 1px solid var(--line); border-radius: 0 0 8px 8px; color: var(--ink); text-decoration: none; }
+  .nav-menu__action .nav-menu__title { color: var(--accent); }
+  .nav-menu__action:hover, .nav-menu__action:focus-visible { background: var(--paper-2); }
   .nav-menu__link { display: grid; gap: .15rem; padding: .7rem .8rem; border-radius: 8px; color: var(--ink); text-decoration: none; }
   a.nav-menu__link:hover, a.nav-menu__link:focus-visible, a.nav-menu__link[aria-current='page'] { background: var(--paper-2); color: var(--ink); }
   .nav-menu__title { display: inline-flex; align-items: center; gap: .45rem; font-size: .94rem; font-weight: 600; }
@@ -195,6 +223,9 @@ const inSection = (item: (typeof NAV)[number]) =>
     :global(.js) .site-header .site-nav__link.is-current { color: var(--accent); }
     :global(.js) .site-header .nav-menu__panel { position: static; width: auto; padding: 0 0 .6rem; border: 0; border-radius: 0; box-shadow: none; background: none; }
     :global(.js) .site-header .nav-menu__link { padding: .6rem .25rem; }
+    :global(.js) .site-header .nav-menu__panel--groups { max-height: none; overflow: visible; }
+    :global(.js) .site-header .nav-menu__group-title { margin: .6rem .25rem .2rem; }
+    :global(.js) .site-header .nav-menu__action { margin-top: .25rem; padding: .6rem .25rem; border-radius: 0; }
     :global(.js) .site-header .site-nav__mobile-action { display: block; margin: 1.25rem 0 0; }
     :global(.js) .site-header .site-nav__cta { width: 100%; justify-content: center; min-height: 48px; font-size: 1rem; }
   }
@@ -222,6 +253,12 @@ const inSection = (item: (typeof NAV)[number]) =>
   @media (max-width: 560px) {
     :global(.js) .site-header .site-header__signin { display: none; }
   }
+  /* Tablets and phones: a menu's groups stack in one column (in the menu panel, or in the open menu without JavaScript). */
+  @media (max-width: 1140px) {
+    .nav-menu__panel--groups { width: min(340px, calc(100vw - 2 * var(--gutter))); }
+    .nav-menu__panel--groups .nav-menu__groups { grid-template-columns: 1fr; }
+    .nav-menu__panel--groups .nav-menu__group + .nav-menu__group { margin-top: .35rem; padding-left: 0; border-left: 0; border-top: 1px solid var(--line); }
+  }
   /* Without JavaScript on small screens: keep every link reachable as a wrapped row. */
   @media (max-width: 1140px) {
     :global(html:not(.js)) .site-header :global(.site-header__inner) { flex-wrap: wrap; padding-block: .5rem; }
@@ -238,6 +275,11 @@ const inSection = (item: (typeof NAV)[number]) =>
   :global(html[data-ui="new"]) .site-nav__link { gap: var(--bz-space-1); padding: 0 var(--bz-space-3); border-radius: var(--bz-radius-md); font-size: var(--bz-text-md); }
   :global(html[data-ui="new"]) .site-nav__link.is-current::after { border-radius: var(--bz-radius-sm); }
   :global(html[data-ui="new"]) .nav-menu__panel { padding: var(--bz-space-2); border-radius: var(--bz-radius-lg); }
+  :global(html[data-ui="new"]) .nav-menu__panel--groups .nav-menu__groups { gap: 0 var(--bz-space-1); }
+  :global(html[data-ui="new"]) .nav-menu__panel--groups .nav-menu__group + .nav-menu__group { padding-left: var(--bz-space-1); }
+  :global(html[data-ui="new"]) .nav-menu__panel--groups .nav-menu__link { padding: var(--bz-space-2) var(--bz-space-3); }
+  :global(html[data-ui="new"]) .nav-menu__group-title { margin: var(--bz-space-2) var(--bz-space-3) var(--bz-space-1); font-size: var(--bz-text-xs); }
+  :global(html[data-ui="new"]) .nav-menu__action { gap: .15rem var(--bz-space-2); margin-top: var(--bz-space-1); padding: var(--bz-space-3) var(--bz-space-3); border-radius: 0 0 var(--bz-radius-md) var(--bz-radius-md); }
   :global(html[data-ui="new"]) .nav-menu__link { padding: var(--bz-space-3) var(--bz-space-3); border-radius: var(--bz-radius-md); }
   :global(html[data-ui="new"]) .nav-menu__title { gap: var(--bz-space-2); font-size: var(--bz-text-md); }
   :global(html[data-ui="new"]) .nav-menu__ext { font-size: var(--bz-text-sm); }
@@ -253,10 +295,13 @@ const inSection = (item: (typeof NAV)[number]) =>
   @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .site-nav__link { padding: 0 var(--bz-space-1); font-size: var(--bz-text-md); } }
   @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .nav-menu__panel { padding: 0 0 var(--bz-space-2); } }
   @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .nav-menu__link { padding: var(--bz-space-2) var(--bz-space-1); } }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .nav-menu__group-title { margin: var(--bz-space-2) var(--bz-space-1) .2rem; } }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .nav-menu__action { margin-top: var(--bz-space-1); padding: var(--bz-space-2) var(--bz-space-1); } }
   @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .site-nav__mobile-action { margin: var(--bz-space-5) 0 0; } }
   @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .site-nav__cta { font-size: var(--bz-text-md); } }
   @media (max-width: 1300px) and (min-width: 1141px) { :global(html[data-ui="new"]) .site-nav { margin-left: var(--bz-space-2); } }
   @media (max-width: 1300px) and (min-width: 1141px) { :global(html[data-ui="new"]) .site-nav__link { padding: 0 var(--bz-space-2); gap: var(--bz-space-1); } }
+  @media (max-width: 1140px) { :global(html[data-ui="new"]) .nav-menu__panel--groups .nav-menu__group + .nav-menu__group { margin-top: var(--bz-space-1); } }
   @media (max-width: 1140px) { :global(html[data-ui="new"]:not(.js)) .site-header :global(.site-header__inner) { padding-block: var(--bz-space-2); } }
   @media (max-width: 1140px) { :global(html[data-ui="new"]:not(.js)) .site-header .site-nav__link { padding: 0 var(--bz-space-2); font-size: var(--bz-text-base); } }
   /* ui-new:generated end */

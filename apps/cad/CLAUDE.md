@@ -196,6 +196,14 @@ byte for byte the CI build's apart from the signatures, and its text files apart
   Tests: `tests/test_erplink.py`. Deployed 20 Nov 2026 (#19, version 13db582, deploy run
   10, release v39, every core check passed); its sync to the production ERP answers 200 every minute. Nothing acts
   until the ERP switches `cad_in_erp` on for a company (the owner's decision).
+  Contract 2 (owner's approval of the audit of 20 Nov 2026, the website's `docs/cad/AUDIT-2026-11-20.md`;
+  `docs/ERP-MODULE.md`, "Contract 2"): the sync says `contract: 2` and the ERP answers each company with `operate` and
+  `export` (an older answer means both, as before). A read-only role is refused in the company (`READ_ONLY`), never
+  worked by person; `sw_export` gives no download link where the role may not download (the export stays for the
+  company), a link is checked again when used, and each link download of a company's export goes to the ERP's history
+  once; the sync counts waiting (`queued`) and running commands apart; and while the ERP's flag `cad_password_retired`
+  acts (every account linked to a BIZOMAT account) and its answer is fresh, password sign-in, sign-up, invites, early
+  access and the Companion's password pairing go through BIZOMAT or the pairing code instead.
 - Malware scan of BIZOMAT ERP's verification documents (`evidencescan.py`, 19 Nov 2026; the owner chose this 2 GB
   Machine because BIZOMAT's own have 512 MB and ClamAV needs about 1 GB while it scans: measured 1,000 MB at its peak,
   about 12 s a file, ClamAV 1.5.4 with the full signature set). A daemon thread `evidence-scan` (started and stopped by

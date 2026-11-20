@@ -891,7 +891,7 @@ class PasswordGate:
         if path == "/access":
             if m != "accounts":
                 return await go("/")
-            if not accounts.access_code():
+            if not accounts.access_code() or _password_retired():  # retired: every account is a BIZOMAT one
                 return await _send(send, 410, _access_closed_page(), HTML)
             if not post:
                 if current_user(scope) is not None:
@@ -916,6 +916,8 @@ class PasswordGate:
         if path == "/signup":
             if m != "accounts" or not accounts.settings()["open_signup"]:
                 return await go("/login")
+            if _password_retired():  # new accounts come from BIZOMAT's (accounts.bizomat_user), as everyone signs in
+                return await go("/auth/bizomat?" + urlencode({"next": nxt}))
             if not post:
                 return await _send(send, 200, _signup_page(nxt), HTML)
             if not _new_account_ok(scope):
@@ -929,6 +931,8 @@ class PasswordGate:
 
         if path.startswith("/join/"):
             token = path[len("/join/"):]
+            if _password_retired():  # the invite is taken with the BIZOMAT account instead of a new password
+                return await go("/auth/bizomat?" + urlencode({"next": nxt, "invite": token[:200]}))
             if not post:
                 if not accounts.invite_valid(token):
                     return await _send(send, 410, _join_page(token, "This invite link has expired or was already used. Ask for a new one."), HTML)
@@ -969,10 +973,13 @@ class PasswordGate:
             if current_user(scope, m) is not None:
                 return await go(nxt)  # already signed in on this browser: straight back to work
             from . import bizomat_id, erplink
-            if erplink.redirect_on() and bizomat_id.enabled() and q.get("password") != "1":
-                # CAD Automation works inside BIZOMAT ERP: one sign-in, BIZOMAT's (/login?password=1 keeps this page)
+            if bizomat_id.enabled() and (_password_retired() or (erplink.redirect_on() and q.get("password") != "1")):
+                # CAD Automation works inside BIZOMAT ERP: one sign-in, BIZOMAT's (/login?password=1 keeps this page
+                # until password sign-in is retired)
                 return await go("/auth/bizomat?next=" + quote(nxt))
             return await _send(send, 200, _login_page(nxt), HTML)
+        if _password_retired():
+            return await _send(send, 403, _retired_page(nxt), HTML)
         keys = ("ip:" + _client(scope), "email:" + form.get("email", "").strip().lower())
         if _limited(*keys):
             return await _send(send, 429, _login_page(nxt, TOO_MANY, form.get("email", "")), HTML)
@@ -985,6 +992,23 @@ class PasswordGate:
         if u.get("suspended"):  # told only after the right password
             return await _send(send, 403, _login_page(nxt, SUSPENDED, form.get("email", "")), HTML)
         return await go(nxt, _set_account_cookie(scope, await asyncio.to_thread(accounts.start_session, u["id"])))
+
+
+PASSWORD_RETIRED = ("Password sign-in to CAD Automation is retired: everyone signs in with their BIZOMAT account, "
+                    "as in BIZOMAT ERP.")
+
+
+def _retired_page(nxt: str) -> bytes:
+    """Password sign-in is retired: one button on to Sign in with BIZOMAT, keeping where the person was going."""
+    page = _page("Sign in with BIZOMAT", PASSWORD_RETIRED, "/auth/bizomat", [], "Continue with BIZOMAT", nxt)
+    return page.replace(b'method="post" action="/auth/bizomat"', b'method="get" action="/auth/bizomat"')
+
+
+def _password_retired() -> bool:
+    """BIZOMAT ERP's flag cad_password_retired, which acts only once every account here is linked to a BIZOMAT account
+    (erplink.password_retired). Sign-in, sign-up, invites and early access then go through BIZOMAT's sign-in."""
+    from . import bizomat_id, erplink
+    return bizomat_id.enabled() and erplink.password_retired()
 
 
 def _request_base(scope) -> str:
