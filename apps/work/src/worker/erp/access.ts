@@ -46,6 +46,7 @@ import type { Context } from 'hono';
 import type { AppEnv } from '../env';
 import { HttpError, notFound } from '../lib/util';
 import type { CompanyRole } from '../company/access';
+import { NEW_ROLES, NEW_ROLE_LABELS } from '../../shared/erp-objects/roles';
 
 export const ERP_ROLES = [
   'erp_admin',
@@ -70,6 +71,9 @@ export const ERP_ROLES = [
   'whs_hsr',
   'health_officer',
   'viewer',
+  // The modules framework (src/shared/erp-objects/roles.ts): People and HR, payroll, projects, service, fleet, contracts,
+  // marketing, finance control, operations and compliance
+  ...NEW_ROLES,
 ] as const;
 export type ErpRole = (typeof ERP_ROLES)[number];
 
@@ -93,10 +97,11 @@ export const ROLE_LABELS: Record<ErpRole, string> = {
   whs_hsr: 'Health and safety representative',
   health_officer: 'Health officer',
   viewer: 'Viewer',
+  ...NEW_ROLE_LABELS,
 };
 
 /** Everyone who may read (every role but the administrator, who may do everything). */
-const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'quality_manager', 'quality_inspector', 'sales_manager', 'whs_manager', 'whs_officer', 'whs_investigator', 'whs_hsr', 'health_officer', 'viewer'] as const;
+const READERS = ['executive', 'engineer', 'engineering_approver', 'buyer', 'procurement_manager', 'warehouse_manager', 'warehouse_operator', 'production_manager', 'production_operator', 'quality_manager', 'quality_inspector', 'sales_manager', 'whs_manager', 'whs_officer', 'whs_investigator', 'whs_hsr', 'health_officer', 'viewer', ...NEW_ROLES] as const;
 
 /** Every action the ERP checks, and the roles that may take it (erp_admin may take every one). */
 export const CAPABILITIES = {

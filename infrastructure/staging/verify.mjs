@@ -202,6 +202,39 @@ for (const [name, path] of pages) {
   check(r && r.status() < 400 && state.main && (state.ui === 'new') === newUi && problems.length === before, `ERP ${name}: opens${state.h1 ? ` ("${state.h1.slice(0, 40)}")` : ''}, ${newUi ? 'new UI' : 'old look'}, no errors`);
 }
 
+// The modules framework and the 97-module catalogue (20 Nov 2026), in the tester's invented example company (once, with
+// every flag off): the pages open without errors, and a record goes through its workflow on the server.
+if (example && phase === 'off') {
+  for (const [name, path] of [['all modules', `/erp/c/${example}/modules`], ['waiting for me', `/erp/c/${example}/inbox`], ['people and hr', `/erp/c/${example}/m/hr`], ['dispatch board', `/erp/c/${example}/m/service/dispatch`], ['contracts', `/erp/c/${example}/m/contracts/ct_contract`], ['new employee form', `/erp/c/${example}/m/hr/hr_employee/new`]]) {
+    const before = problems.length;
+    const r = await p.goto(BASE + path, { waitUntil: 'networkidle' });
+    await p.waitForTimeout(800);
+    const state = await p.evaluate(() => ({ h1: document.querySelector('h1')?.textContent?.trim() ?? '', error: Boolean(document.querySelector('.error-box')) }));
+    check(r && r.status() < 400 && !state.error && state.h1.length > 0 && problems.length === before, `ERP ${name}: opens ("${state.h1.slice(0, 40)}"), no errors`);
+  }
+  const x = (path) => `/erp/c/${example}${path}`;
+  const cat = await api('GET', x('/catalogue'));
+  check(cat.status === 200 && cat.body?.modules?.length === 97, `the catalogue lists 97 modules (${cat.status}, ${cat.body?.modules?.length ?? 0})`);
+  const lt = await api('POST', x('/x/o/hr_leave_type'), { data: { name: 'Annual leave', annualDays: 20, paid: true } });
+  const emp = await api('POST', x('/x/o/hr_employee'), { data: { firstName: 'Vera', lastName: 'Verify', startDate: '2026-01-05', employmentType: 'full_time', user: me.user?.id, payBasis: 'salary', annualSalary: 7_800_000, withholdingPct: 20 } });
+  check(lt.status === 201 && emp.status === 201 && /^EMP-\d{5}$/.test(emp.body?.record?.number ?? ''), `an employee and a leave type are added (${lt.status}, ${emp.status})`);
+  const active = await api('POST', x(`/x/o/hr_employee/${emp.body?.record?.id}/step/activate`), {});
+  check(active.status === 200 && active.body?.record?.status === 'active', `the employee starts work (${active.status})`);
+  const lv = await api('POST', x('/x/o/hr_leave'), { data: { employee: emp.body?.record?.id, leaveType: lt.body?.record?.id, fromDate: '2026-12-07', toDate: '2026-12-09' } });
+  check(lv.status === 201 && lv.body?.record?.data?.days === 3, `a leave request counts 3 working days (${lv.status})`);
+  const sub = await api('POST', x(`/x/o/hr_leave/${lv.body?.record?.id}/step/submit`), {});
+  const appr = await api('POST', x(`/x/o/hr_leave/${lv.body?.record?.id}/step/approve`), {});
+  check(sub.status === 200 && appr.status === 200 && appr.body?.record?.status === 'approved' && appr.body?.record?.sodException === true, `the leave is approved, alone in the company with the exception recorded (${sub.status}, ${appr.status})`);
+  const run = await api('POST', x('/x/o/py_run'), { data: { periodStart: '2026-11-02', periodEnd: '2026-11-15', payDate: '2026-11-16', frequency: 'fortnightly', contributionPct: 12, currency: 'AUD' } });
+  const calc = await api('POST', x(`/x/o/py_run/${run.body?.record?.id}/action/calculate`), {});
+  const slip = (calc.body?.detail?.lines ?? []).find((l) => l.employee === emp.body?.record?.id);
+  check(calc.status === 200 && slip?.gross === 300_000 && slip?.net === 240_000, `a pay run works out 3,000.00 gross and 2,400.00 net for the fortnight (${calc.status})`);
+  const found = await api('GET', x('/x/search?q=verify'));
+  check(found.status === 200 && (found.body?.results ?? []).some((r) => r.kind === 'Employee'), `the search finds the employee (${found.status})`);
+  const csv = await p.evaluate(async (url) => (await fetch(url, { credentials: 'same-origin' })).status, `${BASE}/erp/api${x('/x/o/hr_employee?format=csv')}`);
+  check(csv === 200, `employees export as CSV (${csv})`);
+}
+
 // Density (new UI only): saved on the account, applied on the next page.
 if (newUi) {
   const set = await api('PATCH', '/me', { preferences: { density: 'compact' } });
