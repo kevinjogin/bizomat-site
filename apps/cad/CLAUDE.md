@@ -184,7 +184,11 @@ byte for byte the CI build's apart from the signatures, and its text files apart
   ones are bound to the person's only company on next use, else refused (`COMPANY_REQUIRED`). The old pages and
   `/devices/pair` send people to the ERP and `/login` to Sign in with BIZOMAT only while the ERP's `cad_redirect` is on
   (`/login?password=1` stays; Admin stays). Others never see the open file's name, installation folders or Windows paths
-  in errors (`erplink._scrub`). Tests: `tests/test_erplink.py`.
+  in errors (`erplink._scrub`). The ERP hands out the installer itself (`GET /api/erp/v1/installer/file`, the file in
+  the data folder; `installer_info` in the state), so nobody signs in to CAD Automation separately to download it.
+  Tests: `tests/test_erplink.py`. Deployed 20 Nov 2026 (#19, version 13db582, deploy run
+  10, release v39, every core check passed); its sync to the production ERP answers 200 every minute. Nothing acts
+  until the ERP switches `cad_in_erp` on for a company (the owner's decision).
 - Malware scan of BIZOMAT ERP's verification documents (`evidencescan.py`, 19 Nov 2026; the owner chose this 2 GB
   Machine because BIZOMAT's own have 512 MB and ClamAV needs about 1 GB while it scans: measured 1,000 MB at its peak,
   about 12 s a file, ClamAV 1.5.4 with the full signature set). A daemon thread `evidence-scan` (started and stopped by
