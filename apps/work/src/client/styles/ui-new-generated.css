@@ -345,6 +345,12 @@ html[data-ui="new"] .co-prompt { gap: var(--bz-space-3); margin: 0 0 var(--bz-sp
 html[data-ui="new"] .co-members-filters { gap: var(--bz-space-2); }
 html[data-ui="new"] .co-members-actions { gap: var(--bz-space-1); }
 html[data-ui="new"] .co-members-pager { gap: var(--bz-space-2); }
+html[data-ui="new"] .co-admin-head + .page { padding-top: var(--bz-space-3); }
+html[data-ui="new"] .co-admin-head .eyebrow { font-size: var(--bz-text-xs); }
+html[data-ui="new"] .co-admin-dot { margin-left: var(--bz-space-2); }
+html[data-ui="new"] .co-admin-list { gap: var(--bz-space-2); }
+html[data-ui="new"] .co-admin-item { gap: var(--bz-space-3); padding: var(--bz-space-3) var(--bz-space-3); }
+html[data-ui="new"] .co-admin-grid { gap: var(--bz-space-4); }
 
 /* content.css */
 html[data-ui="new"] .chart { gap: var(--bz-space-2); }

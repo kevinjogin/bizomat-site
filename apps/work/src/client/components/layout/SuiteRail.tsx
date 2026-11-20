@@ -9,6 +9,8 @@
 // the WHS module of the company used last.
 import { lazy, Suspense, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { get } from '../../lib/api';
 import { APP_BASE, SUITE } from '../../lib/base';
 import { IS_SYSTEM } from '../../lib/brand';
 import { useSession } from '../../lib/session';
@@ -28,7 +30,7 @@ interface Module {
 }
 
 const own = (re: RegExp) => (p: string) => IS_SYSTEM && re.test(p);
-const ERP_PAGES = /^\/(my-work|cad|products|procurement|inventory|manufacturing|quality|maintenance|whs|operations|reports|administration|admin)(\/|$)|^\/c\/[^/]+\/(cad|products|procurement|inventory|manufacturing|quality|erp-roles|erp-settings|erp-reports|settings|maintenance|whs)(\/|$)/;
+const ERP_PAGES = /^\/(my-work|cad|products|procurement|inventory|manufacturing|quality|maintenance|whs|operations|reports|administration|admin|company-admin)(\/|$)|^\/c\/[^/]+\/(company-admin|cad|products|procurement|inventory|manufacturing|quality|erp-roles|erp-settings|erp-reports|settings|maintenance|whs)(\/|$)/;
 
 const MODULES: Module[] = [
   { id: 'home', label: 'Dashboard', title: 'Dashboard: your company, its tools and their figures', icon: 'home', to: '/', active: (p) => IS_SYSTEM && !ERP_PAGES.test(p) },
@@ -44,20 +46,25 @@ const MODULES: Module[] = [
   { id: 'admin', label: 'Administration', title: 'Administration: company, people, departments, tools, ERP roles and permissions', icon: 'settings', to: '/administration', active: (p) => APP_BASE === '/company' || (IS_SYSTEM && /^\/(administration|admin)(\/|$)|^\/c\/[^/]+\/(settings|erp-roles|erp-settings)/.test(p)) },
 ];
 
+/** Company Admin (flag company_admin_console): shown to the owner and administrators of a company where it is on. */
+const COMPANY_ADMIN: Module = { id: 'company-admin', label: 'Company Admin', title: 'Company Admin: manage your company’s team, roles and access, API tokens and activity', icon: 'users', to: '/company-admin', active: own(/^\/(c\/[^/]+\/)?company-admin(\/|$)/) };
+
 /** True inside the ERP: the rail is shown and the shell makes room for it (class "in-suite"). */
 export const SUITE_SHELL = SUITE !== '';
 
 export function SuiteRail() {
   const { session } = useSession();
   const location = useLocation();
+  const adminCompanies = useQuery({ queryKey: ['company', 'admin-companies'], queryFn: () => get<{ companies: { id: string }[] }>('/company/admin/companies'), staleTime: 60_000, retry: false, enabled: SUITE_SHELL && !!session });
   if (!SUITE_SHELL || !session) return null;
   const path = location.pathname;
+  const modules = adminCompanies.data?.companies.length ? [...MODULES, COMPANY_ADMIN] : MODULES;
   return (
     <nav className="suite-rail" aria-label="BIZOMAT ERP modules">
       <a className="suite-home" href={`${SUITE}/`} title="BIZOMAT ERP" aria-label="BIZOMAT ERP dashboard">
         <BrandMark size={30} />
       </a>
-      {MODULES.map((m) => {
+      {modules.map((m) => {
         const active = m.active(path);
         const cls = `suite-item${active ? ' active' : ''}`;
         const inner = (

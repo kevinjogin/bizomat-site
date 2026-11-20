@@ -242,7 +242,7 @@ jobs:
   # "Verifying a release"; infrastructure/staging/verify.mjs). Uses only the staging token and the staging address.
   #   1. prepare     staging's own sign-up policy accepts invented example.com addresses (email goes to the log there)
   #   2. flags off   every page and every ERP module with the flags off: the release as production will run it
-  #   3. flags on    (action verify) new_ui_enabled, company_members_v2 and cad_in_erp on in staging only; the website must follow
+  #   3. flags on    (action verify) new_ui_enabled, company_members_v2, cad_in_erp and company_admin_console on in staging only; the website must follow
   #   4. flags off   switched off again (always, even when a check failed), and the old look must come back
   # The flags are switched in staging's database by infrastructure/staging/staging-db.mjs, sent to the work Machine with
   # flyctl and run as the work user. Production's flags are changed only in the Control Centre, with the owner's approval.

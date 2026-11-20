@@ -4,7 +4,7 @@
 // any address that is not a *-staging app, signs up invented accounts and registers an invented company.
 //
 //   node infrastructure/staging/verify.mjs off     the release with every flag off: pages, ERP modules, no new UI
-//   node infrastructure/staging/verify.mjs on      new_ui_enabled, company_members_v2 and cad_in_erp on (switched by the workflow)
+//   node infrastructure/staging/verify.mjs on      new_ui_enabled, company_members_v2, cad_in_erp and company_admin_console on (switched by the workflow)
 //   node infrastructure/staging/verify.mjs reset   after the workflow switched them off again: the old look is back
 //
 // Settings: STAGING_URL, GATE_PW (the gate's password; never printed), PW_DIR (where playwright is installed),
@@ -39,7 +39,7 @@ const bad = (what) => {
 };
 const check = (cond, what) => (cond ? ok(what) : bad(what));
 const newUi = phase === 'on';
-say(`\n### Staging verification: ${phase === 'off' ? 'every flag off' : phase === 'on' ? 'new_ui_enabled, company_members_v2 and cad_in_erp on' : 'flags off again'}\n`);
+say(`\n### Staging verification: ${phase === 'off' ? 'every flag off' : phase === 'on' ? 'new_ui_enabled, company_members_v2, cad_in_erp and company_admin_console on' : 'flags off again'}\n`);
 
 // ------------------------------------------------------------------ the website, as the server sends it
 /** A page with a browser's Accept-Encoding, decoded here (fetch would decode on its own and hide a broken body). */
@@ -275,6 +275,30 @@ if (tester.companyId) {
     return { status: r.status, body: await r.json().catch(() => null) };
   }, `${BASE}/company/api/id/jwks`);
   check(jwks.status === 200 && Array.isArray(jwks.body?.keys) && jwks.body.keys.length === 1 && jwks.body.keys[0].alg === 'ES256' && !('d' in jwks.body.keys[0]), `the ERP publishes one ES256 public key for CAD Automation (${jwks.status})`);
+}
+
+// The Company Admin console (company_admin_console, docs/platform/company-admin.md): the tester owns the invented company.
+if (tester.companyId) {
+  const cid = tester.companyId;
+  const consoleOn = phase === 'on';
+  const list = await api('GET', '/company/admin/companies');
+  check(list.status === 200 && (list.body?.companies ?? []).some((c) => c.id === cid) === consoleOn, `Company Admin companies list ${consoleOn ? 'has' : 'does not have'} the company (${list.status})`);
+  const ov = await api('GET', `/company/c/${cid}/admin/overview`);
+  check(consoleOn ? ov.status === 200 && typeof ov.body?.people?.active === 'number' && Array.isArray(ov.body?.attention) : ov.status === 404 && ov.body?.details?.code === 'COMPANY_ADMIN_OFF', `the console's API: ${consoleOn ? 'the overview answers' : 'off (COMPANY_ADMIN_OFF)'} (${ov.status})`);
+  if (consoleOn) {
+    for (const tab of ['', '/members', '/roles', '/security', '/activity']) {
+      const before = problems.length;
+      await p.goto(`${BASE}/erp/c/${cid}/company-admin${tab}`, { waitUntil: 'networkidle' });
+      await p.waitForTimeout(1200);
+      const h1 = await p.evaluate(() => [...document.querySelectorAll('main h1')].map((x) => x.textContent?.trim() ?? ''));
+      check(problems.length === before && h1.length === 1, `Company Admin ${tab || '/overview'}: opens with one heading ("${h1[0] ?? ''}"), no errors`);
+    }
+    const csv = await p.evaluate(async (url) => {
+      const r = await fetch(url, { credentials: 'same-origin' });
+      return { status: r.status, type: r.headers.get('content-type') ?? '', head: (await r.text()).split('\n')[0] };
+    }, `${BASE}/erp/api/company/c/${cid}/admin/access-review?format=csv`);
+    check(csv.status === 200 && csv.type.includes('text/csv') && csv.head.includes('Company role'), `the access review downloads as CSV (${csv.status})`);
+  }
 }
 
 say(problems.length ? `- browser errors: ${problems.length}` : '- ok: no browser errors');

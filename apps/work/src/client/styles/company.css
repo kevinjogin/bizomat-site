@@ -36,3 +36,15 @@
 .co-members-actions { display: flex; flex-wrap: wrap; gap: 4px; }
 .co-members-pager { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .co-members-pager .co-members-leave { margin-left: auto; }
+
+/* The Company Admin console (src/client/system/companyadmin/CompanyAdmin.tsx). */
+.co-admin-head { padding-bottom: 0; }
+.co-admin-head + .page { padding-top: 12px; }
+.co-admin-head .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.co-admin-dot { margin-left: 6px; }
+.co-admin-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.co-admin-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-left-width: 3px; border-radius: var(--radius); background: var(--surface); }
+.co-admin-high { border-left-color: var(--danger, #b42318); }
+.co-admin-medium { border-left-color: var(--warning, #b54708); }
+.co-admin-info { border-left-color: var(--accent); }
+.co-admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
