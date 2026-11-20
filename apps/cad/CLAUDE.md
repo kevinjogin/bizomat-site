@@ -169,6 +169,22 @@ byte for byte the CI build's apart from the signatures, and its text files apart
   (`auth.PRIVACY_BODY`, section `erp`) and the docs page say what is sent. Tests: `tests/test_erpstatus.py` (a
   stand-in ERP with the ERP's own rules; the slow test runs the real work app when `BIZOMAT_WORK_APP` names a built
   `apps/work`, and checks who sees which computer).
+- CAD Automation inside BIZOMAT ERP (`erplink.py`, `tenancy.py`, 20 Nov 2026; owner's brief and approved audit of 19 Nov
+  2026; `docs/ERP-MODULE.md`, and bizomat-site `docs/cad/README.md`): the screens, accounts, computers, history and
+  exports move into the ERP (`/erp/c/<company>/cad`); the engine (connector, gateway, geometry checks, CAD workers) and
+  SOLIDWORKS stay where they are; no CAD editor in the browser. Off until the ERP's flag `cad_in_erp` is on for a
+  company; with it off (or after a rollback) everything works as before, by person. The ERP calls `/api/erp/v1/*` with
+  `Authorization: BIZOMAT-ERP <jws>` (ES256 by the ERP's key from `<provider>/api/id/jwks`; one minute, used once, bound
+  to method, path and body; names the person, company, permissions and limits; `erplink.verify`); the thread `erp-sync`
+  posts accounts, usage, finished runs and checksums to `<provider>/api/id/cad-sync` once a minute with the BIZOMAT client
+  credentials (no new secret) and keeps the answer in `erp_link.json` (15 minutes fresh). `tenancy.py` holds a request's
+  company: computers, pairings, commands (column `company` in bridge.sqlite), AI connections (`company` in
+  mcp_oauth.json), upload links and exports belong to one company, with its fair-use limits (concurrent commands,
+  command time, upload size, export storage). An AI connection works in one company, chosen on the consent page; older
+  ones are bound to the person's only company on next use, else refused (`COMPANY_REQUIRED`). The old pages and
+  `/devices/pair` send people to the ERP and `/login` to Sign in with BIZOMAT only while the ERP's `cad_redirect` is on
+  (`/login?password=1` stays; Admin stays). Others never see the open file's name, installation folders or Windows paths
+  in errors (`erplink._scrub`). Tests: `tests/test_erplink.py`.
 - Malware scan of BIZOMAT ERP's verification documents (`evidencescan.py`, 19 Nov 2026; the owner chose this 2 GB
   Machine because BIZOMAT's own have 512 MB and ClamAV needs about 1 GB while it scans: measured 1,000 MB at its peak,
   about 12 s a file, ClamAV 1.5.4 with the full signature set). A daemon thread `evidence-scan` (started and stopped by

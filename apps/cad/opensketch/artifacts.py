@@ -188,6 +188,7 @@ def publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None = No
 
 
 def _publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None, owner, lifetime: int) -> dict:
+    from . import tenancy
     directory = _directory()
     _cleanup(directory)
     items = _items(directory)
@@ -196,6 +197,19 @@ def _publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None, ow
         old = mine.pop(0)  # this person's oldest download makes room for their new one
         _drop(directory, old["_id"])
         items.remove(old)
+    # Inside a company (BIZOMAT ERP, tenancy.py): the export belongs to it, and its storage limit applies the same
+    # way (its oldest export makes room; every export is a one-hour download, kept for longer only in the ERP).
+    company = tenancy.company()
+    if company:
+        cap = int(tenancy.limits()["storageMb"]) * 1024 * 1024
+        if len(raw) > cap:
+            raise ArtifactError(f"The export is larger than your company's storage limit ({cap // 1024 // 1024} MB).")
+        ours = [i for i in items if i.get("company") == company]
+        while ours and sum(i["_size"] for i in ours) + len(raw) > cap:
+            old = ours.pop(0)
+            _drop(directory, old["_id"])
+            if old in items:
+                items.remove(old)
     full = lambda: len(items) >= MAX_ARTIFACTS or sum(i["_size"] for i in items) + len(raw) > MAX_STORED_BYTES
     for old in [i for i in items if i.get("format") == "png"]:
         if not full():
@@ -219,7 +233,7 @@ def _publish(rec: dict, raw: bytes, fmt: str, name: str, part_id: str | None, ow
         with payload.open("xb") as out:
             out.write(raw)
         with (directory / f"{artifact_id}.json").open("x") as out:
-            json.dump(dict(info, owner=owner, created=now), out)
+            json.dump(dict(info, owner=owner, created=now, company=company), out)
     except Exception:
         payload.unlink(missing_ok=True)
         (directory / f"{artifact_id}.json").unlink(missing_ok=True)
@@ -286,3 +300,30 @@ def preview_record(rec: dict, view: str, width: int, height: int, part_id: str |
         link = {"doc_id": rec["id"], "version": rec["version"], "format": "png", "size_bytes": len(raw),
                 "download_url": None, "note": f"No download link this time: {exc}"}
     return (dict(link, view=view, width=width, height=height, **extra, **report), raw)
+
+
+def items_for(company: str | None = None, owners: set | None = None) -> list[dict]:
+    """Live exports for BIZOMAT ERP (erplink.py): of one company, optionally of some people only. Newest first."""
+    now = time.time()
+    out = []
+    for i in _items(_directory()):
+        if i.get("expires_at", 0) <= now or i.get("company") != company:
+            continue
+        if owners is not None and i.get("owner") not in owners:
+            continue
+        out.append(i)
+    return sorted(out, key=lambda i: -(i.get("created") or 0))
+
+
+def path_of(artifact_id: str) -> tuple[Path, dict] | None:
+    """An export's file and record by id, if it is still there (no signature: erplink.py checks who may have it)."""
+    if not re.fullmatch(r"[0-9a-f]{32}", str(artifact_id or "")):
+        return None
+    path = _directory() / f"{artifact_id}.bin"
+    try:
+        info = json.loads(path.with_suffix(".json").read_text())
+    except (OSError, ValueError):
+        return None
+    if not isinstance(info, dict) or info.get("expires_at", 0) <= time.time() or not path.is_file():
+        return None
+    return path, info

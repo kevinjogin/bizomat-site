@@ -622,6 +622,40 @@ def bizomat_user(sub: str, email: str, verified: bool) -> dict | None:
     return _linked_user("bizomat", sub, email, verified, True)
 
 
+def erp_user(sub: str, email: str, verified: bool, name: str) -> dict:
+    """The CAD Automation account of a person BIZOMAT ERP vouches for (erplink.py: a signed assertion from the ERP,
+    whose sign-in this is): linked to their BIZOMAT account, else the account with the same email when BIZOMAT says it
+    is confirmed (the same rules as Sign in with BIZOMAT), else a new account linked to it, made even when open sign-up
+    is off, with no password (the ERP's sign-in is the one sign-in). Raises AccountError when there is no owner yet,
+    the account is suspended, or an account with that email exists and BIZOMAT has not confirmed the address."""
+    sub = str(sub or "").strip()
+    if not sub or len(sub) > 64:
+        raise AccountError("The ERP did not say who this is.")
+    u = bizomat_user(sub, email, verified)
+    if u is None:
+        with _lock:
+            data = _edit()
+            if not data["users"]:
+                raise AccountError("CAD Automation is not set up yet.")
+            hit = next((x for x in data["users"] if x.get("bizomat") == sub), None)
+            if hit is None:
+                addr = (email or "").strip().lower()
+                if not EMAIL_RE.match(addr) or len(addr) > 254:
+                    raise AccountError("The ERP account has no usable email address.")
+                if any(x["email"] == addr for x in data["users"]):
+                    raise AccountError("A CAD Automation account with this email already exists. Confirm your email "
+                                       "address in BIZOMAT, then open CAD Automation again.")
+                hit = _new_user(addr, (name or addr.split("@")[0]).strip()[:80] or addr, None, "member", bizomat=sub,
+                                verified=verified)
+                data["users"].append(hit)
+                _write("users.json", data)
+            u = public(hit)
+    full = _by_id().get(u["id"])
+    if full is None or full.get("suspended"):
+        raise AccountError("This CAD Automation account is suspended. Ask your administrator.")
+    return u
+
+
 def _linked_user(field: str, sub: str, email: str, verified: bool, managed: bool) -> dict | None:
     took = None
     with _lock:
