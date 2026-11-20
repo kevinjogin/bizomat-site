@@ -3,6 +3,7 @@
 // receiving, and goods receipts with the draft bill in Finance. The server decides what each person may do; these
 // screens show only what it allows.
 import { useMemo, useState, type ReactNode } from 'react';
+import { PoPortalAnswers } from './SupplierPortal';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { del, errorMessage, get, post, put } from '../../lib/api';
@@ -1120,6 +1121,7 @@ export function PurchaseOrderDetail({ companyId }: { companyId: string }) {
           ) : null}
         </div>
         <div className="stack">
+          <PoPortalAnswers companyId={companyId} poId={o.id} />
           <Files companyId={companyId} kind="purchase_order" id={o.id} files={v.files} canAdd={v.can.files} />
           <Section title="History"><History events={v.history} /></Section>
         </div>

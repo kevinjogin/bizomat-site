@@ -51,6 +51,7 @@ import { idPublicRoutes } from './company/id-provider';
 import { scanRoutes } from './company/scan';
 import { maintenanceRoutes } from './maintenance';
 import { erpRoutes } from './erp';
+import { supplierPortalRoutes } from './erp/supplier-portal';
 import { cadRoutes } from './cad/routes';
 import { cadAdminRoutes } from './cad/admin';
 import { drawingRoutes } from './cad/drawings';
@@ -274,6 +275,9 @@ export function createApp() {
   // BIZOMAT ERP, Release 1 (src/worker/erp): products, variants, revisions and change control, bills of materials,
   // engineering documents and the supplier master.
   api.route('/erp', erpRoutes);
+  // The supplier portal (flag supplier_portal, off): a supplier's own people, signed in, see only that supplier's orders
+  // and requests in one company (src/worker/erp/supplier-portal.ts). Never company members; browser sessions only.
+  api.route('/supplier-portal', supplierPortalRoutes);
   // CAD Automation inside the ERP (flag cad_in_erp, off): src/worker/cad, docs/cad/README.md.
   api.route('/erp', cadRoutes);
   api.route('/erp', drawingRoutes);

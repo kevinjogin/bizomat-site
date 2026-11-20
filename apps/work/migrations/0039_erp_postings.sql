@@ -1,6 +1,7 @@
 -- BIZOMAT ERP: postings to Finance's ledger from the modules framework (batch 2, item 1; docs/erp/postings.md), and the
 -- intercompany contacts of consolidation (batch 2, item 2), custom fields (batch 2, item 3) and the sign-in challenge of
--- two-factor sign-in for everyone and the price source of sales order lines (batch 2, item 4).
+-- two-factor sign-in for everyone and the price source of sales order lines (batch 2, item 4), and the supplier portal
+-- (batch 2, item 5).
 -- Depreciation of fixed assets, approved pay runs and earned revenue become posted journals in the company's Finance
 -- business workspace, through Finance's own ledger code (src/worker/fin/ledger.ts), into the accounts the company
 -- chooses here. Additive only. Each journal is recorded once per key in erp_integration_events (kind
@@ -75,3 +76,47 @@ CREATE INDEX login_challenges_user ON login_challenges(user_id, created_at);
 -- Price lists and promotions on sales orders (batch 2, item 4; src/worker/erp/objects/pricing.ts): where each line's
 -- price came from (the price list, the promotion, the standard price, or typed by hand), in plain words.
 ALTER TABLE erp_so_lines ADD COLUMN price_note TEXT NOT NULL DEFAULT '';
+
+-- The supplier portal (batch 2, item 5; flag supplier_portal, off; src/worker/erp/supplier-portal.ts): a supplier's own
+-- people, invited by email by a buyer, sign in with their own BIZOMAT account and see only that supplier's purchase
+-- orders and requests for quotation in that company. They are not members of the company. An invitation's token is kept
+-- as its SHA-256 only, until it is accepted by the account with the invited address.
+CREATE TABLE erp_supplier_portal_users (
+  id TEXT PRIMARY KEY,
+  company_id TEXT NOT NULL,
+  supplier_id TEXT NOT NULL,
+  email TEXT NOT NULL COLLATE NOCASE CHECK (length(email) BETWEEN 3 AND 320),
+  user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
+  token_hash TEXT UNIQUE,
+  status TEXT NOT NULL CHECK (status IN ('invited', 'active', 'revoked')),
+  invited_by TEXT REFERENCES users(id) ON DELETE SET NULL,
+  invited_at INTEGER NOT NULL,
+  expires_at INTEGER NOT NULL,
+  accepted_at INTEGER,
+  revoked_at INTEGER,
+  revoked_by TEXT REFERENCES users(id) ON DELETE SET NULL,
+  UNIQUE (company_id, id),
+  FOREIGN KEY (company_id, supplier_id) REFERENCES erp_suppliers(company_id, id) ON DELETE CASCADE
+);
+CREATE INDEX erp_supplier_portal_users_user ON erp_supplier_portal_users(user_id, status);
+CREATE INDEX erp_supplier_portal_users_supplier ON erp_supplier_portal_users(company_id, supplier_id, status);
+
+-- A supplier's answer to a purchase order through the portal: accepted (with the date it promises) or declined, once per
+-- revision of the order (an amended order is answered again).
+CREATE TABLE erp_po_acknowledgements (
+  id TEXT PRIMARY KEY,
+  company_id TEXT NOT NULL,
+  po_id TEXT NOT NULL,
+  revision INTEGER NOT NULL,
+  decision TEXT NOT NULL CHECK (decision IN ('accepted', 'declined')),
+  promised_date TEXT,
+  note TEXT NOT NULL DEFAULT '',
+  user_id TEXT REFERENCES users(id) ON DELETE SET NULL,
+  created_at INTEGER NOT NULL,
+  UNIQUE (company_id, id),
+  UNIQUE (company_id, po_id, revision),
+  FOREIGN KEY (company_id, po_id) REFERENCES erp_purchase_orders(company_id, id) ON DELETE CASCADE
+);
+
+-- Who entered a quotation: a buyer ('staff', as before) or the supplier through the portal ('portal').
+ALTER TABLE erp_quotations ADD COLUMN source TEXT NOT NULL DEFAULT 'staff' CHECK (source IN ('staff', 'portal'));

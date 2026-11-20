@@ -35,6 +35,7 @@ const ProductsArea = lazy(() => import('./erp/Products').then((m) => ({ default:
 const ProcurementArea = lazy(() => import('./erp/Suppliers').then((m) => ({ default: m.ProcurementArea })));
 const ErpRolesPage = lazy(() => import('./erp/Roles').then((m) => ({ default: m.ErpRolesPage })));
 const ErpReportsArea = lazy(() => import('./erp/Reports').then((m) => ({ default: m.ErpReportsArea })));
+const SupplierPortalArea = lazy(() => import('./erp/SupplierPortal').then((m) => ({ default: m.SupplierPortalArea })));
 // ERP Release 2: /c/<company>/inventory and the purchasing and inventory settings.
 const InventoryArea = lazy(() => import('./erp/Inventory').then((m) => ({ default: m.InventoryArea })));
 const ErpSettingsPage = lazy(() => import('./erp/ErpSettings').then((m) => ({ default: m.ErpSettingsPage })));
@@ -239,6 +240,8 @@ export function SystemRoutes() {
       <Route path="/" element={<SystemHome />} />
       <Route path="/c/:companyId/*" element={<CompanyArea />} />
       <Route path="/admin/*" element={<Shell><AdminArea /></Shell>} />
+      {/* A supplier's own people (flag supplier_portal): src/client/system/erp/SupplierPortal.tsx */}
+      <Route path="/supplier-portal/*" element={<Shell><Suspense fallback={<Loading />}><SupplierPortalArea /></Suspense></Shell>} />
       {/* CAD Automation: in the company used last where it works in the ERP (the Companion's pairing page included). */}
       <Route path="/cad/*" element={<CadRedirect />} />
       {/* Company Admin: the console of the company used last where the person is the owner or an administrator. */}

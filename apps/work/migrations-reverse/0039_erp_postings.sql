@@ -1,8 +1,14 @@
--- Reverse of migrations/0039_erp_postings.sql. The journals, invoices and bills already made stay in Finance (reverse or
--- void them there if wanted) and their records in erp_integration_events stay; only the chosen posting accounts and the
--- remembered intercompany contacts are lost, the custom fields' definitions (their values stay in the records) and sign-in challenges waiting for a code, the price source
--- noted on sales order lines
--- (two-factor enrolments stay in user_mfa).
+-- Reverse of migrations/0039_erp_postings.sql. Run only after a database copy. What stays: the journals, invoices and bills
+-- already made in Finance (reverse or void them there if wanted) and their records in erp_integration_events, the values
+-- of custom fields (in the records), two-factor enrolments (user_mfa), and quotations entered through the portal (as if a
+-- buyer had entered them). What is lost: the chosen posting accounts, the remembered intercompany contacts, the custom
+-- fields' definitions, sign-in challenges waiting for a code, the price source noted on sales order lines, and the supplier
+-- portal's people and acknowledgements.
+ALTER TABLE erp_quotations DROP COLUMN source;
+DROP TABLE IF EXISTS erp_po_acknowledgements;
+DROP INDEX IF EXISTS erp_supplier_portal_users_supplier;
+DROP INDEX IF EXISTS erp_supplier_portal_users_user;
+DROP TABLE IF EXISTS erp_supplier_portal_users;
 ALTER TABLE erp_so_lines DROP COLUMN price_note;
 DROP INDEX IF EXISTS login_challenges_user;
 DROP TABLE IF EXISTS login_challenges;
