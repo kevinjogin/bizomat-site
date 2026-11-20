@@ -209,7 +209,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Roles and access (with the access review, on screen and CSV), ERP roles, Security (the company's API tokens, revoked
   with a reason, never the owner's by an administrator; support access), Activity and Settings. Members, Departments,
   Activity and Settings are the company area's own pages and checks; `src/worker/company/admin-console.ts` adds the
-  overview, tokens and access review. Never switch the flag on without the owner's approval.
+  overview, tokens and access review. Never switch the flag on without the owner's approval. Released 20 Nov 2026 with
+  the flag off (kevinjogin/bizomat-site#97, deploy run 44), after the staging verification with it on in staging only.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
