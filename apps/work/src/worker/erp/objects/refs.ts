@@ -1,6 +1,7 @@
 // References from the modules framework's records to shared master records: people, departments, customers (the
 // company's one customer record: its CRM companies and the Finance customers they are billed as), suppliers, products,
-// warehouses, maintenance assets, Projects boards, ERP orders and shipments, and other framework records. Nothing is
+// warehouses, maintenance assets, Projects boards, ERP orders and shipments, Finance business workspaces (a legal entity's
+// books, which may be another company's: only those the person may read there), and other framework records. Nothing is
 // copied: a record keeps the id and the label it was given (erp_object_refs), and every new reference is checked to belong
 // to the same company, with the tool's own permissions where it has them (the CRM and Finance).
 
@@ -126,6 +127,16 @@ export async function lookup(db: D1Database, a: ErpAccess, user: User, kind: Ref
       }
       return out.slice(0, limit);
     }
+    case 'fin_workspace': {
+      // Finance business workspaces the person is a member of and may read the books of (Finance's own roles)
+      const rows = await db.prepare("SELECT o.id, o.name, o.currency FROM fin_orgs o JOIN fin_members m ON m.org_id = o.id AND m.user_id = ? WHERE o.kind = 'business' AND o.deleted_at IS NULL AND lower(o.name) LIKE ? ORDER BY o.name COLLATE NOCASE LIMIT 60").bind(user.id, like).all<{ id: string; name: string; currency: string }>();
+      const out: RefOption[] = [];
+      for (const r of rows.results) {
+        const fa = await maybeFin(db, r.id, user);
+        if (fa && finHasPerm(fa, 'accounting', 'view')) out.push({ id: r.id, label: r.name, sub: r.currency });
+      }
+      return out.slice(0, limit);
+    }
     default: {
       if (!kind.startsWith('obj:')) return [];
       const key = kind.slice(4);
@@ -221,6 +232,13 @@ export async function checkRef(db: D1Database, a: ErpAccess, user: User, kind: R
         }
       }
       return bad();
+    }
+    case 'fin_workspace': {
+      const r = await one("SELECT name FROM fin_orgs WHERE id = ? AND kind = 'business' AND deleted_at IS NULL", id);
+      if (!r) bad();
+      const fa = await maybeFin(db, id, user);
+      if (!fa || !finHasPerm(fa, 'accounting', 'view')) throw new HttpError(403, `${fieldLabel}: choose a Finance business workspace whose books you may read`);
+      return r.name;
     }
     default: {
       if (!kind.startsWith('obj:')) bad();

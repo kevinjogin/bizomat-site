@@ -14,6 +14,8 @@ import { OBJECT_BY_KEY, type ObjectDef } from '../../../shared/erp-objects';
 import { loadRow, objAccess, parseValue, relation, type Data, type Line, type RecordRow } from './engine';
 import { addDays, addMonths, depreciationSchedule, getObj, workingDays } from './hooks';
 import { draftInvoice } from './finance';
+import { postRecord, reverseRecord, type PostResult } from './postings';
+import { intercompanyDocuments } from './intercompany';
 import { linesOf, saveRecord, statusStmts, todayUtc, type User } from './store';
 
 export interface ActionResult {
@@ -265,7 +267,44 @@ const ACTIONS: Record<string, Action> = {
     const rows = depreciationSchedule(c.data);
     return { record: c.row, message: rows.length ? `${rows.length} months of depreciation` : 'Give the cost, useful life and acquisition date first', result: rows };
   },
+
+  // ---------------------------------------------------------------- postings to Finance's ledger (postings.ts)
+  'fa_asset.post': async (c) => posted(c, await postRecord(c, { upTo: upTo(c) }), 'month of depreciation'),
+  'rr_schedule.post': async (c) => posted(c, await postRecord(c, { upTo: upTo(c) }), 'earned month'),
+  'rr_schedule.defer': async (c) => posted(c, await postRecord(c, { part: 'deferral' }), 'deferral'),
+  'py_run.post': async (c) => posted(c, await postRecord(c), 'pay run'),
+  'fa_asset.unpost': async (c) => unposted(c),
+  'rr_schedule.unpost': async (c) => unposted(c),
+  'py_run.unpost': async (c) => unposted(c),
+
+  // ---------------------------------------------------------------- intercompany (intercompany.ts)
+  'ic_transaction.documents': async (c) => {
+    const db = c.env.DB;
+    const made = await intercompanyDocuments(c.env, c.a, c.user, c.row, c.data);
+    await db.batch(statusStmts(db, c.a, c.def, c.row, 'documented', `${c.def.label} ${c.row.number}: ${made.message}`, made.data));
+    return { record: await loadRow(db, c.a.companyId, c.def, c.row.id), message: made.message };
+  },
 };
+
+function upTo(c: Ctx): string {
+  const v = parseValue({ key: 'upTo', label: 'Post months up to', type: 'date' }, c.input.upTo);
+  if (!v) throw new HttpError(400, 'Give the date to post up to');
+  return v as string;
+}
+
+function posted(c: Ctx, r: PostResult, noun: string): ActionResult {
+  const parts = r.posted.reduce((s, p) => s + p.parts.length, 0);
+  if (!r.posted.length) return { record: c.row, message: r.skipped ? 'Already posted to Finance' : `Nothing to post: every ${noun} up to that date is posted` };
+  const plural = parts === 1 ? noun : noun === 'month of depreciation' ? 'months of depreciation' : `${noun}s`;
+  return { record: c.row, message: `${r.posted.length === 1 ? 'One journal' : `${r.posted.length} journals`} posted in ${r.workspace.name} (${parts} ${plural})`, result: r.posted.map((p) => ({ date: p.date, amount: p.amount, covers: p.parts.join(', ') })) };
+}
+
+async function unposted(c: Ctx): Promise<ActionResult> {
+  const reason = str(c.input.reason).trim().slice(0, 200);
+  if (!reason) throw new HttpError(400, 'Give the reason');
+  const r = await reverseRecord(c, reason);
+  return { record: c.row, message: r.reversed ? `${r.reversed === 1 ? 'One journal' : `${r.reversed} journals`} reversed in ${r.workspace.name}` : 'The journals were already reversed in Finance' };
+}
 
 export async function runAction(env: Env, a: ErpAccess, user: User, def: ObjectDef, id: string, key: string, input: Data, waitUntil?: (p: Promise<unknown>) => void): Promise<ActionResult> {
   const action = def.actions?.find((x) => x.key === key);

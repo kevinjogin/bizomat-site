@@ -20,6 +20,9 @@
 //   GET  /x/alerts, POST /x/alerts/read   the person's ERP alerts
 //   GET  /x/payslips                      the person's own payslips
 //   GET  /x/price                         the price check (price lists and promotions)
+//   GET|PUT /x/postings                   the accounts depreciation, pay runs and revenue post to in Finance
+//   POST /x/postings/run                  post every asset's depreciation or every schedule's earned revenue up to a date
+//   GET  /x/consolidation                 the group's consolidated profit and loss and balance sheet (CSV with format=csv)
 // Records are the company's only (404 otherwise); sensitive fields are left out for people who may not read them.
 
 import { Hono, type Context } from 'hono';
@@ -39,6 +42,8 @@ import { checkRef, lookup } from './refs';
 import { linesOf, removeRecord, saveRecord, takeStep, todayUtc, unarchiveRecord } from './store';
 import { runAction } from './actions';
 import { reportsOf, runReport } from './reports';
+import { consolidate } from './intercompany';
+import { KIND_LABELS, POSTING_OF, financeTarget, postRecord, postingSettings, postingsOf, savePostingSettings, type PostingKind } from './postings';
 
 export const objectRoutes = new Hono<AppEnv>();
 
@@ -388,7 +393,24 @@ async function detail(c: Context<AppEnv>, a: ErpAccess, def: ObjectDef, row: Rec
     comments: (comments.results as any[]).map((m) => ({ id: m.id, body: m.body, at: m.created_at, authorId: m.author_id, author: m.author ?? null })),
     history: await historyOf(db, a.companyId, { entityType: 'record', entityId: row.id }, 100),
     editableStatus: isEditable(def, row.status),
+    postings: POSTING_OF[def.key] ? await postingsDTO(db, a.companyId, def.key, row.id) : null,
   };
+}
+
+async function postingsDTO(db: D1Database, companyId: string, object: string, id: string) {
+  const list = await postingsOf(db, companyId, object, id);
+  const org = await db.prepare("SELECT target_org_id FROM erp_integration_events WHERE company_id = ? AND source_type = ? AND source_id = ? AND kind IN ('finance.journal', 'finance.reversed') ORDER BY created_at DESC LIMIT 1").bind(companyId, object, id).first<{ target_org_id: string }>();
+  // one row per journal (a catch-up journal covers several months, each its own key)
+  const byJournal = new Map<string, { number: number | null; date: string | null; amount: number; covers: string[]; reversed: boolean; reversalNumber: number | null }>();
+  for (const p of list) {
+    const label = p.part === 'whole' ? 'Pay run' : p.part === 'deferral' ? 'Moved to deferred revenue' : p.part;
+    const j = byJournal.get(p.journalId);
+    if (j) {
+      j.covers.unshift(label);
+      j.amount = Math.max(j.amount, p.amount);
+    } else byJournal.set(p.journalId, { number: p.number, date: p.date, amount: p.amount, covers: [label], reversed: p.reversed, reversalNumber: p.reversalNumber });
+  }
+  return { journals: [...byJournal.values()].map((j) => ({ ...j, covers: j.covers.sort().join(', ') })), url: org ? `/erp/finance/o/${org.target_org_id}/accounting/journals` : null };
 }
 
 async function visibleRow(c: Context<AppEnv>, a: ErpAccess, def: ObjectDef, id: string) {
@@ -527,7 +549,7 @@ objectRoutes.delete('/c/:company/x/files/:id', async (c) => {
 objectRoutes.get('/c/:company/x/lookup/:kind', async (c) => {
   const a = await enter(c);
   const kind = decodeURIComponent(c.req.param('kind')) as RefKind;
-  const known = ['user', 'customer', 'supplier', 'product', 'warehouse', 'asset', 'project', 'department', 'purchase_order', 'sales_order', 'mfg_order', 'shipment'];
+  const known = ['user', 'customer', 'supplier', 'product', 'warehouse', 'asset', 'project', 'department', 'purchase_order', 'sales_order', 'mfg_order', 'shipment', 'fin_workspace'];
   if (!known.includes(kind) && !(kind.startsWith('obj:') && OBJECT_BY_KEY[kind.slice(4)])) throw notFound('Lookup');
   const id = c.req.query('id');
   if (id) {
@@ -727,6 +749,83 @@ objectRoutes.get('/c/:company/x/price', async (c) => {
     if (!promo || off > promo.off) promo = { id: r.id, name: `${r.number} ${r.title}`, off };
   }
   return c.json({ product: { id: p.id, label: `${p.number} ${p.name}`, standardPrice: p.price_cents ?? null, currency: p.currency ?? 'AUD' }, quantity: qty, date, priceList: best, promotion: promo, unitPrice: unit - (promo?.off ?? 0), total: Math.round((unit - (promo?.off ?? 0)) * qty), note: 'A suggestion from the price lists and promotions in use; sales orders keep the prices they are given.' });
+});
+
+// ------------------------------------------------------------------ postings to Finance's ledger
+
+const POSTING_OBJECTS: Record<PostingKind, string> = { depreciation: 'fa_asset', payroll: 'py_run', revenue: 'rr_schedule' };
+
+/** Who sets the posting accounts: an ERP administrator or a finance controller (with the chart in Finance). */
+const postingEditor = (a: ErpAccess) => a.roles.includes('erp_admin') || a.roles.includes('finance_controller');
+
+async function enterPostings(c: Context<AppEnv>) {
+  const a = await enter(c);
+  const kinds = (Object.keys(POSTING_OBJECTS) as PostingKind[]).filter((k) => objAccess(a, OBJECT_BY_KEY[POSTING_OBJECTS[k]]).view);
+  if (!kinds.length && !postingEditor(a)) throw new HttpError(403, 'Your ERP roles include no records that post to Finance');
+  return a;
+}
+
+objectRoutes.get('/c/:company/x/postings', async (c) => {
+  const a = await enterPostings(c);
+  return c.json(await postingSettings(c.env, a, user(c), postingEditor(a)));
+});
+
+objectRoutes.put('/c/:company/x/postings', async (c) => {
+  const a = await enterPostings(c);
+  if (!postingEditor(a)) throw new HttpError(403, 'Only an ERP administrator or a finance controller chooses the posting accounts');
+  const input = await body(c, z.object({ accounts: z.record(z.string().max(40), z.string().max(64).nullable()) }));
+  return c.json(await savePostingSettings(c.env, a, user(c), input.accounts));
+});
+
+objectRoutes.post('/c/:company/x/postings/run', async (c) => {
+  const input = await body(c, z.object({ kind: z.enum(['depreciation', 'revenue']), upTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }));
+  const def = OBJECT_BY_KEY[POSTING_OBJECTS[input.kind]];
+  const a = await enter(c, def);
+  if (!objAccess(a, def).edit) throw new HttpError(403, `Your ERP roles do not let you post ${def.plural.toLowerCase()}`);
+  await rateLimit(c.env.DB, `erp-postings:${a.userId}`, 10, 60_000);
+  const db = c.env.DB;
+  const target = await financeTarget(c.env, a, user(c), 'journal');
+  const statuses = input.kind === 'depreciation' ? ['in_service', 'disposed', 'written_off'] : ['active', 'completed'];
+  const rows = await db
+    .prepare(`SELECT * FROM erp_objects WHERE company_id = ? AND object = ? AND archived_at IS NULL AND status IN (${statuses.map(() => '?').join(',')}) ORDER BY number LIMIT 200`)
+    .bind(a.companyId, def.key, ...statuses)
+    .all<RecordRow>();
+  let journals = 0;
+  let records = 0;
+  const problems: { number: string; title: string; message: string }[] = [];
+  for (const row of rows.results) {
+    try {
+      const r = await postRecord({ env: c.env, a, user: user(c), def, row, data: parseJson<Data>(row.data_json, {}) }, { upTo: input.upTo }, target);
+      if (r.posted.length) records++;
+      journals += r.posted.length;
+    } catch (e) {
+      if (!(e instanceof HttpError) || e.status >= 500) throw e;
+      problems.push({ number: row.number, title: row.title, message: e.message });
+    }
+  }
+  return c.json({ kind: input.kind, label: KIND_LABELS[input.kind], upTo: input.upTo, checked: rows.results.length, records, journals, problems, workspace: target.org, more: rows.results.length === 200 });
+});
+
+// ------------------------------------------------------------------ consolidation
+
+objectRoutes.get('/c/:company/x/consolidation', async (c) => {
+  const def = OBJECT_BY_KEY.ic_transaction;
+  const a = await enter(c, def);
+  if (!objAccess(a, def).view) throw new HttpError(403, 'Your ERP roles do not include consolidation');
+  await rateLimit(c.env.DB, `erp-consolidation:${a.userId}`, 30, 60_000);
+  const iso = /^\d{4}-\d{2}-\d{2}$/;
+  const today = todayUtc();
+  const to = iso.test(c.req.query('to') ?? '') ? c.req.query('to')! : today;
+  const from = iso.test(c.req.query('from') ?? '') ? c.req.query('from')! : `${to.slice(0, 4)}-01-01`;
+  if (from > to) throw new HttpError(400, 'The period ends before it starts');
+  const currency = /^[A-Z]{3}$/.test(c.req.query('currency') ?? '') ? c.req.query('currency')! : 'AUD';
+  const r = await consolidate(c.env, a, user(c), { from, to, currency });
+  if (wantsCsv(c)) {
+    const head = ['Statement', 'Type', 'Code', 'Account', ...r.entities.map((e) => `${e.name} (${currency})`), 'Eliminations', 'Consolidated'];
+    const body = [...r.profitAndLoss.map((x) => ['Profit and loss', x]), ...r.balanceSheet.map((x) => ['Balance sheet', x])].map(([st, x]: any) => [st, x.type, x.code, x.name, ...r.entities.map((e) => (x.amounts[e.id] ?? 0) / 100), x.eliminated / 100, x.total / 100]);
+    return csvResponse(`consolidation-${from}-to-${to}`, [head, ...body]);
+  }
+  return c.json(r);
 });
 
 export { objAccess };

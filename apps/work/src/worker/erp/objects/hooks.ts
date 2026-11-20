@@ -302,14 +302,21 @@ const COMPUTE: Record<string, Compute> = {
     if (!ctx.before) ctx.data.version = 1;
     order(ctx.data.effectiveDate, ctx.data.reviewDate, 'The review date is before the document takes effect');
   },
-  fa_asset: (ctx) => {
+  fa_asset: async (ctx) => {
     const d = ctx.data;
+    if (ctx.before && DEPRECIATION_INPUTS.some((k) => JSON.stringify(parseJson<Data>(ctx.before!.data_json, {})[k] ?? null) !== JSON.stringify(d[k] ?? null)) && (await postedParts(ctx.db, ctx.a.companyId, 'fa_asset', ctx.before.id)).length) {
+      badState('Depreciation of this asset is posted to Finance: reverse the Finance postings before changing its cost, life, method or dates');
+    }
     if (num(d.residualValue) > num(d.cost)) throw new HttpError(400, 'The residual value is more than the cost');
     order(d.acquisitionDate, d.disposalDate, 'The disposal is before the acquisition');
     const at = typeof d.disposalDate === 'string' ? d.disposalDate : ctx.today;
     d.accumulated = accumulatedAt(d, at);
     d.bookValue = num(d.cost) - num(d.accumulated);
     d.gainLoss = typeof d.disposalDate === 'string' ? num(d.disposalProceeds) - num(d.bookValue) : null;
+  },
+  ic_transaction: (ctx) => {
+    if (ctx.data.seller && ctx.data.seller === ctx.data.buyer) throw new HttpError(400, 'The seller and the buyer are the same entity');
+    if (!(num(ctx.data.amount) > 0)) throw new HttpError(400, 'Give the amount');
   },
   rr_schedule: (ctx) => {
     const d = ctx.data;
@@ -518,10 +525,29 @@ const BEFORE: Record<string, Before> = {
   im_match: (ctx) => {
     if (!(ctx.lines ?? []).length) badState('Load the order lines first');
   },
-  fa_asset: (ctx) => {
+  fa_asset: async (ctx) => {
     if (ctx.t.key === 'place' && !(num(ctx.data.cost) > 0)) badState('Give the asset’s cost');
+    if (ctx.t.key === 'dispose' || ctx.t.key === 'write_off') {
+      const from = str(ctx.data.disposalDate).slice(0, 7);
+      if ((await postedParts(ctx.db, ctx.a.companyId, 'fa_asset', ctx.row.id)).some((m) => m >= from)) badState('Depreciation is posted to Finance for the month of the disposal or later: reverse the Finance postings first, then post again after recording the disposal');
+    }
+  },
+  py_run: async (ctx) => {
+    if (ctx.t.key === 'reopen' && (await postedParts(ctx.db, ctx.a.companyId, 'py_run', ctx.row.id)).length) badState('This pay run is posted to Finance: reverse the Finance posting before taking it back to worked out');
+  },
+  rr_schedule: async (ctx) => {
+    if (ctx.t.key === 'cancel' && (await postedParts(ctx.db, ctx.a.companyId, 'rr_schedule', ctx.row.id)).length) badState('This schedule has journals in Finance: reverse the Finance postings before cancelling it');
   },
 };
+
+/** The fields a posted asset's depreciation follows. */
+const DEPRECIATION_INPUTS = ['cost', 'residualValue', 'usefulLifeMonths', 'method', 'dvRatePct', 'depreciationStart', 'acquisitionDate', 'currency'];
+
+/** The parts of a record posted to Finance and not reversed from here (months, 'whole', 'deferral'). */
+async function postedParts(db: D1Database, companyId: string, object: string, id: string): Promise<string[]> {
+  const rows = await db.prepare("SELECT idempotency_key AS k FROM erp_integration_events WHERE company_id = ? AND source_type = ? AND source_id = ? AND kind = 'finance.journal' AND status = 'done'").bind(companyId, object, id).all<{ k: string }>();
+  return rows.results.map((r) => r.k.split(':').slice(4).join(':'));
+}
 
 const AFTER: Record<string, After> = {
   cal_record: async (ctx) => {

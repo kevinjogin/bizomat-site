@@ -20,6 +20,8 @@ import { Comments, FileList, FilterPanel, History, Props, Section } from '../../
 import { Pager } from '../common';
 import { OBJECTS, type FieldDef } from '../../../../shared/erp-objects';
 import { FieldInput, RefPicker } from './fields';
+import { POSTING_KIND_OF_MODULE, PostingsTab, RecordPostings } from './Postings';
+import { ConsolidationTab } from './Consolidation';
 import { TONE_CLASS, favourites, modulePage, moneyText, noteRecent, recordPage, toggleFavourite, useModule, valueText, xHref, xPath, type Detail, type ObjectFull, type Rec, type ReportTable } from './api';
 
 export function StatusBadge({ statuses, value }: { statuses: { key: string; label: string; tone: string }[]; value: string }) {
@@ -76,6 +78,8 @@ export function ModuleArea({ companyId, companyName }: { companyId: string; comp
         {module === 'service' ? <NavLink to={`${base}/dispatch`} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="calendar" size={14} /> Dispatch board</NavLink> : null}
         {module === 'pricing' ? <NavLink to={`${base}/price`} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="search" size={14} /> Price check</NavLink> : null}
         {module === 'hr' || module === 'payroll' ? <NavLink to={`${base}/payslips`} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="dollar" size={14} /> My payslips</NavLink> : null}
+        {module === 'consolidation' ? <NavLink to={`${base}/consolidated`} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="layers" size={14} /> Consolidated report</NavLink> : null}
+        {POSTING_KIND_OF_MODULE[module] ? <NavLink to={`${base}/postings`} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="dollar" size={14} /> Finance postings</NavLink> : null}
         <NavLink to={`${base}/reports`} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="chart" size={14} /> Reports</NavLink>
       </nav>
       <Routes>
@@ -85,6 +89,8 @@ export function ModuleArea({ companyId, companyName }: { companyId: string; comp
         <Route path="dispatch" element={<DispatchBoard companyId={companyId} />} />
         <Route path="price" element={<PriceCheck companyId={companyId} />} />
         <Route path="payslips" element={<Payslips companyId={companyId} />} />
+        {module === 'consolidation' ? <Route path="consolidated" element={<ConsolidationTab companyId={companyId} />} /> : null}
+        {POSTING_KIND_OF_MODULE[module] ? <Route path="postings" element={<PostingsTab companyId={companyId} kind={POSTING_KIND_OF_MODULE[module]} />} /> : null}
         <Route path=":object" element={<ObjectList companyId={companyId} module={module} />} />
         <Route path=":object/new" element={<RecordEditor companyId={companyId} module={module} />} />
         <Route path=":object/:id/edit" element={<RecordEditor companyId={companyId} module={module} />} />
@@ -460,7 +466,7 @@ function RecordDetail({ companyId, module }: { companyId: string; module: string
   const [stepping, setStepping] = useState<Detail['steps'][number] | null>(null);
   const [acting, setActing] = useState<Detail['actions'][number] | null>(null);
   const [result, setResult] = useState<{ title: string; rows: Record<string, unknown>[] } | null>(null);
-  const [tab, setTab] = useState<'details' | 'lines' | 'related' | 'files' | 'comments' | 'history'>('details');
+  const [tab, setTab] = useState<'details' | 'lines' | 'finance' | 'related' | 'files' | 'comments' | 'history'>('details');
   const fileInput = useRef<HTMLInputElement>(null);
   usePageTitle(q.data ? `${q.data.record.number} ${q.data.record.title}` : 'Record');
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
@@ -569,9 +575,9 @@ function RecordDetail({ companyId, module }: { companyId: string; module: string
         {r.hidden.length ? <p className="muted small">Some fields are hidden: your roles do not include them.</p> : null}
       </div>
       <nav className="tabs crm-tabs" aria-label="Record sections">
-        {(['details', ...(d.lines ? ['lines'] : []), 'related', 'files', 'comments', 'history'] as const).map((t) => (
+        {(['details', ...(d.lines ? ['lines'] : []), ...(d.postings ? ['finance'] : []), 'related', 'files', 'comments', 'history'] as const).map((t) => (
           <button key={t} type="button" className={`tab${tab === t ? ' active' : ''}`} aria-pressed={tab === t} onClick={() => setTab(t as typeof tab)}>
-            {t === 'details' ? 'Details' : t === 'lines' ? (def.lines?.label ?? 'Lines') : t === 'related' ? `Related (${d.related.length})` : t === 'files' ? `Files (${d.files.length})` : t === 'comments' ? `Comments (${d.comments.length})` : 'History'}
+            {t === 'details' ? 'Details' : t === 'lines' ? (def.lines?.label ?? 'Lines') : t === 'finance' ? `Finance (${d.postings?.journals.filter((j) => !j.reversed).length ?? 0})` : t === 'related' ? `Related (${d.related.length})` : t === 'files' ? `Files (${d.files.length})` : t === 'comments' ? `Comments (${d.comments.length})` : 'History'}
           </button>
         ))}
       </nav>
@@ -588,6 +594,7 @@ function RecordDetail({ companyId, module }: { companyId: string; module: string
           ) : <p className="muted small">No {def.lines.label.toLowerCase()} yet.</p>}
         </Section>
       ) : null}
+      {tab === 'finance' && d.postings ? <Section title="Journals in Finance"><RecordPostings postings={d.postings} currency={r.currency ?? 'AUD'} /></Section> : null}
       {tab === 'related' ? (
         <Section title="Related records">
           {d.related.length ? (

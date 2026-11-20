@@ -32,7 +32,7 @@ export type FieldType =
  * customers (the company's CRM companies), suppliers (ERP supplier master), products (ERP product master), warehouses,
  * maintenance assets, Projects boards, departments, and other records of this framework (`obj:<object key>`).
  */
-export type RefKind = 'user' | 'customer' | 'supplier' | 'product' | 'warehouse' | 'asset' | 'project' | 'department' | 'purchase_order' | 'sales_order' | 'mfg_order' | 'shipment' | `obj:${string}`;
+export type RefKind = 'user' | 'customer' | 'supplier' | 'product' | 'warehouse' | 'asset' | 'project' | 'department' | 'purchase_order' | 'sales_order' | 'mfg_order' | 'shipment' | 'fin_workspace' | `obj:${string}`;
 
 export interface FieldDef {
   key: string;
