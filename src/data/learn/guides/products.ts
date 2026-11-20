@@ -1,16 +1,16 @@
 import type { Guide } from '../types.ts';
 
-// Products and Engineering (ERP Release 1, with Release 2's stock in the bill of materials). Labels are the client's
+// Product Management, with Engineering's Design (engineering changes and documents) (ERP Release 1, with Release 2's stock in the bill of materials). Labels are the client's
 // own words: apps/work/src/client/system/erp/Products.tsx, Changes.tsx, Documents.tsx; rules from
 // apps/work/src/worker/erp/access.ts, changes.ts, engineering.ts and documents.ts.
 const guide: Guide = {
   id: 'products',
   section: 'modules',
-  title: 'Products and Engineering',
+  title: 'Product Management',
   short: 'Products',
   status: 'live',
   what:
-    'Products and Engineering is the company’s product master: every product, part and material, with its variants, revisions, bills of materials, engineering changes and documents. A released revision is locked, so a change always goes through a change order.',
+    'Product Management is the company’s product master: every product, part and material, with its variants, revisions and bills of materials; their engineering changes and documents are in Engineering, under Design. A released revision is locked, so a change always goes through a change order.',
   purpose: [
     'Keep one numbered record for each product, part, material and service.',
     'Build multi-level bills of materials and see the material cost of one.',
@@ -27,10 +27,10 @@ const guide: Guide = {
     'Executives and viewers, who read everything without changing it.',
   ],
   access: {
-    path: ['BIZOMAT ERP', 'Products and Engineering'],
+    path: ['BIZOMAT ERP', 'Product Management'],
     href: 'https://bizomat.ai/erp/products',
-    label: 'Open Products and Engineering',
-    note: 'The module rail opens it in the company you used last. Its tabs are Products, Changes, Documents and CAD Automation; the company’s side menu lists it too.',
+    label: 'Open Product Management',
+    note: 'The module rail opens it in the company you used last; its side menu lists Products. Engineering changes, documents and CAD Automation are in Engineering, under Design and CAD Automation.',
   },
   tutorials: [
     {
@@ -40,8 +40,8 @@ const guide: Guide = {
       needs: 'Engineer, engineering approver or ERP administrator.',
       steps: [
         {
-          title: 'Open Products and Engineering',
-          body: 'Choose Products and Engineering in the module rail. The Products tab lists the company’s products with search, filters and a CSV export, and counts above the list show products without a released revision and change orders waiting.',
+          title: 'Open Product Management',
+          body: 'Choose Product Management in the module rail. Products lists the company’s products with search, filters and a CSV export, and counts above the list show products without a released revision and change orders waiting.',
           where: 'Products',
         },
         {
@@ -106,7 +106,7 @@ const guide: Guide = {
         },
         {
           title: 'Approve the change order',
-          body: 'An engineering approver who did not draft it opens it from the Changes tab and chooses Approve, with an optional note.',
+          body: 'An engineering approver who did not draft it opens it from Engineering changes (Engineering, under Design) and chooses Approve, with an optional note.',
           where: 'Approve',
         },
         {
@@ -148,7 +148,7 @@ const guide: Guide = {
       steps: [
         {
           title: 'Choose New document',
-          body: 'Open the Documents tab and choose New document, or choose Add a document on a product’s Documents tab.',
+          body: 'In Engineering, open Documents under Design and choose New document, or choose Add a document on a product’s Documents tab.',
           where: 'New document',
         },
         {
@@ -236,7 +236,7 @@ const guide: Guide = {
     },
     {
       q: 'It says I do not have access to products and engineering. Why?',
-      a: 'People who only share a tool with a company do not see its ERP modules; only its members do. If the message says Products and Engineering is switched off for this company, a platform administrator has turned the module off, and BIZOMAT support can help (see /learn/trouble-access/).',
+      a: 'People who only share a tool with a company do not see its ERP modules; only its members do. If the message says products and design are switched off for this company, a platform administrator has turned the module off, and BIZOMAT support can help (see /learn/trouble-access/).',
     },
     {
       q: 'How do I export products or a bill of materials?',

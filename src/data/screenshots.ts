@@ -12,7 +12,7 @@ const ALL: readonly Screenshot[] = [
   { src: '/proof-of-work/product/erp-dashboard.webp', product: 'erp', title: 'BIZOMAT ERP: Dashboard', caption: 'Your company and every tool in it, with the figures your role may see. The module rail is on the left.' },
   { src: '/proof-of-work/product/erp-crm.webp', product: 'erp', title: 'BIZOMAT ERP: Sales and CRM', caption: 'The CRM opens inside the ERP: the same records and permissions, with the module rail beside it.' },
   { src: '/proof-of-work/product/erp-finance.webp', product: 'erp', title: 'BIZOMAT ERP: Finance and Accounting', caption: 'Finance opens inside the ERP, in the company\'s business workspace.' },
-  { src: '/proof-of-work/product/erp-projects.webp', product: 'erp', title: 'BIZOMAT ERP: Projects and Tasks', caption: 'A project board inside the ERP: groups, owners, statuses and dates.' },
+  { src: '/proof-of-work/product/erp-projects.webp', product: 'erp', title: 'BIZOMAT ERP: Project Management', caption: 'A project board inside the ERP: groups, owners, statuses and dates.' },
   { src: '/proof-of-work/product/erp-engineering.webp', product: 'erp', title: 'BIZOMAT ERP: Products and Engineering', caption: 'CAD Automation\'s set-up steps and the computers this person may see.' },
   { src: '/proof-of-work/product/erp-operations.webp', product: 'erp', title: 'BIZOMAT ERP: Operations', caption: 'What waits for approval, receiving, production, inspection, shipping or returns, then the operations modules with their status: Procurement, Inventory, Manufacturing, Quality and Supply Chain live.' },
   // ERP Release 2, captured 15 Nov 2026 from a local instance with the example company's invented data.

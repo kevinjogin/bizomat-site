@@ -155,7 +155,7 @@ const guide: Guide = {
           where: "Reopen",
         },
       ],
-      after: "In a registered company that runs Finance or Projects and Tasks, the deal's Across panel can start a quote, a draft invoice or a project (see the workflows below).",
+      after: "In a registered company that runs Finance or Project Management, the deal's Across panel can start a quote, a draft invoice or a project (see the workflows below).",
     },
     {
       id: "activities",
@@ -185,7 +185,7 @@ const guide: Guide = {
         },
         {
           title: "Send it elsewhere",
-          body: "An activity's menu has Add to my calendar (.ics), and Create a project task, which puts it in a Projects and Tasks project you choose, with a link back to the CRM.",
+          body: "An activity's menu has Add to my calendar (.ics), and Create a project task, which puts it in a Project Management project you choose, with a link back to the CRM.",
           where: "Create a project task",
         },
       ],
@@ -287,8 +287,8 @@ const guide: Guide = {
     },
     {
       label: "Start a quote / Make a draft invoice / Start a project",
-      does: "On a deal, in the Across panel named after your company: a draft quote in Finance, a draft invoice once the deal is won, or a project board in Projects and Tasks.",
-      when: "When the CRM organisation belongs to a registered company that also runs Finance or Projects and Tasks.",
+      does: "On a deal, in the Across panel named after your company: a draft quote in Finance, a draft invoice once the deal is won, or a project board in Project Management.",
+      when: "When the CRM organisation belongs to a registered company that also runs Finance or Project Management.",
       after: "The new record opens in its tool and its link stays on the deal.",
     },
     {
@@ -323,7 +323,7 @@ const guide: Guide = {
     },
     {
       q: "Why don't I see Start a quote, Make a draft invoice or Start a project on a deal?",
-      a: "The Across panel appears only when the CRM organisation belongs to a registered company that also runs Finance or Projects and Tasks. A quote or invoice also needs a company on the deal, the same currency as Finance and a Finance role that may create sales records; an invoice needs the deal to be won and is made once per deal; a project needs a Projects and Tasks role of Member or above and is made once per deal. (see /learn/companies/)",
+      a: "The Across panel appears only when the CRM organisation belongs to a registered company that also runs Finance or Project Management. A quote or invoice also needs a company on the deal, the same currency as Finance and a Finance role that may create sales records; an invoice needs the deal to be won and is made once per deal; a project needs a Project Management role of Member or above and is made once per deal. (see /learn/companies/)",
     },
     {
       q: "Does the CRM send emails to my customers?",

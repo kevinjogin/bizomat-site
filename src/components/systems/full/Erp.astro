@@ -10,7 +10,7 @@
 // manufacturing (apps/work/test/erp-r3.test.ts), Release 4 part A, quality (apps/work/test/erp-r4-quality.test.ts) and
 // part B, Maintenance stages M2 and M3 (apps/work/test/maintenance-m2-m3.test.ts), and Release 5 part A, supply chain
 // (apps/work/test/erp-r5-supply-chain.test.ts; live once deployed). CAD computers in the ERP wait for CAD Automation's
-// reports (in development). Screens are real (src/data/screenshots.ts); the Operations screen shows what is live
+// reports (in development). Screens are real (src/data/screenshots.ts); each module shows what is live
 // (Procurement, Inventory, Manufacturing, Quality, Supply Chain, Maintenance) and what is planned within them.
 // The capability matrix renders src/data/erp-capabilities.ts (ERP_DOMAINS) when that file exists.
 import Container from '../../../components/Container.astro';
@@ -53,7 +53,7 @@ const does = [
   { t: 'One sign-in', st: 'live', x: 'Your BIZOMAT account opens the ERP and every module in it. Signing in once is enough.' },
   { t: 'Work by company', st: 'live', x: 'The company switcher holds your registered companies, your own company and the companies that shared a tool with you.' },
   { t: 'A dashboard for the company', st: 'connected', x: "Each of the company's tools on one screen, with the figures your role in that tool may see." },
-  { t: 'Every tool in one place', st: 'live', x: 'Sales and CRM, Finance and Accounting and Projects and Tasks open inside the ERP, with the module rail beside them.' },
+  { t: 'Every tool in one place', st: 'live', x: 'Sales and CRM, Finance and Accounting and Project Management open inside the ERP, with the module rail beside them.' },
   { t: 'Reports in one place', st: 'live', x: "Every report of the company's tools, each opening in its module with that module's permissions." },
   { t: 'Company administration', st: 'live', x: 'Company, people, departments, tool roles and settings, managed once for every tool.' },
 ] as const;
@@ -78,8 +78,8 @@ const problems: { p: string; a: string; st: FeatureStatus }[] = [
 const teams: { team: string; where: string; st: FeatureStatus }[] = [
   { team: 'Sales and account management', where: 'Sales and CRM', st: 'live' },
   { team: 'Finance and bookkeeping', where: 'Finance and Accounting', st: 'live' },
-  { team: 'Project and operations teams', where: 'Projects and Tasks, and My Work', st: 'live' },
-  { team: 'Engineering and design', where: 'Products and Engineering, and the CAD Automation application', st: 'live' },
+  { team: 'Project and operations teams', where: 'Project Management, with My Work', st: 'live' },
+  { team: 'Engineering and design', where: 'Product Management and Engineering, with CAD Automation', st: 'live' },
   { team: 'Owners and managers', where: "Dashboard and Reports, with each tool's figures", st: 'connected' },
   { team: 'Administration', where: 'Administration: company, people, departments and tool roles', st: 'live' },
   { team: 'Maintenance teams and technicians', where: 'Maintenance: assets, work orders, preventive maintenance, prestart checks and reliability', st: 'live' },
@@ -93,7 +93,7 @@ const teams: { team: string; where: string; st: FeatureStatus }[] = [
 // A department is made once and appears in every tool the company runs (docs/company/README.md).
 const departments = [
   { t: 'Made once, in Administration', st: 'live', x: 'Create a department, choose its head, and place it under another department if you like, to any depth.' },
-  { t: 'A team in Projects and Tasks', st: 'connected', x: 'The same people, ready to assign work to and to filter by.' },
+  { t: 'A team in Project Management', st: 'connected', x: 'The same people, ready to assign work to and to filter by.' },
   { t: 'A team in Sales and CRM', st: 'connected', x: "Led by the department's head. The CRM's dashboard and reports can be filtered by team." },
   { t: 'A department in Finance tracking', st: 'connected', x: 'Tag income and costs to it, and set budgets by department.' },
   { t: 'Totals on the company overview', st: 'connected', x: "Open tasks, open deals and income for each department, from every tool. A department's head sees that department's figures." },
@@ -101,7 +101,7 @@ const departments = [
 
 // The complete business lifecycle, in order, with what serves each stage today.
 const lifecycle: { name: string; serves: string; items: { t: string; st: FeatureStatus }[] }[] = [
-  { name: 'Product development', serves: 'BIZOMAT ERP Products and Engineering; BIZOMAT Engineering Automation', items: [{ t: 'CAD Automation in SOLIDWORKS', st: 'live' }, { t: 'Product records, revisions, changes and bills of materials', st: 'live' }] },
+  { name: 'Product development', serves: 'BIZOMAT ERP Product Management and Engineering; BIZOMAT Engineering Automation', items: [{ t: 'CAD Automation in SOLIDWORKS', st: 'live' }, { t: 'Product records, revisions, changes and bills of materials', st: 'live' }] },
   { name: 'Sales', serves: 'BIZOMAT CRM', items: [{ t: 'Leads, deals and follow-ups', st: 'live' }, { t: 'Quotes in Finance from a deal', st: 'connected' }] },
   { name: 'Procurement', serves: 'BIZOMAT ERP Procurement; Finance', items: [{ t: 'Suppliers with approval, linked to Finance', st: 'live' }, { t: 'Requisitions, quotations, purchase orders and receiving', st: 'live' }, { t: 'A draft bill in Finance from each receipt', st: 'connected' }] },
   { name: 'Inventory', serves: 'BIZOMAT ERP Inventory', items: [{ t: 'Stock on hand, movements, counts and valuation', st: 'live' }, { t: 'Stock value posted to Finance', st: 'planned' }] },
@@ -157,7 +157,7 @@ const features: { t: string; st: FeatureStatus; x: string; today?: string; items
   { t: 'Maintenance (asset management)', st: 'live', x: 'A maintenance management system (CMMS) inside the ERP, with its own module in the rail, called Maintenance. Assets, requests, work orders, preventive maintenance, readings, inspections, prestart checks, parts and reliability reports work today; AI scheduling and offline work are planned.', items: [...MAINT_LIVE.map((t) => ({ t, st: 'live' as const })), ...MAINT_PLANNED.map((t) => ({ t, st: 'planned' as const }))] },
   {
     t: 'Reports', st: 'live',
-    x: `Sales and CRM reports (${CRM.reports.length} of them), Finance and Accounting reports (${FINANCE.reports.length}, including the GST and BAS worksheet) and Projects and Tasks dashboards, gathered on one page. Each opens in its module, with that module's permissions.`,
+    x: `Sales and CRM reports (${CRM.reports.length} of them), Finance and Accounting reports (${FINANCE.reports.length}, including the GST and BAS worksheet) and Project Management dashboards, gathered on one page. Each opens in its module, with that module's permissions.`,
     items: [{ t: "Every tool's reports in one place", st: 'live' }, { t: 'Company performance and operational reports across modules', st: 'planned' }],
   },
   {
@@ -169,28 +169,27 @@ const features: { t: string; st: FeatureStatus; x: string; today?: string; items
 
 // Working and planned modules, one row each.
 const modules: { m: string; st: FeatureStatus; today: string }[] = [
-  { m: 'Dashboard', st: 'connected', today: "Each of the company's tools with the figures your role may see." },
-  { m: 'My Work', st: 'live', today: 'Opens everything assigned to you in Projects and Tasks.' },
+  { m: 'Dashboard', st: 'connected', today: "Every module's progress for the company, with the figures your role may see." },
   { m: 'Sales and CRM', st: 'live', today: 'Customers, leads, deals, activities, reports and automations.' },
   { m: 'Finance and Accounting', st: 'live', today: 'Ledger, quotes, invoices, bills, statements, budgets, reports and the GST worksheet.' },
-  { m: 'Projects and Tasks', st: 'live', today: `Boards, ${WORK.views.length} views, documents, dashboards and automations.` },
-  { m: 'Products and Engineering: CAD set-up', st: 'live', today: 'The set-up steps, with links into CAD Automation.' },
-  { m: "Products and Engineering: the company's computers", st: 'in-development', today: 'Shown once CAD Automation reports to the ERP. Until then the page says so and links to CAD Automation.' },
+  { m: 'Project Management', st: 'live', today: `My Work, boards, ${WORK.views.length} views, documents, dashboards and automations.` },
+  { m: 'Engineering: CAD Automation set-up', st: 'live', today: 'The set-up steps, with links into CAD Automation.' },
+  { m: "Engineering: CAD Automation's screens inside the ERP", st: 'in-development', today: 'Computers, AI assistants, history, exports, tools and your own keys, inside the ERP, once CAD Automation is switched on in the ERP for the company.' },
   { m: 'CAD Automation: sign in with your BIZOMAT account', st: 'live', today: 'The same account: CAD Automation\'s page offers Continue with BIZOMAT.' },
   { m: 'Reports', st: 'live', today: "Every tool's reports in one place." },
   { m: 'Administration', st: 'live', today: 'Company, people, departments, tool roles and settings.' },
   { m: 'Links between tools', st: 'connected', today: 'Deal to quote and draft invoice, deal to project, project costs, and a CRM company as a Finance customer.' },
-  { m: 'Products and Engineering: products and bills of materials', st: 'live', today: 'Products and variants, multi-level bills of materials, where-used, revision comparison and cost roll-up, with CSV exports.' },
-  { m: 'Products and Engineering: revisions and changes', st: 'live', today: 'Change requests and change orders, approved and released by an engineering approver who did not draft them.' },
-  { m: 'Products and Engineering: documents', st: 'live', today: 'Versions of drawings, models and specifications, as files or as references to CAD files on your own computer.' },
+  { m: 'Product Management: products and bills of materials', st: 'live', today: 'Products and variants, multi-level bills of materials, where-used, revision comparison and cost roll-up, with CSV exports.' },
+  { m: 'Engineering: revisions and changes', st: 'live', today: 'Change requests and change orders, approved and released by an engineering approver who did not draft them.' },
+  { m: 'Engineering: documents', st: 'live', today: 'Versions of drawings, models and specifications, as files or as references to CAD files on your own computer.' },
   { m: 'Procurement: suppliers', st: 'live', today: 'The supplier master with approval, contacts, documents, the products each supplies, performance from receipts and the link to Finance.' },
   { m: 'Procurement: requisitions, quotations, purchase orders and receiving', st: 'live', today: 'Requisitions with approval, requests for quotation with a comparison, purchase orders with approval limits and amendments, goods receipts, and one draft bill in Finance per receipt. Orders and requests are downloaded and sent from your own email.' },
-  { m: 'Inventory and Warehouse', st: 'live', today: 'Warehouses and locations, stock by lot and serial, movements, reservations, returns, adjustments, counts, valuation, traceability, QR labels and a warehouse screen for phones. Stock value is not posted to Finance yet.' },
-  { m: 'Manufacturing', st: 'live', today: 'Work centres, routings, manufacturing orders with materials, operations, time and output, the shop floor, the master production schedule, MRP, capacity and job costing. Production value is not posted to Finance yet.' },
-  { m: 'Quality', st: 'live', today: 'Inspection plans, inspections of receipts, operations, finished goods and suppliers, quarantine and release, nonconformances with their disposition, corrective and preventive actions, and seven reports.' },
+  { m: 'Warehouse: stock', st: 'live', today: 'Warehouses and locations, stock by lot and serial, movements, reservations, returns, adjustments, counts, valuation, traceability, QR labels and a warehouse screen for phones. Stock value is not posted to Finance yet.' },
+  { m: 'Engineering: manufacturing', st: 'live', today: 'Work centres, routings, manufacturing orders with materials, operations, time and output, the shop floor, the master production schedule, MRP, capacity and job costing. Production value is not posted to Finance yet.' },
+  { m: 'Engineering: quality', st: 'live', today: 'Inspection plans, inspections of receipts, operations, finished goods and suppliers, quarantine and release, nonconformances with their disposition, corrective and preventive actions, and seven reports.' },
   { m: 'Maintenance: assets, work orders, preventive maintenance and reliability', st: 'live', today: 'The asset register in sites, requests with approval, work orders with parts and labour costs, preventive maintenance by time, meter or condition, readings, inspections, prestart checks, QR labels and the reliability reports.' },
   { m: 'Maintenance: AI scheduling and offline work', st: 'planned', today: 'Not available. An AI scheduling assistant that only proposes, workload planning and offline field work.' },
-  { m: 'Supply Chain', st: 'live', today: 'Sales orders, allocation, make to order, picking, packing, dispatch, delivery confirmation, carriers, the delivery schedule, returns, and the draft invoice and credit note in Finance. Stock value is not posted to Finance yet.' },
+  { m: 'Warehouse: orders and dispatch', st: 'live', today: 'Sales orders, allocation, make to order, picking, packing, dispatch, delivery confirmation, carriers, the delivery schedule, returns, and the draft invoice and credit note in Finance. Stock value is not posted to Finance yet.' },
   { m: 'Search across every module', st: 'planned', today: 'Not available. Each tool has its own search.' },
   { m: 'Executive dashboards across modules', st: 'planned', today: "Not available beyond today's company dashboard." },
 ];
@@ -199,21 +198,22 @@ const modules: { m: string; st: FeatureStatus; today: string }[] = [
 const dashboardParts = [
   { t: 'The company switcher', st: 'live', x: 'At the top. Your companies first, then "Shared with you". Register a company starts a new one.' },
   { t: "The company's kind and your role", st: 'live', x: 'Under its name: a registered company with your role, your own company (not registered), or shared with you, with only the tools you were added to.' },
-  { t: 'A card for each tool', st: 'connected', x: "Its name, your role and Open. Projects: open tasks, overdue, due in 7 days, projects. CRM: open deals, pipeline, won in 30 days, follow-ups due. Finance: income, expenses, owed to you and you owe, this financial year from posted entries. A role that may not see the figures sees a note instead." },
-  { t: 'The Products and Engineering, Procurement, Inventory, Manufacturing and Quality cards', st: 'live', x: 'Open the product master, purchasing, stock, production and quality. CAD Automation\'s set-up steps are a tab of Products and Engineering, with the computers once CAD Automation reports.' },
-  { t: 'People and the rail', st: 'live', x: 'How many people are in the company. The module rail sits at the left (along the bottom on a phone); the side menu lists the company\'s tools.' },
+  { t: 'A card for each module', st: 'connected', x: "In the order of the module rail, each with Open. Project Management: open tasks, overdue, due in 7 days, projects. CRM: open deals, pipeline, won in 30 days, follow-ups due. Finance: income, expenses, owed to you and you owe, this financial year from posted entries. A role that may not see the figures sees a note instead." },
+  { t: 'The Product Management, Engineering, Procurement, Warehouse and Maintenance cards', st: 'live', x: 'Their progress: products without a released revision, change orders to approve, orders in production and late, nonconformances, requisitions and purchase orders to approve, stock value and products to reorder, orders to allocate and ship, open and overdue work orders. Health and Safety shows its own counts.' },
+  { t: 'People and the rail', st: 'live', x: 'How many people are in the company. The module rail sits at the left (along the bottom on a phone); each module has its own side menu with only its sections.' },
 ] as const;
 
 // Screen by screen, in the order of the module rail.
 const walk: { t: string; st: FeatureStatus; x: string }[] = [
-  { t: 'Dashboard', st: 'connected', x: "Opens on the company you used last. See its tools and figures, and open any of them." },
-  { t: 'My Work', st: 'live', x: 'Opens My Work in Projects and Tasks, for the workspace you used last: everything assigned to you.' },
+  { t: 'Dashboard', st: 'connected', x: "Opens on the company you used last. See every module's progress, and open any of them." },
+  { t: 'Project Management', st: 'live', x: 'Projects inside the ERP: My Work (everything assigned to you), boards, views, documents, dashboards and automations.' },
   { t: 'Sales and CRM', st: 'live', x: 'The CRM, inside the ERP: the same records, roles and settings. When the company runs Finance or Projects too, a deal shows what it is linked to there.' },
   { t: 'Finance and Accounting', st: 'live', x: "Finance, inside the ERP, in the company's business workspace: transactions, quotes, invoices, bills, banking, budgets and reports." },
-  { t: 'Projects and Tasks', st: 'live', x: 'Project Management, inside the ERP: boards, views, documents, dashboards and automations.' },
-  { t: 'Products and Engineering', st: 'live', x: "Products, Changes, Documents and CAD Automation. A product opens on its details, bill of materials (structure, every level, cost roll-up), revisions with comparison, where used, documents, suppliers and history. The CAD Automation tab has its set-up steps and the computers you may see; computers are listed once CAD Automation reports (in development)." },
+  { t: 'Product Management', st: 'live', x: "Products and variants. A product opens on its details, bill of materials (structure, every level, cost roll-up), revisions with comparison, where used, documents, suppliers and history." },
+  { t: 'Engineering', st: 'live', x: "Its side menu groups Design (engineering changes and documents), CAD Automation (its set-up steps; its full screens once it is switched on in the ERP for the company), Manufacturing (orders, shop floor, planning, work centres, routings) and Quality (inspections, nonconformances, corrective actions, inspection plans)." },
+  { t: 'Procurement', st: 'live', x: 'Suppliers, requisitions, quotations, purchase orders and receipts, with one draft bill in Finance per receipt.' },
+  { t: 'Warehouse', st: 'live', x: 'Stock (warehouses, movements, adjustments, counts, valuation and the warehouse screen) and Orders and dispatch (sales orders, pick and dispatch, shipments, the delivery schedule, returns and carriers).' },
   { t: 'Maintenance', st: 'live', x: 'Overview, Assets, Requests, Work orders, Preventive, Checklists, Prestart, Scan, Reports and Settings for the company. Register assets in a hierarchy and in sites, raise and approve requests, plan preventive work, record the work with parts and labour, and see reliability. "Report a fault", at the foot of the rail, raises a request from any screen.' },
-  { t: 'Operations', st: 'live', x: 'The operations hub: what waits for you (approvals, orders to receive, products to reorder, adjustments and counts, manufacturing orders to release or close, inspections, MRP suggestions, nonconformances and corrective actions), then Procurement, Inventory, Manufacturing, Quality, Supply Chain and Products and Engineering records, beside what of Maintenance works today. What is not built within them is labelled Planned.' },
   { t: 'Reports', st: 'live', x: "A card for each tool's reports. Each opens in its module, with that module's permissions." },
   { t: 'Administration', st: 'live', x: "Company overview, people and roles, departments, tools and company settings; each tool's team and settings; your profile. Platform administrators also see the ERP console." },
 ];
@@ -224,7 +224,7 @@ const steps = [
   { t: 'Choose or register a company', x: 'Your own company is ready. To work as a business, choose Register a company in the switcher: a business with its ABN, or yourself in your own name.' },
   { t: 'Set up departments', x: 'In Administration, open Departments, choose New department and pick its head. It appears in every tool.' },
   { t: 'Invite your people', x: 'In People, invite each person with a company role, a role in each tool and their departments.' },
-  { t: 'Open a module', x: 'Choose Sales and CRM, Finance and Accounting or Projects and Tasks in the rail and add your first record.' },
+  { t: 'Open a module', x: 'Choose Sales and CRM, Finance and Accounting or Project Management in the rail and add your first record.' },
 ];
 
 const flows: { t: string; path: string[]; x: string; st: FeatureStatus }[] = [
@@ -236,7 +236,7 @@ const flows: { t: string; path: string[]; x: string; st: FeatureStatus }[] = [
   {
     t: 'Deal to project, with its costs', st: 'connected',
     path: ['Deal in the CRM', 'Start a project', 'Tasks on the board', 'Track in Finance', 'Costs against budget'],
-    x: "Start a project makes a board named after the deal in the company's Projects and Tasks. In the company area, give the project a Finance tracking project and a budget: income and costs posted to it show against the budget, all time and this financial year.",
+    x: "Start a project makes a board named after the deal in the company's Project Management. In the company area, give the project a Finance tracking project and a budget: income and costs posted to it show against the budget, all time and this financial year.",
   },
   {
     t: 'A company with departments and roles', st: 'live',
@@ -248,8 +248,8 @@ const flows: { t: string; path: string[]; x: string; st: FeatureStatus }[] = [
 const integrations: { name: string; url: string; items: { t: string; st: FeatureStatus }[] }[] = [
   { name: 'BIZOMAT CRM', url: '/systems/#crm', items: [{ t: 'Opens inside the ERP as Sales and CRM', st: 'live' }, { t: 'Deals start quotes, draft invoices and projects', st: 'connected' }, { t: 'A CRM company as a Finance customer', st: 'connected' }] },
   { name: 'BIZOMAT Finance', url: '/systems/#finance', items: [{ t: 'Opens inside the ERP as Finance and Accounting', st: 'live' }, { t: 'Project costs and budgets', st: 'connected' }, { t: 'Departments in tracking', st: 'connected' }] },
-  { name: 'BIZOMAT Projects', url: '/systems/#projects', items: [{ t: 'Opens inside the ERP as Projects and Tasks', st: 'live' }, { t: 'My Work in the rail', st: 'live' }, { t: 'Projects from CRM deals, tasks from CRM activities', st: 'connected' }] },
-  { name: 'BIZOMAT Engineering Automation', url: '/systems/#engineering', items: [{ t: 'Set-up steps in Products and Engineering', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in with your BIZOMAT account', st: 'in-development' }] },
+  { name: 'BIZOMAT Projects', url: '/systems/#projects', items: [{ t: 'Opens inside the ERP as Project Management', st: 'live' }, { t: 'My Work in Project Management', st: 'live' }, { t: 'Projects from CRM deals, tasks from CRM activities', st: 'connected' }] },
+  { name: 'BIZOMAT Engineering Automation', url: '/systems/#engineering', items: [{ t: 'Set-up steps in Engineering', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in with your BIZOMAT account', st: 'in-development' }] },
   { name: 'BIZOMAT Manufacturing and Operations', url: '/systems/#manufacturing', items: [{ t: 'Maintenance: assets, work orders, preventive maintenance and reliability', st: 'live' }, { t: 'Procurement: suppliers, purchasing and receiving', st: 'live' }, { t: 'Inventory: stock, counts and valuation', st: 'live' }, { t: 'Manufacturing: production orders, MRP and job costing', st: 'live' }, { t: 'Quality: inspections, nonconformances and corrective actions', st: 'live' }, { t: 'Supply chain: sales orders, shipments, deliveries and returns', st: 'live' }] },
   { name: 'BIZOMAT WHS', url: '/systems/#whs', items: [{ t: 'Opens inside the ERP as Health and Safety', st: 'live' }, { t: 'Hazards, risk assessments, incidents, investigations and actions', st: 'live' }, { t: 'Sites and assets from Maintenance', st: 'connected' }, { t: 'Inspections, permits, contractors and training', st: 'planned' }] },
 ];
@@ -478,7 +478,7 @@ const schema = [
         <div class="pp-head">
           <p class="bz-eyebrow">What it looks like</p>
           <h2 id="erp-screens-title">The real product</h2>
-          <p>Captured from the running application with a fictional company and example data. The Operations screen shows each operations module with its status, and what is not built yet within it labelled Planned.</p>
+          <p>Captured from the running application with a fictional company and example data. Each module shows what is built; what is not built yet is labelled Planned.</p>
         </div>
         <div class="pp-shots">
           {gallery.map((s) => (

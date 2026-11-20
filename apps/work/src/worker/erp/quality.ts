@@ -1326,7 +1326,7 @@ export function capaBrief(x: any, today = todayIso()) {
 
 /**
  * The quality hub: counts, what waits for inspection, overdue corrective actions and the person's own. My Work is
- * Projects and Tasks' list of board items and has no place for ERP records, so overdue actions are shown here.
+ * Project Management' list of board items and has no place for ERP records, so overdue actions are shown here.
  */
 qualityRoutes.get('/c/:company/quality/overview', async (c) => {
   const a = await requireErp(c, 'quality.view');
@@ -1348,7 +1348,7 @@ qualityRoutes.get('/c/:company/quality/overview', async (c) => {
     myCapas: (mine.results as any[]).map((x) => capaBrief(x, today)),
     recentFailures: (failed.results as any[]).map(inspectionDTO),
     openNcrs: (ncrs.results as any[]).map((n) => ({ id: n.id, number: n.number, title: n.title, status: n.status, severity: n.severity, createdAt: n.created_at })),
-    myWorkNote: 'My Work lists Projects and Tasks items only, so corrective actions due and overdue are shown here.',
+    myWorkNote: 'My Work lists Project Management items only, so corrective actions due and overdue are shown here.',
     can: { inspect: can(a, 'quality.inspect'), raise: can(a, 'quality.raise'), plan: can(a, 'quality.plan'), propose: can(a, 'capa.propose'), disposition: can(a, 'quality.disposition') },
   });
 });

@@ -31,7 +31,7 @@ const guide: Guide = {
         },
         {
           title: 'Fix the fields',
-          body: '"Invalid request" means a field is empty, too long or in the wrong form. On a Projects and Tasks board, "Required:" followed by column names lists the columns you must fill in first.',
+          body: '"Invalid request" means a field is empty, too long or in the wrong form. On a Project Management board, "Required:" followed by column names lists the columns you must fill in first.',
         },
         {
           title: 'Check the status',
@@ -63,17 +63,17 @@ const guide: Guide = {
           where: 'Deleted',
         },
         {
-          title: 'A board in Projects and Tasks',
+          title: 'A board in Project Management',
           body: 'Open Boards and choose the Archived tab. Open the board\'s menu and choose Restore. Archived boards are read-only and hidden from lists until restored.',
           where: 'Archived',
         },
         {
-          title: 'A product in Products and Engineering',
+          title: 'A product in Product Management',
           body: 'In the product list, open Filters and set Show to Archived. Open the product and choose Restore. Its revisions, documents and history stayed with it.',
           where: 'Restore',
         },
         {
-          title: 'A task or item deleted in Projects and Tasks',
+          title: 'A task or item deleted in Project Management',
           body: 'Deleting an item is permanent: the item, its subitems, updates and files are gone, and it cannot be restored. Next time, use Archive to keep it out of the way instead.',
         },
       ],
@@ -122,7 +122,7 @@ const guide: Guide = {
       a: 'It moved to Deleted with its history. In the list, open the menu, choose Deleted, select it and choose Restore.',
     },
     {
-      q: 'I deleted a task in Projects and Tasks. Can I get it back?',
+      q: 'I deleted a task in Project Management. Can I get it back?',
       a: 'No. Deleting an item permanently deletes it with its subitems, updates and files. Archive tasks you want to keep but hide.',
     },
     {
@@ -147,7 +147,7 @@ const guide: Guide = {
     },
     {
       q: 'How do I get my records out?',
-      a: 'ERP lists have Export CSV; CRM lists have Export where your role allows it. Your own data can be exported from Projects and Tasks, Settings, Security, Export your data (see /learn/data-management/).',
+      a: 'ERP lists have Export CSV; CRM lists have Export where your role allows it. Your own data can be exported from Project Management, Settings, Security, Export your data (see /learn/data-management/).',
     },
   ],
   related: ['trouble-access', 'data-management', 'roles-and-permissions', 'products', 'finance', 'crm', 'projects'],

@@ -82,7 +82,7 @@ export function ManufacturingArea({ companyId, companyName }: { companyId: strin
   return (
     <div className="page crm-page">
       <PageHeader title="Manufacturing" subtitle={`Production of ${m.company.name}: orders from release to close, the shop floor, planning and capacity, work centres and routings.`} />
-      <nav className="tabs mt-tabs" aria-label="Manufacturing sections">
+      <nav className="tabs mt-tabs erp-area-tabs" aria-label="Manufacturing sections">
         {tab('', 'layers', 'Orders', true)}
         {tab('/shop-floor', 'play', 'Shop floor')}
         {tab('/planning', 'calendar', 'Planning')}
@@ -209,7 +209,7 @@ function NewOrderDialog({ companyId, onClose }: { companyId: string; onClose: ()
   return (
     <Modal title="New manufacturing order" wide onClose={onClose} footer={<><button className="btn" onClick={onClose}>Cancel</button><button className="btn primary" disabled={busy || !f.productId || !(Number(f.quantity) > 0)} onClick={() => void save()}>{busy ? 'Saving…' : 'Draft the order'}</button></>}>
       {!opts.data ? <Loading /> : !opts.data.products.length ? (
-        <p className="muted">No product can be made yet: a product needs a released bill of materials (Products and Engineering) and a released routing (Routings).</p>
+        <p className="muted">No product can be made yet: a product needs a released bill of materials (Product Management) and a released routing (Routings).</p>
       ) : (
         <div className="form-grid">
           <div className="field span-2"><label htmlFor="no-p">Product</label><select id="no-p" className="select" value={f.productId} onChange={(e) => setF({ ...f, productId: e.target.value })}><option value="">Choose a product</option>{opts.data.products.map((p) => <option key={p.id} value={p.id}>{p.number} {p.name}{p.routingId ? '' : ' (no released routing)'}</option>)}</select>{product ? <span className="muted small">Bill of materials revision {product.bomRevision}; {product.routingRevision ? `routing revision ${product.routingRevision}` : 'no released routing: release one first'}.</span> : null}</div>

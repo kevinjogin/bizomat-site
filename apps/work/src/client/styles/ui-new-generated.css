@@ -768,6 +768,8 @@ html[data-ui="new"] .sys-gap { margin-left: var(--bz-space-2); }
 html[data-ui="new"] .sys-example-note { padding: var(--bz-space-2) var(--bz-space-4); font-size: var(--bz-text-sm); }
 html[data-ui="new"] .sys-stats { gap: var(--bz-space-3); }
 html[data-ui="new"] .sys-stat strong { font-size: var(--bz-text-2xl); }
+html[data-ui="new"] .erp-module-title { font-size: var(--bz-text-xs); }
+html[data-ui="new"] .nav-item.erp-menu-planned .badge { font-size: var(--bz-text-2xs); }
 
 /* views.css */
 html[data-ui="new"] .view-header { gap: var(--bz-space-2); padding: var(--bz-space-3) var(--bz-space-6) 0; }

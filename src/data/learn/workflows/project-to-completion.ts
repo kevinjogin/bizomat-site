@@ -5,7 +5,7 @@ const workflow: Workflow = {
   title: "Project to completion",
   status: "live",
   summary:
-    "A project goes from plan to finished work in Projects and Tasks: tasks, dates and dependencies on a board, an approved baseline, progress, time and costs recorded as the work is done, the critical path and earned value watched, a completion report saved and the board archived. In a registered company, its income and costs can also come from Finance.",
+    "A project goes from plan to finished work in Project Management: tasks, dates and dependencies on a board, an approved baseline, progress, time and costs recorded as the work is done, the critical path and earned value watched, a completion report saved and the board archived. In a registered company, its income and costs can also come from Finance.",
   stages: [
     {
       guide: "projects",
@@ -47,7 +47,7 @@ const workflow: Workflow = {
     steps: [
       {
         title: "Create the board",
-        body: "In Projects and Tasks, choose New board, name it (for example Harbour Pumps station upgrade), pick the Project plan template or Blank board, and choose Create board.",
+        body: "In Project Management, choose New board, name it (for example Harbour Pumps station upgrade), pick the Project plan template or Blank board, and choose Create board.",
         where: "Create board",
       },
       {
@@ -112,7 +112,7 @@ const workflow: Workflow = {
     },
     {
       q: "Where do the Finance figures come from?",
-      a: "Only from entries posted in Finance with the project chosen on their lines. Costs entered on the tasks in Projects and Tasks stay in the project's own controls. (see /learn/finance/)",
+      a: "Only from entries posted in Finance with the project chosen on their lines. Costs entered on the tasks in Project Management stay in the project's own controls. (see /learn/finance/)",
     },
   ],
   keywords: ["project lifecycle", "project closeout", "project close-out", "baseline", "progress report", "completion report", "earned value", "critical path", "project delivery"],

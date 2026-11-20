@@ -156,7 +156,7 @@ async function side(db: D1Database, auth: ProjectAuth): Promise<Side> {
   return { auth, companyId, columns: await loadColumns(db, auth.board.id), currency: policy.defaultCurrency };
 }
 
-/** Whether tasks may be moved from or to a company: the flag on for it, and its Projects and Tasks not switched off. */
+/** Whether tasks may be moved from or to a company: the flag on for it, and its Project Management not switched off. */
 export const moveOn = (db: D1Database, companyId: string) => moveOnFor(db, companyId, 'tasks');
 
 /**
@@ -171,7 +171,7 @@ async function checkMove(db: D1Database, userId: string, from: Side, to: Side, i
   if (!from.auth.caps.deleteTasks) throw new HttpError(403, 'Your access to this project does not include taking tasks out of it.');
   if (!to.auth.caps.createTasks) throw new HttpError(403, 'Your access to the new project does not include adding tasks.');
   // A company's member rules (company_members_v2), where they act: both must allow it.
-  await assertMemberRules(db, userId, { from: from.companyId, to: to.companyId }, 'projects', 'Projects and Tasks', items.some((i) => i.created_by !== userId));
+  await assertMemberRules(db, userId, { from: from.companyId, to: to.companyId }, 'projects', 'Project Management', items.some((i) => i.created_by !== userId));
 }
 
 /** A query over a list of ids, in parts (a statement takes at most 100 bound values). */

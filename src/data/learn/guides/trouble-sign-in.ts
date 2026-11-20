@@ -53,7 +53,7 @@ const guide: Guide = {
           body: 'Forgot your password? appears under the form only where BIZOMAT has switched self-service password reset on, and it is off for now. Otherwise contact BIZOMAT support through the contact page. Once they have confirmed who you are, they can set a temporary password, and you choose your own the next time you sign in.',
         },
       ],
-      after: 'Once you are in, you can change your password and see where you are signed in under Projects and Tasks, Settings, Security.',
+      after: 'Once you are in, you can change your password and see where you are signed in under Project Management, Settings, Security.',
     },
     {
       id: 'accept-invitation',
@@ -133,7 +133,7 @@ const guide: Guide = {
     },
     {
       q: 'I was signed out unexpectedly.',
-      a: 'Changing your password signs you out everywhere else, and so does choosing Sign out others under Active sessions. Sign in again. To see where you are signed in, open Projects and Tasks, Settings, Security, Active sessions.',
+      a: 'Changing your password signs you out everywhere else, and so does choosing Sign out others under Active sessions. Sign in again. To see where you are signed in, open Project Management, Settings, Security, Active sessions.',
     },
     {
       q: 'How do I sign in to CAD Automation?',

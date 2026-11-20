@@ -516,7 +516,7 @@ cadRoutes.post('/c/:company/cad/bom-proposals/:id/reject', async (c) => {
 
 // ------------------------------------------------------------------ review tasks in Projects (5.6)
 
-/** Boards of the company's Projects and Tasks workspaces the person can add tasks to. */
+/** Boards of the company's Project Management workspaces the person can add tasks to. */
 cadRoutes.get('/c/:company/cad/review-boards', async (c) => {
   const a = await requireCad(c);
   const db = c.env.DB;

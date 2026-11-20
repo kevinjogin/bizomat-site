@@ -16,15 +16,15 @@ import { type CompanyRole, normRole } from './access';
 
 /** The modules a member can be given (brief 1.2, mapped to the product's real modules: decision C3 of the audit). */
 export const MEMBER_MODULES = [
-  { key: 'projects', label: 'Projects and Tasks' },
+  { key: 'projects', label: 'Project Management' },
   { key: 'crm', label: 'Sales and CRM' },
   { key: 'finance', label: 'Finance and Accounting' },
-  { key: 'products', label: 'Products and Engineering' },
+  { key: 'products', label: 'Products and design' },
   { key: 'procurement', label: 'Procurement' },
-  { key: 'inventory', label: 'Inventory' },
+  { key: 'inventory', label: 'Warehouse: stock' },
   { key: 'manufacturing', label: 'Manufacturing' },
   { key: 'quality', label: 'Quality' },
-  { key: 'supply_chain', label: 'Sales orders and logistics' },
+  { key: 'supply_chain', label: 'Warehouse: orders and dispatch' },
   { key: 'maintenance', label: 'Maintenance' },
   { key: 'whs', label: 'Health and Safety' },
   { key: 'reports', label: 'Reports' },

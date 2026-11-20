@@ -55,16 +55,18 @@ export const PLANNER_EXAMPLES = {
  * from the guide, so nothing planned is shown as working.
  */
 export const HOME_ERP_GROUPS = [
-  { rail: 'Dashboard', line: 'Your company, its tools and their figures.', guides: ['dashboard'] },
-  { rail: 'All modules', line: 'The 97 modules of BIZOMAT ERP, one search across them, and what is waiting for you.', guides: ['all-modules'] },
-  { rail: 'People and HR', line: 'Employees, leave, recruitment, onboarding, training, reviews and pay runs.', guides: ['people-hr'] },
+  { rail: 'Dashboard', line: 'Your company and the progress of every module.', guides: ['dashboard'] },
+  { rail: 'Project Management', line: 'My work, projects, boards, timelines, documents and dashboards.', guides: ['projects'] },
   { rail: 'Sales and CRM', line: 'Customers, leads, deals and follow-ups.', guides: ['crm'] },
   { rail: 'Finance and Accounting', line: 'Quotes, invoices, bills, banking, GST and reports.', guides: ['finance'] },
-  { rail: 'Projects and Tasks', line: 'Boards, timelines, documents and dashboards.', guides: ['projects'] },
-  { rail: 'Products and Engineering', line: 'Products, bills of materials, revisions, engineering changes, documents and CAD Automation.', guides: ['products', 'cad-automation'] },
-  { rail: 'Operations', line: 'Procurement, inventory, manufacturing, quality and supply chain.', guides: ['procurement', 'inventory', 'manufacturing', 'quality', 'supply-chain'] },
-  { rail: 'Maintenance', line: 'Asset Management and Maintenance: assets, requests, work orders and preventive maintenance.', guides: ['maintenance'] },
+  { rail: 'Product Management', line: 'Your products and variants, their bills of materials and revisions.', guides: ['products'] },
+  { rail: 'Engineering', line: 'Design changes and documents, CAD Automation, manufacturing and quality.', guides: ['cad-automation', 'manufacturing', 'quality'] },
+  { rail: 'Procurement', line: 'Suppliers, requisitions, quotations, purchase orders and receipts.', guides: ['procurement'] },
+  { rail: 'Warehouse', line: 'Stock, warehouses and counts; sales orders, picking, dispatch and returns.', guides: ['inventory', 'supply-chain'] },
+  { rail: 'Maintenance', line: 'Requests, work orders, assets, preventive maintenance and inspections.', guides: ['maintenance'] },
   { rail: 'Health and Safety', line: 'Hazards, risk assessments, incidents, investigations and actions.', guides: ['whs'] },
+  { rail: 'People and HR', line: 'Employees, leave, recruitment, onboarding, training, reviews and pay runs.', guides: ['people-hr'] },
+  { rail: 'All modules', line: 'The 97 modules of BIZOMAT ERP, one search across them, and what is waiting for you.', guides: ['all-modules'] },
   { rail: 'Reports', line: 'Every report of your tools in one place.', guides: ['reports'] },
   { rail: 'Administration', line: 'Company, people, departments, tools, ERP roles and permissions.', guides: ['company-administration', 'companies', 'roles-and-permissions'] },
 ] as const;

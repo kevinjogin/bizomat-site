@@ -20,7 +20,7 @@ const guide: Guide = {
     'IT staff who install it on Windows computers.',
   ],
   access: {
-    path: ['BIZOMAT ERP', 'Products and Engineering', 'CAD Automation'],
+    path: ['BIZOMAT ERP', 'Engineering', 'CAD Automation'],
     href: 'https://bizomat.ai/erp/cad',
     label: 'Open CAD Automation in BIZOMAT ERP',
     note: "The ERP's CAD Automation tab shows the set-up steps and your company's computers. CAD Automation's own pages (Home, CAD Assistant, SOLIDWORKS, Tools, History and Settings) are at https://bizomat.ai/cad/, where you sign in with Continue with BIZOMAT.",
@@ -34,7 +34,7 @@ const guide: Guide = {
       steps: [
         {
           title: 'Open the set-up steps',
-          body: 'In BIZOMAT ERP, open Products and Engineering and choose the CAD Automation tab. It lists the steps under "Set it up in four steps", with links into CAD Automation.',
+          body: 'In BIZOMAT ERP, open Engineering and choose CAD Automation in its side menu. It lists the steps under "Set it up in four steps", with links into CAD Automation.',
           where: 'Set it up in four steps',
         },
         {
@@ -147,7 +147,7 @@ const guide: Guide = {
         },
         {
           title: "See the company's computers in the ERP",
-          body: "In BIZOMAT ERP, Products and Engineering, CAD Automation shows Computers in your company, with each person's computers, AI apps and recent jobs once CAD Automation reports them. Choose Refresh for the latest. If it says CAD Automation is not reporting to the ERP yet, choose See my computers.",
+          body: "In BIZOMAT ERP, Engineering, CAD Automation shows Computers in your company, with each person's computers, AI apps and recent jobs once CAD Automation reports them. Choose Refresh for the latest. If it says CAD Automation is not reporting to the ERP yet, choose See my computers.",
           where: 'See my computers',
         },
       ],
@@ -155,7 +155,7 @@ const guide: Guide = {
     },
   ],
   buttons: [
-    { label: 'Open CAD Automation', does: "From BIZOMAT ERP's Products and Engineering, opens CAD Automation at bizomat.ai/cad.", when: 'You need its own pages: Home, CAD Assistant, SOLIDWORKS, Tools, History, Settings.' },
+    { label: 'Open CAD Automation', does: "From BIZOMAT ERP's Engineering, opens CAD Automation at bizomat.ai/cad.", when: 'You need its own pages: Home, CAD Assistant, SOLIDWORKS, Tools, History, Settings.' },
     { label: 'Continue with BIZOMAT', does: 'Signs you in to CAD Automation with your BIZOMAT account.', after: 'You confirm on bizomat.ai and return to CAD Automation signed in.' },
     { label: 'Download for SOLIDWORKS', does: 'Downloads the Windows installer (add-in and Companion).', when: 'You set up a new computer or update one.', after: 'Run it with SOLIDWORKS closed.' },
     { label: 'Pair this computer...', does: "From the Companion's tray icon, opens the pairing window.", when: 'The Companion says Not registered, or the computer was removed.' },

@@ -90,7 +90,7 @@ export function QualityArea({ companyId, companyName }: { companyId: string; com
   return (
     <div className="page crm-page">
       <PageHeader title="Quality" subtitle={`Quality of ${m.company.name}: inspections from receipt to finished goods, nonconformances and corrective actions.`} />
-      <nav className="tabs mt-tabs" aria-label="Quality sections">
+      <nav className="tabs mt-tabs erp-area-tabs" aria-label="Quality sections">
         {tab('', 'home', 'Overview', true)}
         {tab('/inspections', 'checkSquare', 'Inspections')}
         {tab('/ncrs', 'alert', 'Nonconformances')}

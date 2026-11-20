@@ -93,7 +93,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       live('One sign-in with your BIZOMAT account.'),
       live('A company switcher: your registered companies, your own company and the companies that shared tools with you.'),
       connected("A dashboard of the company's tools, with the figures your role in each tool may see."),
-      live('Sales and CRM, Finance and Accounting and Projects and Tasks, opened inside the ERP.'),
+      live('Sales and CRM, Finance and Accounting and Project Management, opened inside the ERP.'),
       live("Reports: every tool's reports in one place."),
       live('Administration: company, people, departments, tool roles and settings.'),
     ],
@@ -106,18 +106,18 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     ],
     connects: [
       live('The CRM, Finance and Projects open inside it as modules.'),
-      live("Products and Engineering shows CAD Automation's set-up steps."),
+      live("Engineering shows CAD Automation's set-up steps."),
       building("Your company's CAD computers, reported by CAD Automation. Until it reports, the page says so."),
       live('Maintenance: asset register, maintenance requests and work orders.'),
-      live('Operations: procurement (requisitions, quotations, purchase orders and goods receipts) and inventory (warehouses, stock, counts and valuation).'),
-      live('Operations: manufacturing (work centres, routings, manufacturing orders, the shop floor, MRP, capacity and job costing).'),
-      live('Operations: quality (inspection plans, inspections, nonconformances and corrective actions).'),
-      live('Operations: supply chain (sales orders, allocation, picking, packing, dispatch, deliveries, returns and carriers).'),
+      live('Procurement (requisitions, quotations, purchase orders and goods receipts) and Warehouse stock (warehouses, stock, counts and valuation).'),
+      live('Engineering: manufacturing (work centres, routings, manufacturing orders, the shop floor, MRP, capacity and job costing).'),
+      live('Engineering: quality (inspection plans, inspections, nonconformances and corrective actions).'),
+      live('Warehouse: orders and dispatch (sales orders, allocation, picking, packing, dispatch, deliveries, returns and carriers).'),
     ],
     steps: [
       { t: 'Sign in.', x: 'Open bizomat.ai/erp and sign in, or create a BIZOMAT account.' },
       { t: 'Choose a company.', x: 'Your own company is there already. Register your business to add its people and departments.' },
-      { t: 'Open a module.', x: 'Choose Sales and CRM, Finance and Accounting or Projects and Tasks in the rail.' },
+      { t: 'Open a module.', x: 'Choose Sales and CRM, Finance and Accounting or Project Management in the rail.' },
     ],
     faqs: [
       { q: 'Do I need a separate account for each tool?', a: 'No. One BIZOMAT account and one sign-in open the ERP and every tool inside it, CAD Automation included.' },
@@ -242,10 +242,10 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       connected('A CRM deal can start a project, and a CRM activity can become a task.'),
       connected('A project can be tracked in Finance, so its income and costs show against a budget.'),
       connected("Your company's departments appear as teams."),
-      live('My Work in BIZOMAT ERP opens what is assigned to you here.'),
+      live('My Work, in Project Management, opens what is assigned to you here.'),
     ],
     steps: [
-      { t: 'Open Projects and Tasks.', x: 'Sign in to BIZOMAT ERP and choose Projects and Tasks in the rail.' },
+      { t: 'Open Project Management.', x: 'Sign in to BIZOMAT ERP and choose Project Management in the rail.' },
       { t: 'Create a board.', x: 'Start from a template or an empty board, then add groups and items.' },
       { t: 'Assign and track.', x: 'Give each item an owner, a status and a date, and switch views as you need.' },
     ],
@@ -254,7 +254,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       { q: 'Who can see my boards?', a: "People in the workspace, as their role allows. A private board is seen only by the people added to it and the workspace's owners and administrators." },
     ],
     manages: 'Projects, tasks, timelines, documents and dashboards',
-    opens: 'Inside BIZOMAT ERP, in Projects and Tasks',
+    opens: 'Inside BIZOMAT ERP, in Project Management',
     signIn: 'Your BIZOMAT account',
   },
   engineering: {
@@ -281,7 +281,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       'SOLIDWORKS saves your models on your computer, and the link to it is outgoing HTTPS only.',
     ],
     connects: [
-      live("In BIZOMAT ERP, Products and Engineering shows CAD Automation's set-up steps."),
+      live("In BIZOMAT ERP, Engineering shows CAD Automation's set-up steps."),
       building("Your company's computers in the ERP, reported by CAD Automation: owners and administrators see the company's, members their own. Until it reports, the page says so and links to CAD Automation."),
       live('Sign in with your BIZOMAT account: CAD Automation takes the same account (Continue with BIZOMAT).'),
       planned('Product records with revisions and bills of materials, linked to CAD drawings.'),
@@ -297,7 +297,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       { q: 'How far has it been tested?', a: CAD.status },
     ],
     manages: 'SOLIDWORKS parts, assemblies and drawings, through your AI assistant',
-    opens: 'BIZOMAT ERP: Products and Engineering, then CAD Automation, for set-up and your computers. The work happens in your AI assistant and SOLIDWORKS.',
+    opens: 'BIZOMAT ERP: Engineering, then CAD Automation, for set-up and your computers. The work happens in your AI assistant and SOLIDWORKS.',
     signIn: 'A CAD Automation account, for now',
   },
   manufacturing: {
@@ -340,7 +340,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       { t: 'Ship it.', x: 'Use Supply Chain in BIZOMAT ERP: sales orders, pick, pack and dispatch, deliveries and returns, with the draft invoice in Finance.' },
     ],
     faqs: [
-      { q: 'Can I use it today?', a: 'Yes: Procurement, Inventory, Manufacturing, Quality, Supply Chain and Maintenance work inside BIZOMAT ERP. Sign in and open them from Operations.' },
+      { q: 'Can I use it today?', a: 'Yes: Procurement, Inventory, Manufacturing, Quality, Supply Chain and Maintenance work inside BIZOMAT ERP. Sign in and open them from the module rail: Engineering (Manufacturing and Quality), Procurement, Warehouse (Stock, Orders and dispatch) and Maintenance.' },
       { q: 'What is still planned?', a: 'Posting stock, production and maintenance value to Finance\'s ledger, Maintenance\'s AI scheduling assistant and offline field work, statistical process control, calibration and audits, and carrier connections, landed costs and demand forecasting. Each is labelled Planned until it is built and tested.' },
     ],
     shot: shotOf('erp', 'erp-shop-floor'),
@@ -411,7 +411,7 @@ const start = [
   { t: 'Create your BIZOMAT account', x: 'Open BIZOMAT ERP and choose Create an account: your full name, work email and a password.' },
   { t: 'Register your company', x: 'Register your business with its ABN, or yourself in your own name. It gets a Projects workspace, a CRM organisation and a Finance business workspace, or brings in ones you already own.' },
   { t: 'Invite your people', x: 'Invite each person with a company role, a role in each tool and their departments.' },
-  { t: 'Work from the rail', x: 'Open Sales and CRM, Finance and Accounting or Projects and Tasks. Set up Engineering Automation from Products and Engineering.' },
+  { t: 'Work from the rail', x: 'Open Sales and CRM, Finance and Accounting or Project Management. Set up Engineering Automation from Engineering, CAD Automation.' },
 ];
 
 // Guides live in the Knowledge Centre's one page (/learn/#<guide>), checked by tests/learn.test.ts.

@@ -43,7 +43,7 @@ export function WhsArea({ companyId, companyName }: { companyId: string; company
   return (
     <div className="page crm-page whs-page">
       <PageHeader title="Health and Safety" subtitle={`BIZOMAT WHS for ${m.company.name}: hazards, risk assessments, incidents, regulatory notification records and actions. ${m.whsRoleLabels.length ? `Your WHS roles: ${m.whsRoleLabels.join(', ')}.` : m.can.view ? '' : 'You can report hazards and incidents and follow your own reports.'}`} />
-      <nav className="tabs mt-tabs" aria-label="Health and Safety sections">
+      <nav className="tabs mt-tabs erp-area-tabs" aria-label="Health and Safety sections">
         {tab('', 'home', 'Overview', true)}
         {tab('/hazards', 'alert', 'Hazards')}
         {tab('/incidents', 'flag', 'Incidents')}

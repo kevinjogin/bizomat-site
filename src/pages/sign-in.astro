@@ -1,7 +1,7 @@
 ---
 // /sign-in/: the one place to start signing in to BIZOMAT. One account and one sign-in (owner, 20 Nov 2026: "as now
 // everything is set under one sign in, remove double account sign in"): BIZOMAT ERP, where every system opens. CAD
-// Automation is under Products and Engineering there, and its own page takes the same account (Continue with BIZOMAT;
+// Automation is under Engineering there, and its own page takes the same account (Continue with BIZOMAT;
 // its AI assistant connector signs in the same way). Existing accounts work unchanged.
 import BaseLayout from '../layouts/BaseLayout.astro';
 import Container from '../components/Container.astro';
@@ -11,7 +11,7 @@ import { APP_LINKS, APP_URLS } from '../config/platform.ts';
 
 const host = (u: string) => { const x = new URL(u); return x.host + x.pathname.replace(/\/$/, ''); };
 const apps = [
-  { name: 'BIZOMAT ERP', button: 'BIZOMAT ERP', text: 'One workspace and one sign-in for every system: Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering with CAD Automation, Operations, Maintenance, Health and Safety, your company, Reports and Administration.', signIn: APP_LINKS.erp.signIn, page: '/systems/#erp', host: host(APP_URLS.erp) },
+  { name: 'BIZOMAT ERP', button: 'BIZOMAT ERP', text: 'One workspace and one sign-in for every system: Sales and CRM, Finance and Accounting, Project Management, Product Management, Engineering with CAD Automation, Procurement, Warehouse, Maintenance, Health and Safety, your company, Reports and Administration.', signIn: APP_LINKS.erp.signIn, page: '/systems/#erp', host: host(APP_URLS.erp) },
 ];
 ---
 <BaseLayout title="Sign in" description="Sign in to BIZOMAT ERP with your BIZOMAT account: one sign-in for the CRM, Finance, Projects, CAD Automation and every other system." breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Sign in', href: '/sign-in/' }]}>
@@ -35,7 +35,7 @@ const apps = [
       </ul>
       <div class="bz-alert bz-alert--info signin__note" role="note">
         <strong>CAD Automation uses the same account</strong>
-        <span>Open it from BIZOMAT ERP, under Products and Engineering. On its own page, choose Continue with BIZOMAT.</span>
+        <span>Open it from BIZOMAT ERP, under Engineering.</span>
       </div>
       <div class="bz-alert bz-alert--info signin__note" role="note">
         <strong>Resources need no account</strong>

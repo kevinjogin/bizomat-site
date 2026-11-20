@@ -38,7 +38,7 @@ interface Item { t: string; st: FeatureStatus }
 interface Module { id: string; name: string; st: FeatureStatus; x: string; items?: Item[]; today?: Item[]; where?: string }
 const modules: Module[] = [
   {
-    id: 'manufacturing', name: 'Manufacturing', st: 'live', where: 'Manufacturing',
+    id: 'manufacturing', name: 'Manufacturing', st: 'live', where: 'Engineering, Manufacturing',
     x: 'Work centres and machines with a capacity calendar and cost rates, routings with revisions, and manufacturing orders made from a released bill of materials and routing: materials reserved and issued from stock, each operation started, timed and reported (output, scrap, rework, downtime and inspection results) from a shop-floor screen for phones, and finished goods received at actual cost.',
     items: [
       { t: 'Work centres and machines, linked to their Maintenance assets', st: 'live' },
@@ -53,7 +53,7 @@ const modules: Module[] = [
     ],
   },
   {
-    id: 'planning', name: 'Production planning', st: 'live', where: 'Manufacturing, Planning',
+    id: 'planning', name: 'Production planning', st: 'live', where: 'Engineering, Manufacturing, Planning',
     x: 'A master production schedule of forecast and confirmed demand, confirmed sales orders as demand of their own, MRP that plans level by level through the bills of materials with lead times, open orders, reservations, safety stock and reorder points, and rough-cut capacity per work centre per week.',
     items: [
       { t: 'Master production schedule', st: 'live' },
@@ -64,12 +64,12 @@ const modules: Module[] = [
     ],
   },
   {
-    id: 'inventory', name: 'Inventory', st: 'live', where: 'Inventory',
+    id: 'inventory', name: 'Inventory', st: 'live', where: 'Warehouse, Stock',
     x: 'Stock on hand by product, location, lot and serial, kept by a ledger of stock movements that is never edited: issues, transfers, reservations, quarantine, returns, scrap, adjustments with approval, stocktakes and cycle counts, and valuation by weighted average or first in, first out.',
     items: [{ t: 'Stock by lot and serial, with traceability', st: 'live' }, { t: 'Movements, reservations, returns, quarantine and scrap', st: 'live' }, { t: 'Adjustments, stocktakes and cycle counts with approval', st: 'live' }, { t: 'Weighted average or FIFO valuation', st: 'live' }, { t: 'Stock value posted to Finance', st: 'planned' }],
   },
   {
-    id: 'warehouse', name: 'Warehouse management', st: 'live', where: 'Inventory',
+    id: 'warehouse', name: 'Warehouse management', st: 'live', where: 'Warehouse, Stock',
     x: 'Warehouses and a tree of locations, goods received and put away, transfers between locations, and QR labels made by BIZOMAT with a warehouse screen for phones that takes typed or scanned codes.',
     items: [{ t: 'Warehouses and locations, with quarantine, receiving and dispatch', st: 'live' }, { t: 'Receiving, issuing, moving and counting on a phone', st: 'live' }, { t: 'Pick lists, packing and dispatch on a phone', st: 'live' }],
   },
@@ -79,7 +79,7 @@ const modules: Module[] = [
     items: [{ t: 'Suppliers, requisitions and quotations', st: 'live' }, { t: 'Purchase orders with approval limits and amendments', st: 'live' }, { t: 'Goods receipts and supplier performance', st: 'live' }, { t: 'A draft bill in Finance from each receipt', st: 'connected' }, { t: 'Matching against the supplier\'s own invoice', st: 'planned' }],
   },
   {
-    id: 'quality', name: 'Quality management', st: 'live', where: 'Quality',
+    id: 'quality', name: 'Quality management', st: 'live', where: 'Engineering, Quality',
     x: 'Inspection plans with versions, and inspections of goods received, manufacturing operations, finished goods and suppliers, recorded on a phone, with the pass or fail worked out from the limits. A failed lot goes into quarantine; a nonconformance report records containment, the root cause and the disposition, carried out through stock; corrective and preventive actions follow it to closure.',
     items: [
       { t: 'Inspection plans: dimensions with limits, attributes, visual checks, samples and photos', st: 'live' },
@@ -116,7 +116,7 @@ const modules: Module[] = [
     ],
   },
   {
-    id: 'supply-chain', name: 'Supply chain', st: 'live', where: 'Supply Chain',
+    id: 'supply-chain', name: 'Supply chain', st: 'live', where: 'Warehouse, Orders and dispatch',
     x: 'Sales orders for the company\'s one customer record in the CRM and Finance, with stock allocated or a manufacturing order made to order, then shipments: a pick list, packages, dispatch and delivery confirmation on a phone, with carriers, tracking links and a delivery schedule. Each shipment makes one draft invoice in Finance; returns come back into stock with a draft credit note.',
     items: [
       { t: 'Sales orders priced as Finance prices lines, with amendments and their history', st: 'live' },
@@ -154,7 +154,7 @@ const faqs = [
   { q: 'Can it manage quality?', a: 'Yes. Inspection plans, inspections of goods received, manufacturing operations, finished goods and suppliers, nonconformance reports with their disposition, and corrective and preventive actions work inside BIZOMAT ERP. Statistical process control, calibration and quality audits are planned.' },
   { q: 'Is Inventory available?', a: 'Yes. Warehouses and locations, stock by lot and serial, every movement, reservations, returns, adjustments, stocktakes, cycle counts, weighted average or FIFO valuation, QR labels and a warehouse screen for phones work today inside BIZOMAT ERP. Posting stock value to Finance\'s ledger is planned.' },
   { q: 'Is Maintenance available?', a: 'Yes, inside BIZOMAT ERP: the asset register and hierarchy in several sites, maintenance requests with approval, work orders, technicians and labour costs, preventive maintenance by time, meter or condition, readings, inspections, prestart checks on a phone, spare parts from Inventory, QR labels and the reliability reports. An AI scheduling assistant and offline field work are planned.' },
-  { q: 'Can I sign up or pay for it now?', a: 'Procurement, Inventory, Manufacturing, Quality, Supply Chain and Maintenance come with BIZOMAT ERP: sign in and open them from Operations. For what is planned there is nothing to sign up for, download or buy.' },
+  { q: 'Can I sign up or pay for it now?', a: 'Procurement, Inventory, Manufacturing, Quality, Supply Chain and Maintenance come with BIZOMAT ERP: sign in and open them from the module rail: Engineering (Manufacturing and Quality), Procurement, Warehouse and Maintenance. For what is planned there is nothing to sign up for, download or buy.' },
   { q: 'What can I use today instead?', a: 'BIZOMAT ERP for products, bills of materials, engineering changes, purchasing and stock; BIZOMAT Finance for bills and payments; BIZOMAT Projects to plan the work; BIZOMAT Engineering Automation for SOLIDWORKS parts, assemblies and drawings. All of them, except Engineering Automation\'s own application, open inside BIZOMAT ERP.' },
   { q: 'What is still planned?', a: 'Posting stock, production and maintenance value to Finance\'s ledger (each is recorded as planned; nothing is posted), Maintenance\'s AI scheduling assistant and offline field work, statistical process control, calibration and quality audits, and in Supply Chain connections to carriers\' own systems, landed costs and demand forecasting. There is no date yet: each is labelled Planned until it is built and tested.' },
 ];
@@ -193,7 +193,7 @@ const schema = [
         {modules.map((m) => (
           <li class:list={['sys-feature', { 'sys-feature--planned': m.st === 'planned' }]} id={`manufacturing-${m.id}`}>
             <div class="sys-feature__head"><h3>{m.name}</h3><StatusLabel status={m.st} /></div>
-            <p class="sys-feature__state">{m.st === 'planned' ? 'Planned: not available yet.' : m.st === 'live' ? `Live: works today in BIZOMAT ERP, under ${m.where ?? 'Operations'}.` : 'In development: not available yet.'}</p>
+            <p class="sys-feature__state">{m.st === 'planned' ? 'Planned: not available yet.' : m.st === 'live' ? `Live: works today in BIZOMAT ERP, under ${m.where ?? 'its module'}.` : 'In development: not available yet.'}</p>
             <p>{m.x}</p>
             {m.items && <ul class="pp-list sys-items sys-feature__items">{m.items.map((i) => <li><span>{i.t}</span> <StatusLabel status={i.st} /></li>)}</ul>}
             {m.today && (

@@ -77,8 +77,8 @@ export function SupplyChainArea({ companyId, companyName }: { companyId: string;
   );
   return (
     <div className="page crm-page">
-      <PageHeader title="Supply Chain" subtitle={`Sales orders, shipments and returns of ${m.company.name}: from the customer’s order to its delivery and the draft invoice in Finance.`} />
-      <nav className="tabs mt-tabs" aria-label="Supply chain sections">
+      <PageHeader title="Orders and dispatch" subtitle={`Warehouse: the sales orders, shipments and returns of ${m.company.name}, from the customer’s order to its delivery and the draft invoice in Finance.`} />
+      <nav className="tabs mt-tabs erp-area-tabs" aria-label="Supply chain sections">
         {tab('', 'home', 'Overview', true)}
         {tab('/orders', 'briefcase', 'Sales orders')}
         {tab('/floor', 'check', 'Pick and dispatch')}

@@ -3,11 +3,11 @@ import type { Guide } from '../types.ts';
 const guide: Guide = {
   id: "projects",
   section: "modules",
-  title: "Projects and Tasks",
+  title: "Project Management",
   short: "Projects",
   status: "live",
   what:
-    "Projects and Tasks is BIZOMAT's project management module. Each project is a board of tasks (items) in groups, with columns for owners, status, dates and anything else you track, shown as a table, Kanban, timeline, calendar and other views.",
+    "Project Management is BIZOMAT's project management module. Each project is a board of tasks (items) in groups, with columns for owners, status, dates and anything else you track, shown as a table, Kanban, timeline, calendar and other views.",
   purpose: [
     "Plan a project as a board of tasks and subtasks, from a template or from scratch",
     "Assign work, set dates and dependencies, and follow progress in the view that suits you",
@@ -24,11 +24,11 @@ const guide: Guide = {
     "Managers who follow progress on dashboards and reports",
   ],
   access: {
-    path: ["BIZOMAT ERP", "Projects and Tasks"],
+    path: ["BIZOMAT ERP", "Project Management"],
     href: "https://bizomat.ai/erp/tasks/",
-    label: "Open Projects and Tasks",
+    label: "Open Project Management",
     note:
-      "The rail opens the Projects and Tasks workspace of the company you last opened on this computer. My Work, also in the rail, opens everything assigned to you. Links to bizomat.ai/tasks open the same page inside the ERP.",
+      "Project Management in the rail opens the workspace of the company you last opened on this computer; My Work, in its side menu, opens everything assigned to you. Links to bizomat.ai/tasks open the same page inside the ERP.",
   },
   tutorials: [
     {
@@ -39,7 +39,7 @@ const guide: Guide = {
       steps: [
         {
           title: "Start a new board",
-          body: "In Projects and Tasks, choose New board on Home or on Boards.",
+          body: "In Project Management, choose New board on Home or on Boards.",
           where: "New board",
         },
         {
@@ -290,7 +290,7 @@ const guide: Guide = {
     },
     {
       q: "Why can't I see a board my colleague mentions?",
-      a: "It may be private (Only board members), or you may be a guest who sees only the projects and tasks shared with you. Ask the board's owner to add you under Members. If Projects and Tasks itself is missing, a platform administrator may have switched it off for your company.",
+      a: "It may be private (Only board members), or you may be a guest who sees only the projects and tasks shared with you. Ask the board's owner to add you under Members. If Project Management itself is missing, a platform administrator may have switched it off for your company.",
     },
     {
       q: "Why is there no Reports or Finance button on the board?",
@@ -314,7 +314,7 @@ const guide: Guide = {
     },
     {
       q: "Where is everything assigned to me?",
-      a: "My Work, in the ERP's module rail, lists your tasks across the boards you can open, grouped as Overdue, Today, Next 7 days, Later, No due date and Completed. Add to My Day plans today's work.",
+      a: "My Work, in Project Management's side menu, lists your tasks across the boards you can open, grouped as Overdue, Today, Next 7 days, Later, No due date and Completed. Add to My Day plans today's work.",
     },
   ],
   related: ["crm", "finance", "dashboard", "reports", "automations", "companies", "roles-and-permissions", "notifications"],

@@ -82,7 +82,7 @@ const guide: Guide = {
       title: 'Use the same account in CAD Automation',
       outcome: 'You are signed in to CAD Automation with your BIZOMAT account.',
       steps: [
-        { title: 'Find CAD Automation in the ERP', body: 'Choose Products and Engineering in the rail, then the CAD Automation tab. It lists the set-up steps and your computers.', where: 'CAD Automation' },
+        { title: 'Find CAD Automation in the ERP', body: 'Choose Engineering in the rail, then CAD Automation in its side menu. It lists the set-up steps and your computers.', where: 'CAD Automation' },
         { title: 'Open CAD Automation', body: 'Choose Open CAD Automation, or go to bizomat.ai/cad.', where: 'Open CAD Automation' },
         { title: 'Choose Continue with BIZOMAT', body: 'On CAD Automation’s sign-in page, choose Continue with BIZOMAT. You sign in on bizomat.ai with your BIZOMAT account; there is no second account to make.', where: 'Continue with BIZOMAT' },
       ],

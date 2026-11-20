@@ -6,7 +6,7 @@ import type { Guide } from '../types.ts';
 const guide: Guide = {
   id: 'supply-chain',
   section: 'modules',
-  title: 'Supply Chain',
+  title: 'Warehouse: Orders and dispatch',
   short: 'Supply Chain',
   status: 'live',
   what:
@@ -27,10 +27,10 @@ const guide: Guide = {
     'Executives and other ERP roles, who read orders, shipments and reports.',
   ],
   access: {
-    path: ['BIZOMAT ERP', 'Operations', 'Supply Chain'],
+    path: ['BIZOMAT ERP', 'Warehouse', 'Orders and dispatch'],
     href: 'https://bizomat.ai/erp/supply-chain',
     label: 'Open Supply Chain',
-    note: 'On the Operations page, the Supply Chain card has an Open Supply Chain button. Inside a company, Supply Chain is also in the side menu. The address opens it in the company you used last.',
+    note: 'Choose Warehouse in the module rail. Under Orders and dispatch its side menu lists Dispatch overview, Sales orders, Pick and dispatch, Shipments, Delivery schedule, Returns and Carriers. The address opens it in the company you used last.',
   },
   tutorials: [
     {

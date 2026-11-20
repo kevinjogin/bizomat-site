@@ -27,10 +27,10 @@ const guide: Guide = {
     'Executives and viewers, who read orders, plans and costs.',
   ],
   access: {
-    path: ['BIZOMAT ERP', 'Operations', 'Manufacturing'],
+    path: ['BIZOMAT ERP', 'Engineering', 'Manufacturing'],
     href: 'https://bizomat.ai/erp/manufacturing',
     label: 'Open Manufacturing',
-    note: 'On Operations, the Manufacturing card has Open Manufacturing; the company’s side menu lists Manufacturing too. Its tabs are Orders, Shop floor, Planning, Work centres and Routings.',
+    note: 'Choose Engineering in the module rail. Under Manufacturing its side menu lists Orders, Shop floor, Planning, Work centres and Routings.',
   },
   tutorials: [
     {
@@ -219,7 +219,7 @@ const guide: Guide = {
   faqs: [
     {
       q: 'Why is my product not offered on New order?',
-      a: 'A product can be made only when it has a released bill of materials (in Products and Engineering, released through a change order) and a released routing (in Manufacturing, Routings). The New order window says so when no product qualifies (see /learn/products/).',
+      a: 'A product can be made only when it has a released bill of materials (in Product Management, released through a change order in Engineering) and a released routing (in Manufacturing, Routings). The New order window says so when no product qualifies (see /learn/products/).',
     },
     {
       q: 'Why can I not release my routing?',

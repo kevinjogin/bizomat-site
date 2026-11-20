@@ -17,16 +17,16 @@ const guide: Guide = {
   ],
   who: [
     'Company owners and administrators.',
-    'Workspace administrators in Projects and Tasks.',
+    'Workspace administrators in Project Management.',
     'Sales people who live in their calendar.',
     'Developers and analysts who write scripts or reports.',
     'Engineers using CAD Automation.',
   ],
   access: {
-    path: ['BIZOMAT ERP', 'Projects and Tasks', 'Settings', 'Security'],
+    path: ['BIZOMAT ERP', 'Project Management', 'Settings', 'Security'],
     href: 'https://bizomat.ai/erp/tasks/',
-    label: 'Open Projects and Tasks',
-    note: 'Personal API tokens are under Settings, Security. Webhooks are under Integrations in Projects and Tasks. The calendar feed is under Settings, Calendar feed in Sales and CRM. Links between tools are on the CRM company and deal pages.',
+    label: 'Open Project Management',
+    note: 'Personal API tokens are under Settings, Security. Webhooks are under Integrations in Project Management. The calendar feed is under Settings, Calendar feed in Sales and CRM. Links between tools are on the CRM company and deal pages.',
   },
   tutorials: [
     {
@@ -50,7 +50,7 @@ const guide: Guide = {
       id: 'deal-links',
       title: 'Start a quote, an invoice or a project from a deal',
       outcome: 'The deal is linked to a draft quote, a draft invoice or a project in the same company, and the link shows on the deal.',
-      needs: 'Access to the deal in the CRM, plus a Finance role that may create quotes or invoices, or the right to create projects in Projects and Tasks.',
+      needs: 'Access to the deal in the CRM, plus a Finance role that may create quotes or invoices, or the right to create projects in Project Management.',
       steps: [
         { title: 'Open the deal', body: 'In Sales and CRM, open Deals and then the deal.' },
         { title: 'Find the links section', body: 'The deal page has a section named Across and your company name, with Finance and Project Management parts.', where: 'Across' },
@@ -60,7 +60,7 @@ const guide: Guide = {
           body: "Once the deal is won, choose Make a draft invoice. It has one line with the deal's title and value. It is a draft: check the amount, GST and account in Finance before approving it.",
           where: 'Make a draft invoice',
         },
-        { title: 'Start a project', body: "Choose Start a project. A project board named after the deal is made in the company's Projects and Tasks.", where: 'Start a project' },
+        { title: 'Start a project', body: "Choose Start a project. A project board named after the deal is made in the company's Project Management.", where: 'Start a project' },
       ],
       after: 'The deal shows the quote, invoice or project with a link to open it. Both records must belong to tools of the same company.',
     },
@@ -70,7 +70,7 @@ const guide: Guide = {
       outcome: 'You have a token that a script can use to call the BIZOMAT API as you, in one company only.',
       needs: 'Signed in to BIZOMAT ERP in a browser. Tokens can only be made from an interactive session.',
       steps: [
-        { title: 'Open Security', body: 'In BIZOMAT ERP, open Projects and Tasks, then Settings and Security. Your user menu in Projects and Tasks also has Security.', where: 'Security' },
+        { title: 'Open Security', body: 'In BIZOMAT ERP, open Project Management, then Settings and Security. Your user menu in Project Management also has Security.', where: 'Security' },
         { title: 'Choose New token', body: 'Under Personal API tokens, choose New token.', where: 'New token' },
         {
           title: 'Fill in the token',
@@ -89,9 +89,9 @@ const guide: Guide = {
       id: 'webhook',
       title: 'Send board events to Slack, Teams or a webhook',
       outcome: 'Board events, such as a task created or updated, are posted to your Slack or Teams channel or your own HTTPS address.',
-      needs: 'Workspace administrator in Projects and Tasks.',
+      needs: 'Workspace administrator in Project Management.',
       steps: [
-        { title: 'Open Integrations', body: 'In Projects and Tasks, choose Integrations in the menu.', where: 'Integrations' },
+        { title: 'Open Integrations', body: 'In Project Management, choose Integrations in the menu.', where: 'Integrations' },
         {
           title: 'Choose a connection',
           body: 'Under Available connections, choose Connect next to Outgoing webhook, Slack (incoming webhook) or Microsoft Teams (workflow webhook).',
@@ -137,7 +137,7 @@ const guide: Guide = {
     { label: 'Add as a customer in Finance', does: 'Creates the Finance customer from a CRM company and links the two.', when: 'A CRM company becomes a customer you invoice.' },
     { label: 'Start a quote', does: "Makes a draft quote in Finance for the deal's company with the deal's value.", after: "The quote's progress shows on the deal and its timeline." },
     { label: 'Make a draft invoice', does: "Makes a draft Finance invoice from a won deal: one line with the deal's title and value.", after: 'Someone checks the amount, GST and account in Finance and approves it there.' },
-    { label: 'Start a project', does: "Makes a project board named after the deal in the company's Projects and Tasks.", after: 'The deal links to the project.' },
+    { label: 'Start a project', does: "Makes a project board named after the deal in the company's Project Management.", after: 'The deal links to the project.' },
     { label: 'New token', does: 'Opens the form for a personal API token.', when: 'A script or another system needs to call the BIZOMAT API.' },
     { label: 'Create token', does: 'Makes the token and shows it once.', after: 'Copy it at once: it is never shown again.' },
     { label: 'Revoke', does: 'Ends a token after you confirm.', after: 'Applications using it stop working immediately.' },
@@ -154,7 +154,7 @@ const guide: Guide = {
     },
     {
       q: 'Why does a deal or CRM company show no Finance or Project Management section?',
-      a: "The links appear only when the CRM organisation belongs to a registered company that also runs Finance or Projects and Tasks. When it does not, the server answers, for example, \"This CRM organisation does not belong to a company that runs Finance\". If you have no access to the company's Finance, the section says so (see /learn/companies/).",
+      a: "The links appear only when the CRM organisation belongs to a registered company that also runs Finance or Project Management. When it does not, the server answers, for example, \"This CRM organisation does not belong to a company that runs Finance\". If you have no access to the company's Finance, the section says so (see /learn/companies/).",
     },
     {
       q: 'Why can I not make a draft invoice from a deal?',
@@ -193,10 +193,10 @@ const guide: Guide = {
   workflows: ['deal-to-invoice', 'deal-to-project', 'lead-to-customer'],
   notYet: [
     { text: 'A published API reference.', status: 'planned' },
-    { text: 'Webhooks from the CRM, Finance and the ERP modules (today only Projects and Tasks sends them).', status: 'planned' },
-    { text: 'One place to monitor every connection (today Projects and Tasks records each webhook delivery).', status: 'planned' },
+    { text: 'Webhooks from the CRM, Finance and the ERP modules (today only Project Management sends them).', status: 'planned' },
+    { text: 'One place to monitor every connection (today Project Management records each webhook delivery).', status: 'planned' },
     { text: 'Mailbox synchronisation in the CRM (Gmail and Google Workspace, Outlook and Microsoft 365).', status: 'planned' },
-    { text: 'Google Drive, Google Calendar, Gmail and GitHub connections in Projects and Tasks.', status: 'planned' },
+    { text: 'Google Drive, Google Calendar, Gmail and GitHub connections in Project Management.', status: 'planned' },
   ],
   keywords: ['API', 'API key', 'token', 'webhook', 'Slack', 'Microsoft Teams', 'iCal', 'ics', 'calendar subscription', 'Google Calendar', 'Outlook', 'email', 'SSO', 'single sign-on', 'Sign in with BIZOMAT', 'MCP', 'connector', 'link records'],
   sources: [

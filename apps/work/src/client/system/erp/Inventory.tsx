@@ -61,8 +61,8 @@ export function InventoryArea({ companyId, companyName }: { companyId: string; c
   );
   return (
     <div className="page crm-page">
-      <PageHeader title="Inventory" subtitle={`Stock and warehouses of ${m.company.name}: what is where, every movement, counts and value.`} />
-      <nav className="tabs mt-tabs" aria-label="Inventory sections">
+      <PageHeader title="Stock" subtitle={`Warehouse: the stock and warehouses of ${m.company.name}: what is where, every movement, counts and value.`} />
+      <nav className="tabs mt-tabs erp-area-tabs" aria-label="Inventory sections">
         {tab('', 'layers', 'Stock', true)}
         {tab('/warehouses', 'map', 'Warehouses')}
         {tab('/movements', 'activity', 'Movements')}

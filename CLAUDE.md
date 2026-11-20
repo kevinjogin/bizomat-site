@@ -28,12 +28,17 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   **BIZOMAT ERP** (owner, 14 Nov 2026; "BIZOMAT System" earlier that day, ERP in `docs/erp/`): the one workspace for
   signed-in people, **live at `bizomat.ai/erp`** (`docs/system/README.md`), served by the Project Management app with
   the same accounts and session. Every tool opens inside it, at `/erp/tasks`, `/erp/crm`, `/erp/finance` and
-  `/erp/company`, with its module rail on every screen (Dashboard, My Work, Sales and CRM, Finance and Accounting,
-  Projects and Tasks, Products and Engineering, Maintenance, Operations, Reports, Administration, and "Report a fault"). A page at a tool's own address, or
+  `/erp/company`, with its module rail on every screen (owner, 20 Nov 2026: Dashboard, Project Management (My Work and
+  Projects and Tasks in one), Sales and CRM, Finance and Accounting, Product Management, Engineering (Design: engineering
+  changes and documents; CAD Automation; Manufacturing; Quality), Procurement, Warehouse (Stock and Orders and dispatch),
+  Maintenance, Health and Safety, People and HR, All modules, Reports, Administration, and "Report a fault"). Each module
+  of the ERP's own has its own side menu with only its sections (`apps/work/src/client/system/modules.tsx`); the
+  dashboard shows every module's progress (`system/ModuleHome.tsx`, from each module's own server summary); Operations
+  is retired (`/erp/operations` opens the dashboard). The pages kept their addresses. A page at a tool's own address, or
   at the earlier `/system`, answers 302 there (the API, files and `/finance/view/` stay); links between tools stay
   inside (`toolUrl`). People's tools are grouped by company (registered companies, plus an own company per person, not
   registered, made for every existing account by migration 0017; tools are worked out, never copied; a tool shared with
-  someone shows under its company as "Shared with you"). Products and Engineering is CAD Automation's setup and
+  someone shows under its company as "Shared with you"). Engineering's CAD Automation is its setup and
   company-scoped computers (owner and administrators see the company's, members their own, other companies nothing);
   computers appear only once CAD Automation reports (`/company/api/id/cad-status`, client `cad`): never present them as
   live before. **Maintenance** (Asset Management and Maintenance, owner's CMMS brief of 14 Nov 2026, MEX a functional
@@ -223,7 +228,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   the flag off (kevinjogin/bizomat-site#97, deploy run 44), after the staging verification with it on in staging only.
   **The company being worked in** (owner, 20 Nov 2026; `apps/work/src/client/lib/company-context.ts`): the company
   last opened on this computer (localStorage `bizomat-system-company`, written by the ERP and the company area) decides
-  where the module rail's Projects and Tasks, Sales and CRM, Finance and My Work open: that company's own linked tools,
+  where the module rail's Project Management, Sales and CRM and Finance open: that company's own linked tools,
   never whichever was used last (a company without one falls back to the tool's home). The server still decides access.
   **Moving tasks** (owner, 20 Nov 2026; `docs/platform/moving-records.md`; flag `move_records`, off, needed on for both
   companies): one task or many (the selection bar) to another project in the same company or another company the person

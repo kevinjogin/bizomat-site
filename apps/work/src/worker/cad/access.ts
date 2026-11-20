@@ -90,7 +90,7 @@ export async function loadCadAccess(env: Env, companyId: string, user: { id: str
   const db = env.DB;
   const erp = await loadErpAccess(db, companyId, user);
   if (erp.kind === 'demo') throw new HttpError(404, 'The example company has no CAD Automation. Use it in your own company.', { code: 'CAD_EXAMPLE' });
-  if (!(await cadOn(db, erp.companyId))) throw new HttpError(403, 'CAD Automation is not switched on in the ERP for this company yet. Products and Engineering shows how to set it up.', { code: 'CAD_NOT_ENABLED' });
+  if (!(await cadOn(db, erp.companyId))) throw new HttpError(403, 'CAD Automation is not switched on in the ERP for this company yet. Engineering shows how to set it up.', { code: 'CAD_NOT_ENABLED' });
   let role = normRole(erp.companyRole);
   let scope: CadPerms['scope'] = DEFAULT_SCOPE[role];
   let team = [user.id];

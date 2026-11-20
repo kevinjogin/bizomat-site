@@ -212,7 +212,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     id: 'engineering',
     name: 'Product lifecycle and engineering',
     summary: 'Products from design to release: product records, CAD models and drawings, bills of materials, revisions and changes.',
-    servedBy: 'BIZOMAT ERP Products and Engineering; BIZOMAT Engineering Automation (CAD Automation)',
+    servedBy: 'BIZOMAT ERP Product Management and Engineering; BIZOMAT Engineering Automation (CAD Automation)',
     features: [
       cap('Product master', 'live', 'Numbered products with type, category, unit, costs, price, physical details, lifecycle stage and effective dates, images and attachments. The CRM product catalogue still serves deals on its own.'),
       cap('Product classification', 'planned'),
@@ -220,7 +220,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Specifications', 'planned'),
       cap('Parts and assemblies in SOLIDWORKS', 'live', 'CAD Automation builds native features on the engineer\'s own computer from an AI assistant. Tested through a simulated SOLIDWORKS; field testing on Windows with SOLIDWORKS 2022 is the next milestone.'),
       cap('Engineering drawings', 'live', 'Native SOLIDWORKS drawings through CAD Automation, exported as PDF, DWG or DXF. Released drawings are not kept as ERP records yet.'),
-      cap('CAD integration', 'live', 'CAD Automation\'s connector, add-in and Companion. Its setup is in the ERP under Products and Engineering.'),
+      cap('CAD integration', 'live', 'CAD Automation\'s connector, add-in and Companion. Its setup is in the ERP under Engineering.'),
       cap('CAD computers and jobs in the ERP', 'in-development', 'The ERP side and CAD Automation\'s report are built. Computers show in the ERP only once CAD Automation reports them; until then the ERP page says so.'),
       cap('Design checks', 'live', 'Measuring, inspection and interference checks through CAD Automation.'),
       cap('Model import and export', 'live', 'STEP, IGES and Parasolid in; STEP, STL, Parasolid and IGES out.'),
