@@ -185,8 +185,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `/api/auth/me`; the website's server asks `/tasks/api/ui/public` every minute (`WEB_UPSTREAM_WORK`) and marks pages
   before compressing them. Comfortable or Compact density is saved per account; the UI kit is `/erp/admin/ui-kit`.
   Illustrations are never converted. Never switch the flag on without the owner's approval. Released with Stage 1 and
-  Members on 19 Nov 2026 (kevinjogin/bizomat-site#91, deploy run 42), every new flag off; staging is verified with the
-  staging workflow's action `verify` (`docs/deployment/staging.md`).
+  Members on 19 Nov 2026 (kevinjogin/bizomat-site#91, deploy run 42), every new flag off.
   **CAD Automation inside the ERP** (owner's brief and approved audit of 19 Nov 2026; `docs/cad/README.md`, and
   kevinjogin/bizomat-cad `docs/ERP-MODULE.md`; migration 0037; flags `cad_in_erp`, `cad_redirect`, `cad_products`,
   `cad_bom`, `cad_manufacturing`, `cad_quality`, `cad_projects`, all off): the screens, accounts, computers, history and
@@ -323,15 +322,12 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   the volume `work_data` (3 GB); `fly.website.toml` matches it exactly (the `cad` group of the earlier plan never ran
   and was removed). Never add a Machine, a process group or memory without the owner's approval. `fly.toml` and `wrangler.toml` are not deployed; the notes below about the single app
   and Cloudflare describe earlier plans.
-- **Staging (owner, 19 Nov 2026; `docs/deployment/staging.md`):** the Fly app `bizomat-staging` (syd, org `personal`)
-  at https://bizomat-staging.fly.dev, where every release is tested before production. `fly.staging.toml`: the
-  production groups at production's sizes plus `gate` (`infrastructure/preview/gate.mjs`, entrypoint role `gate`,
-  refused outside an app named `*-staging` and without `GATE_PASSWORD`), the only public service: a password (user
-  `review`, repository secret `STAGING_PASSWORD`), noindex, and every bizomat.ai link rewritten to staging. Every
-  upstream names a staging Machine (Fly's private network is shared by the organisation; `check-config.py` refuses a
-  production address). Invented data only, never production data; email to the log; Stripe test mode. Deployed only
-  by `.github/workflows/bizomat-staging.yml` (any branch; token `FLY_STAGING_TOKEN`; automatic rollback when a check
-  fails; `stop` and `start` for cost). Never point staging at production, and never copy production data there.
+- **No staging app (owner, 20 Nov 2026: "I don't need extra apps ... keep all minimal").** The Fly app
+  `bizomat-staging` (19 Nov 2026) is retired: its workflow, `fly.staging.toml` and scripts are removed, its Machines
+  were stopped and the owner deletes the app in Fly. Two Fly apps only: `bizomat` (3 Machines) and `cados` (1). A
+  release is tested by CI (the website, the work app, the image and the local stack), a local end-to-end run where it
+  needs one, then production's deploy with its own checks and the checks below. Never create another Fly app without
+  the owner's approval. The image's `gate` role stays dormant (refused in any app not named `*-staging`).
 - **CAD Automation into `bizomat` (6 Nov 2026; an earlier plan, not carried out: the `cad` group was removed from
   `fly.website.toml` on 9 Nov 2026 and CAD stays in the app `cados`, in ams):** the plan gave `fly.website.toml` a `cad`
   group (performance-1x, 2 GB, volume `cad_data` in syd, cados's settings). The cad role never starts the CAD server on a volume without CAD data (a
