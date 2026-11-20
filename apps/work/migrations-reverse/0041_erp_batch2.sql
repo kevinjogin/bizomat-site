@@ -1,4 +1,4 @@
--- Reverse of migrations/0039_erp_postings.sql. Run only after a database copy. What stays: the journals, invoices and bills
+-- Reverse of migrations/0041_erp_batch2.sql. Run only after a database copy. What stays: the journals, invoices and bills
 -- already made in Finance (reverse or void them there if wanted) and their records in erp_integration_events, the values
 -- of custom fields (in the records), two-factor enrolments (user_mfa), and quotations entered through the portal (as if a
 -- buyer had entered them). What is lost: the chosen posting accounts, the remembered intercompany contacts, the custom

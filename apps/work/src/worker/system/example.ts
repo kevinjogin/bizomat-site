@@ -294,7 +294,7 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
   ]) {
     stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
   }
-  // The modules framework (migrations/0038_erp_modules.sql and 0039): lines, references, comments, posting accounts,
+  // The modules framework (migrations/0038_erp_modules.sql and 0041): lines, references, comments, posting accounts,
   // intercompany contacts and custom fields go with their records.
   for (const table of ['erp_object_marks', 'erp_object_views', 'erp_alerts', 'erp_object_comments', 'erp_object_refs', 'erp_object_lines', 'erp_objects', 'erp_posting_accounts', 'erp_ic_contacts', 'erp_custom_fields']) {
     stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
