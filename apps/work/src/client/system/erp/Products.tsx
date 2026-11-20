@@ -36,6 +36,7 @@ import { CsvLink, DocBadge, ErpFiles, ErpUpload, FilterPanel, History, Lifecycle
 import { ChangeOrderDetail, ChangeRequestDetail, ChangesPage, NewChangeDialog } from './Changes';
 import { DocumentDetail, DocumentsPage, NewDocumentDialog } from './Documents';
 import { RevisionCadPanel } from '../cad/Cad';
+import { SalesAnalysis, StockAnalysis } from './Analysis';
 
 export function ProductsArea({ companyId, companyName, cad }: { companyId: string; companyName: string; cad: ReactNode }) {
   const me = useErpMe(companyId);
@@ -56,6 +57,7 @@ export function ProductsArea({ companyId, companyName, cad }: { companyId: strin
   // Product Management is the products themselves; their engineering changes, documents and CAD Automation are
   // Engineering's Design (owner, 20 Nov 2026), at the same addresses.
   const design = /\/products\/(changes|documents|cad)(\/|$)/.test(location.pathname);
+  const analysis = /\/products\/analysis(\/|$)/.test(location.pathname);
   const tabs: [string, string, string][] = design
     ? [
         ['/changes', 'Engineering changes', 'history'],
@@ -68,7 +70,14 @@ export function ProductsArea({ companyId, companyName, cad }: { companyId: strin
       {design ? (
         <PageHeader title="Engineering" subtitle={`Design for ${m.company.name}: engineering changes, documents and CAD Automation. Your ERP roles: ${m.roleLabels.join(', ')}.`} />
       ) : (
-        <PageHeader title="Product Management" subtitle={`Products and variants of ${m.company.name}, with their bills of materials and revisions. Your ERP roles: ${m.roleLabels.join(', ')}.`} />
+        <PageHeader
+          title="Product Management"
+          subtitle={
+            analysis
+              ? `What ${m.company.name} sold, what it cost and the margin, by product, customer and more, from the goods dispatched in Warehouse. Read only. Your ERP roles: ${m.roleLabels.join(', ')}.`
+              : `Products and variants of ${m.company.name}, with their bills of materials and revisions. Your ERP roles: ${m.roleLabels.join(', ')}.`
+          }
+        />
       )}
       <nav className="tabs mt-tabs erp-area-tabs" aria-label={design ? 'Design sections' : 'Product Management sections'} hidden={!tabs.length}>
         {tabs.map(([to, label, icon]) => (
@@ -85,6 +94,8 @@ export function ProductsArea({ companyId, companyName, cad }: { companyId: strin
         <Route path="documents" element={<DocumentsPage companyId={companyId} me={m} />} />
         <Route path="documents/:documentId" element={<DocumentDetail companyId={companyId} me={m} />} />
         <Route path="cad" element={<>{cad}</>} />
+        <Route path="analysis" element={<SalesAnalysis companyId={companyId} />} />
+        <Route path="analysis/stock" element={<StockAnalysis companyId={companyId} />} />
         <Route path=":productId" element={<ProductDetail companyId={companyId} me={m} />} />
         <Route path="*" element={<Navigate to={productsPage(companyId)} replace />} />
       </Routes>
