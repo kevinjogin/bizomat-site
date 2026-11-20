@@ -19,6 +19,7 @@ import { assertCan, can, requireErp, segregation, type ErpAccess } from './acces
 import { ECO_STATUS, ECR_STATUS, badState, csvResponse, eventStmt, eventStmtIf, historyOf, likeOf, nextNumber, paging, searchText, wantsCsv, zId, zText } from './util';
 import { loadProduct } from './products';
 import { newRevisionStatements, revisionDTO } from './engineering';
+import { noticeRevisionsReleased } from '../cad/notices';
 
 export const changeRoutes = new Hono<AppEnv>();
 
@@ -554,5 +555,7 @@ changeRoutes.post('/c/:company/change-orders/:id/release', async (c) => {
   ];
   const res = await db.batch(stmts);
   if (!res[0].meta.changes) badState(`${o.number} was released or changed by someone else at the same moment: reload it`);
+  // CAD Automation in the ERP: the people who saved its exports to these revisions, or asked for their review, are told.
+  await noticeRevisionsReleased(db, a.companyId, a.userId, revisions);
   return c.json({ order: ecoDTO(await loadEco(db, a.companyId, o.id)), revisions: await revisionsOfEco(db, a.companyId, o.id) });
 });

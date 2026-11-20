@@ -288,6 +288,15 @@ const BASE: Record<string, FlagDef> = {
     enforcement: false,
     release: 'CAD',
   },
+  cad_password_retired: {
+    label: 'CAD Automation: password sign-in retired',
+    description: 'CAD Automation’s own email-and-password sign-in, sign-up, invitations, early access codes and the Companion’s password pairing stop: everyone signs in with their BIZOMAT account, and computers are paired with their code. Acts only while every CAD Automation account is linked to a BIZOMAT account (the console’s CAD Automation panel says so). Off: password sign-in again (rollback).',
+    values: ONOFF,
+    scopes: ['global'],
+    risk: 'high',
+    enforcement: true,
+    release: 'CAD',
+  },
   move_records: {
     label: 'Move tasks and CRM records to another company',
     description:
