@@ -29,6 +29,7 @@ export const EMAIL_TEMPLATES = [
   'company_email',
   'erp_dispatch',
   'whs_alert',
+  'erp_alert',
 ] as const;
 export type EmailTemplate = (typeof EMAIL_TEMPLATES)[number];
 
@@ -175,7 +176,8 @@ export type TemplateData =
   | { template: 'company_invitation'; organisation: string; inviter: string; role: string; tools: string; expires: string; url: string; existingUser: boolean; message?: string | null }
   | { template: 'company_email'; organisation: string; email: string; url: string; expires: string }
   | { template: 'erp_dispatch'; organisation: string; order: string; shipment: string; customerPo?: string | null; carrier?: string | null; service?: string | null; tracking?: string | null; trackingUrl?: string | null; window?: string | null; packages?: string | null }
-  | { template: 'whs_alert'; organisation: string; title: string; body?: string | null; url?: string | null };
+  | { template: 'whs_alert'; organisation: string; title: string; body?: string | null; url?: string | null }
+  | { template: 'erp_alert'; organisation: string; title: string; body?: string | null; url?: string | null };
 
 function taskRows(d: TaskEmailData): [string, string | null | undefined][] {
   return [
@@ -545,6 +547,18 @@ export function renderEmail(d: TemplateData): RenderedEmail {
         rows: [['Company', d.organisation || null]],
         button: d.url ? { label: 'Open in BIZOMAT WHS', url: d.url } : undefined,
         reason: 'You received this email because you hold a health and safety role in this company in BIZOMAT ERP.',
+      });
+    case 'erp_alert':
+      // BIZOMAT ERP's modules (src/worker/erp/objects/alerts.ts): a record's number, a short title and a link; never pay
+      // details or personal information beyond a name
+      return layout({
+        subject: d.title,
+        preheader: clip(d.body, 120),
+        heading: d.title,
+        intro: d.body ? [clip(d.body, 1000)] : [],
+        rows: [['Company', d.organisation || null]],
+        button: d.url ? { label: 'Open in BIZOMAT ERP', url: d.url } : undefined,
+        reason: 'You received this email because a record in BIZOMAT ERP is waiting for you, is due, or was given to you.',
       });
     case 'notification':
     default: {

@@ -125,7 +125,6 @@ const guide: Guide = {
   workflows: ['production-to-quality', 'procure-to-pay', 'sales-order-to-delivery'],
   notYet: [
     { text: 'Statistical process control (SPC).', status: 'planned' },
-    { text: 'Calibration of measuring equipment.', status: 'planned' },
     { text: 'Quality audits.', status: 'planned' },
     { text: 'Appraisal and external failure costs in the cost of poor quality report.', status: 'planned' },
     { text: 'Sampling plans that work out sample sizes from lot sizes. Today each characteristic gives its own number of samples.', status: 'planned' },

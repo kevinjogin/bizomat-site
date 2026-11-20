@@ -325,7 +325,7 @@ const guide: Guide = {
     },
     {
       q: "Can I lodge my BAS or run payroll from Finance?",
-      a: "No. The GST and BAS worksheet helps you prepare a BAS; you or your registered tax or BAS agent check it and lodge it with the ATO. Finance does not run payroll, PAYG withholding, superannuation or Single Touch Payroll.",
+      a: "No. The GST and BAS worksheet helps you prepare a BAS; you or your registered tax or BAS agent check it and lodge it with the ATO. Finance does not run payroll. BIZOMAT ERP's Payroll module works out pay runs with the withholding and contribution rates you set, but it is not certified payroll: it has no PAYG withholding tables, makes no payment and reports nothing to the ATO (no Single Touch Payroll).",
     },
     {
       q: "Why can't I see Quotes, Invoices or Bills?",
@@ -362,8 +362,8 @@ const guide: Guide = {
   notYet: [
     { text: "Bank feeds through an approved provider (none is chosen; Finance never connects to a bank today).", status: "planned" },
     { text: "A BAS module with lodged-period snapshots (lodgement stays with the business or its agent).", status: "planned" },
-    { text: "Fixed assets and depreciation.", status: "planned" },
-    { text: "Payroll, PAYG withholding, superannuation and Single Touch Payroll.", status: "planned" },
+    { text: "Depreciation posted to the ledger (BIZOMAT ERP's Fixed assets module works it out; enter the journal here).", status: "planned" },
+    { text: "PAYG withholding tables, superannuation payments and Single Touch Payroll (BIZOMAT ERP's Payroll module works out pay runs with the rates you set; it is not certified payroll).", status: "planned" },
     { text: "More than one currency within one workspace, and consolidation across workspaces.", status: "planned" },
     { text: "Posting stock, production and maintenance values from the ERP to the ledger.", status: "planned" },
   ],

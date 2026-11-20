@@ -80,6 +80,43 @@ Built, tested and live at `bizomat.ai/erp`.
 | **Release 5 Supply chain**: traceability and reports | A lot's trace to the shipment and customer; open orders, delivery to customers, shipments by carrier, freight, returns, sales by product and customer, job profitability; drill-down and CSV; Supply Chain overview and Operations counts | Reports with exact numbers and CSV |
 | **Release 5 Supply chain**: example company | A carrier, a sales order with a made-to-order line, a delivered shipment with its draft invoice, a return with its draft credit note; no email | Example company tests (workerd and Node) |
 
+## The modules framework and the 97-module catalogue (20 Nov 2026)
+
+Owner's brief "BIZOMAT ERP, 97-module enterprise expansion and production deployment" (20 Nov 2026). The master catalogue
+of 97 modules, with each module's status, what exists, what does not, where it opens, what it builds on and its tests, is
+`docs/erp/MODULES.md` (generated from `apps/work/src/shared/erp-catalogue.ts`; the ERP's All modules page shows the
+same). Totals on 20 Nov 2026: 45 live, 9 live and extended, 33 new, 8 partly built, 2 planned (21 consolidation and
+intercompany, 41 supplier portal).
+
+The new modules are built on one framework (`apps/work/src/shared/erp-objects` for the definitions,
+`apps/work/src/worker/erp/objects` for the server, `apps/work/src/client/system/erp/objects` for the screens; migration
+0038): typed fields checked on the server, numbering per company, workflow steps with approval and segregation of duties,
+line items, references to the shared records (people, customers as the one customer record, suppliers, products,
+warehouses, maintenance assets, Projects boards, ERP orders and shipments, and each other), sensitive fields seen only by
+their roles and the person themselves, history with before and after values (sensitive values never written), files,
+comments, related records both ways, lists with search, filters, saved filters, sorting, paging, CSV export and import
+(every row checked before any is saved), grouped and custom reports, alerts in the app and by email, due-date reminders and
+workflow escalations once each from the 15-minute run, and the approval inbox. Twelve ERP roles were added. Each module
+answers to a module switch of the Admin Control Centre (on by default, as the owner asked for the modules to be published
+for testing; a platform admin switches any off per company, stage or everyone).
+
+| Area | What | Evidence |
+| --- | --- | --- |
+| Catalogue and navigation | All modules (`/erp/c/<company>/modules`): the 97 modules by area and status, favourites and recently used (this computer), one search across the modules' records and the ERP's products, suppliers and orders, and Waiting for me (`/erp/c/<company>/inbox`); All modules and People and HR in the module rail | `apps/work/test/erp-modules.test.ts`; Chromium at 1360 and 390 px |
+| People and HR (85 to 90) | Employees, leave with balances and approval by the manager, attendance, recruitment to hiring, onboarding and offboarding checklists from templates, training with expiry, performance reviews (the person's and the reviewer's ratings each their own), goals, pay runs from salaries and approved timesheets with approval by someone else and payslips in self service | Workflow 7 test end to end (exact pay figures, balances, segregation, sensitive fields, isolation) |
+| Services (32, 76, 77, 80 to 84) | Tickets with response targets, service agreements, field jobs on a dispatch board and their draft invoices, fleet with fuel consumption and trips, transport runs, timesheets with project costs and draft invoices, resource allocations with utilisation | Every-record test; project costs test; Chromium dispatch board |
+| Commercial (24, 29 to 31, 34, 40) | Campaigns, customer and supplier contracts with notice reminders, price lists, promotions and the price check, commission plans and statements from won CRM deals, subscriptions invoiced as drafts with monthly recurring revenue | Subscription invoice made once test; reminder test |
+| Finance additions (18, 22) | Fixed assets with depreciation, register and disposals; revenue schedules with earned and deferred amounts | Depreciation exact-number test; segregation test |
+| Operations additions (43, 44, 62, 74, 75) | Trade declarations, three-way invoice matching, subcontract orders, calibration (a pass moves the due date, a fail takes the instrument out of service), environmental aspects and records | Calibration test |
+| Core additions (1, 6, 8) | Legal entities with country, currency, fiscal year, time zone and language; business units; locations; exchange rates; controlled documents; workflow rules with escalation | Isolation and workflow rule tests |
+| Industry solutions (91 to 97) | Stores and daily takings, trade accounts, estimates, progress claims with retention and their draft invoices, variations, engagements with hours from timesheets, healthcare facilities and staff credentials (no clinical records), grants with budgets, sites and production | Progress claim exact-number test; every-record test |
+
+Not built in this release (each also named in `docs/erp/MODULES.md`): consolidation of ledgers and intercompany
+transactions; the supplier portal; certified payroll (tax tables, Single Touch Payroll, payment files) and posting pay
+runs, depreciation and revenue schedules to Finance's ledger; repricing sales orders from price lists; stock movements for
+subcontracting; email inboxes and customer portals; custom fields on the new modules; example records for the new modules
+in the example company.
+
 ## BIZOMAT WHS, Release 1
 
 Live since 15 Nov 2026 (kevinjogin/bizomat-site#74, deploy run 37, version e0cad51, migration 0026). Details, sources checked and

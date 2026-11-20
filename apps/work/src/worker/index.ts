@@ -17,6 +17,7 @@ import { syncAllCompanies } from './company/identity';
 import { runScheduledVerification } from './company/verification';
 import { runCompliance } from './compliance/core';
 import { runExports } from './compliance/export';
+import { runObjectReminders } from './erp/objects/alerts';
 import { runDeletion } from './compliance/deletion';
 import { bootstrapFounder } from './services/platform-admin';
 
@@ -59,6 +60,8 @@ export async function runMaintenance(env: Env, at: number, waitUntil?: (p: Promi
   } catch (e) {
     results.maintenancePm = { error: e instanceof Error ? e.message : 'failed' };
   }
+  // The modules framework: due-date reminders and workflow escalations, each once (src/worker/erp/objects/alerts.ts).
+  await step('erpModules', () => runObjectReminders(env, new Date(at).toISOString().slice(0, 10), at));
   // WHS: overdue actions escalated once each, in the app, to the responsible person and the WHS managers.
   try {
     results.whs = { overdueEscalated: await escalateOverdue(env, new Date(at).toISOString().slice(0, 10)) };

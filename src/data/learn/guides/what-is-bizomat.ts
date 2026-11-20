@@ -94,8 +94,7 @@ const guide: Guide = {
   related: ['account-and-sign-in', 'navigation', 'companies', 'roles-and-permissions', 'dashboard', 'reports'],
   workflows: ['lead-to-customer', 'deal-to-invoice', 'deal-to-project', 'procure-to-pay', 'make-to-order', 'maintenance-request-to-work-order'],
   notYet: [
-    { text: 'Human resources: employee records, recruitment, training records, attendance and leave.', status: 'planned' },
-    { text: 'Payroll and superannuation. BIZOMAT does not run payroll.', status: 'planned' },
+    { text: 'Superannuation payments, statutory tax tables and reporting to tax authorities: the ERP’s pay runs use the rates you set.', status: 'planned' },
     { text: 'Customer service cases, service contracts, warranty and field service.', status: 'planned' },
     { text: 'Posting stock, production and maintenance value to Finance’s ledger.', status: 'planned' },
     { text: 'Subsidiaries and several legal entities under one company.', status: 'planned' },

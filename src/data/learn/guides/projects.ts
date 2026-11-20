@@ -322,7 +322,6 @@ const guide: Guide = {
   workflows: ["project-to-completion", "deal-to-project"],
   notYet: [
     { text: "Moving tasks to another project or another company (built, switched off until BIZOMAT turns it on).", status: "in-development" },
-    { text: "Timesheet approval (time is tracked on tasks today).", status: "planned" },
     { text: "Billing from project time or milestones (progress invoices from a Finance quote work today).", status: "planned" },
     { text: "Resource pools, skills and rates.", status: "planned" },
     { text: "Project procurement.", status: "planned" },

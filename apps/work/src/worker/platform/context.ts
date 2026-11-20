@@ -13,6 +13,7 @@ import type { AppEnv } from '../env';
 import { HttpError } from '../lib/util';
 import { loadErpAccess } from '../erp/access';
 import { MODULES, flagOn, moduleEnabled, type ModuleKey } from './flags';
+import { MODULE_BY_KEY, OBJECT_BY_KEY } from '../../shared/erp-objects';
 
 export type ToolApp = 'tasks' | 'crm' | 'finance';
 /** What a scoped API token may be limited to. */
@@ -58,6 +59,14 @@ erpModule('quality', ['qc-plans', 'inspections', 'quality', 'quality-options', '
 erpModule('cad', ['cad']);
 erpModule('supply_chain', ['sales-orders', 'sales-order-options', 'shipments', 'carriers', 'rmas', 'delivery-schedule', 'supply-chain']);
 
+// The modules framework's addresses (/erp/c/<company>/x/o/<object>, /x/m/<module>): the switch of the record's module.
+function frameworkModule(kind: string | undefined, key: string | undefined): ModuleKey | null {
+  if (!key) return null;
+  if (kind === 'o' && Object.hasOwn(OBJECT_BY_KEY, key)) return (MODULE_BY_KEY[OBJECT_BY_KEY[key].module]?.switch ?? null) as ModuleKey | null;
+  if (kind === 'm' && Object.hasOwn(MODULE_BY_KEY, key)) return MODULE_BY_KEY[key].switch as ModuleKey;
+  return null;
+}
+
 const TOOL_MODULE: Record<ToolApp, ModuleKey> = { tasks: 'tasks', crm: 'crm', finance: 'finance' };
 
 function decodeSegment(s: string): string {
@@ -101,7 +110,7 @@ export async function contextOfPath(db: D1Database, apiPath: string): Promise<Re
   const p = apiPath.replace(/^\/+/, '').split('/').map(decodeSegment);
   const seg = p[0];
   if ((seg === 'erp' || seg === 'maintenance' || seg === 'whs' || seg === 'company' || seg === 'billing') && p[1] === 'c' && okId(p[2])) {
-    const module = seg === 'maintenance' ? 'maintenance' : seg === 'whs' ? 'whs' : seg === 'erp' ? (ERP_SEGMENTS[p[3] ?? ''] ?? null) : null;
+    const module = seg === 'maintenance' ? 'maintenance' : seg === 'whs' ? 'whs' : seg === 'erp' ? (p[3] === 'x' ? frameworkModule(p[4], p[5]) : (ERP_SEGMENTS[p[3] ?? ''] ?? null)) : null;
     return { companyId: p[2], app: seg === 'company' || seg === 'billing' ? 'company' : 'erp', module, tool: null };
   }
   // One company as the person sees it, with its tools (where a token limited to that company finds them).

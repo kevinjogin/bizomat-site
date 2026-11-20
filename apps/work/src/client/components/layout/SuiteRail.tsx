@@ -31,10 +31,13 @@ interface Module {
 }
 
 const own = (re: RegExp) => (p: string) => IS_SYSTEM && re.test(p);
-const ERP_PAGES = /^\/(my-work|cad|products|procurement|inventory|manufacturing|quality|maintenance|whs|operations|reports|administration|admin|company-admin)(\/|$)|^\/c\/[^/]+\/(company-admin|cad|products|procurement|inventory|manufacturing|quality|erp-roles|erp-settings|erp-reports|settings|maintenance|whs)(\/|$)/;
+const ERP_PAGES = /^\/(my-work|cad|products|procurement|inventory|manufacturing|quality|maintenance|whs|operations|reports|administration|admin|company-admin|modules|inbox|m)(\/|$)|^\/c\/[^/]+\/(company-admin|cad|products|procurement|inventory|manufacturing|quality|erp-roles|erp-settings|erp-reports|settings|maintenance|whs|modules|inbox|m)(\/|$)/;
 
 const MODULES: Module[] = [
   { id: 'home', label: 'Dashboard', title: 'Dashboard: your company, its tools and their figures', icon: 'home', to: '/', active: (p) => IS_SYSTEM && !ERP_PAGES.test(p) },
+  // The modules framework (20 Nov 2026): the 97-module catalogue and every new module, and People and HR.
+  { id: 'modules', label: 'All modules', title: 'All modules: the 97 modules of BIZOMAT ERP, a search across them, and what is waiting for you', icon: 'grid', to: '/modules', active: own(/^\/(c\/[^/]+\/)?(modules|inbox)(\/|$)|^\/(c\/[^/]+\/)?m\/(?!hr|recruitment|onboarding|training|performance|payroll)[a-z_]+(\/|$)/) },
+  { id: 'people', label: 'People and HR', title: 'People and HR: employees, leave, recruitment, onboarding, training, performance and payroll', icon: 'users', to: '/m/hr', active: own(/^\/(c\/[^/]+\/)?m\/(hr|recruitment|onboarding|training|performance|payroll)(\/|$)/) },
   { id: 'my-work', label: 'My Work', title: 'My Work: everything assigned to you in Projects and Tasks', icon: 'checkSquare', to: '/my-work', active: (p) => APP_BASE === '/tasks' && /\/my-work(\/|$)/.test(p) },
   { id: 'crm', label: 'Sales and CRM', title: 'Sales and CRM: customers, leads, deals and follow-ups', icon: 'briefcase', to: '/crm/', active: () => APP_BASE === '/crm' },
   { id: 'finance', label: 'Finance and Accounting', title: 'Finance and Accounting: quotes, invoices, bills, banking, GST and reports', icon: 'dollar', to: '/finance/', active: () => APP_BASE === '/finance' },
