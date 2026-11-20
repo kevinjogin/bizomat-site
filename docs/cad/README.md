@@ -18,6 +18,22 @@ for a company, which needs the owner's approval. The brief's pilot (one company 
 | Saved exports as engineering documents, bill of materials proposals, drawings on orders, NCRs and inspection plans, review tasks in Projects | The geometry checks and CAD workers (Fly app `cados`, Amsterdam) |
 | The company's history of CAD work, notices of failed work | SOLIDWORKS on the person's own computer, the master copy of every model |
 
+## Setting it up, in place (owner, 20 Nov 2026)
+
+Nobody leaves the ERP to set CAD Automation up. The module's Overview (until every step is done) and its Setup tab show
+four steps, each done in a small popup on the same page, and ticked from what CAD Automation reports:
+
+1. **Install**: the installer is downloaded through the ERP (`GET /erp/c/<company>/cad/installer`, which reads it from the
+   engine with the signed assertion), with its size and SHA-256; no separate CAD Automation sign-in.
+2. **Pair**: type the code the Companion shows, check the computer, add it. The Companion's own link
+   (`/erp/cad/pair?code=`) opens the same popup over the Computers tab.
+3. **Connect your AI assistant**: the connector address with Copy, short steps for Claude or another app, and a live
+   wait that turns green when the assistant signs in.
+4. **Check it works**: each of the person's computers, online or not, and SOLIDWORKS ready or not, updating by itself.
+
+The ERP's side menu has no link out to CAD Automation's own application any more; where the module is on, the Products
+and Engineering tab "CAD Automation" opens it.
+
 ## Flags (Control Centre)
 
 | Flag | Scopes | What it does |
