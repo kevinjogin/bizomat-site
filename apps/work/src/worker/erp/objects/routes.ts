@@ -44,6 +44,7 @@ import { linesOf, removeRecord, saveRecord, takeStep, todayUtc, unarchiveRecord 
 import { runAction } from './actions';
 import { reportsOf, runReport } from './reports';
 import { consolidate } from './intercompany';
+import { loadPricing, suggest } from './pricing';
 import { CUSTOM_TYPES, CUSTOM_TYPE_LABELS, addCustom, changeCustom, listCustom, withCustom } from './custom';
 import { KIND_LABELS, POSTING_OF, financeTarget, postRecord, postingSettings, postingsOf, savePostingSettings, type PostingKind } from './postings';
 
@@ -717,35 +718,12 @@ objectRoutes.get('/c/:company/x/price', async (c) => {
   const date = /^\d{4}-\d{2}-\d{2}$/.test(c.req.query('date') ?? '') ? c.req.query('date')! : todayUtc();
   const p = await db.prepare('SELECT id, number, name, price_cents, currency FROM erp_products WHERE company_id = ? AND id = ?').bind(a.companyId, product).first<any>();
   if (!p) throw new HttpError(400, 'Choose a product');
-  const lists = await db
-    .prepare("SELECT e.id, e.number, e.title, e.data_json, l.data_json AS line FROM erp_objects e JOIN erp_object_lines l ON l.company_id = e.company_id AND l.record_id = e.id WHERE e.company_id = ? AND e.object = 'pr_pricelist' AND e.status = 'active' AND e.archived_at IS NULL AND json_extract(l.data_json, '$.product') = ?")
-    .bind(a.companyId, product)
-    .all<any>();
-  type Hit = { list: string; listId: string; price: number; customer: boolean; minQty: number; currency: string };
-  const hits: Hit[] = [];
-  for (const r of lists.results) {
-    const d = parseJson<Data>(r.data_json, {});
-    const l = parseJson<Data>(r.line, {});
-    if ((d.validFrom && String(d.validFrom) > date) || (d.validTo && String(d.validTo) < date)) continue;
-    if (d.customer && d.customer !== customer) continue;
-    if (Number(l.minQty ?? 1) > qty) continue;
-    hits.push({ list: `${r.number} ${r.title}`, listId: r.id, price: Number(l.unitPrice), customer: !!d.customer, minQty: Number(l.minQty ?? 1), currency: String(d.currency ?? 'AUD') });
-  }
-  // a customer's own list first, then the lowest price at the largest quantity break
-  hits.sort((p1, p2) => Number(p2.customer) - Number(p1.customer) || p1.price - p2.price);
-  const best = hits[0] ?? null;
-  const unit = best ? best.price : Number(p.price_cents ?? 0);
-  const promos = await db.prepare("SELECT id, number, title, data_json FROM erp_objects WHERE company_id = ? AND object = 'pr_promotion' AND status = 'active' AND archived_at IS NULL").bind(a.companyId).all<any>();
-  let promo: { id: string; name: string; off: number } | null = null;
-  for (const r of promos.results) {
-    const d = parseJson<Data>(r.data_json, {});
-    if (String(d.validFrom ?? '') > date || String(d.validTo ?? '9999') < date) continue;
-    if (d.product && d.product !== product) continue;
-    if (d.minOrder && Number(d.minOrder) > unit * qty) continue;
-    const off = d.discountType === 'amount' ? Math.min(unit, Number(d.discountValue)) : Math.round((unit * Number(d.discountValue)) / 100);
-    if (!promo || off > promo.off) promo = { id: r.id, name: `${r.number} ${r.title}`, off };
-  }
-  return c.json({ product: { id: p.id, label: `${p.number} ${p.name}`, standardPrice: p.price_cents ?? null, currency: p.currency ?? 'AUD' }, quantity: qty, date, priceList: best, promotion: promo, unitPrice: unit - (promo?.off ?? 0), total: Math.round((unit - (promo?.off ?? 0)) * qty), note: 'A suggestion from the price lists and promotions in use; sales orders keep the prices they are given.' });
+  const currency = /^[A-Z]{3}$/.test(c.req.query('currency') ?? '') ? c.req.query('currency')! : (p.currency ?? 'AUD');
+  // the same rule sales orders use (pricing.ts)
+  const s = suggest(await loadPricing(db, a.companyId, [product]), { productId: product, standard: p.price_cents ?? null, customerRefs: customer ? [customer] : [], qty, date, currency });
+  const unit = s.listUnit ?? 0;
+  const off = s.promotion?.offPerUnit ?? 0;
+  return c.json({ product: { id: p.id, label: `${p.number} ${p.name}`, standardPrice: p.price_cents ?? null, currency: p.currency ?? 'AUD' }, quantity: qty, date, priceList: s.priceList ? { list: s.priceList.label, listId: s.priceList.id, price: s.priceList.price, customer: s.priceList.customer, minQty: s.priceList.minQty, currency } : null, promotion: s.promotion ? { id: s.promotion.id, name: s.promotion.label, off } : null, unitPrice: unit - off, total: Math.round((unit - off) * qty), note: 'The price sales orders take when no price is typed: the customer’s price list, else the lowest list price for the quantity, then the best promotion.' });
 });
 
 // ------------------------------------------------------------------ postings to Finance's ledger

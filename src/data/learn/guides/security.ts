@@ -94,13 +94,14 @@ const guide: Guide = {
     { q: 'Can BIZOMAT support see our records?', a: 'No. A platform administrator can open access to a registered company for at most 72 hours, with a reason and after signing in again with a second factor. While it lasts they can read the company’s people and roles, tools and registration. They never sign in as anyone and never read records. The owner and administrators see each grant and can end it.' },
     { q: 'What happens when a company is suspended?', a: 'Its ERP modules answer "This company account is suspended. Contact BIZOMAT support." and its Dashboard says the tools stay as they are. Contact BIZOMAT through bizomat.ai/contact/.' },
     { q: 'Why is my account locked?', a: 'After 10 wrong passwords in a row it is locked for 15 minutes. Wait, then sign in with the right password (/learn/trouble-sign-in/).' },
-    { q: 'Can I turn on two-factor sign-in?', a: 'Not for customer accounts yet. Two-factor sign-in is used today by BIZOMAT’s platform administrators for the platform console. Keep a strong password and check Active sessions.' },
+    { q: 'Can I turn on two-factor sign-in?', a: 'Not for customer accounts yet. It is built and waits for BIZOMAT to switch it on; then Settings, Security shows Two-factor sign-in. Today it is used by BIZOMAT’s platform administrators for the platform console. Keep a strong password and check Active sessions.' },
     { q: 'Who can see which API tokens exist for our company?', a: 'Each person sees and revokes their own tokens on their Security tab. A company-wide list with revocation by administrators is part of the Company Admin console, which is not switched on yet.' },
   ],
   related: ['account-and-sign-in', 'company-administration', 'roles-and-permissions', 'integrations', 'trouble-sign-in', 'data-management'],
   notYet: [
     { text: 'The company’s API tokens in one list, revoked by administrators with a reason (Company Admin console, Security).', status: 'in-development' },
     { text: 'Suspending one member of a company while keeping their account and other companies.', status: 'in-development' },
+    { text: 'Two-factor sign-in for every account (an authenticator app and ten recovery codes), in Settings, Security.', status: 'in-development' },
   ],
   keywords: ['security', 'session', 'sessions', 'devices', 'sign out everywhere', 'API', 'API key', 'API token', 'bearer token', 'personal access token', 'revoke', 'support access', 'suspended', 'locked', 'two-factor', '2FA', 'MFA'],
   sources: [

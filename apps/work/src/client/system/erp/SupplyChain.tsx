@@ -221,6 +221,8 @@ interface LineDraft {
   taxCode: string;
   promisedDate: string;
   fulfil: 'stock' | 'make';
+  /** Where the suggested price came from (the price lists and promotions). */
+  note?: string;
 }
 
 function OrderEditor({ companyId }: { companyId: string }) {
@@ -248,9 +250,21 @@ function OrderForm({ companyId, opts, view }: { companyId: string; opts: NonNull
   const [busy, setBusy] = useState(false);
   const chosen = cust.startsWith('crm:') ? companies.find((x) => x.id === cust.slice(4)) : null;
   const setLine = (i: number, patch_: Partial<LineDraft>) => setLines(lines.map((l, j) => (j === i ? { ...l, ...patch_ } : l)));
+  // The price the price lists and promotions give for this customer and quantity (the server's rule, pricing.ts).
+  const suggestPrice = async (i: number, productId: string, quantity: string) => {
+    if (!productId) return;
+    const refs = [cust, chosen?.finContactId ? `fin:${chosen.finContactId}` : ''].filter(Boolean).join(',');
+    try {
+      const s = await get<{ unitPriceCents: number | null; discountBp: number; note: string }>(erpPath(companyId, `/sales-orders/price?productId=${encodeURIComponent(productId)}&customer=${encodeURIComponent(refs)}&qty=${encodeURIComponent(quantity || '1')}`));
+      setLines((all) => all.map((l, j) => (j === i && l.productId === productId ? { ...l, ...(s.unitPriceCents !== null ? { price: dollars(s.unitPriceCents), discount: s.discountBp ? String(s.discountBp / 100) : '' } : {}), note: s.note } : l)));
+    } catch {
+      // the product's standard price stays
+    }
+  };
   const pickProduct = (i: number, productId: string) => {
     const p = opts.products.find((x) => x.id === productId);
-    setLine(i, { productId, price: p?.priceCents !== null && p?.priceCents !== undefined ? dollars(p.priceCents) : lines[i].price });
+    setLine(i, { productId, price: p?.priceCents !== null && p?.priceCents !== undefined ? dollars(p.priceCents) : lines[i].price, note: undefined });
+    void suggestPrice(i, productId, lines[i].quantity);
   };
   const bad = lines.some((l) => !l.productId || !(Number(l.quantity) > 0) || toCents(l.price) === 'bad' || toCents(l.price) === null) || !cust || (amend && !h.reason.trim());
   const estimate = lines.reduce((s, l) => {
@@ -323,8 +337,8 @@ function OrderForm({ companyId, opts, view }: { companyId: string; opts: NonNull
               <legend className="small">Line {i + 1}</legend>
               <div className="form-grid">
                 <div className="field span-2"><label htmlFor={`sl-p-${i}`}>Product</label><select id={`sl-p-${i}`} className="select" value={l.productId} onChange={(e) => pickProduct(i, e.target.value)}><option value="">Choose a product</option>{opts.products.map((p) => <option key={p.id} value={p.id}>{p.number} {p.name}</option>)}</select></div>
-                <div className="field"><label htmlFor={`sl-q-${i}`}>Quantity</label><input id={`sl-q-${i}`} className="input" type="number" min="0" step="any" inputMode="decimal" value={l.quantity} onChange={(e) => setLine(i, { quantity: e.target.value })} /></div>
-                <div className="field"><label htmlFor={`sl-pr-${i}`}>Unit price ({opts.currency})</label><input id={`sl-pr-${i}`} className="input" inputMode="decimal" value={l.price} onChange={(e) => setLine(i, { price: e.target.value })} /></div>
+                <div className="field"><label htmlFor={`sl-q-${i}`}>Quantity</label><input id={`sl-q-${i}`} className="input" type="number" min="0" step="any" inputMode="decimal" value={l.quantity} onChange={(e) => setLine(i, { quantity: e.target.value })} onBlur={() => void suggestPrice(i, l.productId, l.quantity)} /></div>
+                <div className="field"><label htmlFor={`sl-pr-${i}`}>Unit price ({opts.currency})</label><input id={`sl-pr-${i}`} className="input" inputMode="decimal" value={l.price} onChange={(e) => setLine(i, { price: e.target.value, note: undefined })} />{l.note ? <span className="muted small">{l.note}</span> : null}</div>
                 <div className="field"><label htmlFor={`sl-d-${i}`}>Discount %</label><input id={`sl-d-${i}`} className="input" type="number" min="0" max="100" step="any" value={l.discount} onChange={(e) => setLine(i, { discount: e.target.value })} /></div>
                 <div className="field"><label htmlFor={`sl-t-${i}`}>Tax code</label><select id={`sl-t-${i}`} className="select" value={l.taxCode} onChange={(e) => setLine(i, { taxCode: e.target.value })}>{opts.taxCodes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}</select></div>
                 <div className="field"><label htmlFor={`sl-f-${i}`}>Fulfil</label><select id={`sl-f-${i}`} className="select" value={l.fulfil} onChange={(e) => setLine(i, { fulfil: e.target.value as 'stock' | 'make' })}><option value="stock">From stock</option><option value="make">Make to order</option></select></div>
@@ -431,7 +445,7 @@ function OrderDetail({ companyId }: { companyId: string }) {
                   <td data-label="Returned" className="num">{l.returnedQty ? qty(l.returnedQty) : ''}</td>
                   <td data-label="Available" className="num">{qty(l.availableQty)}</td>
                   <td data-label="Short" className={`num${l.shortQty ? ' erp-neg' : ''}`}>{l.shortQty ? qty(l.shortQty) : ''}</td>
-                  <td data-label="Price" className="num">{money(l.unitPriceCents, o.currency)}{l.discountBp ? <div className="muted small">less {l.discountBp / 100}%</div> : null}</td>
+                  <td data-label="Price" className="num">{money(l.unitPriceCents, o.currency)}{l.discountBp ? <div className="muted small">less {l.discountBp / 100}%</div> : null}{l.priceNote ? <div className="muted small">{l.priceNote}</div> : null}</td>
                   <td data-label="Before tax" className="num">{money(l.netCents, o.currency)}</td>
                   <td className="erp-actions">{canMake(l) ? <button className="btn sm" onClick={async () => { const r = (await act(() => post<{ id: string }>(erpPath(companyId, `/sales-orders/${o.id}/lines/${l.id}/make`), { requestKey: requestKey() }), 'Manufacturing order made')) as { id: string } | null; if (r && typeof r === 'object') navigate(manufacturingPage(companyId, `/orders/${r.id}`)); }}>Make to order</button> : null}</td>
                 </tr>

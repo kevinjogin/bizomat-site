@@ -113,6 +113,15 @@ const BASE: Record<string, FlagDef> = {
     enforcement: false,
     release: 'R6',
   },
+  account_two_factor: {
+    label: 'Two-factor sign-in for everyone',
+    description: 'Anyone can turn on two-factor sign-in (an authenticator app, with ten recovery codes) in Settings, Security; from then on signing in with a password or Google needs a code too. Off: only platform admins use it, in the ERP console, as before.',
+    values: ONOFF,
+    scopes: ['global'],
+    risk: 'medium',
+    enforcement: false,
+    release: 'Batch 2',
+  },
   self_service_password_reset: {
     label: 'Forgotten password',
     description: 'People can reset a forgotten password with a one-hour link sent to their proven email address.',

@@ -107,12 +107,13 @@ const guide: Guide = {
     { q: 'Do I need separate accounts for the CRM, Finance, Projects or CAD Automation?', a: 'No. One BIZOMAT account opens every module of BIZOMAT ERP. CAD Automation takes the same account: choose Continue with BIZOMAT on its sign-in page.' },
     { q: 'Why was I signed out?', a: 'A sign-in lasts a fixed time (three days on bizomat.ai) and then ends. You are also signed out everywhere else when you change your password, and a single session ends when you revoke it under Active sessions (/learn/security/).' },
     { q: 'Can I change the email address I sign in with?', a: 'Not in your profile: the Profile tab says "Your sign-in email cannot be changed here." Contact BIZOMAT through bizomat.ai/contact/ if it must change.' },
-    { q: 'Is there two-factor sign-in?', a: 'Not for customer accounts. Two-factor sign-in with an authenticator app is used today only by BIZOMAT’s own platform administrators for the platform console. You sign in with your email and password, or with Google where it is set up.' },
+    { q: 'Is there two-factor sign-in?', a: 'Not for customer accounts yet. It is built (an authenticator app, with recovery codes) and waits for BIZOMAT to switch it on; today it is used only by BIZOMAT’s own platform administrators for the platform console. You sign in with your email and password, or with Google where it is set up.' },
     { q: 'Why does the screen look different on my other computer?', a: 'The theme belongs to the computer, not the account. Each computer opens in its own system theme until you choose Light or Dark on it.' },
   ],
   related: ['what-is-bizomat', 'navigation', 'security', 'trouble-sign-in', 'cad-automation'],
   notYet: [
     { text: 'A Forgot your password? link on the sign-in page that sends a one-hour reset link to your confirmed address.', status: 'in-development' },
+    { text: 'Two-factor sign-in for every account, turned on in Settings, Security, with a code at each sign-in.', status: 'in-development' },
   ],
   keywords: ['login', 'log in', 'log out', 'logout', 'sign up', 'register account', 'password', 'reset password', 'forgot password', 'email confirmation', 'verify email', 'dark mode', 'light mode', 'theme', 'profile', 'single sign-on', 'SSO', 'Google'],
   sources: [

@@ -122,6 +122,7 @@ const guide: Guide = {
     { label: 'Export CSV', does: 'Downloads the list as filtered: orders, shipments, returns or the delivery schedule.', when: 'To work on the records in a spreadsheet.' },
   ],
   faqs: [
+    { q: 'Where does a line’s price come from?', a: 'When you choose a product, the order takes the price the Pricing module gives for the customer and the quantity: the customer’s own price list, else the lowest list price whose quantity is met, else the product’s standard price, then the best promotion in use. Each line says which; a price you type is kept and shown as typed.' },
     { q: 'Why can I not choose a customer?', a: 'Choosing a customer needs access to the company\'s CRM companies or its Finance customers. If you have neither, the order screen says so. Ask an administrator for a CRM role that sees the customer (see /learn/roles-and-permissions/).' },
     { q: 'Why can I not see New sales order?', a: 'Only sales managers and ERP administrators make and change sales orders. Others can read them. ERP roles are given in Administration, ERP roles.' },
     { q: 'Why is Make the draft invoice in Finance missing?', a: 'The section says why. The company needs a Finance business workspace, the customer must be linked to a Finance customer (in the CRM company, In Finance), you need a Finance role that may create invoices and the Sales manager role, and the shipment must be dispatched. Each shipment has one invoice only.' },

@@ -1,5 +1,6 @@
 -- BIZOMAT ERP: postings to Finance's ledger from the modules framework (batch 2, item 1; docs/erp/postings.md), and the
--- intercompany contacts of consolidation (batch 2, item 2) and custom fields (batch 2, item 3).
+-- intercompany contacts of consolidation (batch 2, item 2), custom fields (batch 2, item 3) and the sign-in challenge of
+-- two-factor sign-in for everyone and the price source of sales order lines (batch 2, item 4).
 -- Depreciation of fixed assets, approved pay runs and earned revenue become posted journals in the company's Finance
 -- business workspace, through Finance's own ledger code (src/worker/fin/ledger.ts), into the accounts the company
 -- chooses here. Additive only. Each journal is recorded once per key in erp_integration_events (kind
@@ -52,3 +53,25 @@ CREATE TABLE erp_custom_fields (
   updated_at INTEGER NOT NULL,
   PRIMARY KEY (company_id, object, key)
 );
+
+-- Two-factor sign-in for every account (batch 2, item 4; flag account_two_factor, off; src/worker/auth/two-factor.ts):
+-- a password (or Google) sign-in of a person who has turned two-factor sign-in on makes no session yet, only this
+-- challenge, which a code from their authenticator app (or a recovery code) turns into one. Ten minutes, five tries,
+-- used once; only its SHA-256 is kept. Enrolments stay in user_mfa (migration 0029).
+CREATE TABLE login_challenges (
+  id TEXT PRIMARY KEY,
+  token_hash TEXT NOT NULL UNIQUE,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  provider TEXT NOT NULL CHECK (length(provider) BETWEEN 1 AND 40),
+  redirect_to TEXT,
+  ip TEXT,
+  attempts INTEGER NOT NULL DEFAULT 0,
+  created_at INTEGER NOT NULL,
+  expires_at INTEGER NOT NULL,
+  used_at INTEGER
+);
+CREATE INDEX login_challenges_user ON login_challenges(user_id, created_at);
+
+-- Price lists and promotions on sales orders (batch 2, item 4; src/worker/erp/objects/pricing.ts): where each line's
+-- price came from (the price list, the promotion, the standard price, or typed by hand), in plain words.
+ALTER TABLE erp_so_lines ADD COLUMN price_note TEXT NOT NULL DEFAULT '';

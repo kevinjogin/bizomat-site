@@ -5,6 +5,7 @@ import { HttpError } from './lib/util';
 import { isSecureEnv, requireAuth, resolveAuth, sessionCookieName } from './auth/session';
 import { authRoutes } from './routes/auth';
 import { passwordResetRoutes } from './routes/password-reset';
+import { twoFactorRoutes } from './auth/two-factor';
 import { workspaceRoutes } from './routes/workspaces';
 import { orgRoutes } from './routes/org';
 import { accessRoutes } from './routes/access';
@@ -171,6 +172,8 @@ export function createApp() {
   app.route('/api/auth', authRoutes);
   // Forgotten password (R7; flag self_service_password_reset, off): answers 404 until it is switched on.
   app.route('/api/auth', passwordResetRoutes);
+  // Two-factor sign-in for everyone (batch 2; flag account_two_factor, off): enrolment in Settings, Security.
+  app.route('/api/auth/two-factor', twoFactorRoutes);
   // CRM invitation previews and calendar feeds: no session, the token in the address is the secret.
   app.route('/api/crm-public', crmPublicRoutes);
   // Finance invitation previews: no session, the token in the address is the secret.

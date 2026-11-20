@@ -1093,6 +1093,8 @@ export interface SoLine {
   uom: string;
   unitPriceCents: number;
   discountBp: number;
+  /** Where the price came from: the price list, a promotion, the standard price, or typed. */
+  priceNote?: string;
   taxCode: string;
   taxRateBp: number;
   netCents: number;
