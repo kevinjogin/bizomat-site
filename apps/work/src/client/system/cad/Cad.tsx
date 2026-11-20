@@ -55,7 +55,19 @@ export interface CadView {
   limits: { concurrent: number; commandSeconds: number; uploadMb: number; storageMb: number };
   flags: { products: boolean; bom: boolean; manufacturing: boolean; quality: boolean; projects: boolean };
   erp: { documentsEdit: boolean; productsEdit: boolean };
+  /** When CAD Automation last reported to the ERP: late after 5 minutes, stale (it works by person) after 15. */
+  sync?: { at: number; minutes: number; late: boolean; stale: boolean } | null;
   cad: ({ connected: true } & CadState) | { connected: false; reason: string };
+}
+
+interface CadNotice {
+  id: string;
+  kind: string;
+  title: string;
+  body: string;
+  link: string | null;
+  createdAt: number;
+  read: boolean;
 }
 
 const STATUS: Record<string, [string, string]> = {
@@ -141,6 +153,7 @@ export function CadArea({ companyId, companyName, fallback }: { companyId: strin
           <button className="btn" onClick={() => q.refetch()}><Icon name="refresh" size={14} /> Try again</button>
         </section>
       ) : null}
+      {v.cad.connected && v.sync?.late ? <SyncLate sync={v.sync} /> : null}
       <Routes>
         <Route index element={<Overview v={v} />} />
         <Route path="computers" element={<Computers v={v} />} />
@@ -155,6 +168,47 @@ export function CadArea({ companyId, companyName, fallback }: { companyId: strin
         <Route path="*" element={<Navigate to={cadPage(companyId)} replace />} />
       </Routes>
     </div>
+  );
+}
+
+/** CAD Automation has not reported to the ERP for a while (G6 of the audit of 20 Nov 2026). */
+function SyncLate({ sync }: { sync: NonNullable<CadView['sync']> }) {
+  return (
+    <section className="co-prompt" role="status">
+      <p>
+        <strong>CAD Automation has not reported to the ERP for {sync.minutes} minutes.</strong>{' '}
+        {sync.stale
+          ? 'Until it reports again, new work runs by person, as before the ERP: this company’s limits and shared views do not apply to it.'
+          : 'If it stays silent for 15 minutes, new work runs by person until it reports again, and this company’s limits do not apply to it.'}{' '}
+        Nothing moves between companies either way.
+      </p>
+    </section>
+  );
+}
+
+/** The person's CAD Automation notices in this company: a failed run, a review asked of them, a revision released. */
+function Notices({ v }: { v: CadView }) {
+  const id = v.company.id;
+  const qc = useQueryClient();
+  const q = useQuery({ queryKey: ['cad', id, 'notices'], queryFn: () => get<{ notices: CadNotice[] }>(erpPath(id, '/cad/notices')), retry: false, staleTime: 30_000 });
+  const unread = (q.data?.notices ?? []).filter((n) => !n.read);
+  if (!unread.length) return null;
+  const read = async (ids: string[]) => {
+    await post(erpPath(id, '/cad/notices/read'), { ids }).catch(() => null);
+    await qc.invalidateQueries({ queryKey: ['cad', id, 'notices'] });
+  };
+  return (
+    <Section title="For you" actions={<button className="btn ghost sm" type="button" onClick={() => read(unread.map((n) => n.id))}>Mark all as read</button>}>
+      <ul className="erp-list">
+        {unread.map((n) => (
+          <li key={n.id}>
+            {n.link ? <Link to={n.link.replace(/^\/erp(?=\/)/, '')} onClick={() => read([n.id])}><strong>{n.title}</strong></Link> : <strong>{n.title}</strong>}{' '}
+            <span className="muted small">{timeAgo(n.createdAt)}</span>
+            {n.body ? <div className="small muted">{n.body}</div> : null}
+          </li>
+        ))}
+      </ul>
+    </Section>
   );
 }
 
@@ -435,6 +489,7 @@ function Overview({ v }: { v: CadView }) {
   return (
     <div className="stack">
       <SetupGuide v={v} compact />
+      <Notices v={v} />
       {c.unassigned.computers || c.unassigned.assistants ? (
         <section className="co-prompt">
           <p>
@@ -1317,14 +1372,22 @@ export function ReviewTaskButton({ companyId, documentId }: { companyId: string;
   const q = useQuery({ queryKey: ['cad', companyId, 'review-boards'], queryFn: () => get<{ enabled: boolean; boards: { id: string; name: string }[] }>(erpPath(companyId, '/cad/review-boards')), retry: false, staleTime: 60_000 });
   const [open, setOpen] = useState(false);
   const [boardId, setBoardId] = useState('');
+  const [reviewerId, setReviewerId] = useState('');
   const [note, setNote] = useState('');
   const toast = useToast();
+  const people = useQuery({
+    queryKey: ['cad', companyId, 'review-boards', boardId, 'reviewers'],
+    queryFn: () => get<{ reviewers: { id: string; name: string }[]; assigns: boolean }>(erpPath(companyId, `/cad/review-boards/${encodeURIComponent(boardId)}/reviewers`)),
+    enabled: open && !!boardId,
+    retry: false,
+    staleTime: 60_000,
+  });
   if (!q.data?.enabled) return null;
   const send = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      await post(erpPath(companyId, `/cad/documents/${encodeURIComponent(documentId)}/review`), { boardId, note: note.trim() || undefined });
-      toast('Review task added in Projects');
+      const r = await post<{ assigned: boolean }>(erpPath(companyId, `/cad/documents/${encodeURIComponent(documentId)}/review`), { boardId, reviewerId: reviewerId || undefined, note: note.trim() || undefined });
+      toast(reviewerId ? (r.assigned ? 'Review task added in Projects and given to the reviewer' : 'Review task added in Projects; the reviewer is told') : 'Review task added in Projects');
       setOpen(false);
     } catch (err) {
       toast(errorMessage(err), 'error');
@@ -1339,12 +1402,24 @@ export function ReviewTaskButton({ companyId, documentId }: { companyId: string;
             <form id="cad-review" className="stack" onSubmit={send}>
               <div className="field">
                 <label htmlFor="cad-board">Board</label>
-                <select id="cad-board" className="select" value={boardId} onChange={(e) => setBoardId(e.target.value)}>
+                <select id="cad-board" className="select" value={boardId} onChange={(e) => { setBoardId(e.target.value); setReviewerId(''); }}>
                   {q.data.boards.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
                 </select>
               </div>
+              <div className="field">
+                <label htmlFor="cad-reviewer">Reviewer (optional)</label>
+                <select id="cad-reviewer" className="select" value={reviewerId} onChange={(e) => setReviewerId(e.target.value)} disabled={!people.data}>
+                  <option value="">Nobody yet</option>
+                  {(people.data?.reviewers ?? []).map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
+                </select>
+                <span className="muted small">
+                  {people.data && !people.data.assigns
+                    ? 'This board has no People column, so the task is not given to them; they are told in CAD Automation, and by email where email is set up.'
+                    : 'Only people in this company who can open the board. The task is given to them, and they are told.'}
+                </span>
+              </div>
               <div className="field"><label htmlFor="cad-note">Note (optional)</label><textarea id="cad-note" className="input" rows={3} maxLength={1000} value={note} onChange={(e) => setNote(e.target.value)} /></div>
-              <p className="muted small">The task links back to this document. Assign it and set a date on the board.</p>
+              <p className="muted small">The task links back to this document. Set a date on the board.</p>
             </form>
           )}
         </Modal>

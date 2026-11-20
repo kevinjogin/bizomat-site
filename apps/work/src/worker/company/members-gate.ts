@@ -34,7 +34,7 @@ const PERSONAL = new Set(['views', 'preferences', 'favourites', 'favorites', 're
 
 /** The member module an address belongs to (Projects, CRM and Finance by their tool; the ERP's reports by address). */
 export function memberModuleOf(ctx: RequestContext, segments: string[]): MemberModule | null {
-  if (ctx.app === 'erp' && segments[0] === 'erp' && segments[3] === 'reports') return 'reports';
+  if (ctx.app === 'erp' && segments[0] === 'erp' && (segments[3] === 'reports' || segments[3] === 'analysis')) return 'reports';
   if (!ctx.module) return null;
   if (ctx.module === 'tasks') return 'projects';
   return isMemberModule(ctx.module) ? ctx.module : null;

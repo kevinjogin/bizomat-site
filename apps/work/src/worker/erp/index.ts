@@ -51,6 +51,7 @@ import { returnRoutes } from './returns';
 import { supplyReportRoutes, supplyCounts } from './supply-reports';
 // The modules framework (owner's brief "97-module enterprise expansion", 20 Nov 2026): src/worker/erp/objects
 import { objectRoutes } from './objects/routes';
+import { analysisRoutes } from './analysis';
 import { NEW_ROLE_HELP } from '../../shared/erp-objects/roles';
 
 export const erpRoutes = new Hono<AppEnv>();
@@ -267,3 +268,5 @@ erpRoutes.route('/', objectRoutes);
 erpRoutes.route('/', supplierPortalStaffRoutes);
 // Putaway suggestions and replenishment to maximum levels (replenish.ts).
 erpRoutes.route('/', replenishRoutes);
+// Product Management: sales and margin analysis, and stock against sales
+erpRoutes.route('/', analysisRoutes);

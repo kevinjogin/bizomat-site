@@ -201,3 +201,55 @@ button.erp-stat { text-align: left; font: inherit; color: inherit; cursor: point
 .erp-dispatch-job:hover { border-color: var(--accent); text-decoration: none; }
 .nav-item.nav-sub { padding-left: 28px; font-size: 13px; }
 .erp-crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; color: var(--text-3); }
+
+/* Product Management: sales and margin analysis (system/erp/Analysis.tsx). Chart colours validated with the dataviz
+   checks against the ERP's surfaces: this period teal, the comparison period orange, each mode its own steps. */
+.erp-an { --an-s1: #0d9488; --an-s2: #eb6834; display: flex; flex-direction: column; gap: 12px; }
+:root[data-theme='dark'] .erp-an { --an-s1: #0fa596; --an-s2: #d95926; }
+.erp-an-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px 12px; }
+.erp-an-field { display: grid; gap: 4px; font-size: 12px; color: var(--text-3); }
+.erp-an-field .input { min-width: 150px; }
+.erp-an-field.inline { display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.erp-an-dates { margin: 0; }
+.erp-an-trail { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; }
+.erp-an-step { display: inline-flex; align-items: center; gap: 4px; color: var(--text-3); }
+.erp-an-crumb { border: 1px solid var(--border); background: var(--surface); color: var(--text); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.erp-an-crumb:hover { border-color: var(--accent); }
+.erp-an-crumb.current { border-color: var(--accent); font-weight: 600; }
+.erp-an-body { display: flex; flex-direction: column; gap: 12px; transition: opacity 0.15s; }
+.erp-an-body.refreshing { opacity: 0.6; }
+.erp-an-tiles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+.erp-an-tile { display: grid; gap: 4px; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.erp-an-label { font-size: 12px; color: var(--text-3); }
+.erp-an-value { font-size: 22px; font-weight: 600; }
+.erp-an-delta { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; }
+.erp-an-delta.up, .erp-an-up { color: var(--success); }
+.erp-an-delta.down, .erp-an-down { color: var(--danger); }
+.erp-an-up, .erp-an-down { display: inline-flex; align-items: center; gap: 2px; }
+.erp-an-chart { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.erp-an-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; font-size: 13px; color: var(--text-2); }
+.erp-an-key { display: inline-flex; align-items: center; gap: 6px; }
+.erp-an-plot { position: relative; }
+.erp-an-svg { display: block; overflow: visible; }
+.erp-an-svg text { fill: var(--text-3); font-size: 11px; font-variant-numeric: tabular-nums; }
+.erp-an-grid { stroke: var(--border); stroke-width: 1; }
+.erp-an-base { stroke: var(--border-strong); stroke-width: 1; }
+.erp-an-s1 { fill: var(--an-s1); transition: opacity 0.12s; }
+.erp-an-s1.dim { opacity: 0.55; }
+.erp-an-s2-line { stroke: var(--an-s2); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+.erp-an-s2-dot { fill: var(--an-s2); stroke: var(--surface); stroke-width: 2; }
+.erp-an-hit { fill: transparent; cursor: default; outline: none; }
+.erp-an-hit:focus-visible { stroke: var(--accent); stroke-width: 1; }
+.erp-an-tip { position: absolute; top: 0; width: 180px; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); box-shadow: var(--shadow-2); pointer-events: none; font-size: 13px; display: grid; gap: 2px; }
+.erp-an-track { fill: var(--surface-3); }
+.erp-an-share svg { display: block; }
+.erp-an-dims { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+.erp-an-dim { border: 1px solid var(--border); background: var(--surface-2); color: var(--text-2); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.erp-an-dim:hover { border-color: var(--accent); }
+.erp-an-dim.active { background: var(--accent); border-color: var(--accent); color: var(--on-strong); font-weight: 600; }
+.erp-an-drill { border: 0; background: none; padding: 0; font: inherit; color: var(--accent); cursor: pointer; text-align: left; }
+.erp-an-drill:hover { text-decoration: underline; }
+.erp-an-open { margin-left: 6px; color: var(--text-3); }
+.erp-an-grid-table tfoot th, .erp-an-grid-table tfoot td { font-weight: 600; border-top: 2px solid var(--border); }
+@media (max-width: 900px) { .erp-an-tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .erp-an-share { display: none; } .erp-an-field .input { min-width: 0; } }

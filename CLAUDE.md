@@ -208,6 +208,15 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   out to CAD Automation's own application in the ERP's side menu. Released 20 Nov 2026 with every flag off (kevinjogin/bizomat-site#94, deploy run 43;
   the engine kevinjogin/bizomat-cad#19, `cados` 13db582, its deploy run 10; `apps/cad` synced in #95), after the staging
   verification with `cad_in_erp` on in staging only; the engine's sync to the ERP answers 200 every minute.
+  **Contract 2** (owner, 20 Nov 2026: "Approved, go ahead with all five, pilot on my company"; the audit
+  `docs/cad/AUDIT-2026-11-20.md`, `docs/cad/README.md` "Contract 2"; migration 0040): read-only roles refused by the AI
+  connector inside the company, the download setting on AI assistants' exports and every link download in the
+  company's history, waiting and running counted apart, review requests with a reviewer and CAD notices on the module's
+  Overview, a revision-released notice, a late-sync warning (5 minutes; the engine works by person after 15), and the
+  flag `cad_password_retired` (off; acts only while every CAD account is linked). An engine of contract 1 is told only
+  companies where people may work, so the deploy order never widens access. Staging is replaced by the end-to-end test
+  kevinjogin/bizomat-cad `tests/test_erp_e2e.py` (real work app, real engine, stand-in Companion) and a production pilot
+  on the owner's own company.
   **Every CAD page in the ERP** (owner, 20 Nov 2026: "all CAD Automation data and details in ERP, not at bizomat.ai/cad",
   and every link to bizomat.ai/cad and its pages to go there; `docs/cad/README.md`, "Every page of CAD Automation, in the
   ERP"): Home, CAD Assistant, SOLIDWORKS, Tools, History, Settings (the person's own private address and add-in key,
@@ -260,6 +269,15 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   supplier portal are planned. Healthcare is administration only: no clinical or patient records. Released 20 Nov 2026
   (kevinjogin/bizomat-site#111, deploy run 51, image d62af2b-run51, migration 0038 applied at start-up) after the
   staging walk (`infrastructure/staging/verify.mjs`, every flag off) passed with the new modules in it.
+  **Product Management analysis** (owner, 20 Nov 2026: Product Management "like Phocas", a functional reference only, no
+  Phocas name, screen or text; `docs/erp/analysis.md`; migration 0039; module switch `module_analysis_enabled`, on by
+  default like every module, and Products' switch): Sales and margin analysis (`/erp/c/<company>/products/analysis`:
+  sales, cost, margin and margin % of goods dispatched, by product, category, family, customer, salesperson, warehouse
+  and month, against last year or the period before, drill-down, saved views, CSV) and Stock against sales
+  (`/products/analysis/stock`), under Analysis in Product Management's side menu, read only, from dispatched shipment
+  lines and the stock ledger (`apps/work/src/worker/erp/analysis.ts`). Returns are not deducted; budgets, forecasts,
+  scheduled subscriptions and alerts are planned: never present them as working. Released 20 Nov 2026
+  (kevinjogin/bizomat-site#115, deploy run 54).
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
