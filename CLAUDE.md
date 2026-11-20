@@ -187,6 +187,19 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Illustrations are never converted. Never switch the flag on without the owner's approval. Released with Stage 1 and
   Members on 19 Nov 2026 (kevinjogin/bizomat-site#91, deploy run 42), every new flag off; staging is verified with the
   staging workflow's action `verify` (`docs/deployment/staging.md`).
+  **CAD Automation inside the ERP** (owner's brief and approved audit of 19 Nov 2026; `docs/cad/README.md`, and
+  kevinjogin/bizomat-cad `docs/ERP-MODULE.md`; migration 0037; flags `cad_in_erp`, `cad_redirect`, `cad_products`,
+  `cad_bom`, `cad_manufacturing`, `cad_quality`, `cad_projects`, all off): the screens, accounts, computers, history and
+  exports move into the ERP at `/erp/c/<company>/cad` (and `/erp/cad/pair?code=` for the Companion); the engine (the AI
+  connector, the computers' gateway, the geometry checks) and SOLIDWORKS stay in the Fly app `cados` (Amsterdam); no CAD
+  editor in the browser. The ERP calls CAD at `CAD_URL` (`WORK_CAD_URL = http://cados.internal:8080`) with a one-minute
+  ES256 assertion from its own key (`src/worker/cad/keys.ts`, public half at `/company/api/id/jwks`); CAD syncs once a
+  minute to `/company/api/id/cad-sync` with its client secret (no new secret). Each AI connection works in one company;
+  the central permissions apply (`src/worker/cad/access.ts`); fair-use limits per company in the console's CAD
+  Automation panel (`/erp/admin/cad`); exports saved to product revisions, bill of materials proposals from an open
+  assembly (draft revisions only), drawings on orders, NCRs and plans, review tasks in Projects. Configure-to-order is
+  deferred. CAD Automation is free. Never switch `cad_in_erp` or `cad_redirect` on without the owner's approval; the
+  rollback is switching them off.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
