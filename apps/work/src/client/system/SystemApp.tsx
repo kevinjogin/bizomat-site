@@ -23,6 +23,7 @@ import '../styles/fin.css';
 import '../styles/company.css';
 import '../styles/system.css';
 import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
+import { MODULE_DEFS } from '../../shared/erp-objects';
 
 // Asset Management and Maintenance (stages M1 to M3), inside a company at /c/<company>/maintenance; loaded when it is opened.
 const MaintenanceArea = lazy(() => import('./maintenance/Maintenance').then((m) => ({ default: m.MaintenanceArea })));
@@ -49,6 +50,12 @@ const CadArea = lazy(() => import('./cad/Cad').then((m) => ({ default: m.CadArea
 // The Company Admin console (flag company_admin_console): /c/<company>/company-admin for the owner and administrators.
 const CompanyAdminArea = lazy(() => import('./companyadmin/CompanyAdmin').then((m) => ({ default: m.CompanyAdminArea })));
 const WhsLegalAdmin = lazy(() => import('./whs/LegalAdmin').then((m) => ({ default: m.LegalAdmin })));
+// The modules framework (owner's brief "97-module enterprise expansion", 20 Nov 2026): All modules (the 97-module
+// catalogue) at /c/<company>/modules, what waits for the person at /c/<company>/inbox, and each module at
+// /c/<company>/m/<module> (src/client/system/erp/objects).
+const ModuleArea = lazy(() => import('./erp/objects/ModuleArea').then((m) => ({ default: m.ModuleArea })));
+const ModulesHome = lazy(() => import('./erp/objects/ModulesHome').then((m) => ({ default: m.ModulesHome })));
+const InboxPage = lazy(() => import('./erp/objects/ModulesHome').then((m) => ({ default: m.InboxPage })));
 const BillingPage = lazy(() => import('./billing/Billing').then((m) => ({ default: m.BillingPage })));
 const BillingAdmin = lazy(() => import('./billing/BillingAdmin').then((m) => ({ default: m.BillingAdmin })));
 // The Admin Control Centre and two-factor sign-in (Stage 1, R2; src/client/admin/pages).
@@ -243,6 +250,9 @@ export function SystemRoutes() {
       <Route path="/supply-chain/*" element={<CompanyRedirect section="supply-chain" />} />
       {/* The module rail's Health and Safety: the WHS module of the company used last. */}
       <Route path="/whs/*" element={<CompanyRedirect section="whs" />} />
+      <Route path="/modules/*" element={<CompanyRedirect section="modules" />} />
+      <Route path="/inbox" element={<CompanyRedirect section="inbox" />} />
+      <Route path="/m/*" element={<CompanyRedirect section="m" />} />
       <Route path="/operations" element={<Shell><Operations /></Shell>} />
       <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
       <Route path="/administration" element={<Shell><Administration /></Shell>} />
@@ -290,7 +300,7 @@ function MaintenanceRedirect() {
 }
 
 /** /products, /procurement, /inventory and /manufacturing: the same section of the company used last, else the first one. */
-function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' | 'manufacturing' | 'quality' | 'supply-chain' | 'whs' }) {
+function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' | 'manufacturing' | 'quality' | 'supply-chain' | 'whs' | 'modules' | 'inbox' | 'm' }) {
   const location = useLocation();
   const q = useMe();
   if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
@@ -407,6 +417,9 @@ function CompanyArea() {
         <Route path="supply-chain/*" element={<Suspense fallback={<Loading />}><SupplyChainArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="whs/*" element={<Suspense fallback={<Loading />}><WhsArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="billing" element={<Suspense fallback={<Loading />}><BillingPage companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
+        <Route path="modules" element={<Suspense fallback={<Loading />}><ModulesHome companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
+        <Route path="inbox" element={<Suspense fallback={<Loading />}><InboxPage companyId={q.data.company.id} /></Suspense>} />
+        <Route path="m/:module/*" element={<Suspense fallback={<Loading />}><ModuleArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="*" element={<Navigate to="home" replace />} />
       </Routes>
     </Shell>
@@ -447,6 +460,9 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
         {base ? (
           <>
             <NavLink to={`${base}/home`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="home" /> Dashboard</NavLink>
+            <NavLink to={`${base}/modules`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="grid" /> All modules</NavLink>
+            <NavLink to={`${base}/inbox`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="inbox" /> Waiting for me</NavLink>
+            <ModuleShortcuts base={base} />
             <NavLink to={`${base}/products`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="diamond" /> Products and Engineering</NavLink>
             {cadHere ? <NavLink to={`${base}/cad`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="bolt" /> CAD Automation</NavLink> : null}
             <NavLink to={`${base}/procurement`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="inbox" /> Procurement</NavLink>
@@ -493,6 +509,38 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
     </div>
   );
 }
+
+/** The person's favourite modules (else the ones used last), from this computer, in the sidebar. */
+function ModuleShortcuts({ base }: { base: string }) {
+  const read = () => {
+    try {
+      const fav = JSON.parse(localStorage.getItem('bizomat-erp-favourite-modules') ?? '[]');
+      const recent = JSON.parse(localStorage.getItem('bizomat-erp-recent-modules') ?? '[]');
+      const list = (Array.isArray(fav) && fav.length ? fav : Array.isArray(recent) ? recent : []).filter((x: unknown) => typeof x === 'string' && /^m\/[a-z_]+$/.test(x));
+      return list.slice(0, 6) as string[];
+    } catch {
+      return [];
+    }
+  };
+  const [list, setList] = useState(read);
+  useEffect(() => {
+    const on = () => setList(read());
+    window.addEventListener('bizomat-modules-changed', on);
+    return () => window.removeEventListener('bizomat-modules-changed', on);
+  }, []);
+  if (!list.length) return null;
+  return (
+    <>
+      {list.map((k) => (
+        <NavLink key={k} to={`${base}/${k}`} className={({ isActive }) => `nav-item nav-sub${isActive ? ' active' : ''}`}>
+          <Icon name="star" /> <span className="ellipsis">{MODULE_LABELS[k.slice(2)] ?? k.slice(2)}</span>
+        </NavLink>
+      ))}
+    </>
+  );
+}
+
+const MODULE_LABELS: Record<string, string> = Object.fromEntries(MODULE_DEFS.map((m) => [m.key, m.label]));
 
 /** The company rule's notice (R7): only for people it concerns, while it is switched on. Showing it is recorded. */
 function ComplianceBanner() {

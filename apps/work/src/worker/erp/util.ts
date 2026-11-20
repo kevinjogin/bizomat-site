@@ -134,7 +134,9 @@ export interface ErpEvent {
     | 'cad_pairing'
     | 'cad_bom_proposal'
     | 'cad_review'
-    | 'cad_settings';
+    | 'cad_settings'
+    // the modules framework (src/worker/erp/objects)
+    | 'record';
   entityId?: string | null;
   productId?: string | null;
   summary: string;

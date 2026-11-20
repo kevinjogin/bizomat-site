@@ -47,6 +47,9 @@ import { salesRoutes } from './sales';
 import { logisticsRoutes } from './logistics';
 import { returnRoutes } from './returns';
 import { supplyReportRoutes, supplyCounts } from './supply-reports';
+// The modules framework (owner's brief "97-module enterprise expansion", 20 Nov 2026): src/worker/erp/objects
+import { objectRoutes } from './objects/routes';
+import { NEW_ROLE_HELP } from '../../shared/erp-objects/roles';
 
 export const erpRoutes = new Hono<AppEnv>();
 
@@ -173,6 +176,7 @@ const ROLE_HELP: Record<string, string> = {
   whs_hsr: 'Health and Safety: reads the registers and adds consultation comments',
   health_officer: 'Health and Safety: the only role that reads confidential health information (medical treatment details), and confidential reports',
   viewer: 'Reads products, engineering records, suppliers, purchasing, stock, manufacturing, quality and sales orders',
+  ...NEW_ROLE_HELP,
 };
 
 erpRoutes.get('/c/:company/roles', async (c) => {
@@ -254,3 +258,6 @@ erpRoutes.route('/', salesRoutes);
 erpRoutes.route('/', logisticsRoutes);
 erpRoutes.route('/', returnRoutes);
 erpRoutes.route('/', supplyReportRoutes);
+// The modules framework: People and HR, payroll, timesheets, service, contracts, fleet, calibration, fixed assets, the
+// industry solutions and the rest, with the 97-module catalogue
+erpRoutes.route('/', objectRoutes);

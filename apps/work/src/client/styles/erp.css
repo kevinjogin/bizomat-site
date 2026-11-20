@@ -177,3 +177,20 @@ button.erp-stat { text-align: left; font: inherit; color: inherit; cursor: point
 .cad-step { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
 .cad-step-mark { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--border); font-weight: 600; font-size: 13px; }
 .cad-step-done .cad-step-mark { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+/* The modules framework (20 Nov 2026): reference pickers, the All modules cards, report bars and the dispatch board. */
+.erp-ref { position: relative; }
+.erp-ref-list { position: absolute; z-index: 20; left: 0; right: 0; top: 100%; margin: 4px 0 0; padding: 4px; list-style: none; max-height: 280px; overflow: auto; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow-md, 0 8px 24px rgba(0, 0, 0, 0.12)); }
+.erp-ref-list li { padding: 2px 4px; }
+.erp-ref-option { display: block; width: 100%; text-align: left; padding: 6px 8px; border: 0; border-radius: var(--radius); background: none; color: inherit; font: inherit; cursor: pointer; }
+.erp-ref-option:hover, .erp-ref-option:focus-visible { background: var(--surface-2, rgba(15, 118, 110, 0.08)); }
+.erp-ref-picked { min-height: 36px; padding: 4px 8px; border: 1px solid var(--border); border-radius: var(--radius); }
+.erp-check { gap: 8px; min-height: 36px; }
+.erp-module-card { display: flex; flex-direction: column; gap: 8px; }
+.erp-module-card p { margin: 0; }
+.erp-meter { width: 120px; height: 10px; }
+.erp-dispatch th, .erp-dispatch td { vertical-align: top; min-width: 120px; }
+.erp-dispatch-job { display: block; margin-bottom: 6px; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius); color: inherit; text-decoration: none; }
+.erp-dispatch-job:hover { border-color: var(--accent); text-decoration: none; }
+.nav-item.nav-sub { padding-left: 28px; font-size: 13px; }
+.erp-crumbs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; color: var(--text-3); }

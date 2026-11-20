@@ -621,6 +621,15 @@ html[data-ui="new"] .erp-pod { gap: var(--bz-space-2); }
 html[data-ui="new"] .cad-steps { gap: var(--bz-space-2); }
 html[data-ui="new"] .cad-step { gap: var(--bz-space-3); padding: var(--bz-space-3) var(--bz-space-3); }
 html[data-ui="new"] .cad-step-mark { font-size: var(--bz-text-sm); }
+html[data-ui="new"] .erp-ref-list { margin: var(--bz-space-1) 0 0; padding: var(--bz-space-1); }
+html[data-ui="new"] .erp-ref-list li { padding: 2px var(--bz-space-1); }
+html[data-ui="new"] .erp-ref-option { padding: var(--bz-space-2) var(--bz-space-2); }
+html[data-ui="new"] .erp-ref-picked { padding: var(--bz-space-1) var(--bz-space-2); }
+html[data-ui="new"] .erp-check { gap: var(--bz-space-2); }
+html[data-ui="new"] .erp-module-card { gap: var(--bz-space-2); }
+html[data-ui="new"] .erp-dispatch-job { margin-bottom: var(--bz-space-2); padding: var(--bz-space-2) var(--bz-space-2); }
+html[data-ui="new"] .nav-item.nav-sub { padding-left: var(--bz-space-8); font-size: var(--bz-text-sm); }
+html[data-ui="new"] .erp-crumbs { gap: var(--bz-space-2); }
 
 /* fin.css */
 html[data-ui="new"] .fin-hint { margin: 0 0 var(--bz-space-3); }

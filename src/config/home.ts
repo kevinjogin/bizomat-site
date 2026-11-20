@@ -56,6 +56,8 @@ export const PLANNER_EXAMPLES = {
  */
 export const HOME_ERP_GROUPS = [
   { rail: 'Dashboard', line: 'Your company, its tools and their figures.', guides: ['dashboard'] },
+  { rail: 'All modules', line: 'The 97 modules of BIZOMAT ERP, one search across them, and what is waiting for you.', guides: ['all-modules'] },
+  { rail: 'People and HR', line: 'Employees, leave, recruitment, onboarding, training, reviews and pay runs.', guides: ['people-hr'] },
   { rail: 'Sales and CRM', line: 'Customers, leads, deals and follow-ups.', guides: ['crm'] },
   { rail: 'Finance and Accounting', line: 'Quotes, invoices, bills, banking, GST and reports.', guides: ['finance'] },
   { rail: 'Projects and Tasks', line: 'Boards, timelines, documents and dashboards.', guides: ['projects'] },

@@ -48,6 +48,21 @@ export const MODULES = {
   quality: { label: 'Quality', enforcedFrom: 'R4' },
   supply_chain: { label: 'Supply chain', enforcedFrom: 'R4' },
   cad: { label: 'CAD Automation', enforcedFrom: 'CAD' },
+  // The modules framework (owner's brief "97-module enterprise expansion", 20 Nov 2026): on by default like every module,
+  // so the owner's request to publish them for testing is met; a platform admin switches any of them off per company,
+  // rollout stage or everyone (src/shared/erp-objects FRAMEWORK_SWITCHES).
+  organisation: { label: 'Organisation, documents and workflow', enforcedFrom: 'Modules' },
+  finance_plus: { label: 'Fixed assets and revenue recognition', enforcedFrom: 'Modules' },
+  commercial: { label: 'Marketing, contracts, pricing, commissions and subscriptions', enforcedFrom: 'Modules' },
+  services: { label: 'Customer and field service', enforcedFrom: 'Modules' },
+  workforce: { label: 'Timesheets and resource planning', enforcedFrom: 'Modules' },
+  people: { label: 'People and HR', enforcedFrom: 'Modules' },
+  payroll: { label: 'Payroll', enforcedFrom: 'Modules' },
+  trade: { label: 'Trade compliance, invoice matching and subcontracting', enforcedFrom: 'Modules' },
+  calibration: { label: 'Calibration', enforcedFrom: 'Modules' },
+  environment: { label: 'Environment', enforcedFrom: 'Modules' },
+  fleet: { label: 'Fleet and transportation', enforcedFrom: 'Modules' },
+  industry: { label: 'Industry solutions', enforcedFrom: 'Modules' },
 } as const;
 export type ModuleKey = keyof typeof MODULES;
 export const moduleFlag = (m: ModuleKey) => `module_${m}_enabled`;

@@ -20,6 +20,8 @@ import g_supply_chain from './guides/supply-chain.ts';
 import g_maintenance from './guides/maintenance.ts';
 import g_whs from './guides/whs.ts';
 import g_reports from './guides/reports.ts';
+import g_all_modules from './guides/all-modules.ts';
+import g_people_hr from './guides/people-hr.ts';
 import g_ai_search from './guides/ai-search.ts';
 import g_automations from './guides/automations.ts';
 import g_integrations from './guides/integrations.ts';
@@ -52,7 +54,7 @@ import w_cad_to_product from './workflows/cad-to-product.ts';
 export const LEARN_HOME = '/learn/';
 export const LEARN_NAME = 'Knowledge Centre';
 export const LEARN_TITLE = 'BIZOMAT ERP Knowledge Centre';
-export const GUIDES: readonly Guide[] = [g_what_is_bizomat, g_account_and_sign_in, g_navigation, g_companies, g_roles_and_permissions, g_dashboard, g_crm, g_finance, g_projects, g_products, g_procurement, g_inventory, g_manufacturing, g_quality, g_supply_chain, g_maintenance, g_whs, g_reports, g_ai_search, g_automations, g_integrations, g_cad_automation, g_cad_ai_connection, g_company_administration, g_security, g_data_management, g_notifications, g_trouble_sign_in, g_trouble_access, g_trouble_records, g_trouble_connections];
+export const GUIDES: readonly Guide[] = [g_what_is_bizomat, g_account_and_sign_in, g_navigation, g_companies, g_roles_and_permissions, g_dashboard, g_crm, g_finance, g_projects, g_products, g_procurement, g_inventory, g_manufacturing, g_quality, g_supply_chain, g_maintenance, g_whs, g_people_hr, g_reports, g_all_modules, g_ai_search, g_automations, g_integrations, g_cad_automation, g_cad_ai_connection, g_company_administration, g_security, g_data_management, g_notifications, g_trouble_sign_in, g_trouble_access, g_trouble_records, g_trouble_connections];
 export const WORKFLOWS: readonly Workflow[] = [w_lead_to_customer, w_deal_to_invoice, w_deal_to_project, w_invoice_to_payment, w_project_to_completion, w_procure_to_pay, w_bom_to_production, w_engineering_change, w_make_to_order, w_sales_order_to_delivery, w_production_to_quality, w_maintenance_request_to_work_order, w_preventive_maintenance, w_incident_to_action, w_cad_to_product];
 
 export { SECTIONS };
