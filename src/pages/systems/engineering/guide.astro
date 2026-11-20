@@ -1,6 +1,6 @@
 ---
 // /systems/engineering/guide/: how to use BIZOMAT Engineering Automation (the Engineering Automation System), step by
-// step. Its application is CAD Automation (formerly CADOS), with its own sign-in for now. Every page, button and field
+// step. Its application is CAD Automation (formerly CADOS), with the same BIZOMAT account as every system. Every page, button and field
 // named here is the application's own label: apps/cad/opensketch/app_pages.py (Home, CAD Assistant, SOLIDWORKS, Tools,
 // History, Settings, Admin), apps/cad/opensketch/site.py (the set-up guide: requirements, versions, install, pairing,
 // connecting an assistant, verifying), apps/cad/docs/KEVOS-INSTALL.md and KEVOS-VERSIONS.md; the tools come from
@@ -38,8 +38,7 @@ const parts: Part[] = [
     lead: `${sys.name} works through its application, CAD Automation, at bizomat.ai/cad. It was called CADOS before.`,
     steps: [
       { t: 'Go to CAD Automation', x: `Open ${APP_LINKS.cad.home.replace('https://', '')}. Its pages are Home, CAD Assistant, SOLIDWORKS, Tools, History and Settings, with Admin for the administrator.` },
-      { t: 'Its own sign-in, for now', x: 'CAD Automation has its own accounts, separate from the BIZOMAT account you use for BIZOMAT ERP, Projects, the CRM and Finance.' },
-      { t: 'Sign in with BIZOMAT', x: 'One BIZOMAT account for CAD Automation too is being built. Until it is switched on, use your CAD Automation account.', s: 'in-development' },
+      { t: 'Sign in with BIZOMAT', x: 'Choose Continue with BIZOMAT and sign in with the BIZOMAT account you use for BIZOMAT ERP, Projects, the CRM and Finance. There is no second account to make.', s: 'live' },
       { t: 'From BIZOMAT ERP', x: `In ${erp.name}, Products and Engineering in the module rail shows the same four set-up steps, with links into CAD Automation. The last step of this guide covers it.`, s: 'connected' },
     ],
     shot: 'cad-overview',
@@ -180,7 +179,7 @@ const questions = [
   { q: 'My assistant says SOLIDWORKS is not connected. What do I check?', a: 'That SOLIDWORKS is open on a paired computer and not running as administrator, that the Companion is running (its tray icon) and not paused, and that the add-in is ticked in Tools > Add-Ins. Home shows the state of each part. The set-up and troubleshooting guide in CAD Automation covers the rest.' },
   { q: 'I have a new computer. What do I do?', a: 'On the SOLIDWORKS page, remove the old computer if it will not be used again: it stops working at once. Then install and pair the new one. Nothing needs copying from the old computer.' },
   { q: 'A computer was lost or stolen.', a: 'Remove it on the SOLIDWORKS page. Its key is refused from that moment, and AI apps can no longer reach it.' },
-  { q: 'Does CAD Automation use my BIZOMAT ERP account?', a: 'Not yet. It keeps its own sign-in for now; Sign in with BIZOMAT for CAD Automation is in development.' },
+  { q: 'Does CAD Automation use my BIZOMAT ERP account?', a: 'Yes. Choose Continue with BIZOMAT on its sign-in page. A CAD Automation account made before is linked to your BIZOMAT account when both have the same confirmed email.' },
 ];
 const shots = Object.fromEntries(parts.filter((p) => p.shot).map((p) => [p.id, shot(p.shot!)]));
 ---

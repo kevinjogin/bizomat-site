@@ -7,8 +7,8 @@ import { AI_SEARCH, CRUMB, FOOTER_NAV, NAV, QUOTE_CTA, SIGN_IN } from '../src/co
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : /\.(astro|ts|md|mdx)$/.test(f) ? [p] : []; });
 
-// BIZOMAT navigation (owner, 14 Nov 2026): Home | Systems | Resources | About | Contact, with AI Search and a Sign in
-// menu on the right. Systems is BIZOMAT's business software as one catalogue (src/config/systems.ts); the applications
+// BIZOMAT navigation (owner, 14 Nov 2026): Home | Systems | Resources | About | Contact, with AI Search and Sign in on
+// the right (one sign-in, BIZOMAT ERP, owner 20 Nov 2026). Systems is BIZOMAT's business software as one catalogue (src/config/systems.ts); the applications
 // open inside BIZOMAT ERP. Resources stay free and public. (Before: one menu per product, 13 Nov 2026.)
 test('the main navigation reads Home, Systems, Resources, About, Contact', () => {
   assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['Home', '/'], ['Systems', '/systems/'], ['Resources', '/resources/'], ['About', '/engine-room/'], ['Contact', '/contact/']]);
@@ -20,15 +20,19 @@ test('the main navigation reads Home, Systems, Resources, About, Contact', () =>
   assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
   assert.deepEqual(menu('About'), [['The Engine Room', '/engine-room/'], ['From the founder', '/engine-room/#founder'], ['Test record', '/engine-room/#tests']]);
   assert.deepEqual(AI_SEARCH, { href: '/#ai-search', label: 'AI Search' });
-  // One sign-in: BIZOMAT ERP (the CRM, Finance, Projects and company accounts); CAD Automation keeps its own for now.
-  assert.deepEqual(SIGN_IN.map((s) => [s.label, s.href]), [['BIZOMAT ERP', 'https://bizomat.ai/erp/login'], ['Engineering Automation', 'https://bizomat.ai/cad/login']]);
+  // One account, one sign-in (owner, 20 Nov 2026): BIZOMAT ERP, where every system opens; CAD Automation takes the same
+  // account. No sign-in menu, no second sign-in anywhere on the website.
+  assert.deepEqual(SIGN_IN, { label: 'Sign in', href: 'https://bizomat.ai/erp/login' });
+  assert.doesNotMatch(read('src/components/Header.astro'), /signin-menu|SIGN_IN\.map/);
+  assert.ok(!FOOTER_NAV.apps.some((l) => l.href.includes('/cad/')), 'the footer has one sign-in');
+  for (const f of walk('src').filter((x) => !x.includes('reados'))) assert.doesNotMatch(read(f), /own sign-in/i, `${f} still says CAD Automation has its own sign-in`);
   assert.deepEqual(CRUMB, { tools: 'Tools', library: 'Library' });
   assert.deepEqual(QUOTE_CTA, { href: '/contact/', label: 'Contact' });
   // One list serves desktop, tablet and mobile; menus work without JavaScript (<details>).
   const header = read('src/components/Header.astro');
   assert.match(header, /NAV\.map/);
   assert.match(header, /<details class="nav-menu"/);
-  assert.match(header, /<details class="nav-menu signin-menu" data-nav-menu>/);
+  assert.match(header, /<a class="site-header__cta site-header__signin" href=\{SIGN_IN\.href\}/);
   assert.match(header, /AI_SEARCH\.label/);
   assert.match(header, /aria-expanded="false" data-nav-toggle/);
   for (const page of ['systems/index.astro', 'systems/erp/index.astro', 'systems/erp/guide.astro', 'systems/crm/index.astro', 'systems/crm/guide.astro', 'systems/finance/index.astro', 'systems/finance/guide.astro', 'systems/projects/index.astro', 'systems/projects/guide.astro', 'systems/engineering/index.astro', 'systems/engineering/guide.astro', 'systems/manufacturing/index.astro', 'systems/manufacturing/guide.astro', 'systems/whs/index.astro', 'systems/whs/guide.astro', 'engine-room.astro', 'sign-in.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);

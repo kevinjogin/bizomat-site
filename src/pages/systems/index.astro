@@ -101,7 +101,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
       { t: 'Open a module.', x: 'Choose Sales and CRM, Finance and Accounting or Projects and Tasks in the rail.' },
     ],
     faqs: [
-      { q: 'Do I need a separate account for each tool?', a: 'No. One BIZOMAT account opens the ERP and every tool inside it. Engineering Automation (CAD Automation) keeps its own sign-in for now.' },
+      { q: 'Do I need a separate account for each tool?', a: 'No. One BIZOMAT account and one sign-in open the ERP and every tool inside it, CAD Automation included.' },
       { q: 'What is my own company?', a: 'Everyone has one, in their own name. It is not registered, and it holds the tools you own outside a registered company.' },
     ],
     manages: 'Your company: its tools, dashboard, reports, people, departments and roles',
@@ -264,7 +264,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
     connects: [
       live("In BIZOMAT ERP, Products and Engineering shows CAD Automation's set-up steps."),
       building("Your company's computers in the ERP, reported by CAD Automation: owners and administrators see the company's, members their own. Until it reports, the page says so and links to CAD Automation."),
-      building('Sign in with your BIZOMAT account. CAD Automation keeps its own sign-in for now.'),
+      live('Sign in with your BIZOMAT account: CAD Automation takes the same account (Continue with BIZOMAT).'),
       planned('Product records with revisions and bills of materials, linked to CAD drawings.'),
     ],
     steps: [
@@ -380,7 +380,7 @@ const DETAILS: Record<SystemInfo['id'], Detail> = {
 
 const platformFaqs = [
   { q: 'What is the difference between Systems and Resources?', a: "Systems are BIZOMAT's business software: you sign in to use them. Resources are free learning materials (calculators, the Library and guides), open to every visitor without signing in. Resources are not part of any system, and they stay free." },
-  { q: 'Do I need a separate account for each system?', a: 'No. One BIZOMAT account opens BIZOMAT ERP, and the CRM, Finance and Projects open inside it. Engineering Automation (the CAD Automation application) keeps its own sign-in for now.' },
+  { q: 'Do I need a separate account for each system?', a: 'No. One BIZOMAT account and one sign-in open BIZOMAT ERP, and every system opens inside it. Engineering Automation (the CAD Automation application) takes the same account.' },
   { q: 'Can I manage more than one company?', a: 'Yes. Register more than one company, or accept invitations from others, and move between them with the company switcher. Everyone also has their own company in their own name, which is not registered.' },
   { q: 'Is my data copied between the systems?', a: 'No. Each tool keeps its own records and permissions. A link between tools, such as a won deal to a draft invoice, makes a record in the other tool only when you ask, and checks your role there first.' },
   { q: 'Does Finance connect to my bank or lodge my BAS?', a: 'No. Finance does not connect to banks, make payments or lodge with the ATO. You import statements you download, and the GST and BAS report is a worksheet to check before you lodge yourself.' },

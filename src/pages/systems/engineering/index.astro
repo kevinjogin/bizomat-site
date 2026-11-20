@@ -1,6 +1,6 @@
 ---
 // /systems/engineering/: BIZOMAT Engineering Automation, the Engineering Automation System. Its application is CAD
-// Automation (formerly CADOS) at APP_LINKS.cad, with its own sign-in for now (src/config/systems.ts). What it does, how
+// Automation (formerly CADOS) at APP_LINKS.cad, with the same BIZOMAT account as every system (src/config/systems.ts). What it does, how
 // it connects, every tool, how to install it, how it is secured and how far it has been tested. Facts come from
 // src/data/platform-catalog.ts (CAD) and src/data/cad-tools.ts, which record their sources in apps/cad, and from the CAD
 // application itself: requirements and versions (apps/cad/opensketch/site.py docs page, apps/cad/docs/KEVOS-INSTALL.md,
@@ -122,12 +122,12 @@ const workflows: { t: string; steps: string[] }[] = [
 ];
 const linksNow: { t: string; x: string; s: FeatureStatus }[] = [
   { t: 'BIZOMAT ERP: set-up', x: 'Products and Engineering in the ERP\'s module rail has a CAD Automation tab with its four set-up steps and links into the application.', s: 'connected' },
+  { t: 'Sign in with BIZOMAT', x: 'The same BIZOMAT account as every system: CAD Automation\'s sign-in page offers Continue with BIZOMAT.', s: 'live' },
   { t: 'AI assistants', x: 'Claude, ChatGPT where your plan allows custom connectors, and other assistants that support remote MCP servers.', s: 'live' },
   { t: 'SOLIDWORKS', x: 'A native add-in with a tab, menu and task pane, built against the SOLIDWORKS 2022 API.', s: 'live' },
 ];
 const linksLater: { t: string; x: string; s: FeatureStatus }[] = [
   { t: 'BIZOMAT ERP: your computers', x: 'The ERP lists a company\'s computers (the owner and administrators see everyone\'s, members their own, other companies nothing) once CAD Automation reports to it. That reporting is not switched on yet; until it is, the ERP page says so and links to your computers in CAD Automation.', s: 'in-development' },
-  { t: 'Sign in with BIZOMAT', x: 'One BIZOMAT account for CAD Automation too. Until it is switched on, CAD Automation keeps its own sign-in.', s: 'in-development' },
   { t: 'Product and engineering records', x: 'Products with revisions, bills of materials, engineering changes and documents work today in BIZOMAT ERP, where a document can reference a CAD file on your computer. Making a drawing from an ERP product is planned.', s: 'live' },
 ];
 const faq = [
@@ -138,7 +138,7 @@ const faq = [
   { q: 'Which AI assistants work with it?', a: 'Any assistant that supports remote MCP servers over Streamable HTTP. In Claude, add it as a custom connector. In ChatGPT, add it where your plan allows custom connectors; your workspace administrator may need to allow them first. It has been tested with the MCP Python SDK client and Claude Desktop; ChatGPT\'s connector has not been tested yet.' },
   { q: 'Does BIZOMAT run its own AI?', a: 'No. CAD Automation runs no AI of its own. Your assistant does the reasoning; CAD Automation gives it the tools, checks each step and runs it in SOLIDWORKS.' },
   { q: 'Do my models leave my computer?', a: 'Your model files stay where SOLIDWORKS saves them, on your computer. To check and measure, BIZOMAT works on a copy of the current body, held briefly in memory, and exports you ask for are kept for one hour.' },
-  { q: 'Is it the same account as BIZOMAT ERP?', a: 'Not yet. CAD Automation keeps its own sign-in for now, so your CAD Automation account is separate from the BIZOMAT account you use for BIZOMAT ERP, Projects, the CRM and Finance. Sign in with BIZOMAT for CAD Automation is in development. Meanwhile the ERP shows CAD Automation\'s set-up steps under Products and Engineering.' },
+  { q: 'Is it the same account as BIZOMAT ERP?', a: 'Yes. One BIZOMAT account and one sign-in: open CAD Automation from BIZOMAT ERP, under Products and Engineering, or choose Continue with BIZOMAT on CAD Automation\'s sign-in page.' },
   { q: 'How far has it been tested?', a: `${CAD.status} The add-in is built against the SOLIDWORKS 2022 API and has not yet been run on many real SOLIDWORKS installations, so run the self test on each computer and SOLIDWORKS version you use.` },
   { q: 'Can I use more than one computer?', a: 'Yes. Install and pair each one; each gets its own key. When more than one is online, the assistant asks which one to use, and you can make one the default.' },
 ];

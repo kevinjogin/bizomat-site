@@ -96,10 +96,10 @@ export const SYSTEMS: readonly SystemInfo[] = [
     formerly: 'CAD Automation (CADOS)',
     line: 'Your AI assistant builds and checks SOLIDWORKS parts, assemblies and drawings on your own computer.',
     status: 'available',
-    statusNote: 'Needs SOLIDWORKS on your own Windows computer, the BIZOMAT add-in and Companion, and an AI assistant that supports MCP connectors. CAD Automation keeps its own sign-in for now.',
+    statusNote: 'Needs SOLIDWORKS on your own Windows computer, the BIZOMAT add-in and Companion, and an AI assistant that supports MCP connectors. One BIZOMAT account and sign-in, as for every system.',
     url: '/systems/engineering/',
     guide: '/systems/engineering/guide/',
-    access: { href: APP_LINKS.cad.home, label: 'Open CAD Automation', note: 'CAD Automation has its own sign-in for now. Its setup and your company\'s computers are also in BIZOMAT ERP, under Products and Engineering.' },
+    access: { href: `${erp}cad`, label: 'Open CAD Automation', note: 'Opens inside BIZOMAT ERP, under Products and Engineering. CAD Automation takes the same BIZOMAT account: choose Continue with BIZOMAT.' },
     module: 'Products and Engineering',
   },
   {
