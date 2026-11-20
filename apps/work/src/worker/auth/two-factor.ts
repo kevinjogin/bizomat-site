@@ -32,10 +32,14 @@ export async function twoFactorAvailable(db: D1Database): Promise<boolean> {
   return flagOn(db, 'account_two_factor').catch(() => false);
 }
 
-/** Whether a sign-in of this person must prove the second factor before a session is made. */
+/**
+ * Whether a sign-in of this person must prove the second factor before a session is made. It never fails open: a
+ * database error here is an error of the sign-in, not a sign-in without the code.
+ */
 export async function signInNeedsCode(env: Env, userId: string): Promise<boolean> {
-  if (!(await twoFactorAvailable(env.DB))) return false;
-  return !!(await mfaOf(env.DB, userId))?.confirmed_at;
+  if (!(await flagOn(env.DB, 'account_two_factor'))) return false;
+  const row = await env.DB.prepare('SELECT confirmed_at FROM user_mfa WHERE user_id = ?').bind(userId).first<{ confirmed_at: number | null }>();
+  return !!row?.confirmed_at;
 }
 
 /** A challenge for a sign-in whose password (or Google) was right; the token is returned once. */
@@ -60,6 +64,8 @@ export async function answerChallenge(c: Context<AppEnv>, token: string, input: 
   const row = await db.prepare('SELECT * FROM login_challenges WHERE token_hash = ?').bind(await sha256Hex(token)).first<any>();
   const t = now();
   if (!row || row.used_at || row.expires_at < t || row.attempts >= MAX_TRIES) throw new HttpError(401, 'That sign-in has ended. Sign in again with your password.', { code: 'CHALLENGE_ENDED' });
+  // wrong codes are limited per account too, never reset by a right password: a new challenge is not five new tries
+  await rateLimit(db, `login-2fa:user:${row.user_id}`, 10, 30 * 60_000);
   const user = await db.prepare('SELECT id, disabled_at FROM users WHERE id = ?').bind(row.user_id).first<{ id: string; disabled_at: number | null }>();
   const mfa = await mfaOf(db, row.user_id);
   if (!user || user.disabled_at || !mfa?.confirmed_at) throw new HttpError(401, 'That sign-in has ended. Sign in again with your password.', { code: 'CHALLENGE_ENDED' });
@@ -87,6 +93,12 @@ export function markSession(db: D1Database, sessionId: string) {
 
 export const twoFactorRoutes = new Hono<AppEnv>();
 twoFactorRoutes.use('*', requireAuth);
+// Only a person signed in in a browser manages their second factor: an API token (even a full one) never turns it on,
+// off, or makes new recovery codes.
+twoFactorRoutes.use('*', async (c, next) => {
+  if (!c.get('session')) throw new HttpError(403, 'Two-factor sign-in is managed in a browser, signed in');
+  await next();
+});
 
 /** The password (for an account that has one: a Google-only account gives a code alone) and a code, or a recovery code. */
 async function passwordAndCode(c: Context<AppEnv>, input: { password?: string; code?: string; recoveryCode?: string }) {
@@ -109,8 +121,11 @@ twoFactorRoutes.get('/', async (c) => {
   const user = c.get('user');
   const row = await mfaOf(c.env.DB, user.id);
   const platformAdmin = !!(await getPlatformRole(c.env.DB, user.id));
+  const forEveryone = await twoFactorAvailable(c.env.DB);
   return c.json({
-    available: (await twoFactorAvailable(c.env.DB)) || platformAdmin,
+    available: forEveryone || platformAdmin,
+    /** Signing in asks for the code only while two-factor sign-in is on for everyone; otherwise the ERP console asks. */
+    askedAtSignIn: forEveryone,
     enrolled: !!row?.confirmed_at,
     pending: !!row && !row.confirmed_at,
     recoveryCodesLeft: row?.confirmed_at ? (JSON.parse(row.recovery_json || '[]') as string[]).length : 0,

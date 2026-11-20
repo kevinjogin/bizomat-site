@@ -84,7 +84,7 @@ export interface Detail {
   history: { id: string; action: string; summary: string; actorName: string | null; before: Record<string, unknown> | null; after: Record<string, unknown> | null; at: number }[];
   editableStatus: boolean;
   /** Journals in Finance's ledger (fixed assets, pay runs, revenue schedules). */
-  postings: { journals: { number: number | null; date: string | null; amount: number; covers: string; reversed: boolean; reversalNumber: number | null }[]; url: string | null } | null;
+  postings: { journals: { number: number | null; date: string | null; amount: number; covers: string; reversed: boolean; reversalNumber: number | null }[]; url: string | null; currency?: string | null } | null;
 }
 
 export interface ModuleOverview {

@@ -93,6 +93,7 @@ const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
   { key: 'labour-utilisation', label: 'Labour utilisation', what: 'Hours recorded against available hours.' },
   { key: 'production-variance', label: 'Production variance', what: 'Estimated against actual cost of closed orders.' },
   { key: 'machine-downtime', label: 'Machine downtime', what: 'Downtime by machine and reason.' },
+  { key: 'oee', label: 'Overall equipment effectiveness (OEE)', what: 'Availability, performance and quality by work centre and machine.' },
   { key: 'mrp-suggestions', label: 'MRP suggestions', what: 'What to make, buy or expedite.' },
   { key: 'capacity-load', label: 'Capacity load', what: 'Load per work centre per week.' },
   // Release 4 part A: quality

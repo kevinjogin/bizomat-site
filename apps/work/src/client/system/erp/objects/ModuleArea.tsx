@@ -185,7 +185,8 @@ function ObjectList({ companyId, module }: { companyId: string; module: string }
   if (list.error) return <ErrorBox error={list.error} retry={() => list.refetch()} />;
   if (!def || !list.data) return <Loading />;
   const data = list.data;
-  const listFields = def.fields.filter((f) => f.list && !(data.records[0]?.hidden ?? []).includes(f.key)).slice(0, 5);
+  // the definition's first five list fields, then the company's own fields chosen for the list
+  const listFields = [...def.fields.filter((f) => f.list && !f.custom && !(data.records[0]?.hidden ?? []).includes(f.key)).slice(0, 5), ...def.fields.filter((f) => f.list && f.custom).slice(0, 3)];
   const filterFields = def.fields.filter((f) => f.filter && ['select', 'bool', 'ref'].includes(f.type) && !f.sensitive).slice(0, 6);
   const active = [...params.keys()].filter((k) => k !== 'offset' && k !== 'sort' && k !== 'dir').length;
   const base = modulePage(companyId, module);
@@ -598,7 +599,7 @@ function RecordDetail({ companyId, module }: { companyId: string; module: string
           ) : <p className="muted small">No {def.lines.label.toLowerCase()} yet.</p>}
         </Section>
       ) : null}
-      {tab === 'finance' && d.postings ? <Section title="Journals in Finance"><RecordPostings postings={d.postings} currency={r.currency ?? 'AUD'} /></Section> : null}
+      {tab === 'finance' && d.postings ? <Section title="Journals in Finance"><RecordPostings postings={d.postings} currency={r.currency ?? d.postings.currency ?? 'AUD'} /></Section> : null}
       {tab === 'related' ? (
         <Section title="Related records">
           {d.related.length ? (

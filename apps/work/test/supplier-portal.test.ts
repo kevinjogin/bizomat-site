@@ -44,6 +44,9 @@ describe('the supplier portal', () => {
     // a request for quotation to both suppliers, sent; the other supplier quotes through the buyer
     const rfq = await buyer.json('POST', erp(co, '/rfqs'), { title: 'Nuts', supplierIds: [acme.id, other.id], lines: [{ item: 'Hex nut M8', quantity: 200 }] });
     await buyer.json('POST', erp(co, `/rfqs/${rfq.id}/sent`), { supplierId: acme.id });
+    // a request on which Acme is listed but that was sent only to the other supplier stays hidden from Acme
+    const notSent = await buyer.json('POST', erp(co, '/rfqs'), { title: 'Washers', supplierIds: [acme.id, other.id], lines: [{ item: 'Washer M8', quantity: 50 }] });
+    await buyer.json('POST', erp(co, `/rfqs/${notSent.id}/sent`), { supplierId: other.id });
     const rfqView = await buyer.json('GET', erp(co, `/rfqs/${rfq.id}`));
     const lineId = rfqView.lines[0].id as string;
     await buyer.json('PUT', erp(co, `/rfqs/${rfq.id}/quotations/${other.id}`), { lines: [{ rfqLineId: lineId, unitPriceCents: 11 }] });
@@ -75,6 +78,7 @@ describe('the supplier portal', () => {
     expect(home.orders.map((o: any) => o.id)).toEqual([po.id]);
     expect(home.orders[0]).toMatchObject({ needsAnswer: true, acknowledged: null });
     expect(home.rfqs.map((r: any) => r.id)).toEqual([rfq.id]);
+    expect((await rep.req('GET', `${base}/rfqs/${notSent.id}`)).status).toBe(404);
     // the other supplier's order and records are not theirs
     expect((await rep.req('GET', `${base}/orders/${theirs.id}`)).status).toBe(404);
     expect((await rep.req('GET', `${base}/orders/${draft.id}`)).status).toBe(404);

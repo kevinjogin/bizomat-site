@@ -120,3 +120,7 @@ CREATE TABLE erp_po_acknowledgements (
 
 -- Who entered a quotation: a buyer ('staff', as before) or the supplier through the portal ('portal').
 ALTER TABLE erp_quotations ADD COLUMN source TEXT NOT NULL DEFAULT 'staff' CHECK (source IN ('staff', 'portal'));
+
+-- Who added a file to a record: a person of the company ('staff', as before) or a supplier through the portal
+-- ('portal'). The portal shows and serves only the supplier's own files.
+ALTER TABLE erp_record_files ADD COLUMN source TEXT NOT NULL DEFAULT 'staff' CHECK (source IN ('staff', 'portal'));

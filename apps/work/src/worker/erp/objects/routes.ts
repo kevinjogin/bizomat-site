@@ -416,7 +416,9 @@ async function postingsDTO(db: D1Database, companyId: string, object: string, id
       j.amount = Math.max(j.amount, p.amount);
     } else byJournal.set(p.journalId, { number: p.number, date: p.date, amount: p.amount, covers: [label], reversed: p.reversed, reversalNumber: p.reversalNumber });
   }
-  return { journals: [...byJournal.values()].map((j) => ({ ...j, covers: j.covers.sort().join(', ') })), url: org ? `/erp/finance/o/${org.target_org_id}/accounting/journals` : null };
+  const cur = org ? await db.prepare('SELECT currency FROM fin_orgs WHERE id = ?').bind(org.target_org_id).first<{ currency: string }>() : null;
+  // amounts are in the record's currency; a record without one (a cost allocation) posts in the workspace's
+  return { journals: [...byJournal.values()].map((j) => ({ ...j, covers: j.covers.sort().join(', ') })), url: org ? `/erp/finance/o/${org.target_org_id}/accounting/journals` : null, currency: cur?.currency ?? null };
 }
 
 async function visibleRow(c: Context<AppEnv>, a: ErpAccess, def: ObjectDef, id: string) {
@@ -449,7 +451,7 @@ objectRoutes.post('/c/:company/x/o/:object/:id/action/:action', async (c) => {
   const { def, a } = await enterObject(c);
   await rateLimit(c.env.DB, `erp-action:${a.userId}`, 60, 60_000);
   const input = await body(c, z.object({ input: z.record(z.string(), z.unknown()).optional() }));
-  const r = await runAction(c.env, a, user(c), def, c.req.param('id'), c.req.param('action'), (input.input ?? {}) as Data, (p) => c.executionCtx.waitUntil(p));
+  const r = await runAction(c.env, a, user(c), def, c.req.param('id'), c.req.param('action'), (input.input ?? {}) as Data, (p) => c.executionCtx.waitUntil(p), !!c.get('session'));
   const row = r.record ? await loadRow(c.env.DB, a.companyId, def, r.record.id) : null;
   return c.json({ message: r.message, link: r.link ?? null, result: r.result ?? null, detail: row ? await detail(c, a, def, row) : null });
 });
@@ -718,7 +720,8 @@ objectRoutes.get('/c/:company/x/price', async (c) => {
   const date = /^\d{4}-\d{2}-\d{2}$/.test(c.req.query('date') ?? '') ? c.req.query('date')! : todayUtc();
   const p = await db.prepare('SELECT id, number, name, price_cents, currency FROM erp_products WHERE company_id = ? AND id = ?').bind(a.companyId, product).first<any>();
   if (!p) throw new HttpError(400, 'Choose a product');
-  const currency = /^[A-Z]{3}$/.test(c.req.query('currency') ?? '') ? c.req.query('currency')! : (p.currency ?? 'AUD');
+  // the sales orders' currency (the ERP's), as orders are priced
+  const currency = /^[A-Z]{3}$/.test(c.req.query('currency') ?? '') ? c.req.query('currency')! : (await db.prepare('SELECT currency FROM erp_settings WHERE company_id = ?').bind(a.companyId).first<{ currency: string }>())?.currency ?? 'AUD';
   // the same rule sales orders use (pricing.ts)
   const s = suggest(await loadPricing(db, a.companyId, [product]), { productId: product, standard: p.price_cents ?? null, customerRefs: customer ? [customer] : [], qty, date, currency });
   const unit = s.listUnit ?? 0;
@@ -753,7 +756,7 @@ objectRoutes.put('/c/:company/x/postings', async (c) => {
 });
 
 objectRoutes.post('/c/:company/x/postings/run', async (c) => {
-  const input = await body(c, z.object({ kind: z.enum(['depreciation', 'revenue']), upTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/) }));
+  const input = await body(c, z.object({ kind: z.enum(['depreciation', 'revenue']), upTo: z.string().regex(/^\d{4}-\d{2}-\d{2}$/), after: z.string().max(40).optional() }));
   const def = OBJECT_BY_KEY[POSTING_OBJECTS[input.kind]];
   const a = await enter(c, def);
   if (!objAccess(a, def).edit) throw new HttpError(403, `Your ERP roles do not let you post ${def.plural.toLowerCase()}`);
@@ -762,8 +765,9 @@ objectRoutes.post('/c/:company/x/postings/run', async (c) => {
   const target = await financeTarget(c.env, a, user(c), 'journal');
   const statuses = input.kind === 'depreciation' ? ['in_service', 'disposed', 'written_off'] : ['active', 'completed'];
   const rows = await db
-    .prepare(`SELECT * FROM erp_objects WHERE company_id = ? AND object = ? AND archived_at IS NULL AND status IN (${statuses.map(() => '?').join(',')}) ORDER BY number LIMIT 200`)
-    .bind(a.companyId, def.key, ...statuses)
+    // 200 records a run, in number order; the next run starts after the last one (`next`)
+    .prepare(`SELECT * FROM erp_objects WHERE company_id = ? AND object = ? AND archived_at IS NULL AND status IN (${statuses.map(() => '?').join(',')}) AND number > ? ORDER BY number LIMIT 200`)
+    .bind(a.companyId, def.key, ...statuses, input.after ?? '')
     .all<RecordRow>();
   let journals = 0;
   let records = 0;
@@ -778,7 +782,7 @@ objectRoutes.post('/c/:company/x/postings/run', async (c) => {
       problems.push({ number: row.number, title: row.title, message: e.message });
     }
   }
-  return c.json({ kind: input.kind, label: KIND_LABELS[input.kind], upTo: input.upTo, checked: rows.results.length, records, journals, problems, workspace: target.org, more: rows.results.length === 200 });
+  return c.json({ kind: input.kind, label: KIND_LABELS[input.kind], upTo: input.upTo, checked: rows.results.length, records, journals, problems, workspace: target.org, more: rows.results.length === 200, next: rows.results.length === 200 ? rows.results[rows.results.length - 1].number : null });
 });
 
 // ------------------------------------------------------------------ custom fields
@@ -820,7 +824,7 @@ objectRoutes.get('/c/:company/x/consolidation', async (c) => {
   const from = iso.test(c.req.query('from') ?? '') ? c.req.query('from')! : `${to.slice(0, 4)}-01-01`;
   if (from > to) throw new HttpError(400, 'The period ends before it starts');
   const currency = /^[A-Z]{3}$/.test(c.req.query('currency') ?? '') ? c.req.query('currency')! : 'AUD';
-  const r = await consolidate(c.env, a, user(c), { from, to, currency });
+  const r = await consolidate(c.env, a, user(c), { from, to, currency, session: !!c.get('session') });
   if (wantsCsv(c)) {
     const head = ['Statement', 'Type', 'Code', 'Account', ...r.entities.map((e) => `${e.name} (${currency})`), 'Eliminations', 'Consolidated'];
     const body = [...r.profitAndLoss.map((x) => ['Profit and loss', x]), ...r.balanceSheet.map((x) => ['Balance sheet', x])].map(([st, x]: any) => [st, x.type, x.code, x.name, ...r.entities.map((e) => (x.amounts[e.id] ?? 0) / 100), x.eliminated / 100, x.total / 100]);

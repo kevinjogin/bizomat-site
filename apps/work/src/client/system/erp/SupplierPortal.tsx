@@ -299,13 +299,20 @@ function PortalRfq() {
   const d = q.data;
   const r = d.rfq;
   const given = (lineId: string) => prices[lineId] ?? (d.quotation?.lines.find((l: any) => l.rfqLineId === lineId)?.unitPriceCents != null ? String(d.quotation.lines.find((l: any) => l.rfqLineId === lineId).unitPriceCents / 100) : '');
+  // a price as people type it: 12.50, $12.50 or 1,250.00
+  const cents = (v: string) => {
+    const t = v.replace(/[$\s,]/g, '');
+    if (!t) return null;
+    if (!/^\d+(\.\d{1,2})?$/.test(t)) throw new Error(`“${v}” is not a price: use digits, for example 12.50`);
+    return Math.round(Number(t) * 100);
+  };
   const send = async () => {
     setBusy(true);
     try {
       await put(portalApi(`/${company}/${supplier}/rfqs/${rfq}/quotation`), {
         reference: reference || d.quotation?.reference || '',
         leadTimeDays: lead ? Number(lead) : (d.quotation?.leadTimeDays ?? null),
-        lines: d.lines.map((l: any) => ({ rfqLineId: l.id, unitPriceCents: given(l.id) === '' ? null : Math.round(Number(given(l.id)) * 100) })),
+        lines: d.lines.map((l: any) => ({ rfqLineId: l.id, unitPriceCents: cents(given(l.id)) })),
       });
       toast('Your quotation is sent');
       await qc.invalidateQueries({ queryKey: key });

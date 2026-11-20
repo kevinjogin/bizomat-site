@@ -45,6 +45,38 @@ export async function projectWorkspaces(db: D1Database, a: ErpAccess): Promise<s
 }
 
 const inList = (n: number) => Array.from({ length: n }, () => '?').join(',');
+
+/**
+ * The Finance business workspaces a legal entity of this company may name: the company's own, and those of other
+ * registered companies where the person is the owner or an administrator (not suspended), and the business workspaces
+ * the person owns in their own company. The example company names
+ * only its own, and no real company names the example's. Reading another company's books also needs a browser session
+ * (intercompany.ts), so a token limited to this company never reaches them.
+ */
+export async function entityWorkspaces(db: D1Database, a: ErpAccess, user: User): Promise<{ id: string; name: string; currency: string; own: boolean }[]> {
+  const own = (await financeOrgsFor(db, a)).map((o) => o.id);
+  const ownRows = own.length ? (await db.prepare(`SELECT id, name, currency FROM fin_orgs WHERE id IN (${inList(own.length)})`).bind(...own).all<{ id: string; name: string; currency: string }>()).results : [];
+  const out = ownRows.map((r) => ({ ...r, own: true }));
+  if (a.kind === 'demo') return out;
+  const others = await db
+    .prepare(
+      `SELECT o.id, o.name, o.currency FROM co_members m JOIN co_tools t ON t.company_id = m.company_id AND t.app = 'finance' JOIN fin_orgs o ON o.id = t.ref_id AND o.kind = 'business' AND o.deleted_at IS NULL
+        WHERE m.user_id = ? AND m.role IN ('owner','admin') AND m.suspended_at IS NULL AND m.company_id <> ? AND NOT EXISTS (SELECT 1 FROM sys_demo d WHERE d.fin_org_id = o.id) ORDER BY o.name COLLATE NOCASE LIMIT 50`,
+    )
+    .bind(user.id, a.companyId)
+    .all<{ id: string; name: string; currency: string }>();
+  // and the business workspaces the person owns in their own (unregistered) company
+  const mine = await db
+    .prepare(
+      `SELECT o.id, o.name, o.currency FROM fin_orgs o JOIN fin_members m ON m.org_id = o.id AND m.user_id = ? AND m.role = 'owner'
+        WHERE o.kind = 'business' AND o.deleted_at IS NULL AND NOT EXISTS (SELECT 1 FROM co_tools t WHERE t.app = 'finance' AND t.ref_id = o.id)
+          AND NOT EXISTS (SELECT 1 FROM sys_demo d WHERE d.fin_org_id = o.id) ORDER BY o.name COLLATE NOCASE LIMIT 20`,
+    )
+    .bind(user.id)
+    .all<{ id: string; name: string; currency: string }>();
+  for (const r of [...others.results, ...mine.results]) if (!out.some((x) => x.id === r.id)) out.push({ ...r, own: false });
+  return out;
+}
 const clip = (s: string | null | undefined, n = 160) => String(s ?? '').slice(0, n);
 
 /**
@@ -128,12 +160,13 @@ export async function lookup(db: D1Database, a: ErpAccess, user: User, kind: Ref
       return out.slice(0, limit);
     }
     case 'fin_workspace': {
-      // Finance business workspaces the person is a member of and may read the books of (Finance's own roles)
-      const rows = await db.prepare("SELECT o.id, o.name, o.currency FROM fin_orgs o JOIN fin_members m ON m.org_id = o.id AND m.user_id = ? WHERE o.kind = 'business' AND o.deleted_at IS NULL AND lower(o.name) LIKE ? ORDER BY o.name COLLATE NOCASE LIMIT 60").bind(user.id, like).all<{ id: string; name: string; currency: string }>();
+      // the workspaces an entity may name (entityWorkspaces) whose books the person may read in Finance itself
+      const ql = (q || '').trim().toLowerCase();
       const out: RefOption[] = [];
-      for (const r of rows.results) {
+      for (const r of await entityWorkspaces(db, a, user)) {
+        if (ql && !r.name.toLowerCase().includes(ql)) continue;
         const fa = await maybeFin(db, r.id, user);
-        if (fa && finHasPerm(fa, 'accounting', 'view')) out.push({ id: r.id, label: r.name, sub: r.currency });
+        if (fa && finHasPerm(fa, 'accounting', 'view')) out.push({ id: r.id, label: r.name, sub: `${r.currency}${r.own ? '' : ', another of your companies'}` });
       }
       return out.slice(0, limit);
     }
@@ -234,8 +267,8 @@ export async function checkRef(db: D1Database, a: ErpAccess, user: User, kind: R
       return bad();
     }
     case 'fin_workspace': {
-      const r = await one("SELECT name FROM fin_orgs WHERE id = ? AND kind = 'business' AND deleted_at IS NULL", id);
-      if (!r) bad();
+      const r = (await entityWorkspaces(db, a, user)).find((w) => w.id === id);
+      if (!r) throw new HttpError(403, `${fieldLabel}: choose this company’s Finance workspace, or one of a company where you are the owner or an administrator`);
       const fa = await maybeFin(db, id, user);
       if (!fa || !finHasPerm(fa, 'accounting', 'view')) throw new HttpError(403, `${fieldLabel}: choose a Finance business workspace whose books you may read`);
       return r.name;

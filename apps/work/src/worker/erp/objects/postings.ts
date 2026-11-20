@@ -203,7 +203,7 @@ async function syncReversed(db: D1Database, companyId: string, object: string, i
   const stale = (await postingsOf(db, companyId, object, id)).filter((p) => p.reversed && !p.freed);
   if (!stale.length) return;
   const t = now();
-  await db.batch([...new Set(stale.map((p) => p.journalId))].map((jid) => db.prepare("UPDATE erp_integration_events SET kind = 'finance.reversed', idempotency_key = idempotency_key || '#rev:finance', last_error = 'Reversed in Finance', updated_at = ? WHERE company_id = ? AND kind = 'finance.journal' AND target_ref = ?").bind(t, companyId, jid)));
+  await db.batch([...new Set(stale.map((p) => p.journalId))].map((jid) => db.prepare("UPDATE erp_integration_events SET kind = 'finance.reversed', idempotency_key = idempotency_key || '#rev:finance:' || id, last_error = 'Reversed in Finance', updated_at = ? WHERE company_id = ? AND kind = 'finance.journal' AND target_ref = ?").bind(t, companyId, jid)));
 }
 
 /** The parts (months, 'whole', 'deferral') posted and not reversed. */
@@ -250,9 +250,12 @@ async function inWorkspaceCurrency(db: D1Database, companyId: string, fa: FinAcc
   const cur = str(data.currency) || fa.org.currency;
   if (cur === fa.org.currency) return plans;
   const out: Planned[] = [];
+  // one rate for every journal of the record, at its own date (when the asset was acquired, the revenue starts to be
+  // earned, the pay is paid), so the accounts it posts to net to nothing in the workspace's currency
+  const anchor = str(data.acquisitionDate) || str(data.startDate) || str(data.payDate) || plans[0]?.date || '';
   for (const p of plans) {
-    const r = await rateFor(db, companyId, cur, fa.org.currency, p.date);
-    if (!r) badState(noRate(cur, fa.org.currency, p.date));
+    const r = await rateFor(db, companyId, cur, fa.org.currency, anchor);
+    if (!r) badState(noRate(cur, fa.org.currency, anchor));
     const lines = p.lines.map((l) => ({ ...l, debit: convert(l.debit, r.rate), credit: convert(l.credit, r.rate) }));
     // rounding each line can leave a cent over: the largest line on the short side takes it
     const diff = lines.reduce((sum, l) => sum + l.debit - l.credit, 0);
@@ -397,8 +400,8 @@ async function allocationPlan(c: PostCtx, t: FinTarget, chart: Chart, done: Set<
     tracking.push(d.fin_tracking_id);
   }
   const bal = await db
-    .prepare("SELECT COALESCE(SUM(l.debit - l.credit), 0) AS b FROM fin_journal_lines l JOIN fin_journals j ON j.id = l.journal_id WHERE l.org_id = ? AND l.account_id = ? AND l.department_id IS NULL AND j.status = 'posted' AND j.date >= ? AND j.date <= ? AND (j.source_id IS NULL OR j.source_id <> ?)")
-    .bind(t.org.id, source.id, from, to, row.id)
+    .prepare("SELECT COALESCE(SUM(l.debit - l.credit), 0) AS b FROM fin_journal_lines l JOIN fin_journals j ON j.id = l.journal_id WHERE l.org_id = ? AND l.account_id = ? AND l.department_id IS NULL AND j.status = 'posted' AND j.date >= ? AND j.date <= ? AND (j.source_id IS NULL OR j.source_id NOT IN (SELECT id FROM erp_objects WHERE company_id = ? AND object = 'ca_allocation'))")
+    .bind(t.org.id, source.id, from, to, c.a.companyId)
     .first<{ b: number }>();
   const amount = Math.round(Number(bal?.b) || 0);
   if (amount <= 0) badState(`Nothing to allocate: ${source.code} ${source.name} holds no cost without a department from ${from} to ${to}`);
@@ -466,22 +469,36 @@ export async function reverseRecord(c: PostCtx, reason: string): Promise<{ rever
   const db = c.env.DB;
   const t = await financeTarget(c.env, c.a, c.user, 'journal');
   await syncReversed(db, c.a.companyId, c.def.key, c.row.id);
-  const journals = [...new Set((await postingsOf(db, c.a.companyId, c.def.key, c.row.id)).filter((p) => !p.freed).map((p) => p.journalId))];
-  if (!journals.length) badState('Nothing of this record is posted to Finance');
+  const all = await postingsOf(db, c.a.companyId, c.def.key, c.row.id);
+  const journals = [...new Set(all.filter((p) => !p.freed).map((p) => p.journalId))];
+  if (!journals.length) {
+    if (all.length) return { reversed: 0, workspace: t.org, url: `/erp/finance/o/${t.org.id}/accounting/journals` };
+    badState('Nothing of this record is posted to Finance');
+  }
   const today = todayIn(t.fa.org.timezone || 'Australia/Sydney');
+  const lock = t.fa.org.lock_date;
+  const openDay = lock && today <= lock ? addDays(lock, 1) : today;
   let reversed = 0;
   for (const jid of journals) {
     const j = await db.prepare('SELECT id, date FROM fin_journals WHERE id = ? AND org_id = ?').bind(jid, t.org.id).first<{ id: string; date: string }>();
     if (!j) badState('A journal of this record is in another Finance workspace: reverse it there');
     const at = now();
-    const date = t.fa.org.lock_date && j.date <= t.fa.org.lock_date ? today : null;
+    const date = lock && j.date <= lock ? openDay : null;
     const r = await reversalStmts(db, t.fa, jid, { date, memo: `BIZOMAT ERP: reversal for ${c.def.label} ${c.row.number}${reason ? `: ${reason}` : ''}`.slice(0, 500) });
-    await db.batch([
+    const batch = [
+      // once per journal: a second reversal asked at the same moment fails here, and posts nothing
+      db.prepare('INSERT INTO erp_done (company_id, key, created_at) VALUES (?, ?, ?)').bind(c.a.companyId, `fin-reverse:${jid}`, at),
       ...r.stmts,
       db.prepare("UPDATE erp_integration_events SET kind = 'finance.reversed', idempotency_key = idempotency_key || '#rev:' || ?, last_error = ?, updated_at = ? WHERE company_id = ? AND kind = 'finance.journal' AND target_ref = ?").bind(r.reversalId, reason.slice(0, 200), at, c.a.companyId, jid),
       auditStmt(db, { orgId: t.org.id, actorId: c.user.id, action: 'journal.reversed', targetType: 'journal', targetId: jid, metadata: { source: 'erp', object: c.def.key, record: c.row.number, reversalId: r.reversalId } }),
       eventStmt(db, { companyId: c.a.companyId, actorId: c.user.id, action: 'record.unposted', entityType: 'record', entityId: c.row.id, summary: `Finance journal reversed (${t.org.name})${reason ? `: ${reason}` : ''}`.slice(0, 500), at }),
-    ]);
+    ];
+    try {
+      await db.batch(batch);
+    } catch (e) {
+      if (/UNIQUE constraint failed/i.test(String((e as Error)?.message ?? e))) badState('This journal is being reversed or was just reversed: refresh');
+      throw e;
+    }
     reversed++;
   }
   return { reversed, workspace: t.org, url: `/erp/finance/o/${t.org.id}/accounting/journals` };

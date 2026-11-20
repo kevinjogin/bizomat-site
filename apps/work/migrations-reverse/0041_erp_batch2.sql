@@ -4,6 +4,7 @@
 -- buyer had entered them). What is lost: the chosen posting accounts, the remembered intercompany contacts, the custom
 -- fields' definitions, sign-in challenges waiting for a code, the price source noted on sales order lines, and the supplier
 -- portal's people and acknowledgements.
+ALTER TABLE erp_record_files DROP COLUMN source;
 ALTER TABLE erp_quotations DROP COLUMN source;
 DROP TABLE IF EXISTS erp_po_acknowledgements;
 DROP INDEX IF EXISTS erp_supplier_portal_users_supplier;

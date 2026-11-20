@@ -242,7 +242,7 @@ export const CORE_OBJECTS: ObjectDef[] = [
       F.money('amount', 'Amount before tax', { required: true, list: true }),
       F.currency(),
       F.text('reference', 'Reference', { max: 60 }),
-      F.money('buyerAmount', 'Bill amount in the buyer’s currency', { computed: true }),
+      F.text('buyerAmount', 'Bill amount in the buyer’s currency', { computed: true }),
       F.text('rateUsed', 'Exchange rate used', { computed: true }),
       F.text('invoiceNumber', 'Seller’s invoice', { computed: true }),
       F.text('billNumber', 'Buyer’s bill', { computed: true }),

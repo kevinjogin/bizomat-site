@@ -19,12 +19,23 @@ import { createDoc } from '../../fin/docs';
 import { accountBalances, chartOf, natural, type AccountRow } from '../../fin/ledger';
 import { hasPerm, type FinAccess } from '../../fin/access';
 import { searchText } from '../../fin/util';
-import { SUBTYPES } from '../../../shared/fin/charts';
 import type { ErpAccess } from '../access';
 import { badState } from '../util';
 import { maybeFin } from '../suppliers';
 import type { Data, RecordRow } from './engine';
 import { convert, noRate, rateFor } from './fx';
+import { entityWorkspaces } from './refs';
+
+/**
+ * Why a workspace may not be read for this company now, or null: the company's own are always fine; another company's
+ * only in a browser session, and only where the person is that company's owner or an administrator (refs.ts).
+ */
+async function outsideReason(db: D1Database, a: ErpAccess, user: User, orgId: string, session: boolean): Promise<string | null> {
+  const w = (await entityWorkspaces(db, a, user)).find((x) => x.id === orgId);
+  if (!w) return 'Its Finance workspace is not this company’s, nor one of a company where you are the owner or an administrator';
+  if (!w.own && !session) return 'Another company’s books are read only in a browser, signed in: an API token reaches this company’s own books only';
+  return null;
+}
 
 type User = { id: string; name: string };
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
@@ -103,7 +114,7 @@ async function oneDoc(env: Env, a: ErpAccess, key: string, sourceId: string, fa:
 }
 
 /** The draft invoice (seller) and draft bill (buyer) of an approved intercompany transaction; returns the new data. */
-export async function intercompanyDocuments(env: Env, a: ErpAccess, user: User, row: RecordRow, data: Data): Promise<{ data: Data; message: string }> {
+export async function intercompanyDocuments(env: Env, a: ErpAccess, user: User, row: RecordRow, data: Data, session = false): Promise<{ data: Data; message: string }> {
   const db = env.DB;
   const all = await entities(db, a.companyId);
   const seller = all.find((e) => e.id === data.seller);
@@ -112,6 +123,10 @@ export async function intercompanyDocuments(env: Env, a: ErpAccess, user: User, 
   if (seller.id === buyer.id) badState('The seller and the buyer are the same entity');
   if (!seller.orgId || !buyer.orgId) badState(`Name the Finance workspace of ${!seller.orgId ? seller.name : buyer.name} first (Organisation structure, Legal entities)`);
   if (seller.orgId === buyer.orgId) badState('The seller and the buyer keep their books in the same Finance workspace: record it there as a journal');
+  for (const [e, orgId] of [[seller, seller.orgId], [buyer, buyer.orgId]] as const) {
+    const why = await outsideReason(db, a, user, orgId, session);
+    if (why) throw new HttpError(403, `${e.name}: ${why}`);
+  }
   const fs = await maybeFin(db, seller.orgId, user);
   const fb = await maybeFin(db, buyer.orgId, user);
   if (!fs || !fs.perms.sales.create) throw new HttpError(403, `Your Finance role cannot create invoices in ${seller.name}’s workspace`);
@@ -138,7 +153,7 @@ export async function intercompanyDocuments(env: Env, a: ErpAccess, user: User, 
     (await createDoc(env, fb, { kind: 'bill', contactId: supplier.id, issueDate: date, reference, notes: `${notes}${rate.rate !== 1 ? ` Converted from ${cur} at ${Number(rate.rate.toPrecision(8))} (exchange rate ${rate.source}).` : ''}`, action: 'draft', lines: [{ itemCode: '', description, unit: '', quantity: 1, unitPrice: billAmount, discountBp: 0, accountId: await accountOf(fb.orgId, 'expense'), taxCodeId: fb.gst ? await taxOf(fb.orgId, 'gst_purchases') : null }] } as any)).id,
   );
   return {
-    data: { ...data, currency: cur, buyerAmount: billAmount, rateUsed: rate.rate === 1 ? `Same currency (${cur})` : `${cur} to ${fb.org.currency} at ${Number(rate.rate.toPrecision(8))}, ${rate.source}`, invoiceNumber: `${invoice.number} in ${fs.org.name}`, billNumber: `${bill.number} in ${fb.org.name}` },
+    data: { ...data, currency: cur, buyerAmount: `${fb.org.currency} ${(billAmount / 100).toFixed(2)}`, rateUsed: cur === fb.org.currency ? `Same currency (${cur})` : `${cur} to ${fb.org.currency} at ${Number(rate.rate.toPrecision(8))}, ${rate.source}`, invoiceNumber: `${invoice.number} in ${fs.org.name}`, billNumber: `${bill.number} in ${fb.org.name}` },
     message: `Draft invoice ${invoice.number} made in ${fs.org.name} and draft bill ${bill.number} in ${fb.org.name}`,
   };
 }
@@ -192,7 +207,7 @@ async function contactBalances(db: D1Database, orgId: string, contactIds: string
   return new Map(rows.results.map((r) => [r.account_id, r.bal]));
 }
 
-export async function consolidate(env: Env, a: ErpAccess, user: User, opts: { from: string; to: string; currency: string }): Promise<Consolidation> {
+export async function consolidate(env: Env, a: ErpAccess, user: User, opts: { from: string; to: string; currency: string; session?: boolean }): Promise<Consolidation> {
   const db = env.DB;
   const group = (await entities(db, a.companyId)).filter((e) => e.status === 'active');
   const out: Consolidation = { from: opts.from, to: opts.to, currency: opts.currency, entities: [], excluded: [], profitAndLoss: [], balanceSheet: [], totals: { revenue: {}, expenses: {}, profit: {}, assets: {}, liabilities: {}, equity: {} }, intercompanyDifference: { profitAndLoss: 0, balanceSheet: 0 }, notes: [] };
@@ -205,6 +220,11 @@ export async function consolidate(env: Env, a: ErpAccess, user: User, opts: { fr
     }
     if (seen.has(e.orgId)) {
       out.excluded.push({ id: e.id, number: e.number, name: e.name, reason: 'Its Finance workspace is already counted for another entity' });
+      continue;
+    }
+    const outside = await outsideReason(db, a, user, e.orgId, !!opts.session);
+    if (outside) {
+      out.excluded.push({ id: e.id, number: e.number, name: e.name, reason: outside });
       continue;
     }
     const fa = await maybeFin(db, e.orgId, user);
@@ -248,7 +268,8 @@ export async function consolidate(env: Env, a: ErpAccess, user: User, opts: { fr
       contactBalances(db, m.fa.orgId, [...ic], { from: opts.from, to: opts.to }),
       contactBalances(db, m.fa.orgId, [...ic], { to: opts.to }),
     ]);
-    const eliminable = (acc: AccountRow) => !SUBTYPES[acc.subtype]?.money && acc.subtype !== 'tax';
+    // a payment between entities is still cash, and GST is still owed to the tax office; an intercompany loan is not
+    const eliminable = (acc: AccountRow) => !['bank', 'cash', 'credit_card', 'tax'].includes(acc.subtype);
     // the balance sheet at the end of the period; earnings not yet closed to retained earnings sit in equity
     const earnings = rowOf(bsRows, 'equity', '', 'Earnings to date (not yet closed)');
     for (const [accId, bal] of bs) {
@@ -288,7 +309,7 @@ export async function consolidate(env: Env, a: ErpAccess, user: User, opts: { fr
   out.notes.push(
     `Every amount is translated into ${opts.currency} at the closing rate on or before ${opts.to}; no translation reserve is worked out, so a group with more than one currency may not balance to the cent.`,
     'Every entity is consolidated in full, whatever its ownership: no minority interest is worked out.',
-    'Intercompany balances are those posted against a Finance contact that stands for another entity of the group (remembered from intercompany transactions, or with the entity’s name), except bank, cash, card, loan and tax accounts.',
+    'Intercompany balances are those posted against a Finance contact that stands for another entity of the group (remembered from intercompany transactions, or with the entity’s name), except bank, cash, card and tax accounts. A difference between the two sides can come from what each entity recorded, or from translating them at different rates.',
   );
   return out;
 }

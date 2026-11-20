@@ -122,8 +122,14 @@ export async function changeCustom(db: D1Database, companyId: string, object: st
     options = next;
   }
   if (input.archived === false && r.archived_at) {
-    const active = (await rows(db, companyId, object)).length;
-    if (active >= MAX_CUSTOM_FIELDS) throw new HttpError(409, `At most ${MAX_CUSTOM_FIELDS} custom fields`);
+    const active = await rows(db, companyId, object);
+    if (active.length >= MAX_CUSTOM_FIELDS) throw new HttpError(409, `At most ${MAX_CUSTOM_FIELDS} custom fields`);
+    if (active.some((x) => x.label.toLowerCase() === label.toLowerCase())) throw new HttpError(409, `Another field is called ${label}: rename one first`);
+  }
+  if (input.label !== undefined && !r.archived_at) {
+    const def = OBJECT_BY_KEY[object];
+    const clash = [...(def?.fields.map((f) => f.label) ?? []), ...(await rows(db, companyId, object)).filter((x) => x.key !== key).map((x) => x.label)];
+    if (clash.some((l) => l.toLowerCase() === label.toLowerCase())) throw new HttpError(409, `Another field is called ${label}`);
   }
   await db
     .prepare('UPDATE erp_custom_fields SET label = ?, options_json = ?, required = ?, list = ?, help = ?, position = ?, archived_at = ?, updated_at = ? WHERE company_id = ? AND object = ? AND key = ?')

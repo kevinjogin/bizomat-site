@@ -203,6 +203,15 @@ describe('postings to Finance’s ledger', () => {
     expect(repost.result).toHaveLength(1);
     expect(await balance(fin, '416')).toBe(1_000_000);
     expect((await action(accountant, co, 'fa_asset', id, 'post', { upTo: monthEnd(ym(1)) })).message).toContain('Nothing to post');
+    // the same month reversed in Finance a second time: still freed, posted again, and reversible from here
+    const again2 = (await journalsOf(fin, id)).filter((j: any) => !j.reversed_by_id && !j.reverses_id && j.date === monthEnd(ym(1)));
+    await owner.json('POST', `/api/fin/orgs/${fin}/journals/${again2[0].id}/reverse`, { memo: 'Reversed by hand again' });
+    expect((await action(accountant, co, 'fa_asset', id, 'post', { upTo: monthEnd(ym(1)) })).result).toHaveLength(1);
+    expect(await balance(fin, '416')).toBe(1_000_000);
+    // two reversals asked at the same moment reverse each journal once
+    await Promise.all([actionRes(accountant, co, 'fa_asset', id, 'unpost', { reason: 'Twice at once' }), actionRes(owner, co, 'fa_asset', id, 'unpost', { reason: 'Twice at once' })]);
+    expect(await balance(fin, '416')).toBe(0);
+    expect(await unbalanced(fin)).toBe(0);
 
     // another company's people cannot reach the asset or its postings
     const other = await team('Mp');

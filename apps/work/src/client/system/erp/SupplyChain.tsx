@@ -251,11 +251,13 @@ function OrderForm({ companyId, opts, view }: { companyId: string; opts: NonNull
   const chosen = cust.startsWith('crm:') ? companies.find((x) => x.id === cust.slice(4)) : null;
   const setLine = (i: number, patch_: Partial<LineDraft>) => setLines(lines.map((l, j) => (j === i ? { ...l, ...patch_ } : l)));
   // The price the price lists and promotions give for this customer and quantity (the server's rule, pricing.ts).
+  // never on an amendment (a confirmed order keeps its prices); a line priced by hand keeps its price
   const suggestPrice = async (i: number, productId: string, quantity: string) => {
-    if (!productId) return;
+    if (!productId || amend) return;
+    const total = lines.reduce((s, l) => s + (typeof toCents(l.price) === 'number' ? Math.round((toCents(l.price) as number) * Number(l.quantity || 0)) : 0), 0);
     const refs = [cust, chosen?.finContactId ? `fin:${chosen.finContactId}` : ''].filter(Boolean).join(',');
     try {
-      const s = await get<{ unitPriceCents: number | null; discountBp: number; note: string }>(erpPath(companyId, `/sales-orders/price?productId=${encodeURIComponent(productId)}&customer=${encodeURIComponent(refs)}&qty=${encodeURIComponent(quantity || '1')}`));
+      const s = await get<{ unitPriceCents: number | null; discountBp: number; note: string }>(erpPath(companyId, `/sales-orders/price?productId=${encodeURIComponent(productId)}&customer=${encodeURIComponent(refs)}&qty=${encodeURIComponent(quantity || '1')}&orderTotal=${total}`));
       setLines((all) => all.map((l, j) => (j === i && l.productId === productId ? { ...l, ...(s.unitPriceCents !== null ? { price: dollars(s.unitPriceCents), discount: s.discountBp ? String(s.discountBp / 100) : '' } : {}), note: s.note } : l)));
     } catch {
       // the product's standard price stays
@@ -337,7 +339,7 @@ function OrderForm({ companyId, opts, view }: { companyId: string; opts: NonNull
               <legend className="small">Line {i + 1}</legend>
               <div className="form-grid">
                 <div className="field span-2"><label htmlFor={`sl-p-${i}`}>Product</label><select id={`sl-p-${i}`} className="select" value={l.productId} onChange={(e) => pickProduct(i, e.target.value)}><option value="">Choose a product</option>{opts.products.map((p) => <option key={p.id} value={p.id}>{p.number} {p.name}</option>)}</select></div>
-                <div className="field"><label htmlFor={`sl-q-${i}`}>Quantity</label><input id={`sl-q-${i}`} className="input" type="number" min="0" step="any" inputMode="decimal" value={l.quantity} onChange={(e) => setLine(i, { quantity: e.target.value })} onBlur={() => void suggestPrice(i, l.productId, l.quantity)} /></div>
+                <div className="field"><label htmlFor={`sl-q-${i}`}>Quantity</label><input id={`sl-q-${i}`} className="input" type="number" min="0" step="any" inputMode="decimal" value={l.quantity} onChange={(e) => setLine(i, { quantity: e.target.value })} onBlur={() => (l.note ? void suggestPrice(i, l.productId, l.quantity) : undefined)} /></div>
                 <div className="field"><label htmlFor={`sl-pr-${i}`}>Unit price ({opts.currency})</label><input id={`sl-pr-${i}`} className="input" inputMode="decimal" value={l.price} onChange={(e) => setLine(i, { price: e.target.value, note: undefined })} />{l.note ? <span className="muted small">{l.note}</span> : null}</div>
                 <div className="field"><label htmlFor={`sl-d-${i}`}>Discount %</label><input id={`sl-d-${i}`} className="input" type="number" min="0" max="100" step="any" value={l.discount} onChange={(e) => setLine(i, { discount: e.target.value })} /></div>
                 <div className="field"><label htmlFor={`sl-t-${i}`}>Tax code</label><select id={`sl-t-${i}`} className="select" value={l.taxCode} onChange={(e) => setLine(i, { taxCode: e.target.value })}>{opts.taxCodes.map((t) => <option key={t.value} value={t.value}>{t.label}</option>)}</select></div>

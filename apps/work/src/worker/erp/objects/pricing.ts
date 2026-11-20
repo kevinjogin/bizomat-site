@@ -2,7 +2,9 @@
 // in one place (batch 2, item 4). A product's price for a customer, quantity, date and currency is the customer's own
 // active list first, then the lowest list price whose quantity break is met, else the product's standard price; the best
 // active promotion for the product (or for every product) whose minimum order is met then takes a percentage or an amount
-// per unit off. Lists in another currency than the order's are not used. Nothing here changes a record.
+// per unit off. Lists in another currency than the order's are not used. A list for a customer group, and a promotion
+// with a code or a limit of uses, are never applied by themselves: a person gives that price or discount on the order.
+// A promotion's minimum order is checked against the whole order when it is known. Nothing here changes a record.
 
 import { parseJson } from '../../lib/util';
 import type { Data } from './engine';
@@ -63,18 +65,24 @@ export async function loadPricing(db: D1Database, companyId: string, productIds:
       const d = parseJson<Data>(r.data_json, {});
       const l = parseJson<Data>(r.line, {});
       if (typeof l.unitPrice !== 'number') continue;
+      // a customer group is not known for a customer: such a list is applied by hand
+      if (str(d.customerGroup).trim() && !str(d.customer)) continue;
       lists.push({ listId: r.id, label: `${r.number} ${r.title}`.trim(), product: str(l.product), price: Math.round(l.unitPrice), minQty: typeof l.minQty === 'number' ? l.minQty : 1, customer: str(d.customer) || null, currency: str(d.currency) || 'AUD', from: str(d.validFrom) || null, to: str(d.validTo) || null });
     }
   }
   const promoRows = await db.prepare("SELECT id, number, title, data_json FROM erp_objects WHERE company_id = ? AND object = 'pr_promotion' AND status = 'active' AND archived_at IS NULL").bind(companyId).all<any>();
-  const promos: Promo[] = promoRows.results.map((r) => {
+  const promos: Promo[] = promoRows.results.filter((r) => {
+    const d = parseJson<Data>(r.data_json, {});
+    // a code is typed by the customer, and uses are counted nowhere yet: both are applied by hand
+    return !str(d.code).trim() && !(typeof d.maxUses === 'number' && d.maxUses > 0);
+  }).map((r) => {
     const d = parseJson<Data>(r.data_json, {});
     return { id: r.id, label: `${r.number} ${r.title}`.trim(), product: str(d.product) || null, type: d.discountType === 'amount' ? 'amount' : 'percent', value: Number(d.discountValue) || 0, minOrder: typeof d.minOrder === 'number' ? d.minOrder : null, from: str(d.validFrom), to: str(d.validTo) || '9999-12-31' };
   });
   return { lists, promos };
 }
 
-export function suggest(p: Pricing, q: { productId: string; standard: number | null; customerRefs: string[]; qty: number; date: string; currency: string }): Suggestion {
+export function suggest(p: Pricing, q: { productId: string; standard: number | null; customerRefs: string[]; qty: number; date: string; currency: string; orderTotal?: number }): Suggestion {
   const hits = p.lists.filter((l) => l.product === q.productId && l.currency === q.currency && (!l.from || l.from <= q.date) && (!l.to || l.to >= q.date) && (!l.customer || q.customerRefs.includes(l.customer)) && l.minQty <= q.qty + 1e-9);
   // the customer's own list first, then the lowest price
   hits.sort((a, b) => Number(!!b.customer) - Number(!!a.customer) || a.price - b.price);
@@ -85,7 +93,8 @@ export function suggest(p: Pricing, q: { productId: string; standard: number | n
     for (const pr of p.promos) {
       if (pr.from > q.date || pr.to < q.date) continue;
       if (pr.product && pr.product !== q.productId) continue;
-      if (pr.minOrder !== null && pr.minOrder > listUnit * q.qty) continue;
+      // the whole order's value at list prices when known, else this line's
+      if (pr.minOrder !== null && pr.minOrder > (q.orderTotal ?? listUnit * q.qty)) continue;
       const off = pr.type === 'amount' ? Math.min(listUnit, Math.round(pr.value)) : Math.round((listUnit * Math.min(100, Math.max(0, pr.value))) / 100);
       if (off > 0 && (!promotion || off > promotion.offPerUnit)) promotion = { id: pr.id, label: pr.label, type: pr.type, value: pr.value, offPerUnit: off };
     }

@@ -42,6 +42,11 @@ describe('price lists and promotions on sales orders', () => {
     const promo = await owner.json('POST', x(co, '/o/pr_promotion'), { data: { name: 'Spring offer', discountType: 'percent', discountValue: 10, product: kit.id, validFrom: day(-1), validTo: day(30) } });
     await owner.json('POST', x(co, `/o/pr_promotion/${promo.record.id}/step/activate`), {});
 
+    // a coded promotion and a customer group's list are applied by hand only
+    const coded = await owner.json('POST', x(co, '/o/pr_promotion'), { data: { name: 'Half price code', code: 'HALF', discountType: 'percent', discountValue: 50, product: kit.id, validFrom: day(-1), validTo: day(30) } });
+    await owner.json('POST', x(co, `/o/pr_promotion/${coded.record.id}/step/activate`), {});
+    const group = await owner.json('POST', x(co, '/o/pr_pricelist'), { data: { name: 'Wholesale group', customerGroup: 'Wholesale', currency: 'AUD' }, lines: [{ product: kit.id, minQty: 1, unitPrice: 1_000 }] });
+    await owner.json('POST', x(co, `/o/pr_pricelist/${group.record.id}/step/activate`), {});
     // the order form's suggestion: the customer's own list first, even when a general list is lower
     const s1 = await owner.json('GET', erp(co, `/sales-orders/price?productId=${kit.id}&customer=crm:${trade.crmCompanyId}&qty=20`));
     expect(s1).toMatchObject({ unitPriceCents: 3_600, discountBp: 1_000 });

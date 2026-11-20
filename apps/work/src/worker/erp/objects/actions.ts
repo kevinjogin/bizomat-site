@@ -29,7 +29,7 @@ export interface ActionResult {
 const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
 
-type Ctx = { env: Env; a: ErpAccess; user: User; def: ObjectDef; row: RecordRow; data: Data; input: Data; waitUntil?: (p: Promise<unknown>) => void };
+type Ctx = { env: Env; a: ErpAccess; user: User; def: ObjectDef; row: RecordRow; data: Data; input: Data; waitUntil?: (p: Promise<unknown>) => void; session?: boolean };
 type Action = (c: Ctx) => Promise<ActionResult>;
 
 async function setLines(c: Ctx, lines: Line[], status?: string) {
@@ -282,6 +282,7 @@ const ACTIONS: Record<string, Action> = {
     return { ...r, record: await loadRow(c.env.DB, c.a.companyId, c.def, c.row.id) };
   },
   'ca_allocation.unpost': async (c) => {
+    // also when its journal was reversed in Finance itself: the allocation is approved again, to be posted afresh
     const r = await unposted(c);
     await c.env.DB.batch(statusStmts(c.env.DB, c.a, c.def, c.row, 'approved', `${c.def.label} ${c.row.number}: Finance journal reversed`));
     return { ...r, record: await loadRow(c.env.DB, c.a.companyId, c.def, c.row.id) };
@@ -290,7 +291,7 @@ const ACTIONS: Record<string, Action> = {
   // ---------------------------------------------------------------- intercompany (intercompany.ts)
   'ic_transaction.documents': async (c) => {
     const db = c.env.DB;
-    const made = await intercompanyDocuments(c.env, c.a, c.user, c.row, c.data);
+    const made = await intercompanyDocuments(c.env, c.a, c.user, c.row, c.data, c.session);
     await db.batch(statusStmts(db, c.a, c.def, c.row, 'documented', `${c.def.label} ${c.row.number}: ${made.message}`, made.data));
     return { record: await loadRow(db, c.a.companyId, c.def, c.row.id), message: made.message };
   },
@@ -316,7 +317,7 @@ async function unposted(c: Ctx): Promise<ActionResult> {
   return { record: c.row, message: r.reversed ? `${r.reversed === 1 ? 'One journal' : `${r.reversed} journals`} reversed in ${r.workspace.name}` : 'The journals were already reversed in Finance' };
 }
 
-export async function runAction(env: Env, a: ErpAccess, user: User, def: ObjectDef, id: string, key: string, input: Data, waitUntil?: (p: Promise<unknown>) => void): Promise<ActionResult> {
+export async function runAction(env: Env, a: ErpAccess, user: User, def: ObjectDef, id: string, key: string, input: Data, waitUntil?: (p: Promise<unknown>) => void, session = false): Promise<ActionResult> {
   const action = def.actions?.find((x) => x.key === key);
   const fn = ACTIONS[`${def.key}.${key}`];
   if (!action || !fn) throw new HttpError(404, 'Action not found');
@@ -328,7 +329,7 @@ export async function runAction(env: Env, a: ErpAccess, user: User, def: ObjectD
   if (action.statuses && !action.statuses.includes(row.status)) throw new HttpError(409, `${action.label} is not possible while it is ${def.statuses.find((s) => s.key === row.status)?.label.toLowerCase() ?? row.status}`);
   const allowed = action.cap === 'edit' ? x.edit : action.cap === 'approve' ? x.approve || rel.approver : x.edit || rel.own;
   if (!allowed) throw new HttpError(403, `Your ERP roles do not let you ${action.label.toLowerCase()}`);
-  return fn({ env, a, user, def, row, data: parseJson<Data>(row.data_json, {}), input: input ?? {}, waitUntil });
+  return fn({ env, a, user, def, row, data: parseJson<Data>(row.data_json, {}), input: input ?? {}, waitUntil, session });
 }
 
 export { workingDays };

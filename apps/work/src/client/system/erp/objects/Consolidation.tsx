@@ -52,7 +52,8 @@ export function ConsolidationTab({ companyId }: { companyId: string }) {
         <a className="btn" href={xHref(companyId, `/consolidation?${qs}&format=csv`)}><Icon name="download" /> Export CSV</a>
       </div>
       {q.error ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : null}
-      {!q.data && !q.error ? <Loading label="Reading the entities’ books…" /> : null}
+      {!q.data && !q.error && q.fetchStatus !== 'idle' ? <Loading label="Reading the entities’ books…" /> : null}
+      {q.fetchStatus === 'idle' && !q.data ? <p className="muted small">Give both dates and a three-letter currency code.</p> : null}
       {q.data ? <ReportView r={q.data} /> : null}
     </div>
   );
@@ -103,7 +104,7 @@ function ReportView({ r }: { r: Report }) {
       {table(`Profit and loss, ${r.from} to ${r.to}`, r.profitAndLoss, [['Total income', r.totals.revenue], ['Total expenses', r.totals.expenses], ['Profit', r.totals.profit]])}
       {table(`Balance sheet at ${r.to}`, r.balanceSheet, [['Total assets', r.totals.assets], ['Total liabilities', r.totals.liabilities], ['Total equity', r.totals.equity]])}
       {r.intercompanyDifference.profitAndLoss || r.intercompanyDifference.balanceSheet ? (
-        <p className="warning-text small">The two sides of the intercompany balances differ by {m(r.intercompanyDifference.balanceSheet)} on the balance sheet and {m(r.intercompanyDifference.profitAndLoss)} in profit and loss: check that both entities recorded the same amounts.</p>
+        <p className="warning-text small">The two sides of the intercompany balances differ by {m(r.intercompanyDifference.balanceSheet)} on the balance sheet and {m(r.intercompanyDifference.profitAndLoss)} in profit and loss: check that both entities recorded the same amounts, and remember that each is translated at its own rate.</p>
       ) : null}
       <ul className="muted small">{r.notes.map((n) => <li key={n}>{n}</li>)}</ul>
     </>

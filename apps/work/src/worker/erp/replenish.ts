@@ -73,13 +73,17 @@ interface Need {
   note: string;
 }
 
+const MADE = ['manufactured_part', 'assembly', 'subassembly', 'finished_product'];
+const MAX_LINES = 200;
+
 async function needs(db: D1Database, companyId: string): Promise<Need[]> {
   const rows = await db
     .prepare(
-      `SELECT p.id, p.number, p.name, p.uom, p.standard_cost_cents, ps.reorder_point, ps.max_qty,
+      `SELECT p.id, p.number, p.name, p.uom, p.type, p.standard_cost_cents, ps.reorder_point, ps.max_qty,
               (SELECT COALESCE(SUM(s.on_hand - s.reserved), 0) FROM erp_stock s JOIN erp_locations l ON l.company_id = s.company_id AND l.id = s.location_id WHERE s.company_id = p.company_id AND s.product_id = p.id AND l.kind <> 'quarantine') AS available,
-              (SELECT COALESCE(SUM(pl.quantity - pl.received_qty), 0) FROM erp_po_lines pl JOIN erp_purchase_orders o ON o.company_id = pl.company_id AND o.id = pl.po_id WHERE pl.company_id = p.company_id AND pl.product_id = p.id AND o.status IN ('approved','sent','partially_received')) AS on_order,
-              (SELECT r.number FROM erp_requisition_lines rl JOIN erp_requisitions r ON r.company_id = rl.company_id AND r.id = rl.requisition_id WHERE rl.company_id = p.company_id AND rl.product_id = p.id AND r.status IN ('draft','submitted','approved') AND NOT EXISTS (SELECT 1 FROM erp_purchase_orders po WHERE po.company_id = r.company_id AND po.requisition_id = r.id AND po.status <> 'cancelled') ORDER BY r.created_at DESC LIMIT 1) AS on_req,
+              -- orders still being drafted or approved count as on order too, so nothing is asked for twice
+              (SELECT COALESCE(SUM(pl.quantity - pl.received_qty), 0) FROM erp_po_lines pl JOIN erp_purchase_orders o ON o.company_id = pl.company_id AND o.id = pl.po_id WHERE pl.company_id = p.company_id AND pl.product_id = p.id AND o.status IN ('draft','awaiting_approval','approved','sent','partially_received')) AS on_order,
+              (SELECT r.number FROM erp_requisition_lines rl JOIN erp_requisitions r ON r.company_id = rl.company_id AND r.id = rl.requisition_id WHERE rl.company_id = p.company_id AND rl.product_id = p.id AND r.status IN ('draft','submitted','approved') ORDER BY r.created_at DESC LIMIT 1) AS on_req,
               (SELECT x.price_cents FROM erp_product_suppliers x WHERE x.company_id = p.company_id AND x.product_id = p.id AND x.preferred = 1 LIMIT 1) AS supplier_price
          FROM erp_products p JOIN erp_product_stock ps ON ps.company_id = p.company_id AND ps.product_id = p.id
         WHERE p.company_id = ? AND p.archived_at IS NULL AND p.type <> 'service' AND ps.reorder_point IS NOT NULL
@@ -93,6 +97,8 @@ async function needs(db: D1Database, companyId: string): Promise<Need[]> {
     if (projected > Number(r.reorder_point) + 1e-9) continue;
     const max = r.max_qty === null || r.max_qty === undefined ? null : Number(r.max_qty);
     const qty = max === null ? null : q6(max - projected);
+    // what the company makes is planned in Manufacturing (MRP), not bought
+    const made = MADE.includes(r.type);
     out.push({
       productId: r.id,
       number: r.number,
@@ -102,10 +108,10 @@ async function needs(db: D1Database, companyId: string): Promise<Need[]> {
       onOrder: q6(Number(r.on_order)),
       reorderPoint: Number(r.reorder_point),
       maxQty: max,
-      suggestQty: r.on_req ? null : qty !== null && qty > 0 ? qty : null,
+      suggestQty: r.on_req || made ? null : qty !== null && qty > 0 ? qty : null,
       onRequisition: r.on_req ?? null,
       unitCostCents: r.supplier_price ?? r.standard_cost_cents ?? null,
-      note: r.on_req ? `Already on requisition ${r.on_req}` : max === null ? 'Set a maximum level to order up to' : qty !== null && qty > 0 ? `Order up to the maximum level of ${max}` : 'The maximum level is reached by what is on order',
+      note: made ? 'Made by the company: plan it in Manufacturing (MRP or a manufacturing order)' : r.on_req ? `Already on requisition ${r.on_req}` : max === null ? 'Set a maximum level to order up to' : qty !== null && qty > 0 ? `Order up to the maximum level of ${max}` : 'The maximum level is reached by what is on order',
     });
   }
   return out;
@@ -120,7 +126,9 @@ replenishRoutes.post('/c/:company/inventory/replenishment', async (c) => {
   const a = await requireErp(c, 'requisitions.raise');
   const input = await body(c, z.object({ productIds: z.array(zId).max(500).optional(), submit: z.boolean().optional() }));
   const list = (await needs(c.env.DB, a.companyId)).filter((n) => n.suggestQty !== null && (!input.productIds || input.productIds.includes(n.productId)));
-  if (!list.length) badState('Nothing needs replenishing: every product is above its reorder point, already ordered or requested, or has no maximum level');
+  if (!list.length) badState('Nothing needs replenishing: every product is above its reorder point, already ordered or requested, made by the company, or has no maximum level');
+  // a requisition holds at most 200 lines: the rest are left for the next one
+  list.splice(MAX_LINES);
   const made = await createRequisition(
     c.env.DB,
     a,

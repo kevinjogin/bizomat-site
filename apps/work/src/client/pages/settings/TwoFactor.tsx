@@ -14,6 +14,7 @@ interface Status {
   recoveryCodesLeft: number;
   canEncrypt: boolean;
   hasPassword: boolean;
+  askedAtSignIn: boolean;
 }
 
 export function TwoFactorCard() {
@@ -68,7 +69,9 @@ export function TwoFactorCard() {
     <section className="card card-pad" id="two-factor">
       <h2>Two-factor sign-in</h2>
       <p className="muted small">
-        {s.enrolled ? `On. Signing in asks for a code from your authenticator app. ${s.recoveryCodesLeft} recovery codes left.` : 'Off. Turn it on to be asked for a code from an authenticator app on your phone each time you sign in.'}
+        {s.enrolled
+          ? `On. ${s.askedAtSignIn ? 'Signing in asks for a code from your authenticator app.' : 'The ERP console asks for a code from your authenticator app.'} ${s.recoveryCodesLeft} recovery codes left.`
+          : s.askedAtSignIn ? 'Off. Turn it on to be asked for a code from an authenticator app on your phone each time you sign in.' : 'Off. Turn it on to be asked for a code from an authenticator app in the ERP console.'}
       </p>
       {codes ? (
         <div className="info-box">

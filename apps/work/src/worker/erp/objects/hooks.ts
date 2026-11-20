@@ -552,7 +552,8 @@ const DEPRECIATION_INPUTS = ['cost', 'residualValue', 'usefulLifeMonths', 'metho
 
 /** The parts of a record posted to Finance and not reversed from here (months, 'whole', 'deferral'). */
 async function postedParts(db: D1Database, companyId: string, object: string, id: string): Promise<string[]> {
-  const rows = await db.prepare("SELECT idempotency_key AS k FROM erp_integration_events WHERE company_id = ? AND source_type = ? AND source_id = ? AND kind = 'finance.journal' AND status = 'done'").bind(companyId, object, id).all<{ k: string }>();
+  // a journal reversed in Finance itself no longer counts, though its key is freed only at the next post
+  const rows = await db.prepare("SELECT ev.idempotency_key AS k FROM erp_integration_events ev WHERE ev.company_id = ? AND ev.source_type = ? AND ev.source_id = ? AND ev.kind = 'finance.journal' AND ev.status = 'done' AND NOT EXISTS (SELECT 1 FROM fin_journals j WHERE j.id = ev.target_ref AND j.org_id = ev.target_org_id AND j.reversed_by_id IS NOT NULL)").bind(companyId, object, id).all<{ k: string }>();
   return rows.results.map((r) => r.k.split(':').slice(4).join(':'));
 }
 

@@ -273,7 +273,8 @@ mfgReportRoutes.get('/c/:company/reports/oee', async (c) => {
     const performance = v.run > 0 && v.ideal > 0 ? Math.min(1, v.ideal / v.run) : null;
     const quality = v.good + v.scrap > 0 ? v.good / (v.good + v.scrap) : null;
     const oee = availability !== null && performance !== null && quality !== null ? availability * performance * quality : null;
-    const missing = [availability === null ? 'no machine time recorded' : '', performance === null && v.run > 0 ? 'no run minutes in the routing for what was made' : '', quality === null ? 'no output reported' : ''].filter(Boolean);
+    const made = v.good + v.scrap > 0;
+    const missing = [availability === null ? 'no machine time recorded' : '', performance === null && v.run > 0 && made ? 'no run minutes in the routing for what was made' : '', !made ? 'no output reported' : ''].filter(Boolean);
     return {
       workCentreId: v.wc,
       workCentre: v.wc ? (nameOf.get(`wc:${v.wc}`) ?? '') : 'No work centre',

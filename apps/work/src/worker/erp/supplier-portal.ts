@@ -20,7 +20,7 @@ import type { AppEnv, Env } from '../env';
 import { HttpError, body, clientIp, newId, notFound, now, randomToken, sha256Hex } from '../lib/util';
 import { rateLimit } from '../auth/rate-limit';
 import { MAX_FILE_BYTES, validateUpload } from '../routes/files';
-import { flagOn } from '../platform/flags';
+import { flagOn, moduleEnabled } from '../platform/flags';
 import { audit } from '../services/audit';
 import { enqueueEmail, processOutbox } from '../services/email/outbox';
 import { emailConfig } from '../services/email/provider';
@@ -37,6 +37,14 @@ const SHOWN_PO = [...OPEN_PO, 'received', 'closed'];
 
 async function portalOn(db: D1Database, companyId: string): Promise<boolean> {
   return flagOn(db, 'supplier_portal', { companyId }).catch(() => false);
+}
+
+/** The portal is open for the company only with the flag on, Procurement switched on, and the company not suspended or deleted. */
+async function companyOpen(db: D1Database, companyId: string): Promise<boolean> {
+  if (!(await portalOn(db, companyId))) return false;
+  if (!(await moduleEnabled(db, 'procurement', companyId).catch(() => false))) return false;
+  const closed = await db.prepare('SELECT 1 FROM companies k WHERE k.id = ? AND (k.deleted_at IS NOT NULL OR EXISTS (SELECT 1 FROM co_companies cc WHERE cc.id = k.id AND (cc.suspended_at IS NOT NULL OR cc.deleted_at IS NOT NULL)))').bind(companyId).first();
+  return !closed;
 }
 
 const erpUrl = (env: Env, path: string) => `${appBase(env).origin}/erp${path.startsWith('/') ? path : `/${path}`}`;
@@ -77,6 +85,7 @@ supplierPortalStaffRoutes.post('/c/:company/suppliers/:id/portal/invitations', a
   const { a, s } = await staffSupplier(c, 'suppliers.edit');
   const db = c.env.DB;
   await rateLimit(db, `portal-invite:${a.userId}`, 30, 3_600_000);
+  if (a.kind === 'demo') badState('The example company does not invite anyone: its data is invented and only yours');
   if (s.archived_at) badState(`${s.number} is archived`);
   if (s.status === 'blocked') badState(`${s.number} is blocked: unblock the supplier first`);
   const input = await body(c, z.object({ email: z.string().trim().toLowerCase().email().max(320) }));
@@ -171,7 +180,7 @@ async function portal(c: Context<AppEnv>): Promise<Portal> {
     )
     .bind(companyId, supplierId, u.id)
     .first<any>();
-  if (!row || !(await portalOn(db, companyId))) throw notFound('Supplier portal');
+  if (!row || !(await companyOpen(db, companyId))) throw notFound('Supplier portal');
   return { companyId, companyName: row.company_name, supplierId, supplierNumber: row.number, supplierName: row.trading_name || row.legal_name, userId: u.id, userName: u.name };
 }
 
@@ -187,7 +196,7 @@ supplierPortalRoutes.get('/', async (c) => {
     .bind(u.id)
     .all<any>();
   const out = [];
-  for (const r of rows.results) if (await portalOn(c.env.DB, r.company_id)) out.push({ companyId: r.company_id, companyName: r.company_name, supplierId: r.supplier_id, supplierName: r.trading_name || r.legal_name });
+  for (const r of rows.results) if (await companyOpen(c.env.DB, r.company_id)) out.push({ companyId: r.company_id, companyName: r.company_name, supplierId: r.supplier_id, supplierName: r.trading_name || r.legal_name });
   return c.json({ portals: out });
 });
 
@@ -197,7 +206,7 @@ async function invitation(c: Context<AppEnv>) {
     .prepare('SELECT p.*, s.legal_name, s.trading_name, k.name AS company_name FROM erp_supplier_portal_users p JOIN erp_suppliers s ON s.company_id = p.company_id AND s.id = p.supplier_id JOIN companies k ON k.id = p.company_id WHERE p.token_hash = ?')
     .bind(await sha256Hex(c.req.param('token') ?? ''))
     .first<any>();
-  if (!row || !(await portalOn(db, row.company_id))) throw notFound('Invitation');
+  if (!row || !(await companyOpen(db, row.company_id))) throw notFound('Invitation');
   return row;
 }
 
@@ -246,7 +255,7 @@ supplierPortalRoutes.get('/:company/:supplier', async (c) => {
   const db = c.env.DB;
   const [orders, rfqs] = await db.batch([
     db.prepare(`SELECT id, number, status, revision, order_date, required_date, currency, total_cents, (SELECT decision FROM erp_po_acknowledgements k WHERE k.company_id = o.company_id AND k.po_id = o.id AND k.revision = o.revision) AS ack FROM erp_purchase_orders o WHERE o.company_id = ? AND o.supplier_id = ? AND (o.status IN (${SHOWN_PO.map(() => '?').join(',')}) OR (o.status = 'cancelled' AND o.sent_at IS NOT NULL)) ORDER BY o.order_date DESC LIMIT 200`).bind(p.companyId, p.supplierId, ...SHOWN_PO),
-    db.prepare("SELECT r.id, r.number, r.title, r.status, r.reply_by, r.required_date, r.currency, (SELECT total_cents FROM erp_quotations q WHERE q.company_id = r.company_id AND q.rfq_id = r.id AND q.supplier_id = x.supplier_id) AS quoted FROM erp_rfq_suppliers x JOIN erp_rfqs r ON r.company_id = x.company_id AND r.id = x.rfq_id WHERE x.company_id = ? AND x.supplier_id = ? AND r.status <> 'draft' ORDER BY r.created_at DESC LIMIT 200").bind(p.companyId, p.supplierId),
+    db.prepare("SELECT r.id, r.number, r.title, r.status, r.reply_by, r.required_date, r.currency, (SELECT total_cents FROM erp_quotations q WHERE q.company_id = r.company_id AND q.rfq_id = r.id AND q.supplier_id = x.supplier_id) AS quoted FROM erp_rfq_suppliers x JOIN erp_rfqs r ON r.company_id = x.company_id AND r.id = x.rfq_id WHERE x.company_id = ? AND x.supplier_id = ? AND x.sent_at IS NOT NULL AND r.status <> 'draft' ORDER BY r.created_at DESC LIMIT 200").bind(p.companyId, p.supplierId),
   ]);
   return c.json({
     company: { id: p.companyId, name: p.companyName },
@@ -264,7 +273,7 @@ supplierPortalRoutes.get('/:company/:supplier/orders/:po', async (c) => {
     db.prepare('SELECT l.*, pr.number AS product_number, pr.name AS product_name FROM erp_po_lines l LEFT JOIN erp_products pr ON pr.company_id = l.company_id AND pr.id = l.product_id WHERE l.company_id = ? AND l.po_id = ? ORDER BY l.position').bind(p.companyId, po.id),
     db.prepare('SELECT revision, decision, promised_date, note, created_at FROM erp_po_acknowledgements WHERE company_id = ? AND po_id = ? ORDER BY revision DESC').bind(p.companyId, po.id),
     // the supplier's own documents only: the company's attachments are its own
-    db.prepare("SELECT f.id, f.name, f.mime, f.size, f.created_at FROM erp_record_files f WHERE f.company_id = ? AND f.entity_type = 'purchase_order' AND f.entity_id = ? AND f.deleted_at IS NULL AND f.uploaded_by IN (SELECT user_id FROM erp_supplier_portal_users WHERE company_id = ? AND supplier_id = ? AND user_id IS NOT NULL) ORDER BY f.created_at DESC LIMIT 100").bind(p.companyId, po.id, p.companyId, p.supplierId),
+    db.prepare("SELECT f.id, f.name, f.mime, f.size, f.created_at FROM erp_record_files f WHERE f.company_id = ? AND f.entity_type = 'purchase_order' AND f.entity_id = ? AND f.deleted_at IS NULL AND f.source = 'portal' AND f.uploaded_by IN (SELECT user_id FROM erp_supplier_portal_users WHERE company_id = ? AND supplier_id = ? AND user_id IS NOT NULL) ORDER BY f.created_at DESC LIMIT 100").bind(p.companyId, po.id, p.companyId, p.supplierId),
   ]);
   const ack = (acks.results as any[]).find((k) => k.revision === po.revision) ?? null;
   return c.json({
@@ -297,7 +306,7 @@ supplierPortalRoutes.post('/:company/:supplier/orders/:po/acknowledge', async (c
     throw e;
   }
   const co = { companyId: p.companyId, kind: 'registered' as const, companyName: p.companyName };
-  await alert(c.env, co, { userIds: [po.created_by, po.submitted_by], kind: 'portal', title: `${po.number} ${input.decision === 'accepted' ? `accepted by ${p.supplierName}, promised for ${input.promisedDate}` : `declined by ${p.supplierName}`}`, body: (input.note ?? '').slice(0, 300), link: `/c/${p.companyId}/procurement/purchase-orders/${po.id}`, dedupe: `portal-ack:${po.id}:${po.revision}` }).catch(() => 0);
+  await alert(c.env, co, { userIds: [po.sent_by ?? po.created_by, po.created_by], kind: 'portal', title: `${po.number} ${input.decision === 'accepted' ? `accepted by ${p.supplierName}, promised for ${input.promisedDate}` : `declined by ${p.supplierName}`}`, body: (input.note ?? '').slice(0, 300), link: `/c/${p.companyId}/procurement/purchase-orders/${po.id}`, dedupe: `portal-ack:${po.id}:${po.revision}` }).catch(() => 0);
   return c.json({ ok: true });
 });
 
@@ -305,7 +314,7 @@ supplierPortalRoutes.post('/:company/:supplier/orders/:po/acknowledge', async (c
 
 async function rfqFor(db: D1Database, p: Portal, id: string) {
   const r = await db
-    .prepare("SELECT r.* FROM erp_rfq_suppliers x JOIN erp_rfqs r ON r.company_id = x.company_id AND r.id = x.rfq_id WHERE x.company_id = ? AND x.supplier_id = ? AND r.id = ? AND r.status <> 'draft'")
+    .prepare("SELECT r.* FROM erp_rfq_suppliers x JOIN erp_rfqs r ON r.company_id = x.company_id AND r.id = x.rfq_id WHERE x.company_id = ? AND x.supplier_id = ? AND r.id = ? AND x.sent_at IS NOT NULL AND r.status <> 'draft'")
     .bind(p.companyId, p.supplierId, id.slice(0, 64))
     .first<any>();
   if (!r) throw notFound('Request for quotation');
@@ -350,8 +359,14 @@ supplierPortalRoutes.put('/:company/:supplier/rfqs/:rfq/quotation', async (c) =>
   const byId = new Map(lines.results.map((l) => [l.id, l]));
   for (const l of input.lines) if (!byId.has(l.rfqLineId)) throw new HttpError(400, 'A price is for a line of this request');
   const subtotal = input.lines.reduce((s, l) => s + (l.unitPriceCents === null || l.unitPriceCents === undefined ? 0 : Math.round(l.unitPriceCents * byId.get(l.rfqLineId)!.quantity)), 0);
-  const freight = input.freightCents ?? 0;
-  const existing = await db.prepare('SELECT id FROM erp_quotations WHERE company_id = ? AND rfq_id = ? AND supplier_id = ?').bind(p.companyId, r.id, p.supplierId).first<{ id: string }>();
+  const existing = await db.prepare('SELECT id, valid_until, lead_time_days, freight_cents, payment_terms_days, notes, reference FROM erp_quotations WHERE company_id = ? AND rfq_id = ? AND supplier_id = ?').bind(p.companyId, r.id, p.supplierId).first<any>();
+  // what a new submission does not give again stays as it was
+  const freight = input.freightCents ?? existing?.freight_cents ?? 0;
+  const validUntil = input.validUntil !== undefined ? input.validUntil : (existing?.valid_until ?? null);
+  const leadTime = input.leadTimeDays !== undefined ? input.leadTimeDays : (existing?.lead_time_days ?? null);
+  const terms = input.paymentTermsDays !== undefined ? input.paymentTermsDays : (existing?.payment_terms_days ?? null);
+  const notes = input.notes ?? existing?.notes ?? '';
+  const reference = input.reference ?? existing?.reference ?? '';
   const id = existing?.id ?? newId();
   const t = now();
   // the request stays open while the quotation is written: a request closed at the same moment refuses it
@@ -360,15 +375,15 @@ supplierPortalRoutes.put('/:company/:supplier/rfqs/:rfq/quotation', async (c) =>
       .prepare(
         `INSERT INTO erp_quotations (id, company_id, rfq_id, supplier_id, reference, received_date, valid_until, lead_time_days, freight_cents, payment_terms_days, currency, notes, subtotal_cents, total_cents, created_by, created_at, updated_at, source)
          SELECT ?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, ?16, 'portal' WHERE EXISTS (SELECT 1 FROM erp_rfqs WHERE company_id = ?2 AND id = ?3 AND status = 'sent')
-         ON CONFLICT(company_id, rfq_id, supplier_id) DO UPDATE SET reference = ?5, received_date = ?6, valid_until = ?7, lead_time_days = ?8, freight_cents = ?9, payment_terms_days = ?10, notes = ?12, subtotal_cents = ?13, total_cents = ?14, updated_at = ?16, source = 'portal'`,
+         ON CONFLICT(company_id, rfq_id, supplier_id) DO UPDATE SET reference = ?5, received_date = ?6, valid_until = ?7, lead_time_days = ?8, freight_cents = ?9, payment_terms_days = ?10, currency = ?11, notes = ?12, subtotal_cents = ?13, total_cents = ?14, updated_at = ?16, source = 'portal'`,
       )
-      .bind(id, p.companyId, r.id, p.supplierId, input.reference ?? '', new Date(t).toISOString().slice(0, 10), input.validUntil ?? null, input.leadTimeDays ?? null, freight, input.paymentTermsDays ?? null, r.currency, input.notes ?? '', subtotal, subtotal + freight, p.userId, t),
+      .bind(id, p.companyId, r.id, p.supplierId, reference, new Date(t).toISOString().slice(0, 10), validUntil, leadTime, freight, terms, r.currency, notes, subtotal, subtotal + freight, p.userId, t),
     db.prepare("DELETE FROM erp_quotation_lines WHERE company_id = ? AND quotation_id = ? AND EXISTS (SELECT 1 FROM erp_rfqs WHERE company_id = ? AND id = ? AND status = 'sent')").bind(p.companyId, id, p.companyId, r.id),
     ...input.lines.map((l) => db.prepare("INSERT INTO erp_quotation_lines (company_id, quotation_id, rfq_line_id, unit_price_cents, lead_time_days, note) SELECT ?, ?, ?, ?, ?, ? WHERE EXISTS (SELECT 1 FROM erp_rfqs WHERE company_id = ? AND id = ? AND status = 'sent')").bind(p.companyId, id, l.rfqLineId, l.unitPriceCents ?? null, l.leadTimeDays ?? null, l.note ?? '', p.companyId, r.id)),
     eventStmtIf(db, { companyId: p.companyId, actorId: p.userId, action: existing ? 'quotation.updated' : 'quotation.recorded', entityType: 'rfq', entityId: r.id, summary: `${r.number}: quotation from ${p.supplierNumber} ${p.supplierName} ${existing ? 'changed' : 'sent'} through the supplier portal, ${dollars(subtotal + freight)} ${r.currency} with freight`, after: { quotation: id, totalCents: subtotal + freight, source: 'portal' }, at: t }, "EXISTS (SELECT 1 FROM erp_rfqs WHERE company_id = ? AND id = ? AND status = 'sent')", [p.companyId, r.id]),
   ]);
   if (!res[0].meta.changes) badState(`${r.number} was closed for quotations meanwhile`);
-  await alert(c.env, { companyId: p.companyId, kind: 'registered', companyName: p.companyName }, { userIds: [r.created_by], kind: 'portal', title: `${r.number}: quotation from ${p.supplierName} (${dollars(subtotal + freight)} ${r.currency})`, link: `/c/${p.companyId}/procurement/rfqs/${r.id}`, dedupe: `portal-quote:${r.id}:${p.supplierId}:${t}` }).catch(() => 0);
+  await alert(c.env, { companyId: p.companyId, kind: 'registered', companyName: p.companyName }, { userIds: [r.created_by], kind: 'portal', title: `${r.number}: quotation from ${p.supplierName} (${dollars(subtotal + freight)} ${r.currency})`, link: `/c/${p.companyId}/procurement/rfqs/${r.id}`, dedupe: `portal-quote:${r.id}:${p.supplierId}:${Math.floor(t / 3_600_000)}` }).catch(() => 0);
   return c.json({ id, totalCents: subtotal + freight });
 });
 
@@ -392,7 +407,7 @@ supplierPortalRoutes.post('/:company/:supplier/orders/:po/files', async (c) => {
   await c.env.FILES.put(key, bytes, { httpMetadata: { contentType: type }, customMetadata: { uploader: p.userId, source: 'supplier-portal' } });
   const t = now();
   await db.batch([
-    db.prepare("INSERT INTO erp_record_files (id, company_id, entity_type, entity_id, name, mime, size, r2_key, uploaded_by, created_at) VALUES (?, ?, 'purchase_order', ?, ?, ?, ?, ?, ?, ?)").bind(id, p.companyId, po.id, name, type, bytes.byteLength, key, p.userId, t),
+    db.prepare("INSERT INTO erp_record_files (id, company_id, entity_type, entity_id, name, mime, size, r2_key, uploaded_by, created_at, source) VALUES (?, ?, 'purchase_order', ?, ?, ?, ?, ?, ?, ?, 'portal')").bind(id, p.companyId, po.id, name, type, bytes.byteLength, key, p.userId, t),
     eventStmt(db, { companyId: p.companyId, actorId: p.userId, action: 'file.uploaded', entityType: 'purchase_order', entityId: po.id, summary: `File added to purchase order ${po.number} by ${p.supplierName} (supplier portal): ${name}`, after: { file: id, name, size: bytes.byteLength, source: 'portal' }, at: t }),
   ]);
   return c.json({ id, name, mime: type, size: bytes.byteLength, createdAt: t, url: `/api/supplier-portal/${p.companyId}/${p.supplierId}/files/${id}` }, 201);
@@ -400,7 +415,7 @@ supplierPortalRoutes.post('/:company/:supplier/orders/:po/files', async (c) => {
 
 supplierPortalRoutes.get('/:company/:supplier/files/:id', async (c) => {
   const p = await portal(c);
-  const f = await c.env.DB.prepare("SELECT f.* FROM erp_record_files f JOIN erp_purchase_orders o ON o.company_id = f.company_id AND o.id = f.entity_id AND o.supplier_id = ? WHERE f.company_id = ? AND f.id = ? AND f.entity_type = 'purchase_order' AND f.deleted_at IS NULL AND f.uploaded_by IN (SELECT user_id FROM erp_supplier_portal_users WHERE company_id = ? AND supplier_id = ? AND user_id IS NOT NULL)").bind(p.supplierId, p.companyId, (c.req.param('id') ?? '').slice(0, 64), p.companyId, p.supplierId).first<any>();
+  const f = await c.env.DB.prepare("SELECT f.* FROM erp_record_files f JOIN erp_purchase_orders o ON o.company_id = f.company_id AND o.id = f.entity_id AND o.supplier_id = ? WHERE f.company_id = ? AND f.id = ? AND f.entity_type = 'purchase_order' AND f.deleted_at IS NULL AND f.source = 'portal' AND f.uploaded_by IN (SELECT user_id FROM erp_supplier_portal_users WHERE company_id = ? AND supplier_id = ? AND user_id IS NOT NULL)").bind(p.supplierId, p.companyId, (c.req.param('id') ?? '').slice(0, 64), p.companyId, p.supplierId).first<any>();
   if (!f) throw notFound('File');
   const obj = await c.env.FILES.get(f.r2_key);
   if (!obj) throw notFound('File');

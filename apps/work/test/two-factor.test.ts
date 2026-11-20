@@ -43,6 +43,10 @@ describe('two-factor sign-in for everyone', () => {
     await setFlag('on');
     const c = await signup('Tf Person');
     expect((await c.json('GET', '/api/auth/two-factor')).available).toBe(true);
+    // an API token never manages the second factor
+    const own = (await c.json('GET', '/api/maintenance/companies')).companies.find((x: any) => x.kind === 'own');
+    const tok = await c.json('POST', '/api/me/tokens', { name: 'script', companyId: own.id });
+    expect((await raw('POST', '/api/auth/two-factor/start', { body: {}, headers: { Authorization: `Bearer ${tok.token}` } })).status).toBe(403);
     const { secret, recovery } = await enrol(c);
     expect(recovery).toHaveLength(10);
     expect((await c.json('GET', '/api/auth/two-factor')).enrolled).toBe(true);

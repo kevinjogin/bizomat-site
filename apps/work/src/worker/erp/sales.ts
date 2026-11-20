@@ -302,6 +302,17 @@ async function priceLines(db: D1Database, companyId: string, lines: LineIn[], op
     for (const r of rows.results) products.set(r.id, r);
   }
   const pricing = ctx && (await moduleEnabled(db, 'commercial', companyId).catch(() => true)) ? await loadPricing(db, companyId, ids) : null;
+  // the order's value at list prices, for promotions with a minimum order
+  let orderTotal = 0;
+  if (pricing && ctx) {
+    for (const l of lines) {
+      const p = products.get(l.productId);
+      if (!p) continue;
+      const q = Math.round(l.quantity * 1000) / 1000;
+      const s0 = suggest(pricing, { productId: p.id, standard: p.price_cents ?? null, customerRefs: ctx.customerRefs, qty: q, date: ctx.date, currency: ctx.currency });
+      orderTotal += Math.round((l.unitPriceCents ?? s0.listUnit ?? 0) * q);
+    }
+  }
   const priced = lines.map((l, i) => {
     const p = products.get(l.productId);
     if (!p) throw new HttpError(400, `Line ${i + 1}: choose a product of this company`);
@@ -309,12 +320,13 @@ async function priceLines(db: D1Database, companyId: string, lines: LineIn[], op
     if (p.archived_at && !l.id) throw new HttpError(400, `Line ${i + 1}: ${p.number} is archived`);
     const quantity = Math.round(l.quantity * 1000) / 1000;
     if (quantity <= 0) throw new HttpError(400, `Line ${i + 1}: use a quantity of at least 0.001`);
-    const sug = pricing && ctx ? suggest(pricing, { productId: p.id, standard: p.price_cents ?? null, customerRefs: ctx.customerRefs, qty: quantity, date: ctx.date, currency: ctx.currency }) : null;
+    const sug = pricing && ctx ? suggest(pricing, { productId: p.id, standard: p.price_cents ?? null, customerRefs: ctx.customerRefs, qty: quantity, date: ctx.date, currency: ctx.currency, orderTotal }) : null;
     const given = l.unitPriceCents !== undefined;
     const unit = given ? l.unitPriceCents! : (sug?.unit ?? p.price_cents);
     if (unit === null || unit === undefined) throw new HttpError(400, `Line ${i + 1}: ${p.number} has no list price: give the price`);
     const discountBp = l.discountBp ?? (!given && sug ? sug.discountBp : 0);
-    const priceNote = !sug ? (given ? '' : 'Standard price') : !given || (unit === sug.unit && discountBp === sug.discountBp) ? sug.note : (ctx?.typed ?? 'Price typed on the order');
+    // the note says where the price and discount came from, never naming a promotion that was not applied
+    const priceNote = !sug ? (given ? '' : 'Standard price') : unit === sug.unit && discountBp === sug.discountBp ? sug.note : !given ? `${sug.note.split(', promotion')[0]}, discount typed on the order` : (ctx?.typed ?? 'Price typed on the order');
     const { taxCode, rate } = pickTax(options, l.taxCode, mode, `Line ${i + 1}`);
     const amount = docLineAmount(unit, Math.round(quantity * 1000), discountBp);
     const s = splitTax(amount, rate, mode);
@@ -517,10 +529,11 @@ salesRoutes.get('/c/:company/sales-orders/price', async (c) => {
   const settings = await loadSettings(db, a.companyId);
   const customerRefs = (c.req.query('customer') ?? '').split(',').map((x) => x.trim()).filter((x) => /^(crm|fin):[A-Za-z0-9_-]{1,64}$/.test(x)).slice(0, 4);
   const qty = Math.max(0.001, Number(c.req.query('qty')) || 1);
+  const orderTotal = Number(c.req.query('orderTotal'));
   const date = /^\d{4}-\d{2}-\d{2}$/.test(c.req.query('date') ?? '') ? c.req.query('date')! : todayIso();
   const on = await moduleEnabled(db, 'commercial', a.companyId).catch(() => true);
   if (!on) return c.json({ unitPriceCents: p.price_cents, discountBp: 0, note: p.price_cents !== null ? 'Standard price' : '' });
-  const s = suggest(await loadPricing(db, a.companyId, [p.id]), { productId: p.id, standard: p.price_cents, customerRefs, qty, date, currency: settings.currency });
+  const s = suggest(await loadPricing(db, a.companyId, [p.id]), { productId: p.id, standard: p.price_cents, customerRefs, qty, date, currency: settings.currency, ...(Number.isFinite(orderTotal) && orderTotal > 0 ? { orderTotal: Math.round(orderTotal) } : {}) });
   return c.json({ unitPriceCents: s.unit, discountBp: s.discountBp, note: s.note, priceList: s.priceList, promotion: s.promotion });
 });
 

@@ -68,7 +68,7 @@ describe('consolidation and intercompany', () => {
     const made = await owner.json('POST', obj(co, 'ic_transaction', `/${ic.record.id}/action/documents`), {});
     expect(made.message).toContain('Draft invoice');
     expect(made.detail.record.status).toBe('documented');
-    expect(made.detail.record.data).toMatchObject({ buyerAmount: 111_111 });
+    expect(made.detail.record.data).toMatchObject({ buyerAmount: 'NZD 1111.11' });
     expect(made.detail.record.data.rateUsed).toContain('AUD to NZD');
     expect((await owner.req('POST', obj(co, 'ic_transaction', `/${ic.record.id}/action/documents`), {})).status).toBe(409);
     const invoices = await env.DB.prepare("SELECT d.id, d.total, d.status, c.name FROM fin_docs d JOIN fin_contacts c ON c.id = d.contact_id WHERE d.org_id = ? AND d.kind = 'invoice'").bind(fa).all<any>();
@@ -101,10 +101,10 @@ describe('consolidation and intercompany', () => {
     expect(r.intercompanyDifference).toEqual({ profitAndLoss: 0, balanceSheet: 0 });
     expect(r.notes.join(' ')).toContain('no minority interest');
 
-    // the controller reads only the parent's books: the subsidiary is left out, with the reason
+    // the controller reads only the parent's books: the owner's own workspace is left out, with the reason
     const limited = await controller.json('GET', erp(co, `/x/consolidation?from=${day(-60)}&to=${day(0)}&currency=AUD`));
     expect(limited.entities.map((e: any) => e.name)).toEqual(['Pa Parent']);
-    expect(limited.excluded[0]).toMatchObject({ name: 'Pa NZ Ltd', reason: 'You may not read its books in Finance' });
+    expect(limited.excluded[0]).toMatchObject({ name: 'Pa NZ Ltd', reason: expect.stringContaining('nor one of a company where you are the owner or an administrator') });
     // presented in a currency with no rate: each entity is left out, saying which rate to add
     const usd = await owner.json('GET', erp(co, `/x/consolidation?to=${day(0)}&currency=USD`));
     expect(usd.entities).toEqual([]);

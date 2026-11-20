@@ -764,7 +764,7 @@ purchasingRoutes.post('/c/:company/purchase-orders/:id/receipts', async (c) => {
       const p = await loadStockProduct(db, a.companyId, l.product_id);
       if (p.type !== 'service') {
         // nobody chose: the product's default, else where it is stored the most, else the receiving area (replenish.ts)
-        locationId = x.locationId ?? p.default_location_id ?? (await putawayFor(db, a.companyId, p.id))?.locationId ?? null;
+        locationId = x.locationId ?? (await putawayFor(db, a.companyId, p.id))?.locationId ?? null;
         if (!locationId) throw new HttpError(400, `Line ${i + 1} (${p.number}): choose where it goes`);
         const loc = await loadLocation(db, a.companyId, locationId);
         lot = p.track_lots ? (x.lot ?? '').trim() : '';

@@ -38,6 +38,7 @@ interface RunResult {
   journals: number;
   problems: { number: string; title: string; message: string }[];
   more: boolean;
+  next: string | null;
 }
 
 export const POSTING_KIND_OF_MODULE: Record<string, Kind> = { fixed_assets: 'depreciation', payroll: 'payroll', revenue: 'revenue' };
@@ -78,10 +79,10 @@ export function PostingsTab({ companyId, kind }: { companyId: string; kind: Kind
       setBusy(false);
     }
   };
-  const postAll = async () => {
+  const postAll = async (after?: string) => {
     setBusy(true);
     try {
-      const r = await post<RunResult>(xPath(companyId, '/postings/run'), { kind, upTo });
+      const r = await post<RunResult>(xPath(companyId, '/postings/run'), { kind, upTo, ...(after ? { after } : {}) });
       setRun(r);
       toast(r.journals ? `${r.journals} journals posted` : 'Nothing new to post');
       await qc.invalidateQueries({ queryKey: ['erp', companyId, 'x'] });
@@ -138,7 +139,8 @@ export function PostingsTab({ companyId, kind }: { companyId: string; kind: Kind
           ) : <p className="muted small">Your Finance role cannot post journals. A Finance owner, administrator or accountant can.</p>}
           {run ? (
             <div className="stack">
-              <p className="small">{run.checked} checked; {run.journals} journals posted for {run.records} records, up to {run.upTo}.{run.more ? ' More remain: post again.' : ''}</p>
+              <p className="small">{run.checked} checked; {run.journals} journals posted for {run.records} records, up to {run.upTo}.</p>
+              {run.more && run.next ? <button className="btn" disabled={busy} onClick={() => void postAll(run.next!)}>Post the next records</button> : null}
               {run.problems.length ? <ul className="erp-list small">{run.problems.slice(0, 50).map((p) => <li key={p.number}><span className="mt-num">{p.number}</span> {p.title}: <span className="warning-text">{p.message}</span></li>)}</ul> : null}
             </div>
           ) : null}
