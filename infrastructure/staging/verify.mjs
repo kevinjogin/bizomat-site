@@ -4,7 +4,7 @@
 // any address that is not a *-staging app, signs up invented accounts and registers an invented company.
 //
 //   node infrastructure/staging/verify.mjs off     the release with every flag off: pages, ERP modules, no new UI
-//   node infrastructure/staging/verify.mjs on      new_ui_enabled and company_members_v2 on (switched by the workflow)
+//   node infrastructure/staging/verify.mjs on      new_ui_enabled, company_members_v2 and cad_in_erp on (switched by the workflow)
 //   node infrastructure/staging/verify.mjs reset   after the workflow switched them off again: the old look is back
 //
 // Settings: STAGING_URL, GATE_PW (the gate's password; never printed), PW_DIR (where playwright is installed),
@@ -39,7 +39,7 @@ const bad = (what) => {
 };
 const check = (cond, what) => (cond ? ok(what) : bad(what));
 const newUi = phase === 'on';
-say(`\n### Staging verification: ${phase === 'off' ? 'every flag off' : phase === 'on' ? 'new_ui_enabled and company_members_v2 on' : 'flags off again'}\n`);
+say(`\n### Staging verification: ${phase === 'off' ? 'every flag off' : phase === 'on' ? 'new_ui_enabled, company_members_v2 and cad_in_erp on' : 'flags off again'}\n`);
 
 // ------------------------------------------------------------------ the website, as the server sends it
 /** A page with a browser's Accept-Encoding, decoded here (fetch would decode on its own and hide a broken body). */
@@ -253,6 +253,28 @@ if (phase !== 'reset') {
       check(team.status === 200, `the Members API answers (${team.status})`);
     }
   }
+}
+
+// CAD Automation in the ERP (cad_in_erp, docs/cad/README.md). Staging has no CAD engine (no CAD_URL), so with the flag on
+// the module opens and says CAD Automation is not reachable; with it off, the earlier CAD Automation page.
+if (tester.companyId) {
+  const cid = tester.companyId;
+  const cadOn = phase === 'on';
+  const list = await api('GET', '/erp/cad/companies');
+  const listed = (list.body?.companies ?? []).some((c) => c.id === cid);
+  check(list.status === 200 && listed === cadOn, `CAD Automation companies list ${cadOn ? 'has' : 'does not have'} the company (${list.status})`);
+  const view = await api('GET', `/erp/c/${cid}/cad`);
+  check(cadOn ? view.status === 200 && view.body?.cad?.connected === false : view.status === 403 && view.body?.details?.code === 'CAD_NOT_ENABLED', `the CAD module's API: ${cadOn ? 'on, CAD Automation not reachable from staging' : 'off (CAD_NOT_ENABLED)'} (${view.status})`);
+  const before = problems.length;
+  await p.goto(`${BASE}/erp/c/${cid}/cad`, { waitUntil: 'networkidle' });
+  await p.waitForTimeout(1500);
+  const page = await p.evaluate(() => ({ h1: document.querySelector('main h1, h1')?.textContent?.trim() ?? '', text: document.querySelector('main')?.innerText ?? '' }));
+  check(problems.length === before && (cadOn ? page.h1 === 'CAD Automation' && /not reachable/i.test(page.text) : /CAD Automation/.test(page.text)), `the CAD page: ${cadOn ? 'the module, saying CAD Automation is not reachable here' : 'the earlier CAD Automation page'} ("${page.h1.slice(0, 40)}")`);
+  const jwks = await p.evaluate(async (url) => {
+    const r = await fetch(url, { credentials: 'same-origin' });
+    return { status: r.status, body: await r.json().catch(() => null) };
+  }, `${BASE}/company/api/id/jwks`);
+  check(jwks.status === 200 && Array.isArray(jwks.body?.keys) && jwks.body.keys.length === 1 && jwks.body.keys[0].alg === 'ES256' && !('d' in jwks.body.keys[0]), `the ERP publishes one ES256 public key for CAD Automation (${jwks.status})`);
 }
 
 say(problems.length ? `- browser errors: ${problems.length}` : '- ok: no browser errors');
