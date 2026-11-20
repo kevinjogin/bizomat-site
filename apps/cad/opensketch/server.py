@@ -931,17 +931,27 @@ def _is_owner(request: Request) -> bool:
     return bool(u and u.get("role") == "owner" and not u.get("legacy"))
 
 
-# Where each section opens in BIZOMAT ERP once CAD Automation works there (erplink.py; flag cad_redirect in the ERP).
+# Where each page opens in BIZOMAT ERP once CAD Automation works there (erplink.py; flag cad_redirect in the ERP). Owner,
+# 20 Nov 2026: everything of CAD Automation in the ERP, no pages at bizomat.ai/cad; the product page and the
+# documentation go there too. The privacy notice stays (a legal page anyone can read), and so do the programs: the AI
+# connector and its sign-in, the computers' link, the installer and /healthz.
 ERP_SECTIONS = {"home": "", "assistant": "/assistants", "solidworks": "/computers", "tools": "/tools", "history": "/history",
-                "settings": "/setup"}
+                "settings": "/access", "overview": "", "docs": "/setup"}
+# Pages a visitor without a CAD Automation session opens: the ERP signs them in, then opens their company's module.
+VISITOR_SECTIONS = ("overview", "docs")
 
 
 def _erp_redirect(request: Request, name: str) -> Response | None:
-    """The same section in BIZOMAT ERP, for a person who works with CAD Automation there, while the ERP says the old
-    pages open there; None otherwise (the page here, as before, and after a rollback). Admin stays here."""
+    """The same section in BIZOMAT ERP while the ERP says the old pages open there: for a person who works with CAD
+    Automation there, and for a visitor on the product page or the documentation; None otherwise (the page here, as
+    before, and after a rollback). ?here=1 keeps a page here, for support."""
     from . import erplink
+    if name not in ERP_SECTIONS or request.query_params.get("here") == "1" or not erplink.redirect_on():
+        return None
     u = _user(request)
-    if name not in ERP_SECTIONS or not u or u.get("legacy") or not erplink.redirect_on() or not erplink.in_erp(u["id"]):
+    if u is None and name in VISITOR_SECTIONS and auth.mode(request.scope) == "accounts":
+        return RedirectResponse(erplink.erp_url("/erp/cad" + ERP_SECTIONS[name]), status_code=302, headers={"Cache-Control": "no-store"})
+    if not u or u.get("legacy") or not erplink.in_erp(u["id"]):
         return None
     q = ""
     if name == "history" and request.query_params.get("command"):
@@ -964,9 +974,14 @@ async def _app_page(request: Request, name: str) -> Response:
 
 @app.get("/admin")
 async def admin_page(request: Request):
-    """The owner's Admin page; anyone else is sent to their Home."""
+    """The owner's Admin page; anyone else is sent to their Home. While CAD Automation works inside BIZOMAT ERP, the
+    owner manages it in the ERP console's CAD Automation panel (?here=1 keeps this page, for support)."""
+    from . import erplink
     if not _is_owner(request):
         return RedirectResponse("/dashboard", status_code=303)
+    u = _user(request)
+    if erplink.redirect_on() and request.query_params.get("here") != "1" and erplink.in_erp(u["id"]):
+        return RedirectResponse(erplink.erp_url("/erp/admin/cad"), status_code=302, headers={"Cache-Control": "no-store"})
     return await _app_page(request, "admin")
 
 
@@ -1006,15 +1021,21 @@ def _signed_in(request: Request) -> bool:
 
 @app.get("/overview")
 async def overview_page(request: Request):
-    """The product page, for everyone (the sign-in gate lets it through)."""
+    """The product page, for everyone (the sign-in gate lets it through); in BIZOMAT ERP while CAD Automation works there."""
     from . import site
+    moved = _erp_redirect(request, "overview")
+    if moved is not None:
+        return moved
     return await _text_page(request.scope, site.landing(_signed_in(request), _base(request)), "text/html; charset=utf-8", PUBLIC_HEADERS)
 
 
 @app.get("/docs")
 async def docs_page(request: Request):
-    """Setup, connection, verification and troubleshooting, for everyone."""
+    """Setup, connection, verification and troubleshooting, for everyone; in BIZOMAT ERP while CAD Automation works there."""
     from . import site
+    moved = _erp_redirect(request, "docs")
+    if moved is not None:
+        return moved
     return await _text_page(request.scope, site.docs(_signed_in(request), _base(request)), "text/html; charset=utf-8", PUBLIC_HEADERS)
 
 

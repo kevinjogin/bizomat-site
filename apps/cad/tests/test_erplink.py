@@ -420,15 +420,82 @@ def test_the_old_pages_open_in_the_erp_only_while_it_says_so(erp, client):
     _link(owner["id"], ["co_a"], "co_a", redirect=True)
     site = erp.url.rsplit("/company", 1)[0]
     expect = {"/dashboard": "/erp/cad", "/assistant": "/erp/cad/assistants", "/solidworks": "/erp/cad/computers",
-              "/tools": "/erp/cad/tools", "/history?command=cmd_1": "/erp/cad/history?command=cmd_1", "/settings": "/erp/cad/setup",
-              "/": "/erp/cad", "/devices/pair?code=ABCD-EFGH": "/erp/cad/pair?code=ABCD-EFGH"}
+              "/tools": "/erp/cad/tools", "/history?command=cmd_1": "/erp/cad/history?command=cmd_1", "/settings": "/erp/cad/access",
+              "/": "/erp/cad", "/devices/pair?code=ABCD-EFGH": "/erp/cad/pair?code=ABCD-EFGH", "/overview": "/erp/cad",
+              "/docs": "/erp/cad/setup", "/admin": "/erp/admin/cad"}
     for old, new in expect.items():
         r = client.get(old, follow_redirects=False)
         assert r.status_code == 302 and r.headers["location"] == site + new, (old, r.status_code, r.headers.get("location"))
-    assert client.get("/admin", follow_redirects=False).status_code == 200  # the owner's Admin stays here
+    # ?here=1 keeps a page here, for support; the privacy notice always stays (a legal page anyone can read)
+    for page in ("/admin?here=1", "/tools?here=1", "/docs?here=1", "/privacy"):
+        assert client.get(page, follow_redirects=False).status_code == 200, page
     # the rollback: the ERP stops saying so, and every page works here again
     _link(owner["id"], ["co_a"], "co_a", redirect=False)
     assert client.get("/dashboard", follow_redirects=False).status_code == 200
+
+
+def test_a_visitor_on_the_product_page_or_the_documentation_goes_to_the_erp(erp, client):
+    """Owner, 20 Nov 2026: no pages at bizomat.ai/cad. A visitor without a CAD Automation session opens the product page
+    and the documentation in BIZOMAT ERP, which signs them in, and an old link to a signed-in page goes to the same
+    section there, never through CAD Automation's own sign-in."""
+    owner = accounts._users()["users"][0]
+    site = erp.url.rsplit("/company", 1)[0]
+    for page in ("/", "/overview", "/docs"):
+        assert client.get(page, follow_redirects=False).status_code == 200, page  # the flag off: the pages, as before
+    r = client.get("/tools", follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"].startswith("/login"), "the flag off: sign in here, as before"
+    _link(owner["id"], ["co_a"], "co_a", redirect=True)
+    moved = {"/": "/erp/cad", "/overview": "/erp/cad", "/docs": "/erp/cad/setup", "/dashboard": "/erp/cad",
+             "/assistant": "/erp/cad/assistants", "/solidworks": "/erp/cad/computers", "/tools": "/erp/cad/tools",
+             "/history": "/erp/cad/history", "/settings": "/erp/cad/access"}
+    for page, new in moved.items():
+        r = client.get(page, follow_redirects=False)
+        assert r.status_code == 302 and r.headers["location"] == site + new, (page, r.headers.get("location"))
+    # the server owner's Admin and the sign-in page keep their way in; ?here=1 keeps a page here, for support
+    assert client.get("/admin", follow_redirects=False).headers["location"].startswith("/login")
+    assert client.get("/tools?here=1", follow_redirects=False).headers["location"].startswith("/login")
+    assert client.get("/login?password=1", follow_redirects=False).status_code == 200
+    assert client.get("/privacy", follow_redirects=False).status_code == 200
+    # programs keep their addresses: the connector, the computers' link, health
+    assert client.get("/healthz").status_code == 200
+    assert client.post("/mcp", json={}).status_code == 401
+
+
+def test_a_person_manages_their_own_keys_from_the_erp(erp, client, monkeypatch, tmp_path):
+    """The Settings page's private connector address and add-in key, and the add-in package, inside the ERP: each is the
+    person's own, made new from there, and never someone else's."""
+    from opensketch import server, swbridge
+    a = call(client, erp, "access", {}, "alice", "co_a").json()
+    assert a["privateUrl"].startswith(erplink.connector_url() + "/") and a["addinKey"].startswith("oss_") and a["service"]
+    users = {u["bizomat"]: u for u in accounts._users()["users"] if u.get("bizomat")}
+    assert swbridge.resolve(a["addinKey"])[1]["id"] == users["alice"]["id"]
+    # someone else gets their own keys, never Alice's
+    e = call(client, erp, "access", {}, "eve", "co_a", EMPLOYEE).json()
+    assert e["addinKey"] != a["addinKey"] and e["privateUrl"] != a["privateUrl"]
+    # a new private address and a new key replace the old ones at once
+    p2 = call(client, erp, "access/private/new", {}, "alice", "co_a").json()["privateUrl"]
+    assert p2 != a["privateUrl"]
+    k2 = call(client, erp, "access/addin-key/new", {}, "alice", "co_a").json()["addinKey"]
+    assert k2 != a["addinKey"] and swbridge.resolve(a["addinKey"]) == (False, None) and swbridge.resolve(k2)[1]["id"] == users["alice"]["id"]
+    # a read-only person has no keys to use
+    assert call(client, erp, "access", {}, "rita", "co_a", READER).status_code == 403
+    # the add-in package, handed out by the ERP only
+    path = "/api/erp/v1/addin/package"
+    monkeypatch.setattr(server, "SW_DOWNLOAD", tmp_path / "missing.zip")
+    assert client.get(path, headers={"Authorization": erp.assertion("GET", path, b"", "alice", "co_a")}).status_code == 404
+    zip_ = tmp_path / "addin.zip"
+    zip_.write_bytes(b"PK-zip-bytes")
+    monkeypatch.setattr(server, "SW_DOWNLOAD", zip_)
+    r = client.get(path, headers={"Authorization": erp.assertion("GET", path, b"", "alice", "co_a")})
+    assert r.status_code == 200 and r.content == b"PK-zip-bytes"
+    assert client.get(path).status_code == 401
+    # the state carries the requests to copy and the service address
+    st = call(client, erp, "state", {}, "alice", "co_a").json()
+    assert st["examples"] and all(x["group"] and x["items"] for x in st["examples"]) and st["service"]
+    # and whether there is an add-in package to offer
+    assert st["package"] is True and call(client, erp, "access", {}, "alice", "co_a").json()["package"] is True
+    monkeypatch.setattr(server, "SW_DOWNLOAD", tmp_path / "missing.zip")
+    assert call(client, erp, "state", {}, "alice", "co_a").json()["package"] is False
 
 
 def test_sign_in_goes_to_bizomat_while_the_pages_are_in_the_erp(erp, client):
