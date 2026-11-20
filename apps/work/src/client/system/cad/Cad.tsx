@@ -1,14 +1,17 @@
 // CAD Automation inside BIZOMAT ERP, at /erp/c/<company>/cad (flag cad_in_erp; docs/cad/README.md). The screens,
 // accounts, computers, history and exports are here; the engine (the AI connector, the computers' gateway, the
 // geometry checks) and SOLIDWORKS stay where they are, and the ERP's server reads and changes them with a signed
-// request. Sections: Overview, Computers, AI assistants, History, Exports, Tools, Setup, and the pairing page the
-// Companion opens (/erp/cad/pair?code=...). The server decides who may see and do what; this screen only shows it.
+// request. Sections: Overview, Computers, AI assistants, History, Exports, Tools, Access, People, Setup, and the pairing
+// page the Companion opens (/erp/cad/pair?code=...). Owner, 20 Nov 2026: everything CAD Automation's own pages showed
+// (Home, CAD Assistant, SOLIDWORKS, Tools, History, Settings and Admin) is here, so nobody needs bizomat.ai/cad. The
+// server decides who may see and do what; this screen only shows it.
 import { useEffect, useMemo, useState, type FormEvent, type ReactNode } from 'react';
 import { Link, NavLink, Navigate, Route, Routes, useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, errorMessage, get, post, put } from '../../lib/api';
 import { usePageTitle } from '../../lib/hooks';
 import { timeAgo } from '../../lib/format';
+import { toolUrl } from '../../lib/base';
 import { Icon } from '../../components/ui/Icon';
 import { EmptyState, ErrorBox, Loading, PageHeader } from '../../components/ui/ui';
 import { Modal, useConfirm, useToast } from '../../components/ui/overlays';
@@ -38,7 +41,13 @@ interface CadState {
   usage: { running: number; storageBytes: number };
   unassigned: { computers: number; assistants: number };
   tools: ToolGroup[];
+  /** Requests to copy for the AI assistant (CAD Automation's catalog), and the address the direct link uses. */
+  examples?: { group: string; items: string[] }[];
+  service?: string;
+  /** Whether CAD Automation holds the add-in package for a manual installation. */
+  package?: boolean;
 }
+interface Access { privateUrl: string; addinKey: string; service: string; package: boolean }
 export interface CadView {
   company: { id: string; name: string; kind: string };
   role: string;
@@ -109,6 +118,8 @@ export function CadArea({ companyId, companyName, fallback }: { companyId: strin
     ['/history', 'History', 'history'],
     ['/exports', 'Exports', 'download'],
     ['/tools', 'Tools', 'wrench'],
+    ...(v.perms.operate ? [['/access', 'Access', 'key'] as [string, string, string]] : []),
+    ...(v.perms.scope !== 'own' ? [['/people', 'People', 'users'] as [string, string, string]] : []),
     ['/setup', 'Setup', 'settings'],
   ];
   return (
@@ -137,6 +148,8 @@ export function CadArea({ companyId, companyName, fallback }: { companyId: strin
         <Route path="history" element={<History v={v} />} />
         <Route path="exports" element={<Exports v={v} />} />
         <Route path="tools" element={<Tools v={v} />} />
+        <Route path="access" element={<AccessKeys v={v} />} />
+        <Route path="people" element={<People v={v} />} />
         <Route path="setup" element={<Setup v={v} />} />
         <Route path="pair" element={<Pair v={v} />} />
         <Route path="*" element={<Navigate to={cadPage(companyId)} replace />} />
@@ -439,11 +452,100 @@ function Overview({ v }: { v: CadView }) {
         <Stat label="Failed in the last day" value={String(failed)} to={cadPage(id, '/history?status=failed')} />
       </div>
 
+      <div className="cad-two">
+        <TaskBox v={v} />
+        <Connection v={v} />
+      </div>
       <Section title="Recent work" actions={<Link className="btn ghost sm" to={cadPage(id, '/history')}>All history</Link>}>
         {recent.length ? <CommandTable v={v} commands={recent} /> : <p className="muted">No work yet. Ask your AI assistant to build a part.</p>}
       </Section>
       <Limits v={v} />
     </div>
+  );
+}
+
+/** Copies a text, with a toast; falls back to asking the person to copy it. */
+function useCopy() {
+  const toast = useToast();
+  return async (text: string, what: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      toast(`${what} copied`);
+      return true;
+    } catch {
+      toast('Select the text and copy it', 'error');
+      return false;
+    }
+  };
+}
+
+/** A value to copy; a secret one shows dots until the person chooses Show. */
+function CopyField({ id, label, value, secret, hint }: { id: string; label: string; value: string; secret?: boolean; hint?: string }) {
+  const [shown, setShown] = useState(!secret);
+  const copy = useCopy();
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      <div className="row">
+        <input id={id} className="input grow mono" readOnly type={shown ? 'text' : 'password'} value={value} onFocus={(e) => e.currentTarget.select()} />
+        {secret ? <button className="btn" type="button" onClick={() => setShown(!shown)}><Icon name={shown ? 'eyeOff' : 'eye'} size={14} /> {shown ? 'Hide' : 'Show'}</button> : null}
+        <button className="btn" type="button" onClick={() => void copy(value, label)}><Icon name="copy" size={14} /> Copy</button>
+      </div>
+      {hint ? <span className="muted small">{hint}</span> : null}
+    </div>
+  );
+}
+
+/** Home's "Start an engineering task": the task is copied before the AI app opens (CAD Automation runs no AI itself). */
+function TaskBox({ v }: { v: CadView }) {
+  const c = v.cad as Connected;
+  const [task, setTask] = useState('');
+  const copy = useCopy();
+  const examples = c.examples ?? [];
+  const mine = c.assistants.filter((a) => a.mine && !a.needsCompany);
+  const open = async (href: string) => {
+    if (task.trim()) await copy(task.trim(), 'Task');
+    window.open(href, '_blank', 'noopener');
+  };
+  return (
+    <Section title="Start an engineering task">
+      <p className="muted small">Describe what you need. CAD Automation works through your AI assistant: copy the task, paste it into a connected assistant, and follow the work in SOLIDWORKS.</p>
+      <label className="sr-only" htmlFor="cad-task">Your task</label>
+      <textarea id="cad-task" className="input" rows={4} value={task} onChange={(e) => setTask(e.target.value)} placeholder="For example: Make a 60 x 40 x 8 mm mounting plate with four M5 clearance holes, 6 mm in from each corner." />
+      {examples.length ? (
+        <div className="row wrap" aria-label="Examples">
+          {examples.map((g) => <button key={g.group} type="button" className="btn ghost sm" title={g.items[0]} onClick={() => setTask(g.items[0] ?? '')}>{g.group}</button>)}
+        </div>
+      ) : null}
+      <div className="row wrap">
+        <button className="btn primary" type="button" disabled={!task.trim()} onClick={() => void copy(task.trim(), 'Task')}><Icon name="copy" size={14} /> Copy task</button>
+        <button className="btn" type="button" onClick={() => void open('https://claude.ai/new')}>Open Claude <Icon name="share" size={14} /></button>
+        <button className="btn" type="button" onClick={() => void open('https://chatgpt.com/')}>Open ChatGPT <Icon name="share" size={14} /></button>
+      </div>
+      <p className="muted small">Your task is copied before the assistant opens. Paste it there.</p>
+      {!mine.length ? <p className="co-prompt">No AI assistant of yours works in {v.company.name} yet. <Link to={cadPage(v.company.id, '/assistants')}>Connect one first</Link>.</p> : null}
+    </Section>
+  );
+}
+
+/** Home's "Connection": SOLIDWORKS, computers, AI assistants and what is running, for this person. */
+function Connection({ v }: { v: CadView }) {
+  const c = v.cad as Connected;
+  const mine = c.computers.filter((x) => x.mine);
+  const online = mine.filter((x) => x.online);
+  const ready = online.some((pc) => (pc.solidworks ?? []).some((i) => i.ready));
+  const open = online.some((pc) => (pc.solidworks ?? []).length > 0);
+  const assistants = c.assistants.filter((a) => a.mine && !a.needsCompany);
+  const running = c.commands.filter((x) => x.mine && !FINISHED.has(x.status)).length;
+  return (
+    <Section title="Your connection">
+      <Props items={[
+        ['SOLIDWORKS', ready ? <span className="badge success">Ready</span> : open ? <span className="badge warning">Open, not ready</span> : <span className="badge">{online.length ? 'Not running' : 'No computer online'}</span>],
+        ['Computers', mine.length ? `${online.length} of ${mine.length} online` : <Link to={cadPage(v.company.id, '/computers')}>Pair a computer</Link>],
+        ['AI assistants', assistants.length ? assistants.map((a) => a.name).join(', ') : <Link to={cadPage(v.company.id, '/assistants')}>Connect one</Link>],
+        ['Activity', running ? `${running} running` : 'Idle'],
+      ]} />
+    </Section>
   );
 }
 
@@ -487,6 +589,7 @@ function Computers({ v }: { v: CadView }) {
   };
   return (
     <div className="stack">
+      {v.perms.operate ? <InstallSection v={v} /> : null}
       <Section title={`Computers in ${v.company.name}`} actions={<div className="row wrap"><span className="muted small">{v.perms.scope === 'all' ? 'Everyone’s computers in the company.' : v.perms.scope === 'team' ? 'Your team’s computers.' : 'Your own computers.'}</span>{v.perms.operate ? <button className="btn primary sm" onClick={() => setPairing(true)}><Icon name="plus" size={14} /> Add a computer</button> : null}</div>}>
         {!c.computers.length ? (
           <EmptyState icon="diamond" title="No computers yet">Install CAD Automation for SOLIDWORKS on a Windows computer, then choose Add a computer and type the code the Companion shows.</EmptyState>
@@ -523,7 +626,179 @@ function Computers({ v }: { v: CadView }) {
           </div>
         )}
       </Section>
+      <HowItConnects v={v} />
+      {v.perms.operate ? <DirectLink v={v} /> : null}
       {pairing ? <PairDialog v={v} onClose={() => setPairing(false)} /> : null}
+    </div>
+  );
+}
+
+/** CAD Automation's SOLIDWORKS page: the installer, handed out by the ERP. */
+function InstallSection({ v }: { v: CadView }) {
+  const c = v.cad as Connected;
+  const inst = c.installer;
+  return (
+    <Section title="Install CAD Automation for SOLIDWORKS">
+      <p>One Windows installer adds the add-in to SOLIDWORKS and the Companion, which keeps the computer's secure link. After installing, the Companion shows a pairing code: choose <strong>Add a computer</strong> below and type it.</p>
+      {inst?.available ? (
+        <div className="row wrap">
+          <a className="btn primary" href={apiHref(v.company.id, '/cad/installer')} download><Icon name="download" size={14} /> Download for SOLIDWORKS{inst.size ? ` (${bytes(inst.size)})` : ''}</a>
+          {inst.version ? <span className="muted small">Version {inst.version}</span> : null}
+          {inst.sha256 ? <span className="muted small">SHA-256 <span className="mono">{inst.sha256.slice(0, 16)}…</span></span> : null}
+        </div>
+      ) : <p className="co-prompt">The installer is not available here yet. Ask BIZOMAT support.</p>}
+      <p className="muted small">Windows 10 or 11, 64-bit. SOLIDWORKS 2022 or later. Early access: the installer is not code-signed yet, so Windows may ask you to confirm it.</p>
+    </Section>
+  );
+}
+
+/** "How CAD Automation connects", as CAD Automation's SOLIDWORKS page explained it. */
+function HowItConnects({ v }: { v: CadView }) {
+  const rows: [string, ReactNode][] = [
+    ['The add-in', 'A native SOLIDWORKS add-in, listed in Tools > Add-Ins, with its own tab, menu and task pane. It runs each command and asks you before destructive changes.'],
+    ['The Companion', 'A small Windows tray app. It pairs the computer with your account and keeps an outbound, signed link to CAD Automation. Nothing connects in to your computer.'],
+    ['Cloud connection (MCP)', <>Your assistant connects to CAD Automation at the connector address under <Link to={cadPage(v.company.id, '/assistants')}>AI assistants</Link>.</>],
+    ['Self-hosted (local MCP)', 'Advanced: run the CAD Automation server on your own Windows computer and connect your assistant to it there.'],
+    ['Direct link', 'Without the Companion: one SOLIDWORKS session linked with the service address and your add-in key (below).'],
+    ['Launcher macro', 'Not an add-in. It only starts the installed add-in where SOLIDWORKS does not list add-ins installed without administrator rights.'],
+  ];
+  return (
+    <Section title="How CAD Automation connects">
+      <div className="crm-table-scroll">
+        <table className="data-table responsive">
+          <thead><tr><th>Part</th><th>What it is</th></tr></thead>
+          <tbody>{rows.map(([k, x]) => <tr key={k}><td data-label="Part"><strong>{k}</strong></td><td data-label="What it is">{x}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </Section>
+  );
+}
+
+/** "Direct link and manual installation": for development or locked-down computers. */
+function DirectLink({ v }: { v: CadView }) {
+  const c = v.cad as Connected;
+  return (
+    <Section title="Direct link and manual installation">
+      <p className="muted small">For development or locked-down computers. Most people use the installer above.</p>
+      {c.service ? <CopyField id="cad-service" label="Service address" value={c.service} /> : null}
+      <p className="small">Your add-in key is under <Link to={cadPage(v.company.id, '/access')}>Access</Link>. In SOLIDWORKS, open the add-in's <strong>Status</strong> window (in its menu) and paste both.</p>
+      {c.package ? (
+        <div className="row wrap">
+          <a className="btn sm" href={apiHref(v.company.id, '/cad/addin-package')} download><Icon name="download" size={14} /> Download the add-in package (.zip)</a>
+        </div>
+      ) : (
+        <p className="muted small">This CAD Automation server has no add-in package for a manual installation. Use the installer above.</p>
+      )}
+    </Section>
+  );
+}
+
+// ------------------------------------------------------------------ access (CAD Automation's Settings)
+
+/** The person's own keys: the private connector address and the add-in key, shown on request, made new on request. */
+function AccessKeys({ v }: { v: CadView }) {
+  const id = v.company.id;
+  const confirm = useConfirm();
+  const toast = useToast();
+  const [keys, setKeys] = useState<Access | null>(null);
+  const [error, setError] = useState('');
+  const [busy, setBusy] = useState(false);
+  if (!v.perms.operate) return <section className="co-prompt"><p>Your role in {v.company.name} cannot use CAD Automation, so it has no keys.</p></section>;
+  const load = async () => {
+    setBusy(true);
+    setError('');
+    try {
+      setKeys(await get<Access>(erpPath(id, '/cad/access')));
+    } catch (e) {
+      setError(errorMessage(e));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const renew = async (which: 'private' | 'addin-key') => {
+    const ok = await confirm(which === 'private'
+      ? { title: 'Make a new private address?', message: 'The old private address stops working at once. AI apps that use it need the new one.', confirmLabel: 'Make a new address', danger: true }
+      : { title: 'Make a new add-in key?', message: 'The direct link stops until you paste the new key into the add-in. The Companion is not affected.', confirmLabel: 'Make a new key', danger: true });
+    if (!ok) return;
+    try {
+      const out = await post<Partial<Access>>(erpPath(id, `/cad/access/${which}/new`));
+      setKeys((k) => (k ? { ...k, ...out } : k));
+      toast(which === 'private' ? 'New private address made' : 'New add-in key made');
+    } catch (e) {
+      toast(errorMessage(e), 'error');
+    }
+  };
+  return (
+    <div className="stack">
+      <Section title="Your account">
+        <p>You use CAD Automation with your BIZOMAT account: the same sign-in as BIZOMAT ERP, and no second password. Change your name, password and two-step sign-in in your profile.</p>
+        <div className="row wrap"><a className="btn" href={toolUrl('/tasks/settings/profile')}><Icon name="user" size={14} /> Profile and security</a></div>
+      </Section>
+      <Section title="Private keys" actions={!keys ? <button className="btn primary sm" disabled={busy} onClick={() => void load()}><Icon name="key" size={14} /> Show my keys</button> : undefined}>
+        <p className="muted small">Two private keys give access to your own CAD connection. Keep both to yourself: anyone who has one can use your connection. Nobody else, not even the company owner, sees them here.</p>
+        {error ? <p className="warning-text">{error}</p> : null}
+        {keys ? (
+          <div className="stack">
+            <div className="stack">
+              <h3 className="crm-subhead">Private connector address</h3>
+              <p className="muted small">For AI apps that cannot sign in. It works without sign-in, and in your default company.</p>
+              <CopyField id="cad-private" label="Private address" value={keys.privateUrl} secret />
+              <div><button className="btn ghost sm danger-text" onClick={() => void renew('private')}>Make a new private address</button></div>
+            </div>
+            <div className="stack">
+              <h3 className="crm-subhead">Add-in key</h3>
+              <p className="muted small">Used only by the direct link (SOLIDWORKS without the Companion), with the service address <span className="mono">{keys.service}</span>.</p>
+              <CopyField id="cad-addin-key" label="Add-in key" value={keys.addinKey} secret hint="Making a new key disconnects the direct link until you paste the new one." />
+              <div><button className="btn ghost sm danger-text" onClick={() => void renew('addin-key')}>Make a new key</button></div>
+            </div>
+          </div>
+        ) : null}
+      </Section>
+      <p className="muted small">Your AI assistants are under <Link to={cadPage(id, '/assistants')}>AI assistants</Link>, your computers under <Link to={cadPage(id, '/computers')}>Computers</Link>.</p>
+    </div>
+  );
+}
+
+// ------------------------------------------------------------------ people (CAD Automation's Admin, for the company)
+
+/** Who in the company works with CAD Automation: their computers, AI assistants and latest work (owner, administrators
+ *  and managers see everyone's; the server decides). People are added and removed in the company's People and roles. */
+function People({ v }: { v: CadView }) {
+  const c = v.cad as Connected;
+  if (!v.cad.connected) return null;
+  const key = (p: Person | null, mine: boolean) => (mine ? 'me' : p?.sub ?? p?.email ?? 'unknown');
+  const people = new Map<string, { person: Person | null; mine: boolean; computers: Computer[]; assistants: Assistant[]; commands: Command[] }>();
+  const at = (p: Person | null, mine: boolean) => {
+    const k = key(p, mine);
+    if (!people.has(k)) people.set(k, { person: p, mine, computers: [], assistants: [], commands: [] });
+    return people.get(k)!;
+  };
+  c.computers.forEach((x) => at(x.owner, x.mine).computers.push(x));
+  c.assistants.forEach((x) => at(x.owner, x.mine).assistants.push(x));
+  c.commands.forEach((x) => at(x.owner, x.mine).commands.push(x));
+  const rows = [...people.values()].sort((a, b) => Number(b.mine) - Number(a.mine) || (a.person?.name ?? '').localeCompare(b.person?.name ?? ''));
+  return (
+    <div className="stack">
+      <Section title={`People using CAD Automation in ${v.company.name}`} actions={<a className="btn sm" href={toolUrl(`/company/c/${encodeURIComponent(v.company.id)}/people`)}><Icon name="users" size={14} /> People and roles</a>}>
+        <p className="muted small">{v.perms.scope === 'all' ? 'Everyone in the company who has paired a computer, connected an AI assistant or sent work.' : 'Your team.'} Add, remove or suspend people, and change their roles, in the company's People and roles: it applies to CAD Automation too.</p>
+        {!rows.length ? <EmptyState icon="users" title="Nobody yet">Nobody in {v.company.name} has paired a computer or connected an AI assistant.</EmptyState> : (
+          <div className="crm-table-scroll">
+            <table className="data-table responsive">
+              <thead><tr><th>Person</th><th>Computers</th><th>AI assistants</th><th>Recent work</th></tr></thead>
+              <tbody>
+                {rows.map((r) => (
+                  <tr key={key(r.person, r.mine)}>
+                    <td data-label="Person">{who(r.person, r.mine)}{r.person?.email && !r.mine ? <div className="muted small">{r.person.email}</div> : null}</td>
+                    <td data-label="Computers">{r.computers.length ? r.computers.map((pc) => <div key={pc.id} className="small"><span className={`badge ${pc.online ? 'success' : ''}`}>{pc.online ? 'Online' : 'Offline'}</span> {pc.name}</div>) : <span className="muted small">None</span>}</td>
+                    <td data-label="AI assistants">{r.assistants.length ? r.assistants.map((a) => <div key={a.id} className="small">{a.name} <span className="muted">{a.lastUsed ? `used ${timeAgo(a.lastUsed)}` : 'not used yet'}</span></div>) : <span className="muted small">None</span>}</td>
+                    <td data-label="Recent work">{r.commands.length ? r.commands.slice(0, 3).map((x) => <div key={x.id} className="small">{x.title} <StatusBadge value={x.status} /> <span className="muted">{timeAgo(x.updated)}</span></div>) : <span className="muted small">None yet</span>}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Section>
     </div>
   );
 }
@@ -565,12 +840,14 @@ function Assistants({ v }: { v: CadView }) {
   };
   return (
     <div className="stack">
-      <Section title="Connect an AI assistant" actions={v.perms.operate ? <button className="btn primary sm" onClick={() => setConnecting(true)}>Show me how</button> : undefined}>
-        <p>Add this address as a custom connector (a remote MCP server) in Claude or another AI app. When it asks you to sign in, continue with BIZOMAT and choose <strong>{v.company.name}</strong>: the assistant then works with this company’s computers only.</p>
+      <Section title="Connect an AI assistant" actions={v.perms.operate ? <button className="btn primary sm" onClick={() => setConnecting(true)}>Connect and wait for it</button> : undefined}>
+        <p>Use Claude, ChatGPT or another AI assistant. CAD Automation gives it the SOLIDWORKS tools, checks every sketch and feature, and runs the work on your computer; it runs no AI of its own. Add this address to your assistant once, then sign in when it asks: continue with BIZOMAT and choose <strong>{v.company.name}</strong>, so the assistant works with this company’s computers only.</p>
         <div className="row wrap">
           <input className="input grow mono" readOnly value={c.connector.url} aria-label="Connector address" onFocus={(e) => e.currentTarget.select()} />
           <button className="btn" onClick={() => void copy()}><Icon name="copy" size={14} /> Copy</button>
         </div>
+        <ConnectSteps companyName={v.company.name} />
+        <p className="muted small">An AI app that cannot sign in can use your private connector address instead, under <Link to={cadPage(v.company.id, '/access')}>Access</Link>.</p>
       </Section>
       <Section title="Connected AI assistants">
         {!c.assistants.length ? (
@@ -597,8 +874,81 @@ function Assistants({ v }: { v: CadView }) {
           </div>
         )}
       </Section>
+      <AskExamples v={v} />
+      <Section title="Check it works">
+        <CopyPrompt text="Check the CAD Automation connection to SOLIDWORKS." />
+        <CopyPrompt text="Run the SOLIDWORKS self test, all three stages." />
+        <ul className="erp-list small">
+          <li>The assistant builds in small checked steps and reads your file before it changes it.</li>
+          <li>Deleting, undoing and overwriting ask you in SOLIDWORKS first (on by default).</li>
+          <li>Your model files stay on your computer.</li>
+        </ul>
+      </Section>
       {connecting ? <ConnectDialog v={v} onClose={() => setConnecting(false)} /> : null}
     </div>
+  );
+}
+
+/** How to add the connector, app by app (CAD Automation's CAD Assistant page). */
+function ConnectSteps({ companyName }: { companyName: string }) {
+  const [app, setApp] = useState<'claude' | 'chatgpt' | 'other'>('claude');
+  return (
+    <div className="stack">
+      <nav className="tabs" aria-label="Instructions for your AI app">
+        <button type="button" className={`tab${app === 'claude' ? ' active' : ''}`} onClick={() => setApp('claude')}>Claude</button>
+        <button type="button" className={`tab${app === 'chatgpt' ? ' active' : ''}`} onClick={() => setApp('chatgpt')}>ChatGPT</button>
+        <button type="button" className={`tab${app === 'other' ? ' active' : ''}`} onClick={() => setApp('other')}>Other assistants</button>
+      </nav>
+      {app === 'claude' ? (
+        <ol className="sys-steps">
+          <li>In Claude, open <strong>Settings</strong>, then <strong>Connectors</strong>, and choose <strong>Add custom connector</strong>.</li>
+          <li>Name it BIZOMAT CAD Automation and paste the connector address.</li>
+          <li>Choose Connect. Claude opens a sign-in page: continue with BIZOMAT, choose <strong>{companyName}</strong> and allow.</li>
+        </ol>
+      ) : app === 'chatgpt' ? (
+        <ol className="sys-steps">
+          <li>Where your ChatGPT plan allows custom connectors, add a new connector.</li>
+          <li>Paste the connector address.</li>
+          <li>Sign in when asked: continue with BIZOMAT, choose <strong>{companyName}</strong> and allow. Your workspace administrator may need to allow custom connectors first.</li>
+        </ol>
+      ) : (
+        <ol className="sys-steps">
+          <li>Any app that supports remote MCP servers over Streamable HTTP can use the connector address.</li>
+          <li>When it asks you to sign in, continue with BIZOMAT, choose <strong>{companyName}</strong> and allow.</li>
+        </ol>
+      )}
+    </div>
+  );
+}
+
+/** A request to copy for the AI assistant. */
+function CopyPrompt({ text }: { text: string }) {
+  const copy = useCopy();
+  return (
+    <div className="row cad-prompt">
+      <span className="grow">{text}</span>
+      <button type="button" className="btn sm" onClick={() => void copy(text, 'Request')}><Icon name="copy" size={14} /> Copy</button>
+    </div>
+  );
+}
+
+/** "What you can ask": plain requests, by kind of work (CAD Automation's catalog, sent with its state). */
+function AskExamples({ v }: { v: CadView }) {
+  const c = v.cad as Connected;
+  const examples = c.examples ?? [];
+  if (!examples.length) return null;
+  return (
+    <Section title="What you can ask">
+      <p className="muted small">Plain requests work. Copy one to try it, or describe your own task on the <Link to={cadPage(v.company.id)}>Overview</Link>. Everything the assistant can do is under <Link to={cadPage(v.company.id, '/tools')}>Tools</Link>.</p>
+      <div className="cad-examples">
+        {examples.map((g) => (
+          <div key={g.group} className="stack">
+            <h3 className="crm-subhead">{g.group}</h3>
+            {g.items.map((t) => <CopyPrompt key={t} text={t} />)}
+          </div>
+        ))}
+      </div>
+    </Section>
   );
 }
 

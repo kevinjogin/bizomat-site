@@ -20,7 +20,7 @@ const guide: Guide = {
   ],
   access: {
     path: ['CAD Automation', 'Home', 'Connection'],
-    href: 'https://bizomat.ai/cad/',
+    href: 'https://bizomat.ai/erp/cad',
     label: 'Open CAD Automation',
     note: "CAD Automation's Home shows the state of SOLIDWORKS, your computers and your AI assistants. Its Documentation page has a full troubleshooting table.",
   },

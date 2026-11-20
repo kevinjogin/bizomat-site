@@ -12,6 +12,7 @@ const cadEnv = { ...env, CAD_URL: CAD } as typeof env;
 const CAD_AUTH = `Basic ${btoa('cad:test-cad-status-secret')}`;
 const PDF = new TextEncoder().encode('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n');
 const MSI = new TextEncoder().encode('MSI installer bytes for a test');
+const ZIP = new TextEncoder().encode('PK add-in package bytes for a test');
 
 function newAbn(): string {
   for (;;) {
@@ -65,6 +66,9 @@ beforeAll(() => {
     if (op === 'installer/file') {
       return new Response(MSI, { headers: { 'Content-Type': 'application/x-msi', 'Content-Disposition': `attachment; filename="BIZOMAT-CAD-Automation-x64.msi"`, 'X-Sha256': await hex(MSI), 'Content-Length': String(MSI.byteLength) } });
     }
+    if (op === 'addin/package') {
+      return new Response(ZIP, { headers: { 'Content-Type': 'application/zip', 'Content-Disposition': `attachment; filename="BIZOMAT-CAD-Automation-SOLIDWORKS-addin.zip"`, 'Content-Length': String(ZIP.byteLength) } });
+    }
     if (/^exports\/[^/]+\/file$/.test(op)) {
       return new Response(PDF, { headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename*=UTF-8''Bracket%20drawing.pdf`, 'X-Sha256': await hex(PDF), 'Content-Length': String(PDF.byteLength) } });
     }
@@ -107,6 +111,12 @@ async function join(owner: Client, co: string, p: Client, role: 'manager' | 'emp
   await p.json('POST', `/api/company/invitations/${decodeURIComponent(inv.url.split('/join/')[1])}/accept`, {});
   await env.DB.prepare('UPDATE co_members SET role = ? WHERE company_id = ? AND user_id = ?').bind(role, co, p.userId).run();
 }
+
+// The person's own keys (CAD Automation's Settings): the stand-in makes them from the person the assertion names.
+let renewals = 0;
+answers.access = (claims) => ({ privateUrl: `https://bizomat.ai/cad/mcp/private-${claims.sub}-${renewals}`, addinKey: `oss_${claims.sub}`, service: 'https://bizomat.ai/cad', package: true });
+answers['access/private/new'] = (claims) => ({ privateUrl: `https://bizomat.ai/cad/mcp/private-${claims.sub}-${++renewals}` });
+answers['access/addin-key/new'] = (claims) => ({ addinKey: `oss_${claims.sub}_${++renewals}` });
 
 answers.state = (claims) => ({ computers: [], assistants: [], commands: [], exports: [{ id: 'exp-1', name: 'Bracket drawing.pdf', format: 'pdf', size: PDF.byteLength, owner: { sub: claims.sub } }], connector: { url: 'https://bizomat.ai/cad/mcp' }, tools: [] });
 
@@ -195,6 +205,44 @@ describe('CAD Automation in the ERP', () => {
     expect((await perms(manager)).export).toBe(false);
     // Read-only members cannot pair a computer.
     expect((await call(reader, 'POST', `/api/erp/c/${co}/cad/pairing/ABCD-1234`, {})).status).toBe(403);
+  });
+
+  it('shows and renews a person\u2019s own private address and add-in key, and hands out the add-in package', async () => {
+    const owner = await signup('Keys Owner');
+    const co = await company(owner, 'Keys Pty');
+    const reader = await signup('Keys Reader');
+    await join(owner, co, reader, 'read_only');
+    // Off until the flag is on for the company.
+    expect((await call(owner, 'GET', `/api/erp/c/${co}/cad/access`)).status).toBe(403);
+    await flag('cad_in_erp', 'company', co);
+    const before = seen.length;
+    // A read-only member cannot use CAD Automation, so the ERP never asks the engine for their keys.
+    expect((await call(reader, 'GET', `/api/erp/c/${co}/cad/access`)).status).toBe(403);
+    expect(seen.length).toBe(before);
+    const res = await call(owner, 'GET', `/api/erp/c/${co}/cad/access`);
+    expect(res.status).toBe(200);
+    expect(res.headers.get('Cache-Control')).toBe('no-store');
+    const keys = (await res.json()) as any;
+    const sub = seen.at(-1)!.claims.sub;
+    expect(seen.at(-1)!.op).toBe('access');
+    expect(seen.at(-1)!.claims.co.id).toBe(co);
+    expect(keys).toMatchObject({ addinKey: `oss_${sub}`, service: 'https://bizomat.ai/cad', package: true });
+    // Renewing is recorded in the company's history, without the key itself.
+    const fresh = await okJson(await call(owner, 'POST', `/api/erp/c/${co}/cad/access/private/new`, {}));
+    expect(fresh.privateUrl).not.toBe(keys.privateUrl);
+    expect((await okJson(await call(owner, 'POST', `/api/erp/c/${co}/cad/access/addin-key/new`, {}))).addinKey).toMatch(/^oss_/);
+    const events = await env.DB.prepare("SELECT action, summary FROM erp_events WHERE company_id = ? AND entity_type = 'cad_access' ORDER BY created_at").bind(co).all<{ action: string; summary: string }>();
+    expect(events.results.map((e) => e.action).sort()).toEqual(['cad.addin_key_renewed', 'cad.private_address_renewed']);
+    expect(JSON.stringify(events.results)).not.toContain('oss_');
+    expect(JSON.stringify(events.results)).not.toContain('private-');
+    expect((await call(reader, 'POST', `/api/erp/c/${co}/cad/access/private/new`, {})).status).toBe(403);
+    // The add-in package for a manual installation comes through the ERP too.
+    const pkg = await call(owner, 'GET', `/api/erp/c/${co}/cad/addin-package`);
+    expect(pkg.status).toBe(200);
+    expect(pkg.headers.get('Content-Type')).toBe('application/zip');
+    expect(pkg.headers.get('Content-Disposition')).toContain('BIZOMAT-CAD-Automation-SOLIDWORKS-addin.zip');
+    expect(new Uint8Array(await pkg.arrayBuffer())).toEqual(ZIP);
+    expect((await call(reader, 'GET', `/api/erp/c/${co}/cad/addin-package`)).status).toBe(403);
   });
 
   it('applies the central permission service when company members is on: module access and scope', async () => {

@@ -21,7 +21,7 @@ const guide: Guide = {
   ],
   access: {
     path: ['CAD Automation', 'CAD Assistant', 'Connect your assistant'],
-    href: 'https://bizomat.ai/cad/',
+    href: 'https://bizomat.ai/erp/cad',
     label: 'Open CAD Automation',
     note: 'Sign in with Continue with BIZOMAT, then open CAD Assistant. The Connector address is shown there with Copy.',
   },
