@@ -29,12 +29,16 @@ import https from 'node:https';
 import net from 'node:net';
 import tls from 'node:tls';
 
-const PAGES = ['/', '/systems/', '/systems/erp/', '/systems/erp/guide/', '/systems/crm/', '/systems/crm/guide/', '/systems/finance/', '/systems/finance/guide/', '/systems/projects/', '/systems/projects/guide/', '/systems/engineering/', '/systems/engineering/guide/', '/systems/manufacturing/', '/systems/manufacturing/guide/', '/systems/whs/', '/systems/whs/guide/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
+// The Knowledge Centre (/learn/, owner 20 Nov 2026) holds every system's guide; the old /systems/*/guide/ answer 301 there.
+const PAGES = ['/', '/systems/', '/systems/erp/', '/systems/crm/', '/systems/finance/', '/systems/projects/', '/systems/engineering/', '/systems/manufacturing/', '/systems/whs/', '/learn/', '/learn/crm/', '/learn/procurement/', '/learn/workflows/', '/learn/workflows/procure-to-pay/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
 // Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room; the
 // design preview was retired, owner 14 Nov 2026; the product pages became the Systems pages).
 const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/system-preview/', '/systems/erp/'], ['/erp-design-preview/', '/systems/erp/'],
   // The product pages became the Systems pages (owner, 14 Nov 2026).
-  ['/products/', '/systems/'], ['/work/', '/systems/projects/'], ['/cad-automation/', '/systems/engineering/'], ['/crm-platform/', '/systems/crm/'], ['/crm-platform/guide/', '/systems/crm/guide/'], ['/finance-platform/', '/systems/finance/'], ['/finance-platform/guide/', '/systems/finance/guide/']];
+  ['/products/', '/systems/'], ['/work/', '/systems/projects/'], ['/cad-automation/', '/systems/engineering/'], ['/crm-platform/', '/systems/crm/'], ['/crm-platform/guide/', '/learn/crm/'], ['/finance-platform/', '/systems/finance/'], ['/finance-platform/guide/', '/learn/finance/'],
+  // The user guides moved into the Knowledge Centre (owner, 20 Nov 2026).
+  ['/systems/erp/guide/', '/learn/'], ['/systems/crm/guide/', '/learn/crm/'], ['/systems/finance/guide/', '/learn/finance/'], ['/systems/projects/guide/', '/learn/projects/'],
+  ['/systems/engineering/guide/', '/learn/cad-automation/'], ['/systems/manufacturing/guide/', '/learn/manufacturing/'], ['/systems/whs/guide/', '/learn/whs/']];
 const HSTS = /max-age=\d{7,}/;
 
 function parseArgs(argv) {
