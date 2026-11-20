@@ -295,7 +295,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   from one place): the navigation's Systems menu holds two groups, the systems and Learn (`LEARN_LINKS` in
   `src/config/site.ts`: the Knowledge Centre and each of its sections), with Open BIZOMAT ERP across its foot; `/systems/`
   has a Learn section from the same list, and `/learn/`'s trail is Home, Systems, Knowledge Centre. Both stay one page
-  each (`tests/navigation.test.ts`). Each system's guide is in the Knowledge Centre: BIZOMAT
+  each (`tests/navigation.test.ts`). Released 20 Nov 2026 (kevinjogin/bizomat-site#118, deploy run 56). Each system's guide is in the Knowledge Centre: BIZOMAT
   ERP (Business Management System, `#erp`), BIZOMAT CRM (Customer Management System, `#crm`), BIZOMAT Finance (Finance
   Management System, `#finance`), BIZOMAT Projects (Project Management System, `#projects`), BIZOMAT Engineering
   Automation (Engineering Automation System, `#engineering`; the application is CAD Automation, with the same
