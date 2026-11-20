@@ -148,7 +148,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Treasury', 'planned', 'No payments, investments, borrowing or hedging.'),
       cap('Financial consolidation', 'live', 'A consolidated profit and loss and balance sheet across the legal entities’ Finance workspaces, translated at the closing rate, with intercompany balances eliminated. No translation reserve or minority interest is worked out.'),
       cap('Management accounting', 'live', 'Reports filtered by department, project and cost centre.'),
-      cap('Cost accounting', 'planned', 'No cost allocation, standard costs or activity rates yet.'),
+      cap('Cost accounting', 'live', 'Overhead costs spread across departments by percentage and posted to Finance’s ledger (BIZOMAT ERP, Cost allocation). Allocation by headcount, floor area or activity rates is planned.'),
       cap('Profitability analysis', 'live', 'Profit and loss by department, project or cost centre. By product or customer is planned.'),
       cap('Budgets', 'live', 'Monthly budgets by account, department, project or cost centre, with budget against actual.'),
       cap('Forecasts', 'live', 'Cash flow forecast. Financial planning scenarios are planned.'),
@@ -262,7 +262,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Scrap and rework', 'live', 'Scrap with a reason at each operation and materials scrapped against an order; rework quantities and rework time.'),
       cap('Production costing', 'live', 'Estimated against actual by element (materials, labour, machine, outsourcing, overheads, scrap, rework), finished goods valued at actual cost, and variances recorded at close.'),
       cap('Job profitability', 'live', 'For orders made to order: the sales order line\'s revenue before tax against the order\'s actual cost, on the order and in a report.'),
-      cap('Overall equipment effectiveness (OEE)', 'planned', 'Downtime and output are recorded; the OEE measure is planned.'),
+      cap('Overall equipment effectiveness (OEE)', 'live', 'Availability, performance and quality by work centre and machine, from the machine time, downtime and output recorded on the shop floor. Machines do not send data.'),
     ],
   },
   {
@@ -289,7 +289,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Picking and packing', 'live', 'Pick lists from the stock allocated to a sales order (soonest expiry first, then the oldest), and packages with weight, size and contents, on a phone.'),
       cap('Receiving', 'live', 'Against purchase orders, on a computer or a phone.'),
       cap('Dispatch', 'live', 'The picked stock leaves once, never beyond what is there, and its allocation is used up.'),
-      cap('Replenishment', 'planned', 'Reorder points, minimums, maximums and a shortages report work today; replenishment orders are not made automatically.'),
+      cap('Replenishment', 'live', 'Every product at or below its reorder point ordered up to its maximum level on one draft requisition, run by hand from Stock, Replenishment. No schedule yet.'),
     ],
   },
   {

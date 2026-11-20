@@ -16,6 +16,7 @@
 //   sales.ts, logistics.ts, returns.ts, supply-reports.ts: Release 5 part A (supply chain and logistics)
 
 import { supplierPortalStaffRoutes } from './supplier-portal';
+import { replenishRoutes } from './replenish';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
@@ -264,3 +265,5 @@ erpRoutes.route('/', supplyReportRoutes);
 erpRoutes.route('/', objectRoutes);
 // The supplier portal's side for buyers (flag supplier_portal, off): invitations and answers (supplier-portal.ts).
 erpRoutes.route('/', supplierPortalStaffRoutes);
+// Putaway suggestions and replenishment to maximum levels (replenish.ts).
+erpRoutes.route('/', replenishRoutes);

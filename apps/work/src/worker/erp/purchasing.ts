@@ -23,6 +23,7 @@
 // holds one row per receipt (unique idempotency key), so a retry or a double click never makes a second bill.
 
 import { Hono } from 'hono';
+import { putawayFor } from './replenish';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, body, newId, notFound, now } from '../lib/util';
@@ -762,7 +763,8 @@ purchasingRoutes.post('/c/:company/purchase-orders/:id/receipts', async (c) => {
     if (l.product_id && accepted > 0) {
       const p = await loadStockProduct(db, a.companyId, l.product_id);
       if (p.type !== 'service') {
-        locationId = x.locationId ?? p.default_location_id;
+        // nobody chose: the product's default, else where it is stored the most, else the receiving area (replenish.ts)
+        locationId = x.locationId ?? p.default_location_id ?? (await putawayFor(db, a.companyId, p.id))?.locationId ?? null;
         if (!locationId) throw new HttpError(400, `Line ${i + 1} (${p.number}): choose where it goes`);
         const loc = await loadLocation(db, a.companyId, locationId);
         lot = p.track_lots ? (x.lot ?? '').trim() : '';

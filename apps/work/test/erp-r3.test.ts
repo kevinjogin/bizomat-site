@@ -633,3 +633,85 @@ describe('the example company', () => {
     }
   });
 });
+
+// ------------------------------------------------------------------ batch 2, item 6: OEE, replenishment, putaway
+
+describe('OEE, replenishment and putaway', () => {
+  it('works OEE out from the shop floor, says when it cannot, and replenishes to the maximum once', async () => {
+    const p = await signup('Omega Maker');
+    const co = await ownCompany(p);
+    await p.json('PUT', erp(co, '/erp-settings'), { adjustmentApprovalCents: 100_000_000 });
+    const { bin1, bin2, fg } = await warehouse(p, co);
+    const kit = await p.json('POST', erp(co, '/products'), { name: 'Frame', type: 'finished_product' });
+    const part = await p.json('POST', erp(co, '/products'), { name: 'Tube', type: 'component', standardCostCents: 200 });
+    await releaseBoms(p, p, co, [[kit.id, [[part.id, 1]]]]);
+    const cell = await p.json('POST', erp(co, '/work-centres'), { code: 'WELD', name: 'Welding cell', machineRateCents: 3000 });
+    const idle = await p.json('POST', erp(co, '/work-centres'), { code: 'IDLE', name: 'Idle bench' });
+    // 6 minutes a frame
+    await routing(p, p, co, kit.id, [{ name: 'Weld', workCentreId: cell.id, runMinutes: 6 }]);
+    await stockIn(p, co, part.id, bin1.id, 20, 200);
+    const mo = await p.json('POST', erp(co, '/mos'), { productId: kit.id, quantity: 10 });
+    await p.json('POST', erp(co, `/mos/${mo.id}/release`), {});
+    const v = await p.json('GET', erp(co, `/mos/${mo.id}`));
+    const op = v.operations[0];
+    await p.json('POST', erp(co, `/mos/${mo.id}/operations/${op.id}/start`), {});
+    // 80 minutes of machine time, 20 of downtime; 9 good and 1 scrap
+    await p.json('POST', erp(co, `/mos/${mo.id}/operations/${op.id}/time`), { kind: 'machine', action: 'enter', minutes: 80 });
+    await p.json('POST', erp(co, `/mos/${mo.id}/operations/${op.id}/report`), { kind: 'downtime', minutes: 20, reason: 'Wire feed jammed' });
+    await p.json('POST', erp(co, `/mos/${mo.id}/operations/${op.id}/report`), { kind: 'good', quantity: 9 });
+    await p.json('POST', erp(co, `/mos/${mo.id}/operations/${op.id}/report`), { kind: 'scrap', quantity: 1, reason: 'Crack' });
+    const oee = await p.json('GET', erp(co, '/reports/oee'));
+    const row = oee.rows.find((r: any) => r.workCentreId === cell.id);
+    // availability 80/100 = 80%; performance 10 x 6 / 80 = 75%; quality 9/10 = 90%; OEE 54%
+    expect(row).toMatchObject({ machineHours: 1.33, downtimeHours: 0.33, good: 9, scrap: 1, availabilityPct: 80, performancePct: 75, qualityPct: 90, oeePct: 54 });
+    expect(oee.rows.some((r: any) => r.workCentreId === idle.id)).toBe(false);
+    expect((await p.req('GET', erp(co, '/reports/oee?format=csv'))).headers.get('content-type')).toContain('text/csv');
+    // output with no machine time: cannot be calculated, never guessed
+    const mo2 = await p.json('POST', erp(co, '/mos'), { productId: kit.id, quantity: 1 });
+    await p.json('POST', erp(co, `/mos/${mo2.id}/release`), {});
+    const op2 = (await p.json('GET', erp(co, `/mos/${mo2.id}`))).operations[0];
+    await env.DB.prepare('UPDATE erp_mo_operations SET work_centre_id = ? WHERE company_id = ? AND id = ?').bind(idle.id, co, op2.id).run();
+    await p.json('POST', erp(co, `/mos/${mo2.id}/operations/${op2.id}/start`), {});
+    await p.json('POST', erp(co, `/mos/${mo2.id}/operations/${op2.id}/report`), { kind: 'good', quantity: 1 });
+    const none = (await p.json('GET', erp(co, '/reports/oee'))).rows.find((r: any) => r.workCentreId === idle.id);
+    expect(none).toMatchObject({ oeePct: null, qualityPct: 100 });
+    expect(none.note).toContain('Cannot be calculated: no machine time recorded');
+
+    // replenishment: the tube's reorder point 30, maximum 100; 20 on hand (less the 10 reserved? none reserved) gives 80
+    await p.json('PUT', erp(co, `/products/${part.id}/stock-settings`), { reorderPoint: 30, maxQty: 100 });
+    const plate = await p.json('POST', erp(co, '/products'), { name: 'Plate', type: 'raw_material' });
+    await p.json('PUT', erp(co, `/products/${plate.id}/stock-settings`), { reorderPoint: 5 });
+    const list = await p.json('GET', erp(co, '/inventory/replenishment'));
+    const tube = list.products.find((x: any) => x.productId === part.id);
+    expect(tube.suggestQty).toBe(100 - tube.available);
+    expect(list.products.find((x: any) => x.productId === plate.id)).toMatchObject({ suggestQty: null, note: 'Set a maximum level to order up to' });
+    const req = await p.json('POST', erp(co, '/inventory/replenishment'), {});
+    expect(req.lines).toBe(1);
+    const reqView = await p.json('GET', erp(co, `/requisitions/${req.id}`));
+    expect(reqView.requisition.status).toBe('draft');
+    expect(reqView.lines[0]).toMatchObject({ productId: part.id, quantity: tube.suggestQty });
+    // asked again: already on that requisition, nothing more is made
+    expect((await p.json('GET', erp(co, '/inventory/replenishment'))).products.find((x: any) => x.productId === part.id).note).toContain(reqView.requisition.number);
+    expect((await p.req('POST', erp(co, '/inventory/replenishment'), {})).status).toBe(409);
+
+    // putaway: the default location, else where it is stored the most, else the receiving area
+    const sugg = async (id: string) => (await p.json('GET', erp(co, `/inventory/putaway?productIds=${id}`))).suggestions[id];
+    expect((await sugg(part.id)).locationId).toBe(bin1.id);
+    await stockIn(p, co, part.id, bin2.id, 50, 200);
+    expect(await sugg(part.id)).toMatchObject({ locationId: bin2.id });
+    await p.json('PUT', erp(co, `/products/${part.id}/stock-settings`), { reorderPoint: 30, maxQty: 100, defaultLocationId: fg.id });
+    expect(await sugg(part.id)).toMatchObject({ locationId: fg.id, reason: 'The product’s default location' });
+    expect(await sugg(plate.id)).toBeNull();
+    const recv = await p.json('POST', erp(co, '/locations'), { warehouseId: (await p.json('GET', erp(co, '/warehouses'))).warehouses[0].id, code: 'IN', name: 'Goods in', level: 'zone', kind: 'receiving' });
+    expect(await sugg(plate.id)).toMatchObject({ locationId: recv.id });
+    // a goods receipt with no location chosen puts the plate in the receiving area
+    const sup = await p.json('POST', erp(co, '/suppliers'), { legalName: 'Omega Steel' });
+    await p.json('POST', erp(co, `/suppliers/${sup.id}/status`), { status: 'approved' });
+    const po = await p.json('POST', erp(co, '/purchase-orders'), { supplierId: sup.id, lines: [{ productId: plate.id, quantity: 3, unitPriceCents: 500 }] });
+    await p.json('POST', erp(co, `/purchase-orders/${po.id}/submit`), {});
+    const pl = (await p.json('GET', erp(co, `/purchase-orders/${po.id}`))).lines[0];
+    await p.json('POST', erp(co, `/purchase-orders/${po.id}/receipts`), { lines: [{ poLineId: pl.id, received: 3 }] });
+    const onHand = await env.DB.prepare('SELECT location_id, on_hand FROM erp_stock WHERE company_id = ? AND product_id = ?').bind(co, plate.id).first<any>();
+    expect(onHand).toMatchObject({ location_id: recv.id, on_hand: 3 });
+  });
+});

@@ -277,4 +277,43 @@ describe('postings to Finance’s ledger', () => {
     expect((await controller.req('POST', erp(co, '/x/postings/run'), { kind: 'revenue', upTo: monthEnd(ym(1)) })).status).toBe(403);
     expect((await t.hr.req('POST', erp(co, '/x/postings/run'), { kind: 'depreciation', upTo: monthEnd(ym(1)) })).status).toBe(403);
   });
+
+  it('allocates an overhead across departments by percentage as one journal, once, and again after reversing', async () => {
+    const t = await team('Ra');
+    const { co, fin, accountant, controller, owner } = t;
+    const workshop = await owner.json('POST', `/api/company/c/${co}/departments`, { name: 'Workshop' });
+    const office = await owner.json('POST', `/api/company/c/${co}/departments`, { name: 'Office' });
+    const rent = await accountId(fin, '469');
+    const bank = await accountId(fin, '090');
+    // 1,000.00 of rent with no department, and 200.00 already booked to the office (not reallocated)
+    const tracking = await env.DB.prepare('SELECT fin_tracking_id FROM co_departments WHERE company_id = ? AND id = ?').bind(co, office.id ?? office.department?.id).first<any>();
+    await owner.json('POST', `/api/fin/orgs/${fin}/journals`, { date: `${ym(1)}-05`, memo: 'Rent', lines: [{ accountId: rent, debit: 100_000 }, { accountId: bank, credit: 100_000 }] });
+    await owner.json('POST', `/api/fin/orgs/${fin}/journals`, { date: `${ym(1)}-06`, memo: 'Office rent', lines: [{ accountId: rent, debit: 20_000, departmentId: tracking.fin_tracking_id }, { accountId: bank, credit: 20_000 }] });
+    const wid = workshop.id ?? workshop.department?.id;
+    const oid = office.id ?? office.department?.id;
+    const alloc = await controller.json('POST', obj(co, 'ca_allocation'), { data: { name: 'Rent by floor area', sourceAccount: '469', periodFrom: `${ym(1)}-01`, periodTo: monthEnd(ym(1)) }, lines: [{ department: wid, percent: 70 }, { department: oid, percent: 20 }] });
+    expect(alloc.record.data.totalPct).toBe(90);
+    // shares must add up to 100% before approval; the maker does not approve
+    expect((await owner.req('POST', obj(co, 'ca_allocation', `/${alloc.record.id}/step/approve`), {})).status).toBe(409);
+    await controller.json('PATCH', obj(co, 'ca_allocation', `/${alloc.record.id}`), { data: {}, lines: [{ department: wid, percent: 70 }, { department: oid, percent: 30 }], version: alloc.record.version });
+    expect((await controller.req('POST', obj(co, 'ca_allocation', `/${alloc.record.id}/step/approve`), {})).status).toBe(403);
+    await step(owner, co, 'ca_allocation', alloc.record.id, 'approve');
+    // the finance manager cannot post journals; the accountant posts it
+    expect((await actionRes(controller, co, 'ca_allocation', alloc.record.id, 'post')).status).toBe(403);
+    const posted = await action(accountant, co, 'ca_allocation', alloc.record.id, 'post');
+    expect(posted.detail.record.status).toBe('posted');
+    const byDept = async () => (await env.DB.prepare("SELECT l.department_id AS d, SUM(l.debit - l.credit) AS b FROM fin_journal_lines l JOIN fin_journals j ON j.id = l.journal_id WHERE j.org_id = ? AND j.status = 'posted' AND l.account_id = ? GROUP BY l.department_id").bind(fin, rent).all<any>()).results;
+    const tWork = (await env.DB.prepare('SELECT fin_tracking_id FROM co_departments WHERE company_id = ? AND id = ?').bind(co, wid).first<any>()).fin_tracking_id;
+    const sums = Object.fromEntries((await byDept()).map((r: any) => [r.d ?? 'none', r.b]));
+    // 1,000.00 moved: 700.00 to the workshop, 300.00 to the office (which also keeps its own 200.00)
+    expect(sums).toEqual({ none: 0, [tWork]: 70_000, [tracking.fin_tracking_id]: 50_000 });
+    expect(await unbalanced(fin)).toBe(0);
+    expect((await actionRes(accountant, co, 'ca_allocation', alloc.record.id, 'post')).status).toBe(409);
+    // reversed: the rent is back without a department, and the allocation can be posted again
+    const rev = await action(accountant, co, 'ca_allocation', alloc.record.id, 'unpost', { reason: 'Wrong shares' });
+    expect(rev.detail.record.status).toBe('approved');
+    expect(Object.fromEntries((await byDept()).map((r: any) => [r.d ?? 'none', r.b])).none).toBe(100_000);
+    await action(accountant, co, 'ca_allocation', alloc.record.id, 'post');
+    expect(Object.fromEntries((await byDept()).map((r: any) => [r.d ?? 'none', r.b])).none).toBe(0);
+  });
 });

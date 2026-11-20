@@ -1152,6 +1152,9 @@ function ReceiveDialog({ companyId, view, onClose }: { companyId: string; view: 
   const navigate = useNavigate();
   const locs = useQuery({ queryKey: ['erp', companyId, 'locations', 'all'], queryFn: () => get<{ locations: Location[] }>(erpPath(companyId, '/locations')) });
   const open = view.lines.filter((l) => l.outstanding > 0);
+  // where each product goes when nobody chooses (replenish.ts): the default, where it is stored, or the receiving area
+  const productIds = open.map((l) => l.productId).filter(Boolean).join(',');
+  const putaway = useQuery({ queryKey: ['erp', companyId, 'putaway', productIds], queryFn: () => get<{ suggestions: Record<string, { label: string; reason: string } | null> }>(erpPath(companyId, `/inventory/putaway?productIds=${encodeURIComponent(productIds)}`)), enabled: !!productIds, retry: false });
   const [rows, setRows] = useState<Record<string, ReceiveRow>>(() => Object.fromEntries(open.map((l) => [l.id, { received: String(l.outstanding), damaged: '', rejected: '', reason: '', locationId: '', lot: '', serials: '', expiry: '' }])));
   const [head, setHead] = useState({ receivedDate: new Date().toISOString().slice(0, 10), deliveryRef: '', notes: '' });
   // one key per opening of the dialog: a double click or a retry finds the first receipt
@@ -1201,7 +1204,7 @@ function ReceiveDialog({ companyId, view, onClose }: { companyId: string; view: 
                 {Number(r.damaged) > 0 || Number(r.rejected) > 0 ? <div className="field"><label htmlFor={`gr-why-${l.id}`}>Why</label><input id={`gr-why-${l.id}`} className="input" value={r.reason} maxLength={500} onChange={(e) => upd(l.id, { reason: e.target.value })} /></div> : null}
                 {l.productId ? (
                   <>
-                    <div className="field"><label htmlFor={`gr-loc-${l.id}`}>Put away at</label><select id={`gr-loc-${l.id}`} className="select" value={r.locationId} onChange={(e) => upd(l.id, { locationId: e.target.value })}><option value="">The product’s default</option>{usable.map((x) => <option key={x.id} value={x.id}>{x.fullCode}{x.name ? ` ${x.name}` : ''}{x.kind !== 'normal' ? ` (${x.kindLabel})` : ''}</option>)}</select></div>
+                    <div className="field"><label htmlFor={`gr-loc-${l.id}`}>Put away at</label><select id={`gr-loc-${l.id}`} className="select" value={r.locationId} onChange={(e) => upd(l.id, { locationId: e.target.value })}><option value="">{l.productId && putaway.data?.suggestions[l.productId] ? `Suggested: ${putaway.data.suggestions[l.productId]!.label}` : 'The product’s default'}</option>{usable.map((x) => <option key={x.id} value={x.id}>{x.fullCode}{x.name ? ` ${x.name}` : ''}{x.kind !== 'normal' ? ` (${x.kindLabel})` : ''}</option>)}</select></div>
                     <div className="field"><label htmlFor={`gr-lot-${l.id}`}>Lot</label><input id={`gr-lot-${l.id}`} className="input" value={r.lot} maxLength={80} onChange={(e) => upd(l.id, { lot: e.target.value })} placeholder="If tracked" /></div>
                     <div className="field"><label htmlFor={`gr-exp-${l.id}`}>Expiry</label><input id={`gr-exp-${l.id}`} className="input" type="date" value={r.expiry} onChange={(e) => upd(l.id, { expiry: e.target.value })} /></div>
                     <div className="field span-2"><label htmlFor={`gr-sn-${l.id}`}>Serial numbers</label><textarea id={`gr-sn-${l.id}`} className="textarea" rows={2} value={r.serials} onChange={(e) => upd(l.id, { serials: e.target.value })} placeholder="If tracked: one per unit accepted, separated by spaces or new lines" /></div>

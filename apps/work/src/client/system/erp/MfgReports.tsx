@@ -18,6 +18,7 @@ export const MFG_REPORTS: { key: string; label: string; what: string }[] = [
   { key: 'labour-utilisation', label: 'Labour utilisation', what: 'Hours recorded per work centre and person against available hours.' },
   { key: 'production-variance', label: 'Production variance', what: 'Closed orders: estimated against actual cost by element.' },
   { key: 'machine-downtime', label: 'Machine downtime', what: 'Downtime reported on the shop floor, by machine and reason.' },
+  { key: 'oee', label: 'Overall equipment effectiveness (OEE)', what: 'Availability, performance and quality by work centre and machine, from what the shop floor recorded.' },
   { key: 'mrp-suggestions', label: 'MRP suggestions', what: 'What the latest MRP run suggests to make, buy or expedite.' },
   { key: 'capacity-load', label: 'Capacity load', what: 'Load per work centre per week against its available hours.' },
 ];
@@ -167,6 +168,24 @@ export function MachineDowntime({ companyId }: { companyId: string }) {
           <h3 className="erp-h3">Each report</h3>
           <ul className="erp-list">{q.data.rows.map((r) => <li key={r.id} className="small">{dateText(r.date)} {moLink(companyId, r.moId, r.moNumber)} {r.operation}: {r.minutes} min, {r.reason}{r.byName ? ` (${r.byName})` : ''}</li>)}</ul>
         </>
+      ) : null}
+    </Shell>
+  );
+}
+
+export function Oee({ companyId }: { companyId: string }) {
+  const f = useFilters(['from', 'to']);
+  const q = useData<{ rows: { workCentre: string; machine: string; machineHours: number; downtimeHours: number; good: number; scrap: number; availabilityPct: number | null; performancePct: number | null; qualityPct: number | null; oeePct: number | null; note: string }[]; note: string }>(companyId, `/reports/oee?${f.qs}`);
+  const p = (v: number | null) => (v === null ? '' : `${v}%`);
+  return (
+    <Shell title="Overall equipment effectiveness (OEE)" companyId={companyId} csv={`/reports/oee?${f.qs}`} error={q.error} loading={!q.data} retry={() => q.refetch()} note={q.data?.note} filters={<DateRange f={f} />}>
+      {q.data && !q.data.rows.length ? <Empty>Nothing was recorded on the shop floor in this period.</Empty> : q.data ? (
+        <div className="crm-table-scroll">
+          <table className="data-table responsive">
+            <thead><tr><th>Work centre</th><th className="num">Machine hours</th><th className="num">Downtime hours</th><th className="num">Good</th><th className="num">Scrap</th><th className="num">Availability</th><th className="num">Performance</th><th className="num">Quality</th><th className="num">OEE</th></tr></thead>
+            <tbody>{q.data.rows.map((r, i) => <tr key={i}><td data-label="Work centre">{r.workCentre}{r.machine ? ` / ${r.machine}` : ''}{r.note ? <div className="muted small">{r.note}</div> : null}</td><td data-label="Machine hours" className="num">{r.machineHours}</td><td data-label="Downtime hours" className="num">{r.downtimeHours}</td><td data-label="Good" className="num">{qty(r.good)}</td><td data-label="Scrap" className="num">{qty(r.scrap)}</td><td data-label="Availability" className="num">{p(r.availabilityPct)}</td><td data-label="Performance" className="num">{p(r.performancePct)}</td><td data-label="Quality" className="num">{p(r.qualityPct)}</td><td data-label="OEE" className="num"><strong>{r.oeePct === null ? 'Cannot be calculated' : `${r.oeePct}%`}</strong></td></tr>)}</tbody>
+          </table>
+        </div>
       ) : null}
     </Shell>
   );

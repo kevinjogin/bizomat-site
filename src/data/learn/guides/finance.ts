@@ -316,6 +316,10 @@ const guide: Guide = {
   ],
   faqs: [
     {
+      q: "Can overheads be spread across departments?",
+      a: "Yes, in BIZOMAT ERP: Cost allocation spreads what an account (for example Rent) holds in a period without a department across departments by percentage. Someone else approves it, and Post to Finance makes one journal here, with each department's share. Each department must be in Finance.",
+    },
+    {
       q: "Does Finance connect to my bank?",
       a: "No. It never connects to a bank and never asks for your internet banking password. Download a statement from your bank (CSV, OFX or QIF) and import it.",
     },

@@ -314,6 +314,10 @@ const COMPUTE: Record<string, Compute> = {
     d.bookValue = num(d.cost) - num(d.accumulated);
     d.gainLoss = typeof d.disposalDate === 'string' ? num(d.disposalProceeds) - num(d.bookValue) : null;
   },
+  ca_allocation: (ctx) => {
+    order(ctx.data.periodFrom, ctx.data.periodTo, 'The period ends before it starts');
+    ctx.data.totalPct = Math.round((ctx.lines ?? []).reduce((s, l) => s + num(l.percent), 0) * 1000) / 1000;
+  },
   ic_transaction: (ctx) => {
     if (ctx.data.seller && ctx.data.seller === ctx.data.buyer) throw new HttpError(400, 'The seller and the buyer are the same entity');
     if (!(num(ctx.data.amount) > 0)) throw new HttpError(400, 'Give the amount');
@@ -531,6 +535,9 @@ const BEFORE: Record<string, Before> = {
       const from = str(ctx.data.disposalDate).slice(0, 7);
       if ((await postedParts(ctx.db, ctx.a.companyId, 'fa_asset', ctx.row.id)).some((m) => m >= from)) badState('Depreciation is posted to Finance for the month of the disposal or later: reverse the Finance postings first, then post again after recording the disposal');
     }
+  },
+  ca_allocation: (ctx) => {
+    if (ctx.t.key === 'approve' && Math.abs(num(ctx.data.totalPct) - 100) > 0.001) badState(`The shares add up to ${num(ctx.data.totalPct)}%: they must add up to 100%`);
   },
   py_run: async (ctx) => {
     if (ctx.t.key === 'reopen' && (await postedParts(ctx.db, ctx.a.companyId, 'py_run', ctx.row.id)).length) badState('This pay run is posted to Finance: reverse the Finance posting before taking it back to worked out');

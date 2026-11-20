@@ -728,7 +728,7 @@ objectRoutes.get('/c/:company/x/price', async (c) => {
 
 // ------------------------------------------------------------------ postings to Finance's ledger
 
-const POSTING_OBJECTS: Record<PostingKind, string> = { depreciation: 'fa_asset', payroll: 'py_run', revenue: 'rr_schedule' };
+const POSTING_OBJECTS: Record<PostingKind, string> = { depreciation: 'fa_asset', payroll: 'py_run', revenue: 'rr_schedule', allocation: 'ca_allocation' };
 
 /** Who sets the posting accounts: an ERP administrator or a finance controller (with the chart in Finance). */
 const postingEditor = (a: ErpAccess) => a.roles.includes('erp_admin') || a.roles.includes('finance_controller');

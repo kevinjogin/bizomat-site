@@ -26,7 +26,7 @@ import type { Data, Line, RecordRow } from './engine';
 import { addDays, depreciationSchedule, monthEnd, monthsBetween } from './hooks';
 import { convert, noRate, rateFor } from './fx';
 
-export type PostingKind = 'depreciation' | 'payroll' | 'revenue';
+export type PostingKind = 'depreciation' | 'payroll' | 'revenue' | 'allocation';
 
 export interface PostingRole {
   role: string;
@@ -55,10 +55,10 @@ export const POSTING_ROLES: PostingRole[] = [
   { role: 'rev_earned', kind: 'revenue', label: 'Revenue earned', help: 'Credited as each month is earned.', types: ['revenue'], match: [], fallback: 'revenue' },
 ];
 export const ROLE_BY_KEY: Record<string, PostingRole> = Object.fromEntries(POSTING_ROLES.map((r) => [r.role, r]));
-export const KIND_LABELS: Record<PostingKind, string> = { depreciation: 'Depreciation of fixed assets', payroll: 'Pay runs', revenue: 'Revenue recognition' };
+export const KIND_LABELS: Record<PostingKind, string> = { depreciation: 'Depreciation of fixed assets', payroll: 'Pay runs', revenue: 'Revenue recognition', allocation: 'Cost allocation' };
 
 /** The kind of posting a framework object makes. */
-export const POSTING_OF: Record<string, PostingKind> = { fa_asset: 'depreciation', py_run: 'payroll', rr_schedule: 'revenue' };
+export const POSTING_OF: Record<string, PostingKind> = { fa_asset: 'depreciation', py_run: 'payroll', rr_schedule: 'revenue', ca_allocation: 'allocation' };
 export const POSTING_MODULES: Record<string, PostingKind> = { fixed_assets: 'depreciation', payroll: 'payroll', revenue: 'revenue' };
 
 const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
@@ -292,7 +292,7 @@ function monthlyPlans(fa: FinAccess, months: { month: string; amount: number }[]
   return out;
 }
 
-async function plansFor(c: PostCtx, t: FinTarget, set: Map<string, AccountRow>, opts: { upTo?: string; part?: 'deferral' }): Promise<Planned[]> {
+async function plansFor(c: PostCtx, t: FinTarget, set: Map<string, AccountRow>, opts: { upTo?: string; part?: 'deferral' }, chart: Chart): Promise<Planned[]> {
   const { def, row, data } = c;
   const kind = POSTING_OF[def.key];
   const done = await postedParts(c.env.DB, c.a.companyId, def.key, row.id);
@@ -336,6 +336,7 @@ async function plansFor(c: PostCtx, t: FinTarget, set: Map<string, AccountRow>, 
       lines: [line(acc.rev_deferred, amount, `Earned: ${row.number} ${row.title}`), line(acc.rev_earned, -amount, `Revenue ${row.number} ${row.title}`)],
     }));
   }
+  if (kind === 'allocation') return allocationPlan(c, t, chart, done);
   // payroll: one journal for the run
   if (!['approved', 'paid'].includes(row.status)) badState('Only an approved pay run is posted');
   if (done.has('whole')) badState('This pay run is already posted to Finance');
@@ -368,6 +369,50 @@ async function plansFor(c: PostCtx, t: FinTarget, set: Map<string, AccountRow>, 
   return [{ parts: ['whole'], date: d.date, amount: sum.gross + sum.contribution, memo: `BIZOMAT ERP: ${what}, pay period ${label}${d.moved ? ` (the books are locked up to ${t.fa.org.lock_date}, so it is posted on the first open day)` : ''}`, lines: jl }];
 }
 
+/**
+ * A cost allocation's one journal (catalogue 20): what the source account holds in the period without a department (its
+ * own earlier journals left out, so a reversed allocation can be posted again), out of it, and each department's share
+ * into the target account (the same one by default) with the department's Finance tracking.
+ */
+async function allocationPlan(c: PostCtx, t: FinTarget, chart: Chart, done: Set<string>): Promise<Planned[]> {
+  const { row, data, def } = c;
+  const db = c.env.DB;
+  if (row.status !== 'approved') badState('Approve the allocation first');
+  if (done.has('whole')) badState('This allocation is already posted to Finance');
+  const byCode = (code: string) => [...chart.accounts.values()].find((acc) => acc.code.toLowerCase() === code.trim().toLowerCase() && !acc.archived_at);
+  const source = byCode(str(data.sourceAccount));
+  if (!source) badState(`There is no account ${str(data.sourceAccount)} in ${t.org.name}’s chart`);
+  const target = str(data.targetAccount).trim() ? byCode(str(data.targetAccount)) : source;
+  if (!target) badState(`There is no account ${str(data.targetAccount)} in ${t.org.name}’s chart`);
+  const from = str(data.periodFrom);
+  const to = str(data.periodTo);
+  const shares = (await db.prepare('SELECT data_json FROM erp_object_lines WHERE company_id = ? AND record_id = ? ORDER BY position').bind(c.a.companyId, row.id).all<{ data_json: string }>()).results.map((r) => JSON.parse(r.data_json) as Line);
+  const total = shares.reduce((s, l) => s + num(l.percent), 0);
+  if (!shares.length || Math.abs(total - 100) > 0.001) badState(`The shares add up to ${Math.round(total * 1000) / 1000}%: they must add up to 100%`);
+  const tracking: string[] = [];
+  for (const l of shares) {
+    const d = await db.prepare('SELECT d.name, d.fin_tracking_id, t.org_id FROM co_departments d LEFT JOIN fin_tracking t ON t.id = d.fin_tracking_id WHERE d.company_id = ? AND d.id = ?').bind(c.a.companyId, str(l.department)).first<{ name: string; fin_tracking_id: string | null; org_id: string | null }>();
+    if (!d) badState('A share names a department that is no longer in the company');
+    if (!d.fin_tracking_id || d.org_id !== t.org.id) badState(`The department ${d.name} is not in ${t.org.name}: add it to Finance from the company’s Departments page first`);
+    tracking.push(d.fin_tracking_id);
+  }
+  const bal = await db
+    .prepare("SELECT COALESCE(SUM(l.debit - l.credit), 0) AS b FROM fin_journal_lines l JOIN fin_journals j ON j.id = l.journal_id WHERE l.org_id = ? AND l.account_id = ? AND l.department_id IS NULL AND j.status = 'posted' AND j.date >= ? AND j.date <= ? AND (j.source_id IS NULL OR j.source_id <> ?)")
+    .bind(t.org.id, source.id, from, to, row.id)
+    .first<{ b: number }>();
+  const amount = Math.round(Number(bal?.b) || 0);
+  if (amount <= 0) badState(`Nothing to allocate: ${source.code} ${source.name} holds no cost without a department from ${from} to ${to}`);
+  const lines: LedgerLine[] = [line(source.id, -amount, `Allocated: ${row.number} ${row.title}`)];
+  let left = amount;
+  shares.forEach((l, i) => {
+    const share = i === shares.length - 1 ? left : Math.round((amount * num(l.percent)) / 100);
+    left -= share;
+    if (share) lines.push({ ...line(target.id, share, `${row.number}: ${num(l.percent)}%`), departmentId: tracking[i] });
+  });
+  const d = openDate(t.fa, to);
+  return [{ parts: ['whole'], date: d.date, amount, memo: `BIZOMAT ERP: ${def.label} ${row.number} ${row.title}, ${source.code} ${source.name} from ${from} to ${to}${d.moved ? ` (the books are locked up to ${t.fa.org.lock_date}, so it is posted on the first open day)` : ''}`, lines }];
+}
+
 export interface PostResult {
   posted: { journalId: string; date: string; amount: number; parts: string[] }[];
   skipped: number;
@@ -382,7 +427,7 @@ export async function postRecord(c: PostCtx, opts: { upTo?: string; part?: 'defe
   await syncReversed(db, c.a.companyId, c.def.key, c.row.id);
   const chart = await chartOf(db, t.fa);
   const set = await chosen(db, c.a.companyId, chart, t.org.id);
-  const plans = await inWorkspaceCurrency(db, c.a.companyId, t.fa, c.data, await plansFor(c, t, set, opts));
+  const plans = await inWorkspaceCurrency(db, c.a.companyId, t.fa, c.data, await plansFor(c, t, set, opts, chart));
   const out: PostResult = { posted: [], skipped: 0, workspace: t.org, url: `/erp/finance/o/${t.org.id}/accounting/journals` };
   for (const p of plans.slice(0, 120)) {
     validateJournal(t.fa, chart, p.date, p.lines);

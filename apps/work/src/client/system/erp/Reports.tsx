@@ -14,7 +14,7 @@ import '../../styles/erp.css';
 import { ECO_STATUS, LIFECYCLE, PRODUCT_TYPES, SUPPLIER_STATUS, dateText, dayText, erpPath, money, procurementPage, productsPage, reportPage } from './api';
 import { CsvLink, EcoBadge, LifecycleBadge, Section, SupplierBadge, options } from './common';
 import { PriceVariance, PurchaseCommitments, STOCK_REPORTS, Shortages, SlowMoving, StockAgeing, StockMovementsReport, StockOnHand, StockValuationReport, SupplierDelivery, SupplierSpend } from './StockReports';
-import { CapacityLoad, LabourUtilisation, MFG_REPORTS, MachineDowntime, MaterialConsumption, MrpSuggestions, ProductionOutput, ProductionVariance, WorkOrderProgress } from './MfgReports';
+import { CapacityLoad, LabourUtilisation, MFG_REPORTS, MachineDowntime, MaterialConsumption, MrpSuggestions, Oee, ProductionOutput, ProductionVariance, WorkOrderProgress } from './MfgReports';
 // Release 4 part A: quality
 import { CapaStatus, CostOfPoorQuality, InspectionResults, NcrRegister, QUALITY_REPORTS, RejectionRates, Rework, SupplierDefects } from './QualityReports';
 // Release 5 part A: supply chain
@@ -71,6 +71,7 @@ export function ErpReportsArea({ companyId, companyName }: { companyId: string; 
         <Route path="labour-utilisation" element={<LabourUtilisation companyId={companyId} />} />
         <Route path="production-variance" element={<ProductionVariance companyId={companyId} />} />
         <Route path="machine-downtime" element={<MachineDowntime companyId={companyId} />} />
+        <Route path="oee" element={<Oee companyId={companyId} />} />
         <Route path="mrp-suggestions" element={<MrpSuggestions companyId={companyId} />} />
         <Route path="capacity-load" element={<CapacityLoad companyId={companyId} />} />
         <Route path="inspection-results" element={<InspectionResults companyId={companyId} />} />

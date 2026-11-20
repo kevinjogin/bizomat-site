@@ -207,6 +207,8 @@ const guide: Guide = {
     { label: 'Export CSV', does: 'Downloads the stock list, movements or valuation with your filters.', when: 'To work with the figures in a spreadsheet.' },
   ],
   faqs: [
+    { q: 'How do I reorder what is running low?', a: 'Open Stock, Replenishment. It lists every product whose available stock and what is on order is at or below its reorder point, and what would bring it up to its maximum level. Choose Draft a requisition: one draft requisition is made for them, approved as any other. A product already on an open requisition is not asked for twice; one without a maximum level is listed and not ordered.' },
+    { q: 'Where does a received item go if I do not choose?', a: 'To the product’s default location, else where it is already stored the most, else the warehouse’s receiving area. The receipt shows the suggestion as Suggested.' },
     {
       q: 'Why can I not issue more than is on hand?',
       a: 'Stock never goes below zero while the company’s setting Allow stock below zero is off (it is off by default). If two people issue the last unit at the same moment, one of them is refused. An ERP administrator can allow negative stock; turning it off again is refused while any stock is below zero.',
@@ -246,7 +248,7 @@ const guide: Guide = {
   notYet: [
     { text: 'Posting stock value to Finance’s ledger (each movement records it as planned; nothing is posted).', status: 'planned' },
     { text: 'Work in progress held as stock in work-in-progress locations (materials issued to a manufacturing order leave stock today).', status: 'planned' },
-    { text: 'Replenishment orders and transfers between sites.', status: 'planned' },
+    { text: 'Replenishment on a schedule, and transfers between sites (replenishment by hand works today: Stock, Replenishment).', status: 'planned' },
     { text: 'More than one stock currency (goods bought in another currency are valued at standard cost today).', status: 'planned' },
   ],
   keywords: [

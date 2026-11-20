@@ -276,6 +276,16 @@ const ACTIONS: Record<string, Action> = {
   'fa_asset.unpost': async (c) => unposted(c),
   'rr_schedule.unpost': async (c) => unposted(c),
   'py_run.unpost': async (c) => unposted(c),
+  'ca_allocation.post': async (c) => {
+    const r = posted(c, await postRecord(c), 'allocation');
+    await c.env.DB.batch(statusStmts(c.env.DB, c.a, c.def, c.row, 'posted', `${c.def.label} ${c.row.number}: posted to Finance`));
+    return { ...r, record: await loadRow(c.env.DB, c.a.companyId, c.def, c.row.id) };
+  },
+  'ca_allocation.unpost': async (c) => {
+    const r = await unposted(c);
+    await c.env.DB.batch(statusStmts(c.env.DB, c.a, c.def, c.row, 'approved', `${c.def.label} ${c.row.number}: Finance journal reversed`));
+    return { ...r, record: await loadRow(c.env.DB, c.a.companyId, c.def, c.row.id) };
+  },
 
   // ---------------------------------------------------------------- intercompany (intercompany.ts)
   'ic_transaction.documents': async (c) => {
