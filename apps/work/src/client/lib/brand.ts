@@ -60,16 +60,16 @@ export const PLATFORM_URLS = {
   products: 'https://bizomat.ai/systems/',
   contact: 'https://bizomat.ai/contact/',
   /** This product's page on the website. */
-  // The website explains every system at /systems/ (owner, 14 Nov 2026).
-  productPage: IS_CRM ? 'https://bizomat.ai/systems/crm/' : IS_FINANCE ? 'https://bizomat.ai/systems/finance/' : IS_COMPANY ? 'https://bizomat.ai/systems/erp/' : IS_SYSTEM ? 'https://bizomat.ai/systems/erp/' : 'https://bizomat.ai/systems/projects/',
+  // The website explains every system on one page, /systems/ (owner, 14 Nov 2026; one page since 20 Nov 2026).
+  productPage: IS_CRM ? 'https://bizomat.ai/systems/#crm' : IS_FINANCE ? 'https://bizomat.ai/systems/#finance' : IS_COMPANY ? 'https://bizomat.ai/systems/#erp' : IS_SYSTEM ? 'https://bizomat.ai/systems/#erp' : 'https://bizomat.ai/systems/#projects',
   /** The BIZOMAT ERP Knowledge Centre on the website (owner, 20 Nov 2026): guides, tutorials and answers for every module. */
   learn: 'https://bizomat.ai/learn/',
   /** This tool's guide in the Knowledge Centre. */
-  guide: IS_CRM ? 'https://bizomat.ai/learn/crm/' : IS_FINANCE ? 'https://bizomat.ai/learn/finance/' : IS_COMPANY ? 'https://bizomat.ai/learn/companies/' : IS_SYSTEM ? 'https://bizomat.ai/learn/' : 'https://bizomat.ai/learn/projects/',
+  guide: IS_CRM ? 'https://bizomat.ai/learn/#crm' : IS_FINANCE ? 'https://bizomat.ai/learn/#finance' : IS_COMPANY ? 'https://bizomat.ai/learn/#companies' : IS_SYSTEM ? 'https://bizomat.ai/learn/' : 'https://bizomat.ai/learn/#projects',
   /** The CRM's guide in the Knowledge Centre (the user guides moved there, 20 Nov 2026). */
-  crmGuide: 'https://bizomat.ai/learn/crm/',
+  crmGuide: 'https://bizomat.ai/learn/#crm',
   /** Finance's guide in the Knowledge Centre. */
-  financeGuide: 'https://bizomat.ai/learn/finance/',
+  financeGuide: 'https://bizomat.ai/learn/#finance',
   cad: 'https://bizomat.ai/cad/',
   // Inside the System, every tool opens inside it too (one system).
   tasks: `https://bizomat.ai${SUITE}/tasks/`,

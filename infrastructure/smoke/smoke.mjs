@@ -30,15 +30,15 @@ import net from 'node:net';
 import tls from 'node:tls';
 
 // The Knowledge Centre (/learn/, owner 20 Nov 2026) holds every system's guide; the old /systems/*/guide/ answer 301 there.
-const PAGES = ['/', '/systems/', '/systems/erp/', '/systems/crm/', '/systems/finance/', '/systems/projects/', '/systems/engineering/', '/systems/manufacturing/', '/systems/whs/', '/learn/', '/learn/crm/', '/learn/procurement/', '/learn/workflows/', '/learn/workflows/procure-to-pay/', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
+const PAGES = ['/', '/systems/', '/systems/#erp', '/systems/#crm', '/systems/#finance', '/systems/#projects', '/systems/#engineering', '/systems/#manufacturing', '/systems/#whs', '/learn/', '/learn/#crm', '/learn/#procurement', '/learn/#workflows', '/learn/#workflow-procure-to-pay', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
 // Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room; the
 // design preview was retired, owner 14 Nov 2026; the product pages became the Systems pages).
-const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/system-preview/', '/systems/erp/'], ['/erp-design-preview/', '/systems/erp/'],
+const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/system-preview/', '/systems/#erp'], ['/erp-design-preview/', '/systems/#erp'],
   // The product pages became the Systems pages (owner, 14 Nov 2026).
-  ['/products/', '/systems/'], ['/work/', '/systems/projects/'], ['/cad-automation/', '/systems/engineering/'], ['/crm-platform/', '/systems/crm/'], ['/crm-platform/guide/', '/learn/crm/'], ['/finance-platform/', '/systems/finance/'], ['/finance-platform/guide/', '/learn/finance/'],
+  ['/products/', '/systems/'], ['/work/', '/systems/#projects'], ['/cad-automation/', '/systems/#engineering'], ['/crm-platform/', '/systems/#crm'], ['/crm-platform/guide/', '/learn/#crm'], ['/finance-platform/', '/systems/#finance'], ['/finance-platform/guide/', '/learn/#finance'],
   // The user guides moved into the Knowledge Centre (owner, 20 Nov 2026).
-  ['/systems/erp/guide/', '/learn/'], ['/systems/crm/guide/', '/learn/crm/'], ['/systems/finance/guide/', '/learn/finance/'], ['/systems/projects/guide/', '/learn/projects/'],
-  ['/systems/engineering/guide/', '/learn/cad-automation/'], ['/systems/manufacturing/guide/', '/learn/manufacturing/'], ['/systems/whs/guide/', '/learn/whs/']];
+  ['/systems/erp/guide/', '/learn/'], ['/systems/crm/guide/', '/learn/#crm'], ['/systems/finance/guide/', '/learn/#finance'], ['/systems/projects/guide/', '/learn/#projects'],
+  ['/systems/engineering/guide/', '/learn/#cad-automation'], ['/systems/manufacturing/guide/', '/learn/#manufacturing'], ['/systems/whs/guide/', '/learn/#whs']];
 const HSTS = /max-age=\d{7,}/;
 
 function parseArgs(argv) {
@@ -270,7 +270,7 @@ async function proxyChecks() {
     ['kevos.com', '/', 'HEAD', '/'],
     ['www.kevos.com', '/engine-room/', 'GET', '/engine-room/'],
     // kevos.com/cad/ was the CAD Automation page; on bizomat.ai /cad is the application itself
-    ['kevos.com', '/cad/?smoke=1', 'GET', '/systems/engineering/?smoke=1'],
+    ['kevos.com', '/cad/?smoke=1', 'GET', '/systems/?smoke=1#engineering'],
   ];
   for (const [host, path, method, to] of moves) {
     await check('proxy', `${method} ${host}${path} -> 301 https://bizomat.ai${to}`, async () => {
@@ -311,10 +311,10 @@ async function webChecks() {
       return { fail: describe(r) };
     });
   }
-  // The retired design preview: none of its old files is served (every address under it answers 301 to /systems/erp/).
-  await check('web', 'the retired design preview serves nothing (/system-preview/assets/...: 301 to /systems/erp/)', async () => {
+  // The retired design preview: none of its old files is served (every address under it answers 301 to /systems/#erp).
+  await check('web', 'the retired design preview serves nothing (/system-preview/assets/...: 301 to /systems/#erp)', async () => {
     const r = await onPlatform({ path: '/system-preview/assets/index.js' });
-    return (r.status === 301 && /\/systems\/erp\/$/.test(r.headers.location || '')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    return (r.status === 301 && /\/systems\/#erp$/.test(r.headers.location || '')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
   await check('web', 'security headers on /', async () => {
     const r = await onPlatform({ path: '/', headers: { Accept: 'text/html' } });

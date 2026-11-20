@@ -56,9 +56,12 @@ export const GUIDES: readonly Guide[] = [g_what_is_bizomat, g_account_and_sign_i
 export const WORKFLOWS: readonly Workflow[] = [w_lead_to_customer, w_deal_to_invoice, w_deal_to_project, w_invoice_to_payment, w_project_to_completion, w_procure_to_pay, w_bom_to_production, w_engineering_change, w_make_to_order, w_sales_order_to_delivery, w_production_to_quality, w_maintenance_request_to_work_order, w_preventive_maintenance, w_incident_to_action, w_cad_to_product];
 
 export { SECTIONS };
-export const guideUrl = (id: string) => `/learn/${id}/`;
-export const workflowUrl = (id: string) => `/learn/workflows/${id}/`;
-export const sectionUrl = (id: SectionId) => (id === 'workflows' ? '/learn/workflows/' : `/learn/#${id}`);
+// Everything is on one page (owner, 20 Nov 2026: every module's tutorials on one page, in toggles). A guide is the toggle
+// /learn/#<id>, a workflow /learn/#workflow-<id>; the earlier /learn/<id>/ and /learn/workflows/<id>/ answer 301 there.
+export const guideUrl = (id: string) => `/learn/#${id}`;
+export const workflowUrl = (id: string) => `/learn/#workflow-${id}`;
+export const sectionUrl = (id: SectionId) => `/learn/#${id}`;
+export const tutorialAnchor = (owner: string, tutorialId: string) => `tutorial-${owner}-${tutorialId}`;
 
 export function guideById(id: string): Guide {
   const g = GUIDES.find((x) => x.id === id);
@@ -94,26 +97,38 @@ export function searchEntries(): SearchEntry[] {
   for (const g of GUIDES) {
     const url = guideUrl(g.id);
     out.push({ kind: 'guide', title: g.title, in: SECTIONS.find((s) => s.id === g.section)!.title, text: [g.what, ...g.purpose, ...(g.keywords ?? []), ...(g.access?.path ?? [])].join(' '), url, status: g.status });
-    for (const t of g.tutorials) out.push({ kind: 'tutorial', title: t.title, in: g.title, text: [t.outcome, ...t.steps.map((s) => `${s.title} ${s.where ?? ''}`)].join(' '), url: `${url}#tutorial-${t.id}`, status: g.status });
-    g.faqs.forEach((f, i) => out.push({ kind: 'question', title: f.q, in: g.title, text: f.a, url: `${url}#${g.id}-q${i + 1}`, status: g.status }));
-    for (const b of g.buttons ?? []) out.push({ kind: 'button', title: b.label, in: g.title, text: [b.does, b.when ?? '', b.after ?? ''].join(' '), url: `${url}#buttons`, status: g.status });
+    for (const t of g.tutorials) out.push({ kind: 'tutorial', title: t.title, in: g.title, text: [t.outcome, ...t.steps.map((s) => `${s.title} ${s.where ?? ''}`)].join(' '), url: `${LEARN_HOME}#${tutorialAnchor(g.id, t.id)}`, status: g.status });
+    g.faqs.forEach((f, i) => out.push({ kind: 'question', title: f.q, in: g.title, text: f.a, url: `${LEARN_HOME}#${g.id}-q${i + 1}`, status: g.status }));
+    for (const b of g.buttons ?? []) out.push({ kind: 'button', title: b.label, in: g.title, text: [b.does, b.when ?? '', b.after ?? ''].join(' '), url: `${LEARN_HOME}#${g.id}-buttons`, status: g.status });
   }
   for (const w of WORKFLOWS) {
     const url = workflowUrl(w.id);
     out.push({ kind: 'workflow', title: w.title, in: 'Workflows', text: [w.summary, ...w.stages.map((s) => `${s.label} ${s.detail}`), ...(w.keywords ?? [])].join(' '), url, status: w.status });
-    w.faqs.forEach((f, i) => out.push({ kind: 'question', title: f.q, in: w.title, text: f.a, url: `${url}#${w.id}-q${i + 1}`, status: w.status }));
+    w.faqs.forEach((f, i) => out.push({ kind: 'question', title: f.q, in: w.title, text: f.a, url: `${LEARN_HOME}#workflow-${w.id}-q${i + 1}`, status: w.status }));
   }
   return out;
 }
 
+/** Where a link written in the content goes now: /learn/<id>/ is the guide's toggle, /learn/workflows/<id>/ the
+ *  workflow's, on the one page. Other addresses are kept. */
+export function learnHref(href: string): string {
+  const [path] = href.split(/[?#]/);
+  if (path === '/learn/workflows/') return `${LEARN_HOME}#workflows`;
+  const w = path.match(/^\/learn\/workflows\/([a-z0-9-]+)\/$/);
+  if (w) return workflowUrl(w[1]);
+  const g = path.match(/^\/learn\/([a-z0-9-]+)\/$/);
+  if (g) return guideUrl(g[1]);
+  return href;
+}
+
 /** The name of a page an answer links to: a guide's or workflow's title, else the path itself. */
 export function linkLabel(href: string): string {
-  const path = href.split('#')[0].split('?')[0];
-  if (path === LEARN_HOME) return LEARN_NAME;
-  if (path === '/learn/workflows/') return 'Workflows';
-  const w = path.match(/^\/learn\/workflows\/([a-z0-9-]+)\/$/);
+  const to = learnHref(href);
+  if (to === LEARN_HOME) return LEARN_NAME;
+  if (to === `${LEARN_HOME}#workflows`) return 'Workflows';
+  const w = to.match(/^\/learn\/#workflow-([a-z0-9-]+)$/);
   if (w) return WORKFLOWS.find((x) => x.id === w[1])?.title ?? href;
-  const g = path.match(/^\/learn\/([a-z0-9-]+)\/$/);
+  const g = to.match(/^\/learn\/#([a-z0-9-]+)$/);
   if (g) return GUIDES.find((x) => x.id === g[1])?.title ?? href;
   return href;
 }
@@ -127,6 +142,6 @@ export function answerParts(text: string): ({ text: string } | { href: string; l
     .filter((p) => p !== '')
     .map((p) => {
       const m = p.match(link);
-      return m ? { href: m[1], label: linkLabel(m[1]) } : { text: p };
+      return m ? { href: learnHref(m[1]), label: linkLabel(m[1]) } : { text: p };
     });
 }

@@ -205,3 +205,25 @@
   .sys-glance a { grid-template-columns: minmax(0, 1fr); }
   .sys-glance .sys-badge { grid-row: auto; grid-column: 1; justify-self: start; margin-top: .25rem; }
 }
+
+/* Every system on one page (owner, 20 Nov 2026): each system's full page sits in a toggle under its summary.
+   The bar lines up with the containers above it; the content keeps its own sections and backgrounds. */
+.sys-full { margin-top: clamp(1.5rem, 3vw, 2.25rem); border-top: 1px solid var(--line); }
+.sys-full__summary {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; cursor: pointer; list-style: none;
+  width: min(var(--max), 100% - 2 * var(--gutter)); margin-inline: auto; padding: 1.1rem 2.5rem 1.1rem 0; position: relative;
+}
+.sys-full__summary::-webkit-details-marker { display: none; }
+.sys-full__summary::after {
+  content: ''; position: absolute; right: .35rem; top: 1.45rem; width: .6rem; height: .6rem;
+  border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(45deg); transition: transform .18s var(--ease);
+}
+.sys-full[open] > .sys-full__summary::after { transform: rotate(-135deg); top: 1.7rem; }
+.sys-full__label { color: var(--accent); font-family: var(--font-display); font-size: var(--step-1); font-weight: 650; }
+.sys-full__hint { color: var(--muted); font-size: .92rem; }
+.sys-full__summary:hover .sys-full__label { text-decoration: underline; text-underline-offset: 4px; }
+.sys-full__summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 6px; }
+.sys-full[open] { background: var(--paper); }
+.sys-full .pp-hero { padding-top: clamp(1.5rem, 4vw, 3rem); }
+.sys-full .sys-full__title { max-width: 18ch; font-size: var(--step-4); line-height: 1.06; }
+@media (prefers-reduced-motion: reduce) { .sys-full__summary::after { transition: none; } }

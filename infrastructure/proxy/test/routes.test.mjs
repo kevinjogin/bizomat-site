@@ -251,11 +251,11 @@ test('kevos.com and www.kevos.com: GET and HEAD move to bizomat.ai with the same
   }
 });
 
-test('kevos.com/cad/ was the CAD Automation page: it moves to /systems/engineering/, because bizomat.ai/cad is the app', () => {
+test('kevos.com/cad/ was the CAD Automation page: it moves to /systems/#engineering, because bizomat.ai/cad is the app', () => {
   for (const host of ['kevos.com', 'www.kevos.com']) {
     for (const path of ['/cad', '/cad/']) {
-      assert.equal(get(host, path, 'ref=x').location, 'https://bizomat.ai/systems/engineering/?ref=x', `${host}${path}`);
-      assert.equal(decide({ host, method: 'HEAD', path }).location, 'https://bizomat.ai/systems/engineering/');
+      assert.equal(get(host, path, 'ref=x').location, 'https://bizomat.ai/systems/?ref=x#engineering', `${host}${path}`);
+      assert.equal(decide({ host, method: 'HEAD', path }).location, 'https://bizomat.ai/systems/#engineering');
     }
     assert.equal(decide({ host, method: 'POST', path: '/cad/' }).status, 308, 'a POST keeps its method and address');
   }
@@ -331,7 +331,7 @@ test('sign-in addresses people type go to the platform sign-in page', () => {
 });
 
 test('the ERP\'s own address for the Knowledge Centre goes to the website\'s /learn/ (owner, 20 Nov 2026)', () => {
-  for (const [path, to] of [['/erp/learn', '/learn/'], ['/erp/learn/', '/learn/'], ['/ERP/Learn/', '/learn/'], ['/erp/help', '/learn/'], ['/erp/learn/crm', '/learn/crm/'], ['/erp/learn/procurement/', '/learn/procurement/']]) {
+  for (const [path, to] of [['/erp/learn', '/learn/'], ['/erp/learn/', '/learn/'], ['/ERP/Learn/', '/learn/'], ['/erp/help', '/learn/'], ['/erp/learn/crm', '/learn/#crm'], ['/erp/learn/procurement/', '/learn/#procurement']]) {
     const d = get('bizomat.ai', path);
     assert.equal(d.action, 'redirect', path);
     assert.equal(d.status, 301, path);

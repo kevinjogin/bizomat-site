@@ -1,5 +1,7 @@
 ---
-// /systems/erp/: BIZOMAT ERP, the Business Management System (src/config/systems.ts). The workspace itself runs at
+// Moved from src/components/systems/full/Erp.astro into the one-page Systems (owner, 20 Nov 2026: every module on one
+// page under Systems). /systems/#erp answers 301 to /systems/#erp; every id here starts with "erp-".
+// /systems/#erp: BIZOMAT ERP, the Business Management System (src/config/systems.ts). The workspace itself runs at
 // bizomat.ai/erp (apps/work, docs/system/README.md): one sign-in, a company switcher and the module rail
 // (apps/work/src/client/components/layout/SuiteRail.tsx). Every feature carries one of the four labels of
 // FEATURE_STATUS: Live, Connected, In development or Planned. ERP Release 1 (products, bills of materials, revisions,
@@ -11,10 +13,8 @@
 // reports (in development). Screens are real (src/data/screenshots.ts); the Operations screen shows what is live
 // (Procurement, Inventory, Manufacturing, Quality, Supply Chain, Maintenance) and what is planned within them.
 // The capability matrix renders src/data/erp-capabilities.ts (ERP_DOMAINS) when that file exists.
-import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
-import Breadcrumb from '../../../components/Breadcrumb.astro';
 import StatusLabel from '../../../components/StatusLabel.astro';
 import StatusLegend from '../../../components/StatusLegend.astro';
 import SystemsMap from '../../../components/visuals/SystemsMap.astro';
@@ -246,12 +246,12 @@ const flows: { t: string; path: string[]; x: string; st: FeatureStatus }[] = [
 ];
 
 const integrations: { name: string; url: string; items: { t: string; st: FeatureStatus }[] }[] = [
-  { name: 'BIZOMAT CRM', url: '/systems/crm/', items: [{ t: 'Opens inside the ERP as Sales and CRM', st: 'live' }, { t: 'Deals start quotes, draft invoices and projects', st: 'connected' }, { t: 'A CRM company as a Finance customer', st: 'connected' }] },
-  { name: 'BIZOMAT Finance', url: '/systems/finance/', items: [{ t: 'Opens inside the ERP as Finance and Accounting', st: 'live' }, { t: 'Project costs and budgets', st: 'connected' }, { t: 'Departments in tracking', st: 'connected' }] },
-  { name: 'BIZOMAT Projects', url: '/systems/projects/', items: [{ t: 'Opens inside the ERP as Projects and Tasks', st: 'live' }, { t: 'My Work in the rail', st: 'live' }, { t: 'Projects from CRM deals, tasks from CRM activities', st: 'connected' }] },
-  { name: 'BIZOMAT Engineering Automation', url: '/systems/engineering/', items: [{ t: 'Set-up steps in Products and Engineering', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in with your BIZOMAT account', st: 'in-development' }] },
-  { name: 'BIZOMAT Manufacturing and Operations', url: '/systems/manufacturing/', items: [{ t: 'Maintenance: assets, work orders, preventive maintenance and reliability', st: 'live' }, { t: 'Procurement: suppliers, purchasing and receiving', st: 'live' }, { t: 'Inventory: stock, counts and valuation', st: 'live' }, { t: 'Manufacturing: production orders, MRP and job costing', st: 'live' }, { t: 'Quality: inspections, nonconformances and corrective actions', st: 'live' }, { t: 'Supply chain: sales orders, shipments, deliveries and returns', st: 'live' }] },
-  { name: 'BIZOMAT WHS', url: '/systems/whs/', items: [{ t: 'Opens inside the ERP as Health and Safety', st: 'live' }, { t: 'Hazards, risk assessments, incidents, investigations and actions', st: 'live' }, { t: 'Sites and assets from Maintenance', st: 'connected' }, { t: 'Inspections, permits, contractors and training', st: 'planned' }] },
+  { name: 'BIZOMAT CRM', url: '/systems/#crm', items: [{ t: 'Opens inside the ERP as Sales and CRM', st: 'live' }, { t: 'Deals start quotes, draft invoices and projects', st: 'connected' }, { t: 'A CRM company as a Finance customer', st: 'connected' }] },
+  { name: 'BIZOMAT Finance', url: '/systems/#finance', items: [{ t: 'Opens inside the ERP as Finance and Accounting', st: 'live' }, { t: 'Project costs and budgets', st: 'connected' }, { t: 'Departments in tracking', st: 'connected' }] },
+  { name: 'BIZOMAT Projects', url: '/systems/#projects', items: [{ t: 'Opens inside the ERP as Projects and Tasks', st: 'live' }, { t: 'My Work in the rail', st: 'live' }, { t: 'Projects from CRM deals, tasks from CRM activities', st: 'connected' }] },
+  { name: 'BIZOMAT Engineering Automation', url: '/systems/#engineering', items: [{ t: 'Set-up steps in Products and Engineering', st: 'live' }, { t: "The company's computers, reported by CAD Automation", st: 'in-development' }, { t: 'Sign in with your BIZOMAT account', st: 'in-development' }] },
+  { name: 'BIZOMAT Manufacturing and Operations', url: '/systems/#manufacturing', items: [{ t: 'Maintenance: assets, work orders, preventive maintenance and reliability', st: 'live' }, { t: 'Procurement: suppliers, purchasing and receiving', st: 'live' }, { t: 'Inventory: stock, counts and valuation', st: 'live' }, { t: 'Manufacturing: production orders, MRP and job costing', st: 'live' }, { t: 'Quality: inspections, nonconformances and corrective actions', st: 'live' }, { t: 'Supply chain: sales orders, shipments, deliveries and returns', st: 'live' }] },
+  { name: 'BIZOMAT WHS', url: '/systems/#whs', items: [{ t: 'Opens inside the ERP as Health and Safety', st: 'live' }, { t: 'Hazards, risk assessments, incidents, investigations and actions', st: 'live' }, { t: 'Sites and assets from Maintenance', st: 'connected' }, { t: 'Inspections, permits, contractors and training', st: 'planned' }] },
 ];
 
 const faqs = [
@@ -277,13 +277,11 @@ const schema = [
   { '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title={`${erp.name}: cloud ERP for small business`} description={description} imageAlt="BIZOMAT ERP: one workspace for your company" breadcrumbs={crumbs} schema={schema}>
-  <section class="pp-hero" aria-labelledby="erp-title">
+  <section class="pp-hero" aria-labelledby="erp-erp-title">
     <Container class="pp-hero__inner">
       <div>
-        <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
         <p class="bz-eyebrow">{erp.name} · {erp.kind}<span class="pp-hero__formerly">Formerly {erp.formerly}</span></p>
-        <h1 id="erp-title">One workspace for your company</h1>
+        <h2 class="sys-full__title" id="erp-erp-title">One workspace for your company</h2>
         <p class="pp-hero__lead">Cloud ERP for small and medium businesses: sales, finance, projects, maintenance, engineering and administration, by company. Sign in once, choose the company, and open every module from the rail at the left of each screen.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="erp-access">{access.label}</Button>
@@ -293,15 +291,15 @@ const schema = [
         <p class="pp-hero__note">{erp.statusNote}</p>
         <p class="pp-hero__note">BIZOMAT ERP is free for every company: nothing is charged.</p>
       </div>
-      <SystemsMap id="erp-hero-map" />
+      <SystemsMap id="erp-erp-hero-map" />
     </Container>
   </section>
 
-  <section class="pp-section" id="what" aria-labelledby="what-title">
+  <section class="pp-section" id="erp-what" aria-labelledby="erp-what-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">What it does</p>
-        <h2 id="what-title">Your company, its people and its tools, on one screen</h2>
+        <h2 id="erp-what-title">Your company, its people and its tools, on one screen</h2>
         <p>ERP (enterprise resource planning) is software that runs a business's main work in one system. BIZOMAT ERP brings BIZOMAT's tools together by company: each tool keeps its own records and permissions, and the ERP shows them side by side.</p>
       </div>
       <ul class="pp-cards" role="list">
@@ -315,22 +313,22 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="who" aria-labelledby="who-title">
+  <section class="pp-section pp-section--tint" id="erp-who" aria-labelledby="erp-who-title">
     <Container class="pp-split">
       <div>
         <p class="bz-eyebrow">Who should use it</p>
-        <h2 id="who-title">For everyone who runs, or works in, the business</h2>
+        <h2 id="erp-who-title">For everyone who runs, or works in, the business</h2>
         <p class="sys-lead">Anyone with a BIZOMAT account can use it. What each person sees depends on their role in each tool.</p>
       </div>
       <ul class="pp-list">{who.map((w) => <li>{w}</li>)}</ul>
     </Container>
   </section>
 
-  <section class="pp-section" id="problems" aria-labelledby="problems-title">
+  <section class="pp-section" id="erp-problems" aria-labelledby="erp-problems-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Problems it solves</p>
-        <h2 id="problems-title">What changes when the tools work as one</h2>
+        <h2 id="erp-problems-title">What changes when the tools work as one</h2>
       </div>
       <ul class="pp-cards" role="list">
         {problems.map((p) => <li class="pp-card"><StatusLabel status={p.st} /><h3 class="sys-card-title">{p.p}</h3><p>{p.a}</p></li>)}
@@ -338,11 +336,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="enterprise" aria-labelledby="enterprise-title">
+  <section class="pp-section pp-section--tint" id="erp-enterprise" aria-labelledby="erp-enterprise-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Enterprise overview</p>
-        <h2 id="enterprise-title">How each department connects</h2>
+        <h2 id="erp-enterprise-title">How each department connects</h2>
         <p>Each team works in its own module, and the company's departments appear in every tool. What works today is labelled Live or Connected, what is being built In development, and what is designed but not built Planned.</p>
       </div>
       <div class="sys-table-wrap">
@@ -360,7 +358,7 @@ const schema = [
         {departments.map((d) => <li><StatusLabel status={d.st} /><h4>{d.t}</h4><p>{d.x}</p></li>)}
       </ul>
 
-      <h3 class="sys-section-sub" id="lifecycle">The business lifecycle, stage by stage</h3>
+      <h3 class="sys-section-sub" id="erp-lifecycle">The business lifecycle, stage by stage</h3>
       <p class="sys-body">From product development to customer service, in order, with the system that serves each stage today.</p>
       <ol class="sys-cycle">
         {lifecycle.map((c) => (
@@ -375,11 +373,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="features" aria-labelledby="features-title">
+  <section class="pp-section" id="erp-features" aria-labelledby="erp-features-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Every feature, explained</p>
-        <h2 id="features-title">What each part does, and what is planned</h2>
+        <h2 id="erp-features-title">What each part does, and what is planned</h2>
       </div>
       <ul class="sys-features" role="list">
         {features.map((f) => (
@@ -394,11 +392,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="status" aria-labelledby="status-title">
+  <section class="pp-section pp-section--tint" id="erp-status" aria-labelledby="erp-status-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Working and planned</p>
-        <h2 id="status-title">Every module and its status</h2>
+        <h2 id="erp-status-title">Every module and its status</h2>
         <p>Live and Connected work today. In development is being built. Planned is designed, not built, and cannot be used.</p>
       </div>
       <div class="sys-table-wrap">
@@ -412,11 +410,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="capabilities" aria-labelledby="capabilities-title">
+  <section class="pp-section" id="erp-capabilities" aria-labelledby="erp-capabilities-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">By business area</p>
-        <h2 id="capabilities-title">Enterprise capability matrix</h2>
+        <h2 id="erp-capabilities-title">Enterprise capability matrix</h2>
         <p>Every business area an ERP covers, each feature with its status, and the BIZOMAT system that serves it. An area with no BIZOMAT system yet shows every feature as Planned.</p>
       </div>
       {domains.length > 0 ? (
@@ -426,7 +424,7 @@ const schema = [
             {domains.map((d) => {
               const c = capabilityCounts(d.features);
               return (
-                <details class="sys-matrix__domain" id={`cap-${d.id}`}>
+                <details class="sys-matrix__domain" id={`erp-cap-${d.id}`}>
                   <summary>
                     <span class="sys-matrix__name">{d.name}</span>
                     <span class="sys-matrix__counts">{countLine(c)}</span>
@@ -450,16 +448,16 @@ const schema = [
           </div>
         </>
       ) : (
-        <p class="sys-body">The full matrix of capabilities by business area is being prepared. Until it is published here, the <a href="#status">module table</a> above lists every module and its status.</p>
+        <p class="sys-body">The full matrix of capabilities by business area is being prepared. Until it is published here, the <a href="#erp-status">module table</a> above lists every module and its status.</p>
       )}
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="dashboard" aria-labelledby="dashboard-title">
+  <section class="pp-section pp-section--tint" id="erp-dashboard" aria-labelledby="erp-dashboard-title">
     <Container class:list={[{ 'pp-split': Boolean(dashboardShot) }]}>
       <div>
         <p class="bz-eyebrow">The main dashboard</p>
-        <h2 id="dashboard-title">What the dashboard shows</h2>
+        <h2 id="erp-dashboard-title">What the dashboard shows</h2>
         <p class="sys-lead">The first screen after you sign in. It opens on the company you used last.</p>
         <ul class="sys-walk sys-walk--plain">
           {dashboardParts.map((d) => <li><div><h3>{d.t} <StatusLabel status={d.st} /></h3><p>{d.x}</p></div></li>)}
@@ -475,11 +473,11 @@ const schema = [
   </section>
 
   {gallery.length > 0 && (
-    <section class="pp-section" id="screens" aria-labelledby="screens-title">
+    <section class="pp-section" id="erp-screens" aria-labelledby="erp-screens-title">
       <Container>
         <div class="pp-head">
           <p class="bz-eyebrow">What it looks like</p>
-          <h2 id="screens-title">The real product</h2>
+          <h2 id="erp-screens-title">The real product</h2>
           <p>Captured from the running application with a fictional company and example data. The Operations screen shows each operations module with its status, and what is not built yet within it labelled Planned.</p>
         </div>
         <div class="pp-shots">
@@ -497,11 +495,11 @@ const schema = [
     </section>
   )}
 
-  <section class:list={['pp-section', { 'pp-section--tint': gallery.length > 0 }]} id="walkthrough" aria-labelledby="walk-title">
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length > 0 }]} id="erp-walkthrough" aria-labelledby="erp-walk-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Screen by screen</p>
-        <h2 id="walk-title">The modules, one by one</h2>
+        <h2 id="erp-walk-title">The modules, one by one</h2>
         <p>The rail is at the left of every screen inside the ERP, and along the bottom on a phone. Each module keeps its own menu beside it.</p>
       </div>
       <ol class="sys-walk">
@@ -510,11 +508,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class:list={['pp-section', { 'pp-section--tint': gallery.length === 0 }]} id="start" aria-labelledby="start-title">
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length === 0 }]} id="erp-start" aria-labelledby="erp-start-title">
     <Container class="pp-split">
       <div>
         <p class="bz-eyebrow">Getting started</p>
-        <h2 id="start-title">Start in six steps</h2>
+        <h2 id="erp-start-title">Start in six steps</h2>
         <p class="sys-lead">The <a href={GUIDE}>Knowledge Centre guide</a> covers each step, and everything after it.</p>
       </div>
       <ol class="pp-steps">
@@ -523,11 +521,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class:list={['pp-section', { 'pp-section--tint': gallery.length > 0 }]} id="workflows" aria-labelledby="flows-title">
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length > 0 }]} id="erp-workflows" aria-labelledby="erp-flows-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Typical workflows</p>
-        <h2 id="flows-title">How work moves between the modules</h2>
+        <h2 id="erp-flows-title">How work moves between the modules</h2>
         <p>Each step makes a record in the next tool only when you ask, and checks your role there.</p>
       </div>
       <ul class="sys-flows" role="list">
@@ -542,16 +540,16 @@ const schema = [
     </Container>
   </section>
 
-  <section class:list={['pp-section', { 'pp-section--tint': gallery.length === 0 }]} id="integration" aria-labelledby="int-title">
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length === 0 }]} id="erp-integration" aria-labelledby="erp-int-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Integration with other systems</p>
-        <h2 id="int-title">How the other systems fit in</h2>
+        <h2 id="erp-int-title">How the other systems fit in</h2>
       </div>
       <div class="pp-tools">
         {integrations.map((g) => (
-          <section aria-labelledby={`int-${g.url.split('/')[2]}`}>
-            <h3 id={`int-${g.url.split('/')[2]}`}><a href={g.url}>{g.name}</a></h3>
+          <section aria-labelledby={`erp-int-${g.url.replace(/[^a-z0-9]+/gi, "")}`}>
+            <h3 id={`erp-int-${g.url.replace(/[^a-z0-9]+/gi, "")}`}><a href={g.url}>{g.name}</a></h3>
             <ul class="pp-list sys-items">{g.items.map((i) => <li><span>{i.t}</span> <StatusLabel status={i.st} /></li>)}</ul>
           </section>
         ))}
@@ -560,11 +558,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class:list={['pp-section', { 'pp-section--tint': gallery.length > 0 }]} id="faq" aria-labelledby="faq-title">
+  <section class:list={['pp-section', { 'pp-section--tint': gallery.length > 0 }]} id="erp-faq" aria-labelledby="erp-faq-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Questions</p>
-        <h2 id="faq-title">About BIZOMAT ERP</h2>
+        <h2 id="erp-faq-title">About BIZOMAT ERP</h2>
       </div>
       <dl class="sys-faq sys-faq--wide">
         {faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
@@ -573,10 +571,10 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--inverse" id="access" aria-labelledby="access-title">
+  <section class="pp-section pp-section--inverse" id="erp-access" aria-labelledby="erp-access-title">
     <Container class="pp-band">
       <div>
-        <h2 id="access-title">Open your company's workspace.</h2>
+        <h2 id="erp-access-title">Open your company's workspace.</h2>
         <p>{access.note}</p>
       </div>
       <div class="pp-band__actions">
@@ -586,11 +584,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="related" aria-labelledby="related-title">
+  <section class="pp-section" id="erp-related" aria-labelledby="erp-related-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Related systems</p>
-        <h2 id="related-title">The other BIZOMAT systems</h2>
+        <h2 id="erp-related-title">The other BIZOMAT systems</h2>
       </div>
       <ul class="sys-related" role="list">
         {related.map((s) => (
@@ -613,4 +611,3 @@ const schema = [
       </ul>
     </Container>
   </section>
-</BaseLayout>

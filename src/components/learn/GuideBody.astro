@@ -1,0 +1,135 @@
+---
+// One Knowledge Centre guide, inside its toggle on the one page /learn/ (owner, 20 Nov 2026: every module's tutorials on
+// one page). The documentation structure the owner asked for (A to J): what it is, what it is for, who uses it, how to
+// open it, step-by-step tutorials with a screen outline, the important buttons, common questions, how it connects,
+// related workflows and the button that opens it. Every id starts with the guide's id. Data: src/data/learn/guides/.
+import StatusLabel from '../StatusLabel.astro';
+import AccessPath from './AccessPath.astro';
+import ErpScreen, { RAIL } from './ErpScreen.astro';
+import TutorialStepper from './TutorialStepper.astro';
+import Faqs from './Faqs.astro';
+import Answer from './Answer.astro';
+import FlowChain from './FlowChain.astro';
+import Diagram, { type DiagramName } from './Diagram.astro';
+import { FEATURE_STATUS } from '../../config/systems.ts';
+import { guideById, guideUrl, workflowById, workflowUrl, workflowsThrough } from '../../data/learn/index.ts';
+import type { Guide } from '../../data/learn/types.ts';
+
+interface Props { g: Guide }
+const { g } = Astro.props;
+const p = g.id;
+const DIAGRAM: Partial<Record<string, { name: DiagramName; caption: string }>> = {
+  'what-is-bizomat': { name: 'erp-map', caption: 'BIZOMAT ERP around your company. Each group is a set of modules in the module rail.' },
+  'account-and-sign-in': { name: 'one-account', caption: 'One account and one sign-in for BIZOMAT ERP, CAD Automation and the AI apps you connect.' },
+  companies: { name: 'company-structure', caption: 'A company, its people, its tools and its departments.' },
+  'roles-and-permissions': { name: 'company-structure', caption: 'Company roles set each person\'s role in each tool; departments appear in every tool.' },
+  'company-administration': { name: 'company-structure', caption: 'What a company administrator looks after: people, tools and departments.' },
+  products: { name: 'approval-path', caption: 'Change requests, change orders and revisions are approved by someone other than the person who drafted them.' },
+  procurement: { name: 'approval-path', caption: 'Purchase orders above your approval limit wait for an approver; nobody approves what they drafted.' },
+  manufacturing: { name: 'approval-path', caption: 'Routings are released by an engineering approver who did not draft them.' },
+  quality: { name: 'approval-path', caption: 'Corrective actions and dispositions are decided by someone other than the person who raised them.' },
+  'cad-automation': { name: 'cad-connection', caption: 'From your request in the AI app to native features in SOLIDWORKS on your own computer.' },
+  'cad-ai-connection': { name: 'cad-connection', caption: 'The connector your AI app signs in to, and the computer that does the work.' },
+  'trouble-connections': { name: 'cad-connection', caption: 'Each link in the chain can be checked on its own: the AI app, CAD Automation, the Companion and SOLIDWORKS.' },
+};
+const diagram = DIAGRAM[g.id];
+const railItem = g.access?.path.find((x) => RAIL.includes(x));
+const screenTab = g.access && g.access.path.length > 2 && !RAIL.includes(g.access.path[g.access.path.length - 1]) ? g.access.path[g.access.path.length - 1] : undefined;
+const screen = railItem && g.access ? { rail: railItem, page: g.access.path[g.access.path.length - 1], tabs: screenTab ? [screenTab] : [], tab: screenTab } : undefined;
+const flows = [...new Set([...(g.workflows ?? []), ...workflowsThrough(g.id).map((w) => w.id)])].map(workflowById);
+const related = g.related.map(guideById);
+const chain = g.chain?.map((id) => {
+  const r = guideById(id);
+  return { href: guideUrl(r.id), title: r.short ?? r.title };
+});
+const updated = new Date(`${g.updated}T00:00:00Z`).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+---
+<div class="lv-gbody">
+  <p class="lv-gbody__status"><StatusLabel status={g.status} /> <span>{FEATURE_STATUS[g.status].meaning}</span></p>
+  <p class="lv-gbody__what">{g.what}</p>
+
+  <section class="lv-sec" aria-labelledby={`${p}-purpose`}>
+    <div class="lv-two">
+      <div>
+        <h4 id={`${p}-purpose`}>What it is for</h4>
+        <ul class="lv-list">{g.purpose.map((x) => <li>{x}</li>)}</ul>
+      </div>
+      <div>
+        <h4 id={`${p}-who`}>Who uses it</h4>
+        <ul class="lv-list">{g.who.map((x) => <li>{x}</li>)}</ul>
+      </div>
+    </div>
+    {diagram && <Diagram name={diagram.name} uid={`${p}-diagram`} caption={diagram.caption} />}
+  </section>
+
+  {g.access && (
+    <section class="lv-sec" aria-labelledby={`${p}-access`}>
+      <h4 id={`${p}-access`}>How to open it</h4>
+      <AccessPath {...g.access} />
+      {screen && <ErpScreen id={`${p}-screen`} rail={screen.rail} page={screen.page} tabs={screen.tabs} tab={screen.tab} />}
+    </section>
+  )}
+
+  {g.tutorials.length > 0 && (
+    <section class="lv-sec" aria-labelledby={`${p}-tutorials`}>
+      <h4 id={`${p}-tutorials`}>Step-by-step tutorials</h4>
+      <p class="lv-sec__lead">Open a tutorial and go through it one step at a time; the screen outline shows where to click. Tutorials only explain: they never change your records.</p>
+      {g.tutorials.map((t, i) => <TutorialStepper tutorial={t} idPrefix={p} level={4} open={i === 0} screen={screen} finishHref={g.access?.href} finishLabel={g.access?.label} />)}
+    </section>
+  )}
+
+  {g.buttons && g.buttons.length > 0 && (
+    <section class="lv-sec" aria-labelledby={`${p}-buttons`}>
+      <h4 id={`${p}-buttons`}>The important buttons</h4>
+      <dl class="lv-buttons">
+        {g.buttons.map((b) => (
+          <div class="lv-buttons__row">
+            <dt><span class="lv-ui">{b.label}</span></dt>
+            <dd>
+              <p><Answer text={b.does} /></p>
+              {b.when && <p class="lv-muted"><strong>When:</strong> <Answer text={b.when} /></p>}
+              {b.after && <p class="lv-muted"><strong>Afterwards:</strong> <Answer text={b.after} /></p>}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+  )}
+
+  <section class="lv-sec" aria-labelledby={`${p}-questions`}>
+    <h4 id={`${p}-questions`}>Common questions</h4>
+    <Faqs faqs={g.faqs} idPrefix={p} />
+  </section>
+
+  {(related.length > 0 || chain) && (
+    <section class="lv-sec" aria-labelledby={`${p}-connections`}>
+      <h4 id={`${p}-connections`}>How it connects</h4>
+      {chain && <FlowChain items={chain} label={`How a record moves from ${chain[0].title} to ${chain[chain.length - 1].title}`} />}
+      {flows.length > 0 && (
+        <>
+          <h5>Workflows through {g.short ?? g.title}</h5>
+          <ul class="lv-links">{flows.map((w) => <li><a href={workflowUrl(w.id)}>{w.title}</a> <span class="lv-muted">{w.stages.map((s) => s.label).join(' → ')}</span></li>)}</ul>
+        </>
+      )}
+      {related.length > 0 && (
+        <>
+          <h5>Related guides</h5>
+          <ul class="lv-links lv-links--inline">{related.map((r) => <li><a href={guideUrl(r.id)}>{r.title}</a></li>)}</ul>
+        </>
+      )}
+    </section>
+  )}
+
+  {g.notYet && g.notYet.length > 0 && (
+    <section class="lv-sec" aria-labelledby={`${p}-not-yet`}>
+      <h4 id={`${p}-not-yet`}>Not available yet</h4>
+      <p class="lv-sec__lead">These are not part of {g.short ?? g.title} today. They are listed so nobody looks for them.</p>
+      <ul class="lv-notyet">{g.notYet.map((n) => <li><StatusLabel status={n.status} /> <Answer text={n.text} /></li>)}</ul>
+    </section>
+  )}
+
+  <div class="lv-foot">
+    {g.access && <p><a class="bz-btn bz-btn--accent" href={g.access.href} rel="noopener">{g.access.label} <span aria-hidden="true">↗</span></a></p>}
+    <p class="lv-muted">Checked against BIZOMAT ERP on {updated}. Something wrong or missing? <a href="/contact/">Contact us</a>.</p>
+  </div>
+</div>

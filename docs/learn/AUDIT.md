@@ -111,3 +111,20 @@ There is no "MSP" product; CAD Automation's AI connection uses MCP (the Model Co
   Resources; the Knowledge Centre's search and where to start, by who you are; the module rail's groups, each linked to
   its guide. AI Search, the proof, Tools and the Library stay.
 - AI Search's catalogue and `/llms.txt` name the Knowledge Centre and its module guides.
+
+## 5. One page each (owner, 20 Nov 2026, the same day)
+
+After the first release the owner asked to "keep all modules in one page (under Systems) and make tutorials for all
+modules under one page with toggle with HTML/SVG image style", with all existing information transferred.
+
+- `/systems/` holds every system. Each section keeps its summary (who it is for, capabilities, benefits, connections,
+  getting started, questions) and adds a toggle, "Everything about <system>", holding the whole of the former system page
+  (moved unchanged into `src/components/systems/full/`: features with their status, real product screens, dashboards,
+  walk-throughs, set-up steps, workflows, integrations and questions). The seven `/systems/<id>/` pages answer 301 to
+  `/systems/#<id>`; links inside the site point at the sections (`/systems/#crm-features` and so on).
+- `/learn/` holds every guide and workflow, each a toggle with the full content of its former page; each tutorial is a
+  toggle beside an SVG screen outline whose highlighted control follows the step. The 46 earlier pages answer 301 to their
+  toggle.
+- Found on the way: the Systems page linked a system's guide only when it was a static page, so after the first release
+  the "Guides and tutorials" buttons on `/systems/` were missing; they are back. A redirect whose target has a fragment
+  now keeps the query before it (`/systems/?x=1#crm`), in the website server, the Worker and the router.

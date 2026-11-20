@@ -1,22 +1,22 @@
 // Pages the design audit loads: one or more of every page template on the website (src/pages/), not all of the
 // thousands of tool and Library pages. `key` pages get screenshots; `ci` pages are the ones the layout check in CI
-// loads (npm run audit:layout). A new template (for example a new system's page under /systems/, or a Knowledge Centre page under /learn/) belongs
-// here; a page of an existing template does not.
+// loads (npm run audit:layout). A new template belongs here; a page of an existing template does not. Systems and the Knowledge Centre are
+// one page each (owner, 20 Nov 2026): their entries open one toggle each (#<system>-full, #<guide>) so its content is checked; the ?view= query makes each a
+// page load of its own rather than a jump within the page the audit loaded before.
 export const PAGES = [
   { path: '/', name: 'home', key: true, ci: true },
   { path: '/systems/', name: 'systems', key: true, ci: true },
-  { path: '/systems/erp/', name: 'system-erp', key: true, ci: true },
+  { path: '/systems/?view=erp-full#erp-full', name: 'system-erp', key: true, ci: true },
   { path: '/learn/', name: 'learn', key: true, ci: true },
-  { path: '/learn/procurement/', name: 'learn-guide', key: true, ci: true },
-  { path: '/learn/workflows/', name: 'learn-workflows', ci: true },
-  { path: '/learn/workflows/procure-to-pay/', name: 'learn-workflow', ci: true },
+  { path: '/learn/?view=procurement#procurement', name: 'learn-guide', key: true, ci: true },
+  { path: '/learn/?view=workflow-procure-to-pay#workflow-procure-to-pay', name: 'learn-workflow', ci: true },
   { path: '/pricing/', name: 'pricing', key: true, ci: true },
-  { path: '/systems/crm/', name: 'system-crm', ci: true },
-  { path: '/systems/finance/', name: 'system-finance', ci: true },
-  { path: '/systems/projects/', name: 'system-projects', ci: true },
-  { path: '/systems/engineering/', name: 'system-engineering', ci: true },
-  { path: '/systems/manufacturing/', name: 'system-manufacturing', key: true, ci: true },
-  { path: '/systems/whs/', name: 'system-whs', key: true, ci: true },
+  { path: '/systems/?view=crm-full#crm-full', name: 'system-crm', ci: true },
+  { path: '/systems/?view=finance-full#finance-full', name: 'system-finance', ci: true },
+  { path: '/systems/?view=projects-full#projects-full', name: 'system-projects', ci: true },
+  { path: '/systems/?view=engineering-full#engineering-full', name: 'system-engineering', ci: true },
+  { path: '/systems/?view=manufacturing-full#manufacturing-full', name: 'system-manufacturing', key: true, ci: true },
+  { path: '/systems/?view=whs-full#whs-full', name: 'system-whs', key: true, ci: true },
   { path: '/resources/', name: 'resources', key: true, ci: true },
   { path: '/tools/', name: 'tools', key: true, ci: true },
   { path: '/tools/?tool=air-pipe-drop', name: 'tool-app', ci: true },

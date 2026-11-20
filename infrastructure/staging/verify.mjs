@@ -78,15 +78,15 @@ if (phase !== 'off') {
   check(seen === newUi, `the website follows the flag within 150 s (${newUi ? 'new UI' : 'old look'})`);
 }
 
-const SITE = ['/', '/systems/', '/systems/erp/', '/systems/crm/', '/systems/finance/', '/systems/projects/', '/systems/engineering/',
-  '/systems/manufacturing/', '/systems/whs/', '/learn/', '/learn/procurement/', '/learn/workflows/', '/learn/workflows/procure-to-pay/',
+const SITE = ['/', '/systems/', '/systems/#erp', '/systems/#crm', '/systems/#finance', '/systems/#projects', '/systems/#engineering',
+  '/systems/#manufacturing', '/systems/#whs', '/learn/', '/learn/#procurement', '/learn/#workflows', '/learn/#workflow-procure-to-pay',
   '/resources/', '/tools/', '/tools/abbe-error/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/', '/contact/', '/assessment/'];
 for (const path of SITE) {
   const r = await rawPage(path);
   const html = r.status === 200 && /<html\b/i.test(r.text);
   check(html && marked(r.text) === newUi, `${path}: 200, decodes, ${newUi ? 'marked for the new UI' : 'not marked'}`);
 }
-for (const [from, to] of [['/about/', '/engine-room/'], ['/system-preview/', '/systems/erp/'], ['/work/', '/systems/'], ['/pricing/', '/systems/'], ['/systems/crm/guide/', '/learn/crm/'], ['/systems/erp/guide/', '/learn/']]) {
+for (const [from, to] of [['/about/', '/engine-room/'], ['/system-preview/', '/systems/#erp'], ['/work/', '/systems/'], ['/pricing/', '/systems/'], ['/systems/crm/guide/', '/learn/#crm'], ['/systems/erp/guide/', '/learn/']]) {
   const r = await rawPage(from);
   check(r.status === 301 && String(r.headers.location ?? '').includes(to), `${from} answers 301 to ${to}`);
 }
@@ -104,11 +104,11 @@ const httpCredentials = { username: 'review', password: PW };
 const site = await browser.newContext({ httpCredentials, viewport: { width: 1280, height: 900 }, reducedMotion: 'no-preference' });
 const sp = await site.newPage();
 watch(sp, 'website');
-for (const path of ['/', '/systems/erp/', '/tools/', '/privacy/']) {
+for (const path of ['/', '/systems/#erp', '/tools/', '/privacy/']) {
   await sp.goto(BASE + path, { waitUntil: 'networkidle' });
   const ui = await sp.evaluate(() => document.documentElement?.dataset?.ui ?? '');
   check((ui === 'new') === newUi, `browser ${path}: data-ui ${ui || 'absent'}`);
-  if (newUi && path === '/systems/erp/') {
+  if (newUi && path === '/systems/#erp') {
     const h = await sp.evaluate(() => {
       const b = document.querySelector('main .button');
       return b ? Math.round(b.getBoundingClientRect().height) : 0;

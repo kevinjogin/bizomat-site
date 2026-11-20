@@ -8,14 +8,22 @@ guide covers is `docs/learn/COVERAGE.md` (generated).
 
 | Address | What |
 | --- | --- |
-| `/learn/` | The hub: search, then getting started, modules, workflows, AI and integrations, CAD and engineering, the administrator guide, troubleshooting and the first questions people ask |
-| `/learn/<guide>/` | One guide per module or topic, for example `/learn/procurement/`, `/learn/crm/`, `/learn/trouble-access/` |
-| `/learn/<guide>/#tutorial-<id>` | A tutorial, opened from search or a link |
-| `/learn/<guide>/#<guide>-q<n>` | A question, opened (the accordion opens itself) |
-| `/learn/workflows/` and `/learn/workflows/<id>/` | End-to-end processes across modules |
-| `/learn/search.json` | The search index (built from the content at build time) |
-| `/erp/learn`, `/erp/help` | Answer 301 to `/learn/` from the router (`infrastructure/proxy/routes.mjs`, `LEARN_ALIASES`) |
-| `/systems/*/guide/`, `/crm-platform/guide/`, `/finance-platform/guide/`, `/help/`, `/knowledge-centre/` | Answer 301 to the matching guide (`public/_redirects`) |
+| `/learn/` | One page (owner, 20 Nov 2026: "tutorials for all modules under one page with toggle"): search, a jump list, then every guide and workflow as a toggle, section by section, and the first questions people ask |
+| `/learn/#<guide>` | A guide's toggle, for example `/learn/#procurement`, `/learn/#crm`, `/learn/#trouble-access`; the address opens it |
+| `/learn/#tutorial-<guide>-<id>` | A tutorial inside its guide; the address opens both |
+| `/learn/#<guide>-q<n>` | A question inside its guide; the address opens both |
+| `/learn/#workflow-<id>` | A workflow's toggle; `/learn/#workflows` is the section |
+| `/learn/search.json` | The search index (built from the content at build time); a result opens its toggle |
+| `/learn/<guide>/`, `/learn/workflows/<id>/`, `/learn/workflows/` | The earlier pages: answer 301 to the toggle (`public/_redirects`) |
+| `/erp/learn`, `/erp/learn/<guide>`, `/erp/help` | Answer 301 to `/learn/` or `/learn/#<guide>` from the router (`infrastructure/proxy/routes.mjs`, `LEARN_ALIASES`) |
+| `/systems/*/guide/`, `/crm-platform/guide/`, `/finance-platform/guide/`, `/help/`, `/knowledge-centre/` | Answer 301 to the matching guide's toggle (`public/_redirects`) |
+
+Inside a guide's toggle: what it is and its status, what it is for and who uses it, how to open it (the path and a screen
+outline of BIZOMAT ERP with the module rail), the tutorials (each a toggle with Previous, Next, progress and Finish, beside
+a screen outline whose highlighted control follows the step on show), the important buttons, the questions (toggles), how
+it connects, what is not available yet and the button that opens it. The guide's content is `src/components/learn/GuideBody.astro`,
+a workflow's `WorkflowBody.astro`; every id in them starts with the guide's id (or `workflow-<id>`), so nothing collides on
+the one page.
 
 ## Content
 
@@ -39,7 +47,8 @@ Rules (checked by `tests/learn.test.ts`):
   Illustration; screen outlines (`ErpScreen.astro`) show where a control is, never a fake screenshot.
 
 To add a guide: write `src/data/learn/guides/<id>.ts`, import it in `src/data/learn/index.ts` and add it to `GUIDES`,
-then run `node scripts/learn/coverage.ts` and `npm test`. A workflow goes in `workflows/` the same way.
+add its two redirect lines (`/learn/<id>` and `/learn/<id>/` to `/learn/#<id>`) to `public/_redirects`, then run
+`node scripts/learn/coverage.ts` and `npm test`. A workflow goes in `workflows/` the same way.
 
 ## Where it is linked
 

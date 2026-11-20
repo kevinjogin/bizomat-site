@@ -86,6 +86,8 @@ async function auditOne(page, base, p, width, theme, state) {
   try {
     await page.setViewportSize({ width, height: width < 700 ? 800 : 900 });
     await page.emulateMedia({ colorScheme: theme, reducedMotion: 'reduce' });
+    // An address with a fragment, loaded again in the next theme, would only be a jump within the page: start afresh.
+    if (p.path.includes('#')) await page.goto('about:blank');
     const res = await page.goto(base + p.path, { waitUntil: 'load', timeout: 60000 });
     const status = res?.status() ?? 0;
     if (status !== (p.status ?? 200)) findings.push({ type: 'page-status', severity: 'error', sel: '', text: `HTTP ${status}` });

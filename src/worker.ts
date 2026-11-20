@@ -20,7 +20,7 @@
 //   /finance/... → BIZOMAT Finance, served by the same app too: the same binding, or the origin
 //   /company/... → BIZOMAT company accounts, served by the same app too: the same binding, or the origin
 //   /system/...  → BIZOMAT System, served by the same app too: the same binding, or the origin (/system-preview/, the
-//                  retired design preview, is the website's: it answers 301 to /systems/erp/)
+//                  retired design preview, is the website's: it answers 301 to /systems/#erp)
 import { handleChat, type ChatEnv } from './server/chat/handler.ts';
 import { handleDiscover, handleDiscoverEvent, type DiscoverEnv } from './server/discover/handler.ts';
 import { handleLearnAsk, handleLearnIntent, handleLearnLesson, handleLearnPlan, type LearnEnv } from './server/learn/handler.ts';
@@ -121,7 +121,7 @@ export default {
     }
     // The CAD Automation page was /cad/; on bizomat.ai that address is the application itself.
     if ((url.pathname === '/cad' || url.pathname === '/cad/') && read) {
-      return withHeaders(redirect(`/systems/engineering/${url.search}`, 301), url);
+      return withHeaders(redirect(`/systems/${url.search}#engineering`, 301), url);
     }
     // The Insights section is retired. public/_redirects sends each /insights/<slug>/ to its Library chapter;
     // anything those rules cannot match exactly reaches the Worker: add the missing trailing slash so the

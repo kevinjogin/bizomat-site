@@ -130,7 +130,9 @@ export function createAssets({ dir, cacheBytes = 64 * 2 ** 20, newUi }: AssetsOp
       }
     }
     if (!to) return null;
-    const location = /^https?:/.test(to) || to.includes('?') ? to : `${to}${search}`;
+    // The query goes before a fragment (/systems/#crm with ?x=1 is /systems/?x=1#crm).
+    const [path, frag] = to.split('#', 2) as [string, string | undefined];
+    const location = /^https?:/.test(to) || to.includes('?') ? to : `${path}${search}${frag !== undefined ? `#${frag}` : ''}`;
     return new Response(null, { status, headers: { Location: location, 'Cache-Control': 'public, max-age=3600' } });
   }
 

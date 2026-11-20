@@ -25,7 +25,7 @@ ${PLATFORM.name} (formerly ${PLATFORM.formerName.name}) makes business software 
 
 ## Systems
 
-The business software, each with a page and a guide in the Knowledge Centre: ${abs(SYSTEMS_HOME)}
+The business software, every system on one page, each with its guide in the Knowledge Centre: ${abs(SYSTEMS_HOME)}
 
 ${systems.join('\n')}
 
@@ -33,8 +33,8 @@ Signed-in people use the systems inside ${PLATFORM.name} ERP: ${abs(APP_LINKS.er
 
 ## Learn ${PLATFORM.name} ERP
 
-- [${LEARN_TITLE}](${abs(LEARN_HOME)}): a guide to every module, with step-by-step tutorials, the buttons explained and answered questions, all searchable (open to everyone, no sign-in).
-- [Workflows](${abs('/learn/workflows/')}): end-to-end processes across modules, from the first record to the last.
+- [${LEARN_TITLE}](${abs(LEARN_HOME)}): every module and workflow on one page, each in a toggle with step-by-step tutorials, screen outlines, the buttons explained and answered questions, all searchable (open to everyone, no sign-in).
+- [Workflows](${abs('/learn/#workflows')}): end-to-end processes across modules, from the first record to the last.
 - Module guides: ${GUIDES.filter((g) => g.section === 'modules').map((g) => `[${g.title}](${abs(guideUrl(g.id))})`).join(', ')}.
 
 ## What the software does not do

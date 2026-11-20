@@ -123,10 +123,12 @@ test('every link in the text leads to a real page', () => {
     for (const part of answerParts(text)) {
       if (!('href' in part)) continue;
       const path = part.href.split('#')[0].split('?')[0];
-      if (path === '/learn/' || path === '/learn/workflows/') continue;
-      const learn = path.match(/^\/learn\/(workflows\/)?([a-z0-9-]+)\/$/);
-      if (learn) {
-        assert.ok(learn[1] ? workflowIds.has(learn[2]) : guideIds.has(learn[2]), `${where}: ${part.href} is a guide or workflow`);
+      if (path === '/learn/') {
+        // A place on the one page: a guide, a workflow (workflow-<id>), a section, or a question or tutorial inside one.
+        const anchor = part.href.split('#')[1] ?? '';
+        const ok = !anchor || guideIds.has(anchor) || SECTIONS.some((x) => x.id === anchor) || (anchor.startsWith('workflow-') && workflowIds.has(anchor.slice(9)))
+          || [...guideIds].some((id) => anchor.startsWith(`${id}-`)) || anchor.startsWith('tutorial-');
+        assert.ok(ok, `${where}: ${part.href} is a place in the Knowledge Centre`);
         continue;
       }
       assert.ok(pageExists(path), `${where}: ${part.href} is a page of the website`);
@@ -167,15 +169,15 @@ test('the Knowledge Centre makes no claim the code does not back', () => {
 test('the search index covers every guide, tutorial, question and workflow', () => {
   const entries = searchEntries();
   for (const g of GUIDES) {
-    assert.ok(entries.some((e) => e.kind === 'guide' && e.url === `/learn/${g.id}/`), `${g.id} is searchable`);
-    for (const t of g.tutorials) assert.ok(entries.some((e) => e.url === `/learn/${g.id}/#tutorial-${t.id}`), `${g.id}: tutorial ${t.id} is searchable`);
-    assert.equal(entries.filter((e) => e.kind === 'question' && e.url.startsWith(`/learn/${g.id}/#`)).length, g.faqs.length, `${g.id}: every question is searchable`);
+    assert.ok(entries.some((e) => e.kind === 'guide' && e.url === `/learn/#${g.id}`), `${g.id} is searchable`);
+    for (const t of g.tutorials) assert.ok(entries.some((e) => e.url === `/learn/#tutorial-${g.id}-${t.id}`), `${g.id}: tutorial ${t.id} is searchable`);
+    assert.equal(entries.filter((e) => e.kind === 'question' && new RegExp(`^/learn/#${g.id}-q\\d+$`).test(e.url)).length, g.faqs.length, `${g.id}: every question is searchable`);
   }
-  for (const w of WORKFLOWS) assert.ok(entries.some((e) => e.kind === 'workflow' && e.url === `/learn/workflows/${w.id}/`), `${w.id} is searchable`);
+  for (const w of WORKFLOWS) assert.ok(entries.some((e) => e.kind === 'workflow' && e.url === `/learn/#workflow-${w.id}`), `${w.id} is searchable`);
 });
 
 test('the pages, components and diagrams follow the site rules', () => {
-  for (const f of ['src/pages/learn/index.astro', 'src/pages/learn/[guide].astro', 'src/pages/learn/workflows/index.astro', 'src/pages/learn/workflows/[workflow].astro', ...readdirSync(join(root, 'src/components/learn')).map((f) => `src/components/learn/${f}`)]) {
+  for (const f of ['src/pages/learn/index.astro', ...readdirSync(join(root, 'src/components/learn')).map((f) => `src/components/learn/${f}`)]) {
     assert.doesNotMatch(read(f), /\sstyle="/, `${f}: no inline styles (the CSP forbids them)`);
   }
   for (const f of readdirSync(join(root, 'src/assets/learn'))) {
@@ -189,13 +191,22 @@ test('the pages, components and diagrams follow the site rules', () => {
   assert.doesNotMatch(read('src/scripts/learn.ts'), /fetch\((?!'\/learn\/search\.json')/, 'the only request is the search index');
 });
 
-test('the old user guides answer 301 in the Knowledge Centre, and the ERP\'s own address leads there', () => {
+test('the Knowledge Centre is one page: every guide and workflow is a toggle there, and their old addresses answer 301 to it', () => {
+  const hub = read('src/pages/learn/index.astro');
+  assert.match(hub, /<details class="lv-guide" id=\{g\.id\}>/, 'each guide is a toggle with the guide\'s id');
+  assert.match(hub, /<details class="lv-guide" id=\{`workflow-\$\{w\.id\}`\}>/, 'each workflow is a toggle');
+  assert.match(hub, /<GuideBody g=\{g\} \/>/);
+  assert.match(hub, /<WorkflowBody w=\{w\} \/>/);
+  for (const page of ['[guide].astro', 'workflows/index.astro', 'workflows/[workflow].astro']) assert.ok(!existsSync(join(root, 'src/pages/learn', page)), `src/pages/learn/${page} is gone`);
   const redirects = read('public/_redirects');
-  for (const [from, to] of [['erp', '/learn/'], ['crm', '/learn/crm/'], ['finance', '/learn/finance/'], ['projects', '/learn/projects/'], ['engineering', '/learn/cad-automation/'], ['manufacturing', '/learn/manufacturing/'], ['whs', '/learn/whs/']]) {
-    assert.match(redirects, new RegExp(`^/systems/${from}/guide/ ${to.replace(/\//g, '\\/')} 301$`, 'm'));
-    assert.ok(!existsSync(join(root, `src/pages/systems/${from}/guide.astro`)), `the old /systems/${from}/guide/ page is gone`);
-    const id = to.match(/^\/learn\/([a-z0-9-]+)\/$/)?.[1];
-    if (id) assert.ok(guideIds.has(id), `${to} is a guide`);
+  const moved = (from: string, to: string) => assert.match(redirects, new RegExp(`^${from.replace(/[/#]/g, '\\$&')} ${to.replace(/[/#]/g, '\\$&')} 301$`, 'm'), `${from} -> ${to}`);
+  for (const g of GUIDES) { moved(`/learn/${g.id}/`, `/learn/#${g.id}`); moved(`/learn/${g.id}`, `/learn/#${g.id}`); }
+  for (const w of WORKFLOWS) { moved(`/learn/workflows/${w.id}/`, `/learn/#workflow-${w.id}`); moved(`/learn/workflows/${w.id}`, `/learn/#workflow-${w.id}`); }
+  moved('/learn/workflows/', '/learn/#workflows');
+  // The systems' old user guides go to their guide's toggle.
+  for (const [from, to] of [['erp', 'getting-started'], ['crm', 'crm'], ['finance', 'finance'], ['projects', 'projects'], ['engineering', 'cad-automation'], ['manufacturing', 'manufacturing'], ['whs', 'whs']]) {
+    moved(`/systems/${from}/guide/`, `/learn/#${to}`);
+    assert.ok(to === 'getting-started' || guideIds.has(to), `${to} is a guide`);
   }
   assert.match(read('infrastructure/proxy/routes.mjs'), /LEARN_ALIASES/, 'bizomat.ai/erp/learn is sent to /learn/ by the router');
 });

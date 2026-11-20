@@ -24,6 +24,25 @@ import { SITE } from '../../config/site.ts';
 import { APP_LINKS } from '../../config/platform.ts';
 import { STATUS_LABEL, SYSTEMS, SYSTEMS_HOME, type FeatureStatus, type SystemInfo } from '../../config/systems.ts';
 import { CAD, CRM, FINANCE, WORK } from '../../data/platform-catalog.ts';
+import Erp from '../../components/systems/full/Erp.astro';
+import Crm from '../../components/systems/full/Crm.astro';
+import Finance from '../../components/systems/full/Finance.astro';
+import Projects from '../../components/systems/full/Projects.astro';
+import Engineering from '../../components/systems/full/Engineering.astro';
+import Manufacturing from '../../components/systems/full/Manufacturing.astro';
+import Whs from '../../components/systems/full/Whs.astro';
+
+// Each system's full page, now a toggle on this page (owner, 20 Nov 2026). /systems/<id>/ answers 301 to /systems/#<id>.
+const FULL: Record<string, (props: Record<string, never>) => unknown> = { erp: Erp, crm: Crm, finance: Finance, projects: Projects, engineering: Engineering, manufacturing: Manufacturing, whs: Whs };
+const FULL_HINT: Record<string, string> = {
+  erp: 'Every module and its status, the capability matrix, the dashboard, real screens, set-up and how work moves',
+  crm: 'Every feature, real screens, the Overview, set-up, workflows and questions',
+  finance: 'Every feature, real screens, the Dashboard, set-up, workflows and questions',
+  projects: 'Views, teams, automations, dashboards, real screens, set-up and questions',
+  engineering: 'How it works, every tool, security, screens, installation and questions',
+  manufacturing: 'Every module, what works today, how it connects and questions',
+  whs: 'What it does and does not do, what works today, roles, workflows and questions',
+};
 
 const list = (items: readonly string[]) => items.join(', ').replace(/, ([^,]+)$/, ' and $1');
 const shotOf = (product: Screenshot['product'], name: string) => screenshots(product).find((s) => s.src.endsWith(`/${name}.webp`));
@@ -395,7 +414,8 @@ const start = [
   { t: 'Work from the rail', x: 'Open Sales and CRM, Finance and Accounting or Projects and Tasks. Set up Engineering Automation from Products and Engineering.' },
 ];
 
-const entries = SYSTEMS.map((s) => ({ s, d: DETAILS[s.id], guide: s.guide && pageExists(s.guide) ? s.guide : undefined }));
+// Guides live in the Knowledge Centre's one page (/learn/#<guide>), checked by tests/learn.test.ts.
+const entries = SYSTEMS.map((s) => ({ s, d: DETAILS[s.id], guide: s.guide && (s.guide.startsWith('/learn/') || pageExists(s.guide)) ? s.guide : undefined }));
 
 const schema = [
   {
@@ -502,39 +522,47 @@ const schema = [
         </div>
 
         <div class="sys-entry__grid">
-          <section class="sys-box" aria-labelledby={`${s.id}-cap`}>
-            <h3 id={`${s.id}-cap`}>{s.status === 'planned' ? 'Modules and their status' : 'Main capabilities'}</h3>
+          <section class="sys-box" aria-labelledby={`${s.id}-sum-cap`}>
+            <h3 id={`${s.id}-sum-cap`}>{s.status === 'planned' ? 'Modules and their status' : 'Main capabilities'}</h3>
             <ul class="pp-list sys-items">{d.capabilities.map((c) => <li><span>{c.t}</span> <StatusLabel status={c.st} /></li>)}</ul>
             {d.limit && <p class="pp-table-note">{d.limit}</p>}
           </section>
-          <section class="sys-box" aria-labelledby={`${s.id}-ben`}>
-            <h3 id={`${s.id}-ben`}>{s.status === 'planned' ? 'What it is designed to do' : 'Key benefits'}</h3>
+          <section class="sys-box" aria-labelledby={`${s.id}-sum-ben`}>
+            <h3 id={`${s.id}-sum-ben`}>{s.status === 'planned' ? 'What it is designed to do' : 'Key benefits'}</h3>
             <ul class:list={['pp-list', { 'sys-items': s.status === 'planned' }]}>{d.benefits.map((b) => <li><span>{b}</span>{s.status === 'planned' && <> <StatusLabel status="planned" /></>}</li>)}</ul>
           </section>
-          <section class="sys-box" aria-labelledby={`${s.id}-con`}>
-            <h3 id={`${s.id}-con`}>{s.status === 'planned' ? 'How it is designed to connect' : 'How it connects'}</h3>
+          <section class="sys-box" aria-labelledby={`${s.id}-sum-con`}>
+            <h3 id={`${s.id}-sum-con`}>{s.status === 'planned' ? 'How it is designed to connect' : 'How it connects'}</h3>
             <ul class="pp-list sys-items">{d.connects.map((c) => <li><span>{c.t}</span> <StatusLabel status={c.st} /></li>)}</ul>
           </section>
         </div>
 
         <div class="sys-entry__foot">
-          <section class="sys-box" aria-labelledby={`${s.id}-start`}>
-            <h3 id={`${s.id}-start`}>{s.status === 'planned' ? 'What you can do today' : 'Getting started'}</h3>
+          <section class="sys-box" aria-labelledby={`${s.id}-sum-start`}>
+            <h3 id={`${s.id}-sum-start`}>{s.status === 'planned' ? 'What you can do today' : 'Getting started'}</h3>
             <ol class="sys-mini-steps">{d.steps.map((st) => <li><strong>{st.t}</strong> {st.x}</li>)}</ol>
           </section>
-          <section class="sys-box" aria-labelledby={`${s.id}-faq`}>
-            <h3 id={`${s.id}-faq`}>Questions</h3>
+          <section class="sys-box" aria-labelledby={`${s.id}-sum-faq`}>
+            <h3 id={`${s.id}-sum-faq`}>Questions</h3>
             <dl class="sys-faq">{d.faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}</dl>
           </section>
         </div>
 
         <div class="sys-actions">
           {s.access && <Button href={s.access.href} variant="accent" rel="noopener" data-cta={`systems-${s.id}-access`}>{s.access.label}</Button>}
-          <Button href={s.url} variant="secondary" data-cta={`systems-${s.id}-about`}>About {s.name}</Button>
+          <Button href={`#${s.id}-full`} variant="secondary" data-cta={`systems-${s.id}-about`} data-open-full>All the details</Button>
           {guide && <Button href={guide} variant="text" data-cta={`systems-${s.id}-guide`}>Guides and tutorials</Button>}
           {s.access ? <p class="sys-actions__note">{s.access.note}</p> : <p class="sys-actions__note">Not available yet: there is no application to open.</p>}
         </div>
       </Container>
+      {/* Everything that was on the system's own page (owner, 20 Nov 2026: every module on one page), in a toggle. */}
+      <details class="sys-full" id={`${s.id}-full`}>
+        <summary class="sys-full__summary">
+          <span class="sys-full__label">Everything about {s.name}</span>
+          <span class="sys-full__hint">{FULL_HINT[s.id]}</span>
+        </summary>
+        {(() => { const Full = FULL[s.id]; return Full ? <Full /> : null; })()}
+      </details>
     </section>
   ))}
 
@@ -621,8 +649,26 @@ const schema = [
       <h2 id="systems-cta">Your company, its people and its tools, on one sign-in.</h2>
       <div class="pp-band__actions">
         <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="systems-band-erp">Open BIZOMAT ERP</Button>
-        <Button href="/systems/erp/" variant="secondary" data-cta="systems-band-about">About BIZOMAT ERP</Button>
+        <Button href="/systems/#erp" variant="secondary" data-cta="systems-band-about">About BIZOMAT ERP</Button>
       </div>
     </Container>
   </section>
 </BaseLayout>
+
+<script>
+  // One page for every system (owner, 20 Nov 2026): an address such as /systems/#crm-features, or the old pages'
+  // redirects (/systems/crm/ to /systems/#crm), opens the toggle that holds the target and brings it into view.
+  // "Everything about ..." opens its toggle too.
+  const open = (id: string, scroll: boolean) => {
+    if (!id) return;
+    const el = document.getElementById(id);
+    if (!el) return;
+    const box = el instanceof HTMLDetailsElement ? el : el.closest('details');
+    if (box && !box.open) box.open = true;
+    if (scroll && !(el instanceof HTMLElement && el.matches('section.pp-section'))) el.scrollIntoView({ block: 'start' });
+  };
+  const fromHash = () => open(decodeURIComponent(location.hash.slice(1)), true);
+  fromHash();
+  window.addEventListener('hashchange', fromHash);
+  document.querySelectorAll<HTMLAnchorElement>('a[data-open-full]').forEach((a) => a.addEventListener('click', () => open(a.hash.slice(1), false)));
+</script>

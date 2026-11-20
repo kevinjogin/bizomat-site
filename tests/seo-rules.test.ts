@@ -46,7 +46,7 @@ test('llms.txt lists every system with its page, says what is planned, and claim
 test('the retired design preview is linked from nowhere on the website, and its addresses answer 301', () => {
   const redirects = fs.readFileSync('public/_redirects', 'utf8');
   for (const from of ['/system-preview', '/system-preview/*', '/erp-design-preview', '/erp-design-preview/*']) {
-    assert.match(redirects, new RegExp(`^${from.replace(/[*/]/g, '\\$&')} /systems/erp/ 301$`, 'm'), from);
+    assert.match(redirects, new RegExp(`^${from.replace(/[*/]/g, '\\$&')} /systems/#erp 301$`, 'm'), from);
   }
   const walk = (dir: string): string[] => fs.readdirSync(dir, { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(`${dir}/${e.name}`) : [`${dir}/${e.name}`]));
   for (const file of [...walk('src/pages'), ...walk('src/config'), ...walk('src/components')].filter((f) => /\.(astro|ts|tsx|md|mdx)$/.test(f))) {

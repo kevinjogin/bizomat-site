@@ -30,7 +30,7 @@
 //                                   other methods                             308 https://bizomat.ai<path>?<query>
 //   cados.kevos.com                 all (all paths, upgrades)                 proxy -> cad (CAD Automation's old address)
 //   work.kevos.com                  all (all paths, WebSockets)               proxy -> work (Project Management's old address)
-//   kevos.com, www.kevos.com        GET, HEAD /cad, /cad/                     301 https://bizomat.ai/systems/engineering/?<query>
+//   kevos.com, www.kevos.com        GET, HEAD /cad, /cad/                     301 https://bizomat.ai/systems/?<query>#engineering
 //                                                                             (the old CAD Automation page: /cad is the app)
 //                                   GET, HEAD                                 301 https://bizomat.ai<path>?<query>
 //                                   other methods to /api or /api/*           proxy -> web (old cached pages still post forms)
@@ -195,7 +195,8 @@ function redirectTo(origin, path, query, method) {
   return {
     action: 'redirect',
     status: keep ? 301 : 308,
-    location: origin + path + (query ? `?${query}` : ''),
+    // The query goes before a fragment: /systems/#engineering with ?x=1 is /systems/?x=1#engineering.
+    location: origin + path.split('#')[0] + (query ? `?${query}` : '') + (path.includes('#') ? `#${path.split('#')[1]}` : ''),
   };
 }
 
@@ -223,7 +224,8 @@ function byPath(base, path, query, method, preview, tasksOrigin) {
   }
   if ((method === 'GET' || method === 'HEAD') && LEARN_ALIASES.test(routingPath(path))) {
     const rest = routingPath(path).replace(/^\/erp\/(?:learn|help)\/?/i, '').replace(/\/$/, '').toLowerCase();
-    return { ...base, action: 'redirect', status: 301, location: `${LEARN_PATH}${rest ? `${rest}/` : ''}${query ? `?${query}` : ''}` };
+    // The Knowledge Centre is one page: a guide is its toggle, /learn/#<guide> (owner, 20 Nov 2026).
+    return { ...base, action: 'redirect', status: 301, location: `${LEARN_PATH}${query ? `?${query}` : ''}${rest ? `#${rest}` : ''}` };
   }
   const lower = lowercaseLocation(path, query, method);
   if (lower) return { ...base, action: 'redirect', status: 301, location: lower };
@@ -262,7 +264,7 @@ export function decide({ host, method, path, query = '', previewCookie = '', pre
     // legacy: kevos.com and www.kevos.com moved to bizomat.ai
     const read = method === 'GET' || method === 'HEAD';
     const p = routingPath(path);
-    if (read && (p === '/cad' || p === '/cad/')) return { ...base, ...redirectTo(rule.origin, '/systems/engineering/', query, method) };
+    if (read && (p === '/cad' || p === '/cad/')) return { ...base, ...redirectTo(rule.origin, '/systems/#engineering', query, method) };
     if (read || !isApiPath(path)) {
       return { ...base, ...redirectTo(rule.origin, path, query, method) };
     }

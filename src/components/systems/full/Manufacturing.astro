@@ -1,5 +1,7 @@
 ---
-// /systems/manufacturing/: BIZOMAT Manufacturing and Operations (src/config/systems.ts), a family of BIZOMAT ERP modules.
+// Moved from src/components/systems/full/Manufacturing.astro into the one-page Systems (owner, 20 Nov 2026: every module on one
+// page under Systems). /systems/#manufacturing answers 301 to /systems/#manufacturing; every id here starts with "manufacturing-".
+// /systems/#manufacturing: BIZOMAT Manufacturing and Operations (src/config/systems.ts), a family of BIZOMAT ERP modules.
 // Live: Maintenance (stage 1 in production; stages 2 and 3, ERP Release 4 part B, live once deployed:
 // apps/work/src/worker/maintenance, apps/work/test/maintenance.test.ts and maintenance-m2-m3.test.ts), ERP Release 2's
 // Procurement and Inventory (apps/work/src/worker/erp, apps/work/test/erp-r2.test.ts) and ERP Release 3's Manufacturing
@@ -9,10 +11,8 @@
 // live once Release 5 is deployed). With it every module of the system works, so the system is Available; what is not
 // built inside a module is labelled Planned. The product screens are of working modules, with the example company's
 // invented data.
-import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
-import Breadcrumb from '../../../components/Breadcrumb.astro';
 import StatusLabel from '../../../components/StatusLabel.astro';
 import StatusLegend from '../../../components/StatusLegend.astro';
 import '../../../styles/product.css';
@@ -137,11 +137,11 @@ const modules: Module[] = [
 ];
 
 const today: { name: string; url: string; items: Item[] }[] = [
-  { name: 'BIZOMAT ERP', url: '/systems/erp/', items: [{ t: 'Procurement: requisitions, quotations, purchase orders and receipts', st: 'live' }, { t: 'Inventory: warehouses, stock, counts and valuation', st: 'live' }, { t: 'Manufacturing: orders, routings, the shop floor, MRP and job costing', st: 'live' }, { t: 'Quality: inspections, nonconformances and corrective actions', st: 'live' }, { t: 'Supply Chain: sales orders, shipments, deliveries and returns', st: 'live' }, { t: 'Bills of materials with stock availability', st: 'live' }] },
-  { name: 'BIZOMAT Finance', url: '/systems/finance/', items: [{ t: 'Supplier bills, approved and paid', st: 'live' }, { t: 'A draft bill from each goods receipt', st: 'connected' }, { t: 'A draft invoice from each shipment, and a draft credit note from each return', st: 'connected' }, { t: 'Budgets by category, department or project', st: 'live' }] },
-  { name: 'BIZOMAT Projects', url: '/systems/projects/', items: [{ t: 'Boards, timelines and workload to plan the work', st: 'live' }, { t: 'Tasks with owners, statuses and dates', st: 'live' }] },
-  { name: 'BIZOMAT Engineering Automation', url: '/systems/engineering/', items: [{ t: 'SOLIDWORKS parts and assemblies from your AI assistant', st: 'live' }, { t: 'Drawings with views, dimensions and a bill of materials', st: 'live' }] },
-  { name: 'BIZOMAT CRM', url: '/systems/crm/', items: [{ t: 'Customers, deals and follow-ups', st: 'live' }, { t: 'The customer record a sales order is made for', st: 'connected' }, { t: 'A draft sales order from a won deal', st: 'connected' }] },
+  { name: 'BIZOMAT ERP', url: '/systems/#erp', items: [{ t: 'Procurement: requisitions, quotations, purchase orders and receipts', st: 'live' }, { t: 'Inventory: warehouses, stock, counts and valuation', st: 'live' }, { t: 'Manufacturing: orders, routings, the shop floor, MRP and job costing', st: 'live' }, { t: 'Quality: inspections, nonconformances and corrective actions', st: 'live' }, { t: 'Supply Chain: sales orders, shipments, deliveries and returns', st: 'live' }, { t: 'Bills of materials with stock availability', st: 'live' }] },
+  { name: 'BIZOMAT Finance', url: '/systems/#finance', items: [{ t: 'Supplier bills, approved and paid', st: 'live' }, { t: 'A draft bill from each goods receipt', st: 'connected' }, { t: 'A draft invoice from each shipment, and a draft credit note from each return', st: 'connected' }, { t: 'Budgets by category, department or project', st: 'live' }] },
+  { name: 'BIZOMAT Projects', url: '/systems/#projects', items: [{ t: 'Boards, timelines and workload to plan the work', st: 'live' }, { t: 'Tasks with owners, statuses and dates', st: 'live' }] },
+  { name: 'BIZOMAT Engineering Automation', url: '/systems/#engineering', items: [{ t: 'SOLIDWORKS parts and assemblies from your AI assistant', st: 'live' }, { t: 'Drawings with views, dimensions and a bill of materials', st: 'live' }] },
+  { name: 'BIZOMAT CRM', url: '/systems/#crm', items: [{ t: 'Customers, deals and follow-ups', st: 'live' }, { t: 'The customer record a sales order is made for', st: 'connected' }, { t: 'A draft sales order from a won deal', st: 'connected' }] },
 ];
 
 // The flows, as they work today (Scenario G and Scenario B of the owner's brief).
@@ -164,12 +164,10 @@ const schema = [
   { '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title="Manufacturing, procurement, inventory, quality, maintenance and supply chain ERP" description={description} imageAlt="BIZOMAT Manufacturing and Operations: ERP modules that work today" breadcrumbs={crumbs} schema={schema}>
-  <section class="pp-hero" aria-labelledby="mfg-title">
+  <section class="pp-hero" aria-labelledby="manufacturing-mfg-title">
     <Container>
-      <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
       <p class="bz-eyebrow">{sys.name} · {sys.kind}</p>
-      <h1 id="mfg-title">Manufacturing and Operations</h1>
+      <h2 class="sys-full__title" id="manufacturing-mfg-title">Manufacturing and Operations</h2>
       <p class="sys-planned__status sys-hero-status"><StatusLabel status="live" /> Procurement, Inventory, Manufacturing, Quality, Supply Chain and Maintenance work today in BIZOMAT ERP.</p>
       <p class="pp-hero__lead">A family of BIZOMAT ERP modules for making, buying, storing, checking, maintaining and shipping goods. Procurement (requisitions, quotations, purchase orders and goods receipts), Inventory (warehouses, stock, counts and valuation), Manufacturing (orders, routings, the shop floor, MRP, job costing and job profitability), Quality (inspections, nonconformances and corrective actions), Supply Chain (sales orders, picking, packing, dispatch, deliveries and returns) and Maintenance, a maintenance management system (CMMS), work today inside BIZOMAT ERP.</p>
       <div class="pp-hero__actions">
@@ -180,11 +178,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="modules" aria-labelledby="modules-title">
+  <section class="pp-section" id="manufacturing-modules" aria-labelledby="manufacturing-modules-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">The modules</p>
-        <h2 id="modules-title">What each module does</h2>
+        <h2 id="manufacturing-modules-title">What each module does</h2>
         <p>Every module below is labelled. Manufacturing, Production planning, Procurement, Inventory, Warehouse management, Quality management, Maintenance and Supply chain are Live. Within a module, what is not built yet is labelled Planned.</p>
       </div>
       <div class="sys-legend">
@@ -193,7 +191,7 @@ const schema = [
       </div>
       <ul class="sys-features sys-features--spaced" role="list">
         {modules.map((m) => (
-          <li class:list={['sys-feature', { 'sys-feature--planned': m.st === 'planned' }]} id={m.id}>
+          <li class:list={['sys-feature', { 'sys-feature--planned': m.st === 'planned' }]} id={`manufacturing-${m.id}`}>
             <div class="sys-feature__head"><h3>{m.name}</h3><StatusLabel status={m.st} /></div>
             <p class="sys-feature__state">{m.st === 'planned' ? 'Planned: not available yet.' : m.st === 'live' ? `Live: works today in BIZOMAT ERP, under ${m.where ?? 'Operations'}.` : 'In development: not available yet.'}</p>
             <p>{m.x}</p>
@@ -207,17 +205,17 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="today" aria-labelledby="today-title">
+  <section class="pp-section pp-section--tint" id="manufacturing-today" aria-labelledby="manufacturing-today-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">What exists today</p>
-        <h2 id="today-title">What you can use now, in BIZOMAT ERP</h2>
+        <h2 id="manufacturing-today-title">What you can use now, in BIZOMAT ERP</h2>
         <p>These systems work today: production, purchasing, stock and deliveries in the ERP, with the customers, money, plans and drawings around them.</p>
       </div>
       <div class="pp-tools">
         {today.map((g) => (
-          <section aria-labelledby={`today-${g.url.split('/')[2]}`}>
-            <h3 id={`today-${g.url.split('/')[2]}`}><a href={g.url}>{g.name}</a></h3>
+          <section aria-labelledby={`manufacturing-today-${g.url.replace(/[^a-z0-9]+/gi, "")}`}>
+            <h3 id={`manufacturing-today-${g.url.replace(/[^a-z0-9]+/gi, "")}`}><a href={g.url}>{g.name}</a></h3>
             <ul class="pp-list sys-items">{g.items.map((i) => <li><span>{i.t}</span> <StatusLabel status={i.st} /></li>)}</ul>
           </section>
         ))}
@@ -225,11 +223,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="design" aria-labelledby="design-title">
+  <section class="pp-section" id="manufacturing-design" aria-labelledby="manufacturing-design-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">How it fits together</p>
-        <h2 id="design-title">Working through the systems you already use</h2>
+        <h2 id="manufacturing-design-title">Working through the systems you already use</h2>
         <p>The modules use the CRM and Finance for customers, Finance for bills, invoices and credit notes, and Projects for the work around an order. Nothing is copied: each record stays in its own system. Posting stock and production value to Finance’s ledger is planned.</p>
       </div>
       <div class="sys-concepts">
@@ -277,11 +275,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="faq" aria-labelledby="faq-title">
+  <section class="pp-section pp-section--tint" id="manufacturing-faq" aria-labelledby="manufacturing-faq-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Questions</p>
-        <h2 id="faq-title">About Manufacturing and Operations</h2>
+        <h2 id="manufacturing-faq-title">About Manufacturing and Operations</h2>
       </div>
       <dl class="sys-faq sys-faq--wide">
         {faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
@@ -290,10 +288,10 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--inverse" aria-labelledby="mfg-cta">
+  <section class="pp-section pp-section--inverse" aria-labelledby="manufacturing-mfg-cta">
     <Container class="pp-band">
       <div>
-        <h2 id="mfg-cta">Make, buy, store, check, maintain and ship in one workspace.</h2>
+        <h2 id="manufacturing-mfg-cta">Make, buy, store, check, maintain and ship in one workspace.</h2>
         <p>{erp.access?.note}</p>
       </div>
       <div class="pp-band__actions">
@@ -304,4 +302,3 @@ const schema = [
       </div>
     </Container>
   </section>
-</BaseLayout>

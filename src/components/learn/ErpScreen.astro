@@ -2,8 +2,9 @@
 // "Where to click", drawn as a plain outline of the BIZOMAT ERP screen: the module rail on the left (its real labels,
 // apps/work/src/client/components/layout/SuiteRail.tsx), the page, and the control to use. It is an illustration of
 // the layout, never a copy of a screen: real screens are on the Systems pages, marked "Product screen".
-interface Props { rail?: string; page: string; control?: string; tabs?: string[]; tab?: string; id: string }
-const { rail, page, control, tabs = [], tab, id } = Astro.props;
+interface Props { rail?: string; page: string; control?: string; tabs?: string[]; tab?: string; id: string; /** Beside a tutorial: the control follows the step on show (src/scripts/learn.ts). */ dynamic?: boolean }
+const { rail, page, control, tabs = [], tab, id, dynamic } = Astro.props;
+const cut = (s: string) => (s.length > 22 ? `${s.slice(0, 21)}…` : s);
 export const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Maintenance', 'Health and Safety', 'Operations', 'Reports', 'Administration'];
 const W = 720;
 const H = 380;
@@ -13,7 +14,7 @@ const tabW = 118;
 const shown = tabs.slice(0, 4);
 const label = `Illustration of BIZOMAT ERP: in the module rail at the left choose ${rail ?? 'the module'}${shown.length && tab ? `, then the ${tab} tab` : ''}${control ? `, then ${control}` : ''}. The page is ${page}.`;
 ---
-<figure class="lv-figure lv-figure--screen">
+<figure class="lv-figure lv-figure--screen" data-screen={dynamic ? '' : undefined}>
   <svg class="lv lv-screen" viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby={`${id}-t`}>
     <title id={`${id}-t`}>{label}</title>
     <rect x="0" y="0" width={W} height={H} rx="14" class="lv-screen__bg" />
@@ -33,10 +34,10 @@ const label = `Illustration of BIZOMAT ERP: in the module rail at the left choos
         <text x={railW + 28 + i * (tabW + 8) + tabW / 2} y="83" text-anchor="middle" class:list={['lv-screen__tabtext', { 'is-on': t === tab }]}>{t.length > 16 ? `${t.slice(0, 15)}…` : t}</text>
       </g>
     ))}
-    {control && (
-      <g>
+    {(control || dynamic) && (
+      <g class:list={['lv-screen__control', { 'is-off': !control }]} data-screen-control>
         <rect x={W - 200} y="24" width="176" height="34" rx="8" class="lv-screen__button" />
-        <text x={W - 112} y="46" text-anchor="middle" class="lv-screen__buttontext">{control.length > 22 ? `${control.slice(0, 21)}…` : control}</text>
+        <text x={W - 112} y="46" text-anchor="middle" class="lv-screen__buttontext" data-screen-control-text>{control ? cut(control) : ''}</text>
         <circle cx={W - 30} cy="58" r="14" class="lv-screen__ring" />
       </g>
     )}
@@ -44,5 +45,5 @@ const label = `Illustration of BIZOMAT ERP: in the module rail at the left choos
       <rect x={railW + 28} y={116 + i * 48} width={W - railW - 56} height="36" rx="8" class="lv-screen__row" />
     ))}
   </svg>
-  <figcaption><span class="lv-tag">Illustration</span> Where to click: {rail ? <strong>{rail}</strong> : null}{shown.length && tab ? <> → <strong>{tab}</strong></> : null}{control ? <> → <strong>{control}</strong></> : null}</figcaption>
+  <figcaption><span class="lv-tag">Illustration</span> Where to click: {rail ? <strong>{rail}</strong> : null}{shown.length && tab ? <> → <strong>{tab}</strong></> : null}{dynamic ? <span data-screen-caption hidden={!control}> → <strong data-screen-caption-text>{control}</strong></span> : control ? <> → <strong>{control}</strong></> : null}</figcaption>
 </figure>
