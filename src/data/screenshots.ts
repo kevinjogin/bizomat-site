@@ -7,17 +7,17 @@ import { join } from 'node:path';
 export interface Screenshot { src: string; product: 'cad' | 'work' | 'crm' | 'finance' | 'erp'; title: string; caption: string }
 
 const ALL: readonly Screenshot[] = [
-  // BIZOMAT ERP, the one workspace, captured 14 Nov 2026 from a local instance with a fictional company ("Acme Studio")
-  // and example data (apps/work/scripts/seed-local.mjs and the capture script's own example records).
-  { src: '/proof-of-work/product/erp-dashboard.webp', product: 'erp', title: 'BIZOMAT ERP: Dashboard', caption: 'Your company and every tool in it, with the figures your role may see. The module rail is on the left.' },
+  // BIZOMAT ERP, the one workspace, recaptured 20 Nov 2026 with the module rail and each module's own side menu, from a
+  // local instance's example company ("Acme Studio (example)", the ERP's own invented data: worker/system/example.ts).
+  { src: '/proof-of-work/product/erp-dashboard.webp', product: 'erp', title: 'BIZOMAT ERP: Dashboard', caption: 'Every module of the company with its progress, as far as your role may see it. The module rail is on the left.' },
   { src: '/proof-of-work/product/erp-crm.webp', product: 'erp', title: 'BIZOMAT ERP: Sales and CRM', caption: 'The CRM opens inside the ERP: the same records and permissions, with the module rail beside it.' },
   { src: '/proof-of-work/product/erp-finance.webp', product: 'erp', title: 'BIZOMAT ERP: Finance and Accounting', caption: 'Finance opens inside the ERP, in the company\'s business workspace.' },
   { src: '/proof-of-work/product/erp-projects.webp', product: 'erp', title: 'BIZOMAT ERP: Project Management', caption: 'A project board inside the ERP: groups, owners, statuses and dates.' },
-  { src: '/proof-of-work/product/erp-engineering.webp', product: 'erp', title: 'BIZOMAT ERP: Products and Engineering', caption: 'CAD Automation\'s set-up steps and the computers this person may see.' },
-  { src: '/proof-of-work/product/erp-operations.webp', product: 'erp', title: 'BIZOMAT ERP: Operations', caption: 'What waits for approval, receiving, production, inspection, shipping or returns, then the operations modules with their status: Procurement, Inventory, Manufacturing, Quality and Supply Chain live.' },
+  { src: '/proof-of-work/product/erp-engineering.webp', product: 'erp', title: 'BIZOMAT ERP: Engineering', caption: 'Design, CAD Automation, Manufacturing and Quality, each with what waits in it; Engineering\'s side menu lists their sections.' },
+  { src: '/proof-of-work/product/erp-warehouse.webp', product: 'erp', title: 'BIZOMAT ERP: Warehouse', caption: 'Stock and Orders and dispatch: stock value, products to reorder, adjustments and counts to approve, orders to allocate, shipments to pick, pack or dispatch, and returns.' },
   // ERP Release 2, captured 15 Nov 2026 from a local instance with the example company's invented data.
   { src: '/proof-of-work/product/erp-procurement.webp', product: 'erp', title: 'BIZOMAT ERP: a request for quotation', caption: 'Two suppliers\' quotations side by side, with the cheapest and the fastest marked, ready for a buyer to select one.' },
-  { src: '/proof-of-work/product/erp-inventory.webp', product: 'erp', title: 'BIZOMAT ERP: Inventory', caption: 'Stock by product: on hand, reserved, available, on order, reorder points and value.' },
+  { src: '/proof-of-work/product/erp-inventory.webp', product: 'erp', title: 'BIZOMAT ERP: Warehouse, Stock', caption: 'Stock by product: on hand, reserved, available, on order, reorder points and value.' },
   { src: '/proof-of-work/product/erp-reports.webp', product: 'erp', title: 'BIZOMAT ERP: Reports', caption: 'Every report of the company\'s tools in one place; each opens in its module.' },
   { src: '/proof-of-work/product/erp-administration.webp', product: 'erp', title: 'BIZOMAT ERP: Administration', caption: 'The company, each tool\'s team and settings, and your own profile.' },
   // ERP Release 3, captured 15 Nov 2026 from a local instance with the example company's invented data.
@@ -38,7 +38,7 @@ const ALL: readonly Screenshot[] = [
   { src: '/proof-of-work/product/erp-maintenance-inspection.webp', product: 'erp', title: 'BIZOMAT ERP: an inspection and labour costs on a work order', caption: 'A failed inspection item with the request it raised, then parts used and labour priced at the person\'s rate.' },
   { src: '/proof-of-work/product/erp-maintenance-reliability.webp', product: 'erp', title: 'BIZOMAT ERP: the reliability report', caption: 'Failures, downtime, mean time to repair, mean time between failures and availability per asset, each linked to its work orders.' },
   // ERP Release 5 part A (supply chain), captured 15 Nov 2026 from a local instance with the example company's invented data.
-  { src: '/proof-of-work/product/erp-supply-chain.webp', product: 'erp', title: 'BIZOMAT ERP: Supply Chain', caption: 'What waits: orders to confirm and allocate, shipments to pick, pack, dispatch and invoice, and returns to authorise or receive.' },
+  { src: '/proof-of-work/product/erp-supply-chain.webp', product: 'erp', title: 'BIZOMAT ERP: Warehouse, Orders and dispatch', caption: 'What waits: orders to confirm and allocate, shipments to pick, pack, dispatch and invoice, and returns to authorise or receive.' },
   { src: '/proof-of-work/product/erp-sales-order.webp', product: 'erp', title: 'BIZOMAT ERP: a sales order', caption: 'A sales order for a customer of the CRM and Finance, partly shipped, with one line made to order.' },
   { src: '/proof-of-work/product/erp-shipment.webp', product: 'erp', title: 'BIZOMAT ERP: a delivered shipment', caption: 'A shipment picked, packed, dispatched with its tracking number and delivered, with each step marked.' },
   { src: '/proof-of-work/product/erp-supply-reports.webp', product: 'erp', title: 'BIZOMAT ERP: supply chain reports', caption: 'Sales by product from what was dispatched, beside the other supply chain reports.' },
