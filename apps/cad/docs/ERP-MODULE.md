@@ -69,12 +69,33 @@ reads "a file" (`erplink._scrub`, also applied to the runs sent to the ERP).
 
 ## The sync
 
-`erplink.build` sends each account (id, email, confirmed, BIZOMAT id, counts, how many have no company yet), usage by
-company, finished commands since the last answer (only those made after the link started: the earlier ones are history,
-not new runs) and checksums. `erplink.apply` keeps the answer in `erp_link.json`: each account's companies and default,
+`erplink.build` sends `contract: 2`, each account (id, email, confirmed, BIZOMAT id, counts, how many have no company
+yet), usage by company (commands waiting for a computer and running apart), finished commands since the last answer
+(only those made after the link started: the earlier ones are history, not new runs), the downloads made through AI
+assistants' links since the last answer, and checksums. `erplink.apply` keeps the answer in `erp_link.json`: each account's companies and default,
 each company's limits, and whether the old pages open in the ERP (`cad_redirect`). It then moves the account's computers,
 commands and AI connections with no company into its default company. An answer older than 15 minutes counts for nothing
 (`erplink.fresh`): the server then works as before.
+
+## Contract 2 (owner's approval of 20 Nov 2026)
+
+The owner approved the audit's fixes (website repository, `docs/cad/AUDIT-2026-11-20.md`, G2 to G7). The sync says
+`contract: 2`, and the ERP answers each account's companies as `{id, name, operate, export}`, plus `passwordRetired`. An
+ERP from before sends neither key: a company then means "may work, may download", as before. The ERP names read-only
+companies only to an engine that says `contract: 2`, so the order of the two deploys never widens anyone's access.
+
+| What | Where | How |
+| --- | --- | --- |
+| Read-only roles are refused inside the company, never worked by person | `erplink.company_for_connection`, `working_companies`, the consent page (`server.oauth_authorize`) | A connection in a company where the role is read only (`operate: false`) is refused with `READ_ONLY`; so is one with no company when every company the person is in is read only. The consent page offers only the companies where they may work, and refuses with 403 when there is none. Earlier work never moves into a company where the person is refused |
+| The company's download setting reaches the AI connector | `sw_tools.sw_export`, `server.api_artifact`, `erplink.may_export`, `download_refused`, `record_download` | Where the role may not download, `sw_export` keeps the export for the company (the ERP's Exports, one hour) without a `download_url`, and says so. A link is checked again when it is used (the role may have changed within the hour: 403). Every download of a company's export through its link is kept in `erp_link.json` (`downloads`, at most 500) and sent once to the ERP, which writes it into the company's history; a download is removed only after the ERP's 200. Previews (PNG) are pictures, not CAD files, and are not counted |
+| Waiting and running commands apart | `erplink.build` | `queued` is the company's commands not yet given to a computer; `running` the others not finished |
+| Password sign-in retired | `erplink.password_retired`, `auth._password_retired`, `devicebridge.pair_password` | While the ERP says so (flag `cad_password_retired`, which acts only once every account here is linked to a BIZOMAT account) and its answer is fresh: `/login` (also `?password=1`) goes to Sign in with BIZOMAT, a password sign-in answers 403 with a way on, `/signup` and `/join/<invite>` go to Sign in with BIZOMAT (with the invite), early access is closed, and the Companion's password pairing answers 403 `PASSWORD_RETIRED` with how to pair with the code. A stale answer counts for nothing, so password sign-in comes back when the ERP cannot be reached; `python -m opensketch --reset-password` still sets a password for that case |
+
+Admin's people API reports `password_retired` and `downloads_waiting` under `erp_link`.
+
+Tests: `tests/test_erplink.py` (7 more): an answer from before contract 2, read-only refusal, the consent page, an export
+without a link, a link checked again and recorded once, waiting and running counts, and password retirement with its
+rollback.
 
 ## The old pages
 
@@ -103,10 +124,19 @@ pages here. With the flag off, every page is served here again.
 
 ## Not in this change
 
-- Uploads sent to SOLIDWORKS are not scanned for malware: they go only to the person's own SOLIDWORKS. Exports saved to a
+- Uploads sent to SOLIDWORKS are not scanned for malware: they go only to the person's own SOLIDWORKS (the audit's G12,
+  a later brief).
+- When the ERP's answer is older than 15 minutes, the server works by person: company limits, team views and the
+  read-only refusal do not apply to new work until it answers again (nothing moves between companies). The ERP's
+  console and module say so after 5 minutes. Exports saved to a
   product are checked by the ERP as every engineering upload is.
 - The add-in reads only an assembly's top-level components, without materials, so the ERP's bill of materials proposal
   groups them by part file and says materials are not read.
 - `cados` stays in Amsterdam (owner, 19 Nov 2026).
 
-Tests: `tests/test_erplink.py` (a stand-in ERP with its own key and JWKS).
+Tests: `tests/test_erplink.py` (a stand-in ERP with its own key and JWKS), and `tests/test_erp_e2e.py` (slow, by hand
+before a release, in place of the retired staging walk): the real BIZOMAT work app built and run on Node
+(`BIZOMAT_WORK_APP=<bizomat-site>/apps/work`, after `npm run build` there), this engine over HTTP and the stand-in
+Companion paired through the ERP; `BIZOMAT_E2E_REPORT=<file>` writes each check's result. It covers one sign-in, the
+module for permitted people only, company isolation, downloads by role in the ERP and through links, the migration of
+earlier work, old pages into the ERP, fair-use limits, read-only refusal, password retirement and the rollback.

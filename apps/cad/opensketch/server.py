@@ -584,6 +584,8 @@ def api_admin_people(request: Request):
             "erp": erpstatus.status(), "evidence_scan": evidencescan.status(),
             "erp_link": {"on": erplink.syncer._thread is not None, "fresh": erplink.fresh(), "redirect": erplink.redirect_on(),
                          "accounts_in_erp": sum(1 for v in erplink.state()["accounts"].values() if v.get("companies")),
+                         "password_retired": erplink.password_retired(),
+                         "downloads_waiting": len(erplink.state().get("downloads") or []),
                          "last": erplink.syncer.last}}
 
 
@@ -595,6 +597,14 @@ def api_artifact(artifact_id: str, filename: str, expires: str = "", signature: 
         path, info = artifacts.resolve(artifact_id, filename, expires, signature)
     except artifacts.ArtifactError:
         raise HTTPException(404, "No such artifact") from None
+    # A company's export (BIZOMAT ERP): only while its owner's role there may download, and every download goes into
+    # the company's history at the next sync (erplink.py, contract 2). Previews are pictures, not CAD files.
+    from . import erplink
+    if info.get("format") != "png":
+        why = erplink.download_refused(info)
+        if why:
+            raise HTTPException(403, why)
+        erplink.record_download(info)
     return FileResponse(path, filename=info["filename"], media_type=info["media_type"],
                         headers={"Cache-Control": "no-store", "Referrer-Policy": "no-referrer",
                                  "X-Content-Type-Options": "nosniff", "Content-Security-Policy": "sandbox"})
@@ -1163,9 +1173,12 @@ async def oauth_authorize(request: Request):
     u = _user(request)
     uid = u["id"] if u else "local"
     from . import erplink
+    if u and erplink.in_erp(u["id"]) and not erplink.working_companies(u["id"]):
+        # read only in every company where they are inside BIZOMAT ERP: refused there, never by person (contract 2)
+        return _auth_html(auth.oauth_problem_page(erplink.read_only_error(u["id"], None).message), 403)
     return _auth_html(auth.consent_page(rec["name"], req["redirect_uri"], u, mcpauth.sign_request(req, uid),
                                         rec.get("host", "") if rec.get("cimd") else "",
-                                        companies=erplink.companies_of(u["id"]) if u else None))
+                                        companies=erplink.working_companies(u["id"]) if u else None))
 
 
 @app.post("/oauth/authorize")
