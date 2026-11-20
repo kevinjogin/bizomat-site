@@ -204,6 +204,15 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   out to CAD Automation's own application in the ERP's side menu. Released 20 Nov 2026 with every flag off (kevinjogin/bizomat-site#94, deploy run 43;
   the engine kevinjogin/bizomat-cad#19, `cados` 13db582, its deploy run 10; `apps/cad` synced in #95), after the staging
   verification with `cad_in_erp` on in staging only; the engine's sync to the ERP answers 200 every minute.
+  **Every CAD page in the ERP** (owner, 20 Nov 2026: "all CAD Automation data and details in ERP, not at bizomat.ai/cad",
+  and every link to bizomat.ai/cad and its pages to go there; `docs/cad/README.md`, "Every page of CAD Automation, in the
+  ERP"): Home, CAD Assistant, SOLIDWORKS, Tools, History, Settings (the person's own private address and add-in key,
+  never kept by the ERP) and Admin are the module's tabs. Nothing links CAD Automation's pages
+  (`tests/cad-links.test.ts`): people open `https://bizomat.ai/erp/cad`; `APP_LINKS.cad` keeps only the connector. With
+  `cad_redirect` on, the old pages answer 302 into the ERP for visitors (old links, search results) and for people whose
+  company has the module; the programs (`/cad/mcp`, OAuth, the computers' link, the installer) and `/cad/privacy` stay.
+  The Knowledge Centre's CAD guides still describe CAD Automation's own pages until the owner switches the flags on:
+  rewrite them then, never before.
   **Company Admin console** (owner, 20 Nov 2026; `docs/platform/company-admin.md`; flag `company_admin_console`, off):
   the company administrators' counterpart of the super admin's ERP console, at `/erp/c/<company>/company-admin` (and
   `/erp/company-admin`), with "Company Admin" in the module rail and side menu for the owner and active administrators

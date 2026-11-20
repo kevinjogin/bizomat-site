@@ -13,7 +13,7 @@ for a company, which needs the owner's approval. The brief's pilot (one company 
 
 | In the ERP (`/erp/c/<company>/cad`) | Where it stays |
 | --- | --- |
-| Overview, computers, AI assistants, history, exports, tools, setup, pairing a computer | The AI connector `https://bizomat.ai/cad/mcp` and its sign-in |
+| Overview, computers, AI assistants, history, exports, tools, access, people, setup, pairing a computer | The AI connector `https://bizomat.ai/cad/mcp` and its sign-in |
 | Who may see and do what (the ERP's central permissions) | The computers' gateway (`/cad/v2/device/*`) and the Companion |
 | Saved exports as engineering documents, bill of materials proposals, drawings on orders, NCRs and inspection plans, review tasks in Projects | The geometry checks and CAD workers (Fly app `cados`, Amsterdam) |
 | The company's history of CAD work, notices of failed work | SOLIDWORKS on the person's own computer, the master copy of every model |
@@ -34,12 +34,48 @@ four steps, each done in a small popup on the same page, and ticked from what CA
 The ERP's side menu has no link out to CAD Automation's own application any more; where the module is on, the Products
 and Engineering tab "CAD Automation" opens it.
 
+## Every page of CAD Automation, in the ERP (owner, 20 Nov 2026)
+
+The owner asked for "all CAD Automation data and details in ERP, not at bizomat.ai/cad", so people manage and watch their
+CAD assistance from the ERP, and for every link to bizomat.ai/cad and its pages to go there instead. Where each page went:
+
+| CAD Automation's page | In the ERP (`/erp/c/<company>/cad`) |
+| --- | --- |
+| Home (`/cad/`, `/cad/dashboard`) | Overview: the set-up steps, the counts, **Start an engineering task** (the task box, example requests to fill it, Copy task, Open Claude, Open ChatGPT, the task copied first) and **Your connection** (SOLIDWORKS, computers, AI assistants, activity), recent work |
+| CAD Assistant (`/cad/assistant`) | AI assistants: the connector address, the steps for Claude, ChatGPT and other apps, the connected assistants with Disconnect, prompts to check it works, and **What you can ask** |
+| SOLIDWORKS (`/cad/solidworks`) | Computers: the installer (through the ERP), the computers with default and remove, **How CAD Automation connects** (add-in, Companion, cloud MCP, self-hosted, direct link, launcher macro), and **Direct link and manual installation** (the service address, the add-in package through the ERP where the server has one) |
+| Tools (`/cad/tools`) | Tools |
+| History (`/cad/history`) | History, with each command's steps and result |
+| Settings (`/cad/settings`) | Access: the account (the BIZOMAT account; profile and security in the ERP), the person's own private connector address and add-in key, hidden until **Show my keys**, with Show, Copy and Make new (renewals in the company's history, never the key) |
+| Admin (`/cad/admin`) | People (computers, AI assistants and commands by person, for owners and administrators) and the console's CAD Automation panel (`/erp/admin/cad`); people and roles are the company's own |
+| Documentation (`/cad/docs`), product page (`/cad/overview`) | Setup, and the Knowledge Centre (`/learn/#cad-automation`) |
+
+The private address and add-in key are each person's own: the ERP asks the engine with the signed assertion
+(`GET /erp/c/<company>/cad/access`, `POST .../access/private/new`, `.../access/addin-key/new`; needs `operate`, rate
+limited, `Cache-Control: no-store`) and keeps neither. The add-in package comes through `GET .../cad/addin-package`.
+
+**Links.** Nothing on the website or in the ERP links CAD Automation's pages any more (`tests/cad-links.test.ts`): the
+website's Engineering section, the founder's letter, the AI Search catalogue and the Knowledge Centre's links open
+`https://bizomat.ai/erp/cad` (Products and Engineering, then CAD Automation: the person's company, or a choice of
+companies); the platform links in every tool and engineering documents open it in the ERP. Only while the module is off
+for a company does its Products and Engineering tab still offer CAD Automation's own sign-in (`/cad/login`, never the
+root, which a visitor is sent from), its computers and assistant pages; the example company has no CAD Automation and
+points to the person's own company.
+
+**Old links and search results** (with `cad_redirect` on; the engine's `docs/ERP-MODULE.md`, "The old pages"): `/cad/`,
+`/cad/overview` and `/cad/docs` answer 302 to `/erp/cad` and `/erp/cad/setup` for everyone; `/cad/dashboard`,
+`/cad/assistant`, `/cad/solidworks`, `/cad/tools`, `/cad/history` and `/cad/settings` answer 302 to the same section
+for a visitor (the ERP signs them in and opens it) and for a signed-in person who works in the ERP; `/cad/admin` sends
+the owner to the console's panel; `/cad/login` goes to Sign in with BIZOMAT. The programs keep their addresses (the
+connector, its sign-in and consent, the computers' link, the installer, `/cad/healthz`), and `/cad/privacy` stays. The
+answers are 302, not 301, because a flag decides them: switching it off is the rollback.
+
 ## Flags (Control Centre)
 
 | Flag | Scopes | What it does |
 | --- | --- | --- |
 | `cad_in_erp` | everyone, stage, company | The module for the company. Off: CAD Automation works as before at `/cad`, by person |
-| `cad_redirect` | everyone | The old `/cad` pages send people whose company has the module to the same screen in the ERP, and `/cad/login` goes to Sign in with BIZOMAT. Off: the old pages again |
+| `cad_redirect` | everyone | The old `/cad` pages answer 302 to the same screen in the ERP: visitors (old links, search results) on every page, signed-in people whose company has the module; `/cad/login` goes to Sign in with BIZOMAT. Off: the old pages again |
 | `cad_products` | everyone, stage, company | Save an export to a product revision as a draft engineering document, with where it came from |
 | `cad_bom` | everyone, stage, company | Read the open assembly into a bill of materials proposal for a draft revision |
 | `cad_manufacturing` | everyone, stage, company | Approved drawings of the revision on manufacturing orders and the shop floor |
@@ -128,8 +164,9 @@ connections not yet in a company) and lets a platform admin place a reviewed acc
    wanted for it.
 3. Open the console's CAD Automation panel: the company appears under usage once CAD Automation's next sync arrives;
    place any account in the review list.
-4. With the pilot working, switch `cad_redirect` on (everyone): the old pages then open in the ERP for people whose
-   company has the module, and only for them.
+4. With the pilot working, switch `cad_in_erp` on for everyone, then `cad_redirect` on (everyone): the old pages then
+   open in the ERP for visitors and for people whose company has the module. A signed-in person whose company does not
+   have it keeps the old pages.
 
 ## Rollback
 
@@ -141,7 +178,9 @@ additive: migration 0037 has a reverse script, and the engine's new columns are 
 
 ## Tests
 
-- ERP: `apps/work/test/cad.test.ts` (8 tests, a stand-in CAD engine that checks every assertion against the published
+- ERP: `apps/work/test/cad.test.ts` (10 tests, a stand-in CAD engine that checks every assertion against the published
   key): flags and isolation between companies, the role matrix and the download setting, members' module access and
   scope, saving an export, bill of materials proposals, the sync and the review list, drawings, the companies list.
-- Engine: kevinjogin/bizomat-cad `tests/test_erplink.py` (15 tests, a stand-in ERP with its own key).
+- Engine: kevinjogin/bizomat-cad `tests/test_erplink.py` (18 tests, a stand-in ERP with its own key), including the
+  person's own keys and the old pages' answers to visitors and signed-in people.
+- Website: `tests/cad-links.test.ts` (no link to CAD Automation's pages; the links open the ERP).

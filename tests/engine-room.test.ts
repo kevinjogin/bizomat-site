@@ -66,7 +66,9 @@ test('the Engine Room joins About and Proof of Work, and every old address and i
   // 14 Nov 2026: "update From the founder with the tools under Systems, from a CEO perspective").
   const letter = page.slice(page.indexOf('id="founder"'), page.indexOf('id="combines"'));
   for (const tool of ['BIZOMAT ERP', 'BIZOMAT CRM', 'BIZOMAT Finance', 'BIZOMAT Projects', 'BIZOMAT Engineering Automation', 'Maintenance']) assert.match(letter, new RegExp(`<strong>${tool}</strong>`), `the letter names ${tool}`);
-  for (const app of ['erp', 'cad']) assert.match(letter, new RegExp(`href=\\{APP_LINKS\\.${app}\\.signIn\\}`), `the letter opens ${app}`);
+  assert.match(letter, /href=\{APP_LINKS\.erp\.signIn\}/, 'the letter opens BIZOMAT ERP');
+  // CAD Automation opens inside BIZOMAT ERP (owner, 20 Nov 2026): no link to its own pages at bizomat.ai/cad.
+  assert.match(letter, /href=\{APP_LINKS\.erp\.cad\}/, 'the letter opens CAD Automation in the ERP');
   assert.match(letter, /href="\/systems\/"/, 'the letter links the Systems');
   assert.match(letter, /Planned/, 'the letter says what is planned');
   assert.match(page, /<FounderPortrait name=\{PLATFORM\.founder\} \/>/, 'the founder portrait sits under the founder heading');

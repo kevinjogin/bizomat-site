@@ -172,6 +172,13 @@ button.erp-stat { text-align: left; font: inherit; color: inherit; cursor: point
 .erp-pod img { width: 100%; height: 110px; object-fit: contain; background: #fff; border: 1px solid var(--border); border-radius: var(--radius); }
 .erp-pod li { min-width: 0; overflow-wrap: anywhere; }
 
+/* CAD Automation's Home and CAD Assistant pages inside the module (owner, 20 Nov 2026): the task box beside the
+   connection, requests to copy in columns. */
+.cad-two { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.cad-examples { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 16px; }
+.cad-prompt { align-items: center; gap: 10px; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.cad-prompt > span { min-width: 0; overflow-wrap: anywhere; }
+@media (max-width: 860px) { .cad-two { grid-template-columns: minmax(0, 1fr); } }
 /* CAD Automation's setup steps (src/client/system/cad/Cad.tsx, SetupGuide): each opens a popup on the same page. */
 .cad-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .cad-step { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }

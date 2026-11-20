@@ -2,7 +2,7 @@
 //
 // The production addresses, all on bizomat.ai (docs/BIZOMAT-CLOUDFLARE-MIGRATION.md, "Production addresses"):
 //   the website                                   https://bizomat.ai        (www.bizomat.ai answers 301 there)
-//   CAD Automation      (formerly CADOS)          https://bizomat.ai/cad    (the Worker passes /cad to bizomat-mcp)
+//   CAD Automation      (formerly CADOS)          https://bizomat.ai/erp/cad (its pages; programs keep https://bizomat.ai/cad)
 //   its MCP endpoint for AI apps                  https://mcp.bizomat.ai/mcp (the Worker bizomat-mcp itself)
 //   Project Management  (formerly KEVOS Work)     https://bizomat.ai/tasks  (the Worker sends /tasks on to the app)
 // The applications need sign-in. The old addresses (cados.kevos.com, work.kevos.com) keep working for programs set up
@@ -56,8 +56,9 @@ export const APP_URLS = {
  * Finance open inside BIZOMAT ERP (/erp/tasks, /erp/crm, /erp/finance); their own addresses answer 302 there.
  */
 export const APP_LINKS = {
-  cad: { home: `${APP_URLS.cad}/`, signIn: `${APP_URLS.cad}/login`, dashboard: `${APP_URLS.cad}/dashboard`, docs: `${APP_URLS.cad}/docs`, download: `${APP_URLS.cad}/download/solidworks`, mcp: APP_URLS.cadMcp },
-  erp: { home: `${APP_URLS.erp}/`, signIn: `${APP_URLS.erp}/login`, dashboard: `${APP_URLS.erp}/` },
+  /** CAD Automation's connector address (a program address). People open CAD Automation inside BIZOMAT ERP (erp.cad). */
+  cad: { mcp: APP_URLS.cadMcp },
+  erp: { home: `${APP_URLS.erp}/`, signIn: `${APP_URLS.erp}/login`, dashboard: `${APP_URLS.erp}/`, cad: `${APP_URLS.erp}/cad` },
   work: { home: `${APP_URLS.erp}/tasks/`, signIn: `${APP_URLS.erp}/tasks/`, dashboard: `${APP_URLS.erp}/tasks/` },
   crm: { home: `${APP_URLS.erp}/crm/`, signIn: `${APP_URLS.erp}/crm/`, dashboard: `${APP_URLS.erp}/crm/` },
   finance: { home: `${APP_URLS.erp}/finance/`, signIn: `${APP_URLS.erp}/finance/`, dashboard: `${APP_URLS.erp}/finance/` },

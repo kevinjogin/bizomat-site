@@ -17,8 +17,6 @@ import { CsvLink, DocBadge, History, Pager, Props, Section, options } from './co
 import { ProductPicker, type PickedProduct } from './Products';
 import { ReviewTaskButton, cadPage, useCadFlags } from '../cad/Cad';
 
-const CAD_APP = 'https://bizomat.ai/cad/';
-
 export function DocumentsPage({ companyId, me }: { companyId: string; me: ErpMe }) {
   usePageTitle('Engineering documents');
   const [params, setParams] = useSearchParams();
@@ -260,7 +258,7 @@ export function DocumentDetail({ companyId }: { companyId: string; me: ErpMe }) 
           </Section>
           <Section title="CAD Automation">
             <p className="small">CAD Automation connects your AI assistant to SOLIDWORKS on your own computer, where it builds native parts, assemblies and drawings. Open the referenced file there; this record keeps where it is.</p>
-            <div className="row">{cadInErp ? <Link className="btn" to={cadPage(companyId)}><Icon name="diamond" /> Open CAD Automation</Link> : <a className="btn" href={CAD_APP}><Icon name="diamond" /> Open CAD Automation</a>}</div>
+            <div className="row">{cadInErp ? <Link className="btn" to={cadPage(companyId)}><Icon name="diamond" /> Open CAD Automation</Link> : <Link className="btn" to={productsPage(companyId, '/cad')}><Icon name="diamond" /> Open CAD Automation</Link>}</div>
           </Section>
         </div>
         <div className="stack">
