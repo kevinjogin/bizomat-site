@@ -234,7 +234,7 @@ function FinShell({ children }: { children: ReactNode }) {
           <Icon name="briefcase" /> Customer Relationship Management
         </a>
         <a className="nav-item" href={PLATFORM_URLS.financeGuide}>
-          <Icon name="help" /> Finance user guide
+          <Icon name="help" /> Finance guide and tutorials
         </a>
         <PlatformFooter />
       </nav>

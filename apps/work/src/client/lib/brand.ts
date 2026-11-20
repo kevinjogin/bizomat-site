@@ -62,10 +62,14 @@ export const PLATFORM_URLS = {
   /** This product's page on the website. */
   // The website explains every system at /systems/ (owner, 14 Nov 2026).
   productPage: IS_CRM ? 'https://bizomat.ai/systems/crm/' : IS_FINANCE ? 'https://bizomat.ai/systems/finance/' : IS_COMPANY ? 'https://bizomat.ai/systems/erp/' : IS_SYSTEM ? 'https://bizomat.ai/systems/erp/' : 'https://bizomat.ai/systems/projects/',
-  /** The CRM's user guide on the website. */
-  crmGuide: 'https://bizomat.ai/systems/crm/guide/',
-  /** Finance's user guide on the website. */
-  financeGuide: 'https://bizomat.ai/systems/finance/guide/',
+  /** The BIZOMAT ERP Knowledge Centre on the website (owner, 20 Nov 2026): guides, tutorials and answers for every module. */
+  learn: 'https://bizomat.ai/learn/',
+  /** This tool's guide in the Knowledge Centre. */
+  guide: IS_CRM ? 'https://bizomat.ai/learn/crm/' : IS_FINANCE ? 'https://bizomat.ai/learn/finance/' : IS_COMPANY ? 'https://bizomat.ai/learn/companies/' : IS_SYSTEM ? 'https://bizomat.ai/learn/' : 'https://bizomat.ai/learn/projects/',
+  /** The CRM's guide in the Knowledge Centre (the user guides moved there, 20 Nov 2026). */
+  crmGuide: 'https://bizomat.ai/learn/crm/',
+  /** Finance's guide in the Knowledge Centre. */
+  financeGuide: 'https://bizomat.ai/learn/finance/',
   cad: 'https://bizomat.ai/cad/',
   // Inside the System, every tool opens inside it too (one system).
   tasks: `https://bizomat.ai${SUITE}/tasks/`,
@@ -104,7 +108,8 @@ export const PLATFORM_LINKS = {
   ],
   company: [
     { label: 'About', href: PLATFORM_URLS.about, title: 'About BIZOMAT' },
-    { label: 'Systems', href: PLATFORM_URLS.products, title: 'BIZOMAT Systems: what each one does and how to use it' },
+    { label: 'Systems', href: PLATFORM_URLS.products, title: 'BIZOMAT Systems: what each one does' },
+    { label: 'Knowledge Centre', href: PLATFORM_URLS.learn, title: 'BIZOMAT ERP Knowledge Centre: guides, tutorials and answers for every module' },
     { label: 'Contact', href: PLATFORM_URLS.contact, title: 'Contact BIZOMAT' },
   ],
   legal: [

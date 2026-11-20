@@ -4,7 +4,7 @@
 // and Projects). The page cannot be /crm/: that path is the application (tests/worker.test.ts). Facts come from
 // src/data/platform-catalog.ts (CRM), which records its sources in apps/work; tests/platform-catalog.test.ts compares
 // them with the application's code. The links to Finance and Projects are apps/work/src/worker/company/links.ts
-// (docs/company/README.md); the ERP is docs/system/README.md. The guide is /systems/crm/guide/.
+// (docs/company/README.md); the ERP is docs/system/README.md. The guide is in the Knowledge Centre (/learn/crm/).
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
@@ -236,7 +236,7 @@ const questions = [
         <p class="pp-hero__lead">{sys.name} is a Customer Relationship Management (CRM) system for small businesses and their teams: one shared place for your contacts, companies, leads, deals and follow-ups. Work your pipeline on a board, plan every activity and see what is closing from live reports.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="crm-access">{access.label}</Button>
-          <Button href={GUIDE} variant="secondary" data-cta="crm-guide">Read the user guide</Button>
+          <Button href={GUIDE} variant="secondary" data-cta="crm-guide">Guides and tutorials</Button>
         </div>
         <p class="pp-hero__note">{access.note} Sign-in required: use your BIZOMAT account, the same one as {finance.name} and {projects.name}. New to BIZOMAT? Create an account on the sign-in page.</p>
       </div>
@@ -288,7 +288,7 @@ const questions = [
       <div class="pp-head">
         <p class="bz-eyebrow">Features</p>
         <h2 id="features-title">Every feature, explained</h2>
-        <p>What {sys.name} does today, area by area, and what is planned. The <a href={GUIDE}>user guide</a> shows where each working feature is in the application.</p>
+        <p>What {sys.name} does today, area by area, and what is planned. The <a href={GUIDE}>Knowledge Centre guide</a> shows where each working feature is in the application.</p>
       </div>
       <div class="pp-tools">
         <section id="records" aria-labelledby="records-title">
@@ -360,7 +360,7 @@ const questions = [
         <div class="pp-head">
           <p class="bz-eyebrow">Screenshots</p>
           <h2 id="screens-title">The real product</h2>
-          <p>Captured from the running application with a fictional organisation and example data. More screens are in the <a href={GUIDE}>user guide</a>.</p>
+          <p>Captured from the running application with a fictional organisation and example data. Step-by-step tutorials are in the <a href={GUIDE}>Knowledge Centre</a>.</p>
         </div>
         <div class="pp-shots">
           {erpShot && (
@@ -419,7 +419,7 @@ const questions = [
       <div>
         <p class="bz-eyebrow">Getting started</p>
         <h2 id="start-title">Start in {steps.length} steps</h2>
-        <p class="pp-head-lead">The <a href={GUIDE}>user guide</a> walks through each step, and everything after it, screen by screen.</p>
+        <p class="pp-head-lead">The <a href={GUIDE}>Knowledge Centre guide</a> walks through each step, and everything after it.</p>
       </div>
       <ol class="pp-steps">
         {steps.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
@@ -480,7 +480,7 @@ const questions = [
       <dl class="guide-faq">
         {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
       </dl>
-      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>user guide</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
+      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>Knowledge Centre guide</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
     </Container>
   </section>
 
@@ -489,7 +489,7 @@ const questions = [
       <h2 id="crm-cta">Open {sys.name} in {erp.name}.</h2>
       <div class="pp-band__actions">
         <Button href={access.href} variant="accent" rel="noopener" data-cta="crm-band-access">{access.label}</Button>
-        <Button href={GUIDE} variant="secondary" data-cta="crm-band-guide">Read the user guide</Button>
+        <Button href={GUIDE} variant="secondary" data-cta="crm-band-guide">Guides and tutorials</Button>
       </div>
     </Container>
   </section>

@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadWorkosTools } from '../src/utils/workos-tools.ts';
-import { HOME_DISCOVERY_EXAMPLES, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS } from '../src/config/home.ts';
+import { HOME_DISCOVERY_EXAMPLES, HOME_ERP_GROUPS, HOME_FEATURED_BOOKS, HOME_FEATURED_TOOLS, HOME_LEARN_STARTS } from '../src/config/home.ts';
+import { WORKFLOWS, guideById } from '../src/data/learn/index.ts';
 import { NAV, SITE } from '../src/config/site.ts';
 import { PRODUCTS, SOLUTIONS } from '../src/config/products.ts';
 
@@ -11,27 +12,60 @@ const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const home = read('src/pages/index.astro');
 
 // BIZOMAT homepage: the corporate slogan "Connecting Intelligence. Empowering Progress." (owner, 8 Nov 2026; it replaced
-// "Automate work. Connect systems. Get business done." of 5 Nov). Hero with Explore Products and
-// Explore AI Tools, then the three products, AI Search, proof, tools and the Library.
-test('the homepage leads with the BIZOMAT message, then products, AI search, proof, tools and resources', () => {
+// "Automate work. Connect systems. Get business done." of 5 Nov). Redesigned around BIZOMAT ERP and learning it (owner's
+// brief of 20 Nov 2026): the hero with Open BIZOMAT ERP, Explore modules, Learn BIZOMAT and Tools and Resources; the
+// Knowledge Centre's search and where to start; the ERP's modules; then the systems, AI Search, proof, tools and the Library.
+test('the homepage leads with the BIZOMAT message, then learning, the ERP modules, systems, AI search, proof, tools and resources', () => {
   assert.match(home, /<p class="bz-eyebrow">\{SITE\.tagline\}<\/p>/);
   assert.match(home, /<h1 id="home-title"><span class="home-hero__line">Connecting Intelligence\.<\/span> <span class="home-hero__line">Empowering Progress\.<\/span><\/h1>/);
   assert.match(home, /<p class="home-hero__lead">\{SITE\.introduction\}<\/p>/);
   assert.equal(SITE.tagline, 'Business Intelligence & Automation');
   assert.equal(SITE.statement, 'Connecting Intelligence. Empowering Progress.');
   assert.equal(SITE.support, 'Technology Connected. Progress Delivered.');
-  assert.match(home, />Explore Products<\/Button>/);
-  assert.match(home, />Explore AI Tools<\/Button>/);
+  // The hero's four ways in.
+  const hero = home.slice(home.indexOf('<section class="home-hero"'), home.indexOf('<section class="home-learn"'));
+  assert.match(hero, /<Button href=\{APP_LINKS\.erp\.home\} variant="accent" rel="noopener" data-cta="home-open-erp">Open BIZOMAT ERP<\/Button>/);
+  assert.match(hero, /<Button href="#modules"[^>]*>Explore modules<\/Button>/);
+  assert.match(hero, /<Button href=\{LEARN_HOME\}[^>]*>Learn BIZOMAT<\/Button>/);
+  assert.match(hero, /<Button href="#tools"[^>]*>Tools and Resources<\/Button>/);
   assert.match(home, /<ConnectedOps id="hero-ops" \/>/, 'the hero shows connected operations');
-  const order = ['home-title', 'id="products"', 'id="ai-search"', '<DiscoveryResults />', 'id="proof-title"', 'id="tools"', 'id="resources"'].map((m) => home.indexOf(m));
+  const order = ['home-title', 'id="learn"', 'id="modules"', 'id="products"', 'id="ai-search"', '<DiscoveryResults />', 'id="proof-title"', 'id="tools"', 'id="resources"'].map((m) => home.indexOf(m));
   assert.ok(order.every((n, i) => n > 0 && (i === 0 || n > order[i - 1])), 'sections in the agreed order');
+  // The learning entry: the question the brief asked for, the Knowledge Centre's own search (it opens /learn/?q= and
+  // works without JavaScript) and where to start, by who you are.
+  assert.match(home, /<h2 id="learn-title">Need help using BIZOMAT\?<\/h2>/);
+  assert.match(home, /Find a tutorial, search a question, or learn any module\./);
+  assert.match(home, /<LearnSearch \/>/);
+  assert.match(read('src/components/learn/LearnSearch.astro'), /<form action="\/learn\/" method="get"/);
+  assert.match(home, /HOME_LEARN_STARTS\.map/);
   assert.match(home, /<h2 id="ai-title">Ask BIZOMAT<\/h2>/);
   assert.match(home, /<Button href="\/tools\/" arrow data-cta="home-tools">Explore Tools<\/Button>/);
   assert.match(home, /<Button href="\/reados\/" arrow data-cta="home-library">Explore Library<\/Button>/);
   assert.match(home, /<form class="home-search" role="search" action="\/tools\/" method="get">/, 'tool search works without JavaScript');
   assert.equal(SITE.title, 'BIZOMAT | Business Intelligence & Automation');
-  assert.deepEqual(NAV.map((n) => n.label), ['Home', 'Systems', 'Resources', 'About', 'Contact']);
-  assert.deepEqual(NAV.map((n) => n.href), ['/', '/systems/', '/resources/', '/engine-room/', '/contact/']);
+  assert.deepEqual(NAV.map((n) => n.label), ['Home', 'Systems', 'Learn', 'Resources', 'About', 'Contact']);
+  assert.deepEqual(NAV.map((n) => n.href), ['/', '/systems/', '/learn/', '/resources/', '/engine-room/', '/contact/']);
+});
+
+test('the ERP modules on the homepage are the module rail\'s own, each with its guide and honest status', () => {
+  const rail = read('apps/work/src/client/components/layout/SuiteRail.tsx');
+  const railLabels = [...rail.matchAll(/\{ id: '[a-z-]+', label: '([^']+)'/g)].map((m) => m[1]);
+  for (const g of HOME_ERP_GROUPS) {
+    assert.ok(railLabels.includes(g.rail), `${g.rail} is a label of the module rail`);
+    for (const id of g.guides) {
+      const guide = guideById(id);
+      assert.ok(guide, `${g.rail}: guide ${id} exists`);
+    }
+  }
+  // Every group of the rail, apart from My Work (a person's own tasks) and Company Admin (behind a flag that ships off).
+  assert.ok(railLabels.filter((l) => l !== 'My Work' && l !== 'Company Admin').every((l) => HOME_ERP_GROUPS.some((g) => g.rail === l)), 'every module group of the rail is shown');
+  // A module that is not built says so: the status comes from the guide, never from the homepage.
+  assert.match(home, /g\.status !== 'live' && g\.status !== 'connected' \? <StatusLabel status=\{g\.status\} \/>/);
+  for (const s of HOME_LEARN_STARTS) {
+    const m = s.href.match(/^\/learn\/(workflows\/)?([a-z0-9-]+)\/$/);
+    if (m) assert.ok(m[1] ? WORKFLOWS.some((w) => w.id === m[2]) : guideById(m[2]), `${s.who}: ${s.href} is a real guide`);
+    else assert.equal(s.href, '/resources/');
+  }
 });
 
 test('products are described from the catalogue, and every product action leads to a real page', () => {

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 250" role="img" aria-labelledby="cad-title cad-desc" class="lv">
+  <title id="cad-title">How CAD Automation connects your AI assistant to SOLIDWORKS</title>
+  <desc id="cad-desc">Your AI app, such as Claude or ChatGPT, calls CAD Automation's connector at bizomat.ai/cad/mcp. CAD Automation checks each sketch and feature, then passes the work to the Companion on your Windows computer over a link the Companion opens itself. The Companion hands it to the BIZOMAT add-in inside SOLIDWORKS, which builds native features in your own files. Your models stay on your computer.</desc>
+  <defs><marker id="cad-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 z" class="lv-arrowhead"/></marker></defs>
+  <rect x="10" y="80" width="170" height="90" rx="12" class="lv-box"/><text x="95" y="114" class="lv-head" text-anchor="middle">Your AI app</text><text x="95" y="138" class="lv-small" text-anchor="middle">Claude, ChatGPT</text>
+  <rect x="230" y="80" width="200" height="90" rx="12" class="lv-core"/><text x="330" y="114" class="lv-core-title" text-anchor="middle">CAD Automation</text><text x="330" y="138" class="lv-core-sub" text-anchor="middle">bizomat.ai/cad/mcp</text>
+  <rect x="480" y="80" width="200" height="90" rx="12" class="lv-box"/><text x="580" y="114" class="lv-head" text-anchor="middle">Companion</text><text x="580" y="138" class="lv-small" text-anchor="middle">on your Windows computer</text>
+  <rect x="730" y="80" width="220" height="90" rx="12" class="lv-box"/><text x="840" y="114" class="lv-head" text-anchor="middle">SOLIDWORKS add-in</text><text x="840" y="138" class="lv-small" text-anchor="middle">native parts and drawings</text>
+  <g class="lv-flows"><path d="M182 125 L226 125" marker-end="url(#cad-arrow)"/><path d="M432 125 L476 125" marker-end="url(#cad-arrow)"/><path d="M682 125 L726 125" marker-end="url(#cad-arrow)"/></g>
+  <text x="330" y="200" class="lv-small" text-anchor="middle">checks every sketch and feature</text>
+  <text x="580" y="200" class="lv-small" text-anchor="middle">opens the link itself (outgoing only)</text>
+  <text x="840" y="200" class="lv-small" text-anchor="middle">your files stay on your computer</text>
+  <text x="95" y="58" class="lv-small" text-anchor="middle">you ask in plain words</text>
+</svg>

@@ -330,6 +330,21 @@ test('sign-in addresses people type go to the platform sign-in page', () => {
   assert.equal(get('cados.kevos.com', '/login').upstream, 'cad');
 });
 
+test('the ERP\'s own address for the Knowledge Centre goes to the website\'s /learn/ (owner, 20 Nov 2026)', () => {
+  for (const [path, to] of [['/erp/learn', '/learn/'], ['/erp/learn/', '/learn/'], ['/ERP/Learn/', '/learn/'], ['/erp/help', '/learn/'], ['/erp/learn/crm', '/learn/crm/'], ['/erp/learn/procurement/', '/learn/procurement/']]) {
+    const d = get('bizomat.ai', path);
+    assert.equal(d.action, 'redirect', path);
+    assert.equal(d.status, 301, path);
+    assert.equal(d.location, to, path);
+  }
+  assert.equal(get('bizomat.ai', '/erp/learn', 'q=invite').location, '/learn/?q=invite');
+  // the ERP itself, and the website's own /learn/, are served as before
+  assert.equal(get('bizomat.ai', '/erp/').upstream, 'work');
+  assert.equal(get('bizomat.ai', '/erp/learning').upstream, 'work');
+  assert.equal(get('bizomat.ai', '/learn/').upstream, 'web');
+  assert.equal(decide({ host: 'bizomat.ai', method: 'POST', path: '/erp/learn' }).upstream, 'work');
+});
+
 test('the preview cookie (preview routing on) sends every path to one backend at the root, as the old addresses do', () => {
   for (const target of ['cad', 'work', 'web']) {
     for (const path of ['/login', '/', '/tasks/x', '/cad/x', '/mcp', '/CAD']) {

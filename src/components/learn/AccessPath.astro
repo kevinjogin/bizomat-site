@@ -1,0 +1,14 @@
+---
+// D. How do I access it? The click path in the application's own words, and the button that opens it.
+interface Props { path: string[]; href: string; label: string; note?: string }
+const { path, href, label, note } = Astro.props;
+---
+<div class="lv-access">
+  <ol class="lv-path" aria-label="Where to click">
+    {path.map((p, i) => <li aria-current={i === path.length - 1 ? 'step' : undefined}>{p}</li>)}
+  </ol>
+  <p class="lv-access__actions">
+    <a class="bz-btn bz-btn--accent" href={href} rel="noopener" data-cta="learn-open-module">{label} <span aria-hidden="true">↗</span></a>
+    <span class="lv-access__note">{note ?? 'Opens BIZOMAT ERP. Sign in with your BIZOMAT account if asked.'}</span>
+  </p>
+</div>

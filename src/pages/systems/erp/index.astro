@@ -28,7 +28,7 @@ import { CRM, FINANCE, WORK } from '../../../data/platform-catalog.ts';
 import { ERP_DOMAINS, capabilityCounts } from '../../../data/erp-capabilities.ts';
 
 const erp = systemById('erp');
-const GUIDE = erp.guide ?? '/systems/erp/guide/';
+const GUIDE = erp.guide ?? '/learn/';
 const crumbs = [{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: erp.name, href: erp.url }];
 const description = 'BIZOMAT ERP is cloud ERP software for small and medium businesses: CRM, quoting and invoicing, projects, maintenance (CMMS), engineering and administration in one workspace.';
 const erpShots = screenshots('erp');
@@ -287,7 +287,7 @@ const schema = [
         <p class="pp-hero__lead">Cloud ERP for small and medium businesses: sales, finance, projects, maintenance, engineering and administration, by company. Sign in once, choose the company, and open every module from the rail at the left of each screen.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="erp-access">{access.label}</Button>
-          <Button href={GUIDE} variant="secondary" data-cta="erp-guide">Read the user guide</Button>
+          <Button href={GUIDE} variant="secondary" data-cta="erp-guide">Guides and tutorials</Button>
         </div>
         <p class="pp-hero__note">{access.note}</p>
         <p class="pp-hero__note">{erp.statusNote}</p>
@@ -515,7 +515,7 @@ const schema = [
       <div>
         <p class="bz-eyebrow">Getting started</p>
         <h2 id="start-title">Start in six steps</h2>
-        <p class="sys-lead">The <a href={GUIDE}>user guide</a> covers each step, and everything after it, screen by screen.</p>
+        <p class="sys-lead">The <a href={GUIDE}>Knowledge Centre guide</a> covers each step, and everything after it.</p>
       </div>
       <ol class="pp-steps">
         {steps.map((s) => <li><h3>{s.t}</h3><p>{s.x}</p></li>)}
@@ -581,7 +581,7 @@ const schema = [
       </div>
       <div class="pp-band__actions">
         <Button href={access.href} variant="accent" rel="noopener" data-cta="erp-band-access">{access.label}</Button>
-        <Button href={GUIDE} variant="secondary" data-cta="erp-band-guide">Read the user guide</Button>
+        <Button href={GUIDE} variant="secondary" data-cta="erp-band-guide">Guides and tutorials</Button>
       </div>
     </Container>
   </section>

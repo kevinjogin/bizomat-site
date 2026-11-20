@@ -163,7 +163,7 @@ const schema = [
       <p class="pp-hero__lead">{sys.line}</p>
       <div class="pp-hero__actions">
         <Button href={sys.access?.href ?? APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="whs-open">{sys.access?.label ?? 'Open BIZOMAT ERP'}</Button>
-        <Button href={sys.guide} variant="secondary" data-cta="whs-guide">Read the user guide</Button>
+        <Button href={sys.guide} variant="secondary" data-cta="whs-guide">Guides and tutorials</Button>
       </div>
       <p class="pp-hero__note">{sys.statusNote}</p>
     </Container>
@@ -293,7 +293,7 @@ const schema = [
       <dl class="sys-faq sys-faq--wide">
         {faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
       </dl>
-      <p class="pp-table-note">Step by step: the <a href={sys.guide}>BIZOMAT WHS user guide</a>. Missing something? <a href="/contact/?service=feedback#enquiry">Tell us what you need it for</a>.</p>
+      <p class="pp-table-note">Step by step: the <a href={sys.guide}>Health and Safety guide in the Knowledge Centre</a>. Missing something? <a href="/contact/?service=feedback#enquiry">Tell us what you need it for</a>.</p>
     </Container>
   </section>
 
@@ -305,7 +305,7 @@ const schema = [
       </div>
       <div class="pp-band__actions">
         <Button href={sys.access?.href ?? APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="whs-band-open">{sys.access?.label ?? 'Open BIZOMAT ERP'}</Button>
-        <Button href={sys.guide} variant="secondary" data-cta="whs-band-guide">User guide</Button>
+        <Button href={sys.guide} variant="secondary" data-cta="whs-band-guide">Guides and tutorials</Button>
         <Button href={erp.url} variant="secondary" data-cta="whs-band-erp">About {erp.name}</Button>
         <Button href={SYSTEMS_HOME} variant="secondary" data-cta="whs-band-all">All systems</Button>
       </div>

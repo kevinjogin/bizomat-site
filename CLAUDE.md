@@ -237,17 +237,26 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   the image, and `/system-preview/` and `/erp-design-preview/` answer 301 to `/systems/erp/`. The platform
   console is `/erp/admin` (platform admins only).
   **Systems** (owner, 14 Nov 2026): the public catalogue of the software at `bizomat.ai/systems/`
-  (`src/config/systems.ts`, one source), a page and a user guide per system: BIZOMAT ERP (Business Management System,
+  (`src/config/systems.ts`, one source), a page per system, with its guide in the Knowledge Centre: BIZOMAT ERP (Business Management System,
   `/systems/erp/`), BIZOMAT CRM (Customer Management System, `/systems/crm/`), BIZOMAT Finance (Finance Management
   System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
   Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, with the same
-  BIZOMAT account: Continue with BIZOMAT) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`, guide `/systems/manufacturing/guide/`:
+  BIZOMAT account: Continue with BIZOMAT) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`, guide `/learn/manufacturing/`:
   Maintenance, Procurement and Inventory work in the ERP today, Manufacturing since Release 3, Quality and Maintenance
   M2 and M3 since Release 4, and Supply Chain with Release 5 part A; the owner asked for it to turn green once every
   tool works, so it is Available since Release 5 part A was deployed (15 Nov 2026), with what is not built inside it labelled Planned). The old product pages
   (`/work/`, `/cad-automation/`, `/crm-platform/`, `/finance-platform/`, their guides, `/products/`) answer 301 there
   (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
+  **Knowledge Centre** (owner's brief of 20 Nov 2026; `docs/learn/README.md`, audit `docs/learn/AUDIT.md`, coverage
+  `docs/learn/COVERAGE.md`): the one place to learn BIZOMAT ERP, public at `bizomat.ai/learn/` (navigation **Learn**;
+  `/erp/learn` answers 301 there from the router). A guide per module and topic with the brief's structure A to J
+  (what, purpose, who, access path, tutorials, buttons, questions, related modules and workflows, the link into the
+  ERP), workflows across modules at `/learn/workflows/`, SVG diagrams, and its own search (`/learn/search.json`). The
+  content is typed data in `src/data/learn/`, written from the code; `tests/learn.test.ts` checks it (complete, every
+  link real, statuses honest, no prices or compliance claims, coverage in step: `node scripts/learn/coverage.ts`). The
+  seven `/systems/*/guide/` pages were retired into it and answer 301 to their guide. Tutorials only explain: nothing
+  there acts on anyone's records. Never write up a flagged-off or planned feature as working there.
 - **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
   registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
   name (footer, trade mark notice, "Formerly" labels) and in historical docs.
@@ -401,16 +410,18 @@ Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then 
 
 ## After any production change
 
-Check the public site, not just the build: `/`, `/systems/` and every system's page and guide (`/systems/erp/`,
-`/systems/crm/`, `/systems/finance/`, `/systems/projects/`, `/systems/engineering/`, `/systems/manufacturing/`, each
-with `guide/`), that the old product pages answer 301 there, `/resources/`, `/tools/`, `/reados/` (open
+Check the public site, not just the build: `/`, `/systems/` and every system's page (`/systems/erp/`,
+`/systems/crm/`, `/systems/finance/`, `/systems/projects/`, `/systems/engineering/`, `/systems/manufacturing/`,
+`/systems/whs/`; each `guide/` answers 301 to its guide in the Knowledge Centre), that the old product pages answer 301
+there, the Knowledge Centre (`/learn/`, its search, a guide such as `/learn/procurement/` and `/learn/workflows/`; open
+without signing in), `/resources/`, `/tools/`, `/reados/` (open
 without signing in),
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`,
 that `/system-preview/` (the retired design preview) answers 301 to `/systems/erp/`, `/robots.txt` and `/llms.txt`
 (`docs/seo/README.md`), `/erp/` (BIZOMAT ERP, signed in, answering X-Robots-Tag noindex; the tools inside it at
 `/erp/tasks/`, `/erp/crm/`, `/erp/finance/`, `/erp/company/`; `/system/` answers 302 there), and every new chapter URL.
-Confirm the BIZOMAT wordmark and favicon, the navigation **Home, Systems, Resources, About, Contact** (owner,
-14 Nov 2026) with **AI Search** and one **Sign in** (BIZOMAT ERP only, owner 20 Nov 2026: one account, one sign-in;
+Confirm the BIZOMAT wordmark and favicon, the navigation **Home, Systems, Learn, Resources, About, Contact** (owner,
+14 Nov 2026; Learn 20 Nov 2026) with **AI Search** and one **Sign in** (BIZOMAT ERP only, owner 20 Nov 2026: one account, one sign-in;
 never a second sign-in on the website), that a new visit opens in the
 computer's system theme, and that AI
 search answers. For the apps (`/cad/`, `/erp/`, and `/tasks/`, `/crm/`, `/finance/`, `/company/`, `/system/` on bizomat.ai, and their old hosts),

@@ -78,16 +78,15 @@ if (phase !== 'off') {
   check(seen === newUi, `the website follows the flag within 150 s (${newUi ? 'new UI' : 'old look'})`);
 }
 
-const SITE = ['/', '/systems/', '/systems/erp/', '/systems/erp/guide/', '/systems/crm/', '/systems/crm/guide/', '/systems/finance/', '/systems/finance/guide/',
-  '/systems/projects/', '/systems/projects/guide/', '/systems/engineering/', '/systems/engineering/guide/', '/systems/manufacturing/',
-  '/systems/manufacturing/guide/', '/resources/', '/tools/', '/tools/abbe-error/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/',
-  '/contact/', '/assessment/'];
+const SITE = ['/', '/systems/', '/systems/erp/', '/systems/crm/', '/systems/finance/', '/systems/projects/', '/systems/engineering/',
+  '/systems/manufacturing/', '/systems/whs/', '/learn/', '/learn/procurement/', '/learn/workflows/', '/learn/workflows/procure-to-pay/',
+  '/resources/', '/tools/', '/tools/abbe-error/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/', '/contact/', '/assessment/'];
 for (const path of SITE) {
   const r = await rawPage(path);
   const html = r.status === 200 && /<html\b/i.test(r.text);
   check(html && marked(r.text) === newUi, `${path}: 200, decodes, ${newUi ? 'marked for the new UI' : 'not marked'}`);
 }
-for (const [from, to] of [['/about/', '/engine-room/'], ['/system-preview/', '/systems/erp/'], ['/work/', '/systems/'], ['/pricing/', '/systems/']]) {
+for (const [from, to] of [['/about/', '/engine-room/'], ['/system-preview/', '/systems/erp/'], ['/work/', '/systems/'], ['/pricing/', '/systems/'], ['/systems/crm/guide/', '/learn/crm/'], ['/systems/erp/guide/', '/learn/']]) {
   const r = await rawPage(from);
   check(r.status === 301 && String(r.headers.location ?? '').includes(to), `${from} answers 301 to ${to}`);
 }

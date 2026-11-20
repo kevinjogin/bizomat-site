@@ -35,12 +35,33 @@
 /cad-automation/ /systems/engineering/ 301
 /crm-platform /systems/crm/ 301
 /crm-platform/ /systems/crm/ 301
-/crm-platform/guide /systems/crm/guide/ 301
-/crm-platform/guide/ /systems/crm/guide/ 301
+/crm-platform/guide /learn/crm/ 301
+/crm-platform/guide/ /learn/crm/ 301
 /finance-platform /systems/finance/ 301
 /finance-platform/ /systems/finance/ 301
-/finance-platform/guide /systems/finance/guide/ 301
-/finance-platform/guide/ /systems/finance/guide/ 301
+/finance-platform/guide /learn/finance/ 301
+/finance-platform/guide/ /learn/finance/ 301
+# The user guides moved into the ERP Knowledge Centre (owner, 20 Nov 2026): one place to learn every module.
+/systems/erp/guide /learn/ 301
+/systems/erp/guide/ /learn/ 301
+/systems/crm/guide /learn/crm/ 301
+/systems/crm/guide/ /learn/crm/ 301
+/systems/finance/guide /learn/finance/ 301
+/systems/finance/guide/ /learn/finance/ 301
+/systems/projects/guide /learn/projects/ 301
+/systems/projects/guide/ /learn/projects/ 301
+/systems/engineering/guide /learn/cad-automation/ 301
+/systems/engineering/guide/ /learn/cad-automation/ 301
+/systems/manufacturing/guide /learn/manufacturing/ 301
+/systems/manufacturing/guide/ /learn/manufacturing/ 301
+/systems/whs/guide /learn/whs/ 301
+/systems/whs/guide/ /learn/whs/ 301
+/erp/learn /learn/ 301
+/erp/learn/ /learn/ 301
+/help /learn/ 301
+/help/ /learn/ 301
+/knowledge-centre /learn/ 301
+/knowledge-centre/ /learn/ 301
 
 # READOS permanent redirects. Generated from the published collection and volume layouts before each
 # reorganisation; every old book and chapter URL points straight at its current page (no chains).

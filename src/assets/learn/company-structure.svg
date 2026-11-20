@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 330" role="img" aria-labelledby="cs-title cs-desc" class="lv">
+  <title id="cs-title">How a company is organised in BIZOMAT</title>
+  <desc id="cs-desc">A company has people, each with a company role: owner, administrator, manager, employee or read only. The company runs one Projects and Tasks workspace, one CRM organisation and one Finance business workspace, and each person has a role in each tool. Departments belong to the company and appear in every tool: as teams in Projects and Tasks and the CRM, and as a department for tracking in Finance.</desc>
+  <rect x="330" y="16" width="240" height="70" rx="14" class="lv-core"/><text x="450" y="48" class="lv-core-title" text-anchor="middle">Company</text><text x="450" y="70" class="lv-core-sub" text-anchor="middle">registered, or your own</text>
+  <g class="lv-links"><path d="M450 86 L150 130"/><path d="M450 86 L450 130"/><path d="M450 86 L750 130"/></g>
+  <rect x="40" y="130" width="220" height="86" rx="12" class="lv-box"/><text x="56" y="156" class="lv-head">People</text><text x="56" y="180" class="lv-small">owner · admin · manager</text><text x="56" y="200" class="lv-small">employee · read only</text>
+  <rect x="340" y="130" width="220" height="86" rx="12" class="lv-box"/><text x="356" y="156" class="lv-head">Tools</text><text x="356" y="180" class="lv-small">Projects and Tasks · CRM</text><text x="356" y="200" class="lv-small">Finance (business)</text>
+  <rect x="640" y="130" width="220" height="86" rx="12" class="lv-box"/><text x="656" y="156" class="lv-head">Departments</text><text x="656" y="180" class="lv-small">teams in Projects and the CRM,</text><text x="656" y="200" class="lv-small">a department in Finance</text>
+  <rect x="190" y="252" width="520" height="60" rx="12" class="lv-box lv-box--soft"/><text x="450" y="278" class="lv-item" text-anchor="middle">Each person has a role in each tool,</text><text x="450" y="298" class="lv-small" text-anchor="middle">set from their company role and changeable tool by tool</text>
+  <g class="lv-links"><path d="M150 216 L300 252"/><path d="M450 216 L450 252"/><path d="M750 216 L600 252"/></g>
+</svg>

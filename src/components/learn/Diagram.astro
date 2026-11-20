@@ -1,0 +1,20 @@
+---
+// A Knowledge Centre diagram: an SVG file from src/assets/learn/, inlined so it follows the page's light or dark theme
+// (its classes are styled in src/styles/learn.css; no inline styles, which the CSP forbids). Every diagram carries the
+// "Illustration" label: it explains how things fit together and is never a picture of a real screen.
+import erpMap from '../../assets/learn/erp-map.svg?raw';
+import oneAccount from '../../assets/learn/one-account.svg?raw';
+import approvalPath from '../../assets/learn/approval-path.svg?raw';
+import cadConnection from '../../assets/learn/cad-connection.svg?raw';
+import companyStructure from '../../assets/learn/company-structure.svg?raw';
+
+export const DIAGRAMS = { 'erp-map': erpMap, 'one-account': oneAccount, 'approval-path': approvalPath, 'cad-connection': cadConnection, 'company-structure': companyStructure } as const;
+export type DiagramName = keyof typeof DIAGRAMS;
+
+interface Props { name: DiagramName; caption: string; wide?: boolean }
+const { name, caption, wide } = Astro.props;
+---
+<figure class:list={['lv-figure', { 'lv-figure--wide': wide }]}>
+  <div class="lv-frame" set:html={DIAGRAMS[name]} />
+  <figcaption><span class="lv-tag">Illustration</span> {caption}</figcaption>
+</figure>

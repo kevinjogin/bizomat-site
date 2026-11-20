@@ -1,0 +1,15 @@
+---
+// The Knowledge Centre's search box. On /learn/ it searches in place (src/scripts/learn.ts); elsewhere it opens /learn/
+// with the question, where the search runs. Without JavaScript the hub still lists every section.
+interface Props { local?: boolean; autofocus?: boolean; compact?: boolean }
+const { local, autofocus, compact } = Astro.props;
+---
+<div class:list={['lv-search', { 'lv-search--compact': compact }]} data-learn-search={local ? '' : undefined} role="search">
+  <form action="/learn/" method="get" data-local={local ? 'true' : 'false'}>
+    <label for={compact ? 'learn-q-small' : 'learn-q'} class="visually-hidden">Search the Knowledge Centre</label>
+    <input id={compact ? 'learn-q-small' : 'learn-q'} type="search" name="q" placeholder="Search a feature, a question or a task, e.g. approve a purchase order" autocomplete="off" autofocus={autofocus} />
+    <button class="bz-btn" type="submit">Search</button>
+  </form>
+  {local && <p class="lv-search__count" aria-live="polite" data-count></p>}
+  {local && <ol class="lv-results" data-results></ol>}
+</div>

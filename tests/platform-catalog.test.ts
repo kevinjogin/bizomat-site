@@ -77,7 +77,9 @@ test('every catalogue entry is public and points at a real page or an applicatio
     assert.equal(e.keywords, e.keywords.toLowerCase(), `${e.id} keywords are lower case`);
     if (e.url.startsWith('/')) {
       const path = e.url.split('#')[0].replace(/^\/|\/$/g, '');
-      const page = path ? [`src/pages/${path}.astro`, `src/pages/${path}/index.astro`] : ['src/pages/index.astro'];
+      // A Knowledge Centre guide is one page of src/pages/learn/[guide].astro, made from src/data/learn/guides/<id>.ts.
+      const guide = path.match(/^learn\/([a-z0-9-]+)$/)?.[1];
+      const page = path ? [`src/pages/${path}.astro`, `src/pages/${path}/index.astro`, ...(guide ? [`src/data/learn/guides/${guide}.ts`] : [])] : ['src/pages/index.astro'];
       assert.ok(page.some((p) => existsSync(join(process.cwd(), p))), `${e.id}: ${e.url} has a page`);
     } else {
       const u = new URL(e.url);
@@ -108,7 +110,7 @@ test('the example searches return relevant products, tools and readings, each wi
   assert.equal(work.platform[0]?.url, '/systems/projects/');
   const crm = ask('I need a CRM to manage leads and my sales pipeline.');
   assert.equal(crm.platform[0]?.url, '/systems/crm/', 'the CRM page');
-  assert.ok(ask('Is there a guide to getting started with the CRM?').platform.some((h) => h.url === '/systems/crm/guide/'), 'the CRM user guide');
+  assert.ok(ask('Is there a guide to getting started with the CRM?').platform.some((h) => h.url === '/learn/crm/'), 'the CRM guide in the Knowledge Centre');
   const guides = ask('Find guides about business automation.');
   assert.ok(guides.platform.some((h) => h.url === '/library/'));
   assert.ok(guides.readings.length >= 1);

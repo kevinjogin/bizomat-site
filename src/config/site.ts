@@ -84,7 +84,7 @@ export type NavChild = { label: string; href?: string; description?: string; sta
 export type NavItem = { label: string; short?: string; href: string; children?: readonly NavChild[] };
 
 export const NAV: readonly NavItem[] = [
-  // Home | Systems | Resources | About | Contact (owner, 14 Nov 2026). Systems is BIZOMAT's business software, as one
+  // Home | Systems | Learn | Resources | About | Contact (owner, 14 Nov 2026; Learn added 20 Nov 2026). Systems is BIZOMAT's business software, as one
   // catalogue (src/config/systems.ts); the applications open inside BIZOMAT ERP. Resources stay free and public.
   { label: 'Home', href: '/' },
   {
@@ -92,6 +92,17 @@ export const NAV: readonly NavItem[] = [
       { label: 'All systems', href: SYSTEMS_HOME, description: 'One connected platform to manage your business.' },
       ...SYSTEMS.map((s) => ({ label: s.name, href: s.url, description: s.status === 'planned' ? `${s.kind}. Planned.` : s.line, status: s.status === 'planned' ? 'Planned' : undefined })),
       { label: 'Open BIZOMAT ERP', href: APP_LINKS.erp.home, description: 'Sign in to your company\'s workspace.', external: true },
+    ],
+  },
+  // Learn (owner, 20 Nov 2026): the ERP Knowledge Centre, the one place to learn BIZOMAT ERP (src/data/learn/).
+  {
+    label: 'Learn', href: '/learn/', children: [
+      { label: 'Knowledge Centre', href: '/learn/', description: 'Search any question, or learn any module step by step.' },
+      { label: 'Getting started', href: '/learn/what-is-bizomat/', description: 'What BIZOMAT ERP is, your account and finding your way around.' },
+      { label: 'ERP modules', href: '/learn/#modules', description: 'A guide to every module, with tutorials and common questions.' },
+      { label: 'Workflows', href: '/learn/workflows/', description: 'End-to-end processes, from the first record to the last.' },
+      { label: 'CAD and engineering', href: '/learn/cad-automation/', description: 'Your AI assistant working in SOLIDWORKS on your computer.' },
+      { label: 'Troubleshooting', href: '/learn/#troubleshooting', description: 'Sign-in, access, records and connections.' },
     ],
   },
   {
@@ -132,6 +143,7 @@ export const FOOTER_NAV = {
   products: [
     { href: SYSTEMS_HOME, label: 'All systems' },
     ...SYSTEMS.map((x) => ({ href: x.url, label: x.name })),
+    { href: '/learn/', label: 'Knowledge Centre' },
     { href: '/resources/', label: 'Resources (free)' },
     { href: '/solutions/', label: 'Solutions' },
   ],

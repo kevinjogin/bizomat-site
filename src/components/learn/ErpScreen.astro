@@ -1,0 +1,48 @@
+---
+// "Where to click", drawn as a plain outline of the BIZOMAT ERP screen: the module rail on the left (its real labels,
+// apps/work/src/client/components/layout/SuiteRail.tsx), the page, and the control to use. It is an illustration of
+// the layout, never a copy of a screen: real screens are on the Systems pages, marked "Product screen".
+interface Props { rail?: string; page: string; control?: string; tabs?: string[]; tab?: string; id: string }
+const { rail, page, control, tabs = [], tab, id } = Astro.props;
+export const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Maintenance', 'Health and Safety', 'Operations', 'Reports', 'Administration'];
+const W = 720;
+const H = 380;
+const railW = 168;
+const rowH = 28;
+const tabW = 118;
+const shown = tabs.slice(0, 4);
+const label = `Illustration of BIZOMAT ERP: in the module rail at the left choose ${rail ?? 'the module'}${shown.length && tab ? `, then the ${tab} tab` : ''}${control ? `, then ${control}` : ''}. The page is ${page}.`;
+---
+<figure class="lv-figure lv-figure--screen">
+  <svg class="lv lv-screen" viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby={`${id}-t`}>
+    <title id={`${id}-t`}>{label}</title>
+    <rect x="0" y="0" width={W} height={H} rx="14" class="lv-screen__bg" />
+    <rect x="0" y="0" width={railW} height={H} rx="14" class="lv-screen__rail" />
+    <rect x={railW - 14} y="0" width="14" height={H} class="lv-screen__rail" />
+    <text x="20" y="34" class="lv-screen__brand">BIZOMAT</text>
+    {RAIL.map((r, i) => (
+      <g>
+        {r === rail && <rect x="10" y={52 + i * rowH - 18} width={railW - 20} height="26" rx="7" class="lv-screen__hit" />}
+        <text x="22" y={52 + i * rowH} class:list={['lv-screen__railtext', { 'is-on': r === rail }]}>{r}</text>
+      </g>
+    ))}
+    <text x={railW + 28} y="44" class="lv-screen__title">{page}</text>
+    {shown.map((t, i) => (
+      <g>
+        <rect x={railW + 28 + i * (tabW + 8)} y="64" width={tabW} height="28" rx="7" class:list={['lv-screen__tab', { 'is-on': t === tab }]} />
+        <text x={railW + 28 + i * (tabW + 8) + tabW / 2} y="83" text-anchor="middle" class:list={['lv-screen__tabtext', { 'is-on': t === tab }]}>{t.length > 16 ? `${t.slice(0, 15)}…` : t}</text>
+      </g>
+    ))}
+    {control && (
+      <g>
+        <rect x={W - 200} y="24" width="176" height="34" rx="8" class="lv-screen__button" />
+        <text x={W - 112} y="46" text-anchor="middle" class="lv-screen__buttontext">{control.length > 22 ? `${control.slice(0, 21)}…` : control}</text>
+        <circle cx={W - 30} cy="58" r="14" class="lv-screen__ring" />
+      </g>
+    )}
+    {[0, 1, 2, 3, 4].map((i) => (
+      <rect x={railW + 28} y={116 + i * 48} width={W - railW - 56} height="36" rx="8" class="lv-screen__row" />
+    ))}
+  </svg>
+  <figcaption><span class="lv-tag">Illustration</span> Where to click: {rail ? <strong>{rail}</strong> : null}{shown.length && tab ? <> → <strong>{tab}</strong></> : null}{control ? <> → <strong>{control}</strong></> : null}</figcaption>
+</figure>

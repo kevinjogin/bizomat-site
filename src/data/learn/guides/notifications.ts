@@ -1,0 +1,128 @@
+import type { Guide } from '../types.ts';
+
+// Notifications in each tool and the choices of in-app and email. Facts: Projects and Tasks (apps/work/src/client/
+// components/layout/AppShell.tsx NotificationsBell and profile menu, pages/Inbox.tsx, pages/settings/Notifications.tsx,
+// apps/work/src/shared/types.ts NOTIFICATION_TYPES, apps/work/src/worker/routes/me.ts), Sales and CRM
+// (apps/work/src/client/crm/CrmApp.tsx Bell and NotificationsPage, crm/Settings.tsx NotificationPrefs,
+// apps/work/src/worker/crm/notify.ts), Finance (apps/work/src/client/fin/FinApp.tsx, fin/Settings.tsx,
+// apps/work/src/worker/fin/util.ts) and Health and Safety alerts (apps/work/src/client/system/whs/Whs.tsx,
+// apps/work/src/worker/whs/util.ts). The example company sends no email (apps/work/src/worker/system/example.ts).
+const guide: Guide = {
+  id: 'notifications',
+  section: 'admin',
+  title: 'Notifications',
+  short: 'Notifications',
+  status: 'live',
+  what: 'Projects and Tasks, Sales and CRM and Finance each tell you, in the app and by email, about the work that involves you: assignments, mentions, due dates, approvals and invitations. Each tool has its own bell, its own list and your own choices of what arrives in the app and what by email.',
+  purpose: [
+    'See what needs you without opening every module.',
+    'Open the record a notification is about in one click.',
+    'Choose, type by type, what you get in the app and what by email.',
+    'Set the reminders a Finance workspace sends about due invoices, bills and budgets.',
+    'Read health and safety alerts meant for you.',
+  ],
+  who: ['Everyone who is assigned work', 'Approvers in Finance', 'Sales staff with follow-ups', 'Finance managers who set alerts', 'Health and safety officers'],
+  access: {
+    path: ['BIZOMAT ERP', 'Projects and Tasks', 'Notifications'],
+    href: 'https://bizomat.ai/erp/tasks/',
+    label: 'Open Projects and Tasks',
+    note: 'Sales and CRM and Finance and Accounting each have their own bell in their top bar.',
+  },
+  tutorials: [
+    {
+      id: 'tasks-notifications',
+      title: 'Read your notifications in Projects and Tasks',
+      outcome: 'You have seen what is new and opened what needs you.',
+      steps: [
+        { title: 'Open the bell', body: 'Choose Projects and Tasks in the rail, then the bell in the top bar. A red dot means something is unread. The latest notifications are listed; unread ones stand out.', where: 'Notifications' },
+        { title: 'Open one', body: 'Choose a notification. It is marked as read and the task or page it is about opens.' },
+        { title: 'Mark all read', body: 'Choose Mark all read at the top of the list.', where: 'Mark all read' },
+        { title: 'See them all', body: 'Choose View all notifications, or Notifications in the side menu. Inbox, in the side menu, keeps only mentions, assignments, comments, replies and invitations that need you.', where: 'Inbox' },
+        { title: 'Filter and tidy', body: 'Filter by type with All types, tick Unread only, mark one as read or unread, or delete it with its bin button. Load older notifications shows earlier ones.', where: 'Unread only' },
+      ],
+    },
+    {
+      id: 'tasks-preferences',
+      title: 'Choose what reaches you in Projects and Tasks',
+      outcome: 'You get in the app and by email only the notification types you want.',
+      steps: [
+        { title: 'Open Notification settings', body: 'In Projects and Tasks, open the profile menu and choose Notification settings (or Profile and security from the ERP, then Notifications).', where: 'Notification settings' },
+        { title: 'Read the table', body: 'Notification preferences lists each type with what it covers: assignments, mentions, comments, replies, status changes, due soon, overdue, automations, invitations and more.', where: 'Notification preferences' },
+        { title: 'Switch each one', body: 'For each type, switch In-app and Email on or off.', where: 'Email' },
+        { title: 'Save', body: 'Choose Save. You see "Notification preferences saved".', where: 'Save' },
+      ],
+      after: 'If email is not set up on the service yet, the page says so: your email choices are kept and apply once it is.',
+    },
+    {
+      id: 'crm-finance-notifications',
+      title: 'Set your CRM and Finance notifications',
+      outcome: 'Your CRM and Finance notifications reach you where you want, in every organisation and workspace you belong to.',
+      steps: [
+        { title: 'Open the CRM’s bell', body: 'Choose Sales and CRM in the rail, then the bell in its top bar; the number on it is how many are unread. All notifications opens the full list, and Mark all read clears the count.', where: 'All notifications' },
+        { title: 'Open My notifications', body: 'Choose Settings under the bell’s list, or Notification settings in the CRM’s profile menu. The My notifications tab opens.', where: 'My notifications' },
+        { title: 'Switch CRM types', body: 'For each type, such as Records assigned to me, Mentions in notes and comments or Overdue activities and follow-ups, switch In BIZOMAT and By email. Each change is saved at once.', where: 'By email' },
+        { title: 'Do the same in Finance', body: 'Choose Finance and Accounting in the rail, then Settings, My notifications. Switch In the app and By email for types such as Records waiting for my approval or Invoices due soon or overdue, then choose Save.', where: 'In the app' },
+      ],
+      after: 'These choices are yours alone and apply in every CRM organisation or Finance workspace you belong to.',
+    },
+    {
+      id: 'finance-alerts',
+      title: 'Set a Finance workspace’s reminders and alerts',
+      outcome: 'The workspace reminds people before invoices and bills are due and warns about budgets.',
+      needs: 'A Finance role that manages the workspace’s settings.',
+      steps: [
+        { title: 'Open the settings', body: 'In Finance and Accounting choose Settings, then Approvals and alerts (Alerts in a personal or household workspace).', where: 'Approvals and alerts' },
+        { title: 'Set the reminders', body: 'Under Alerts, set Remind before an invoice is due (days) and Remind before a bill is due (days). 0 turns a reminder off.', where: 'Remind before an invoice is due (days)' },
+        { title: 'Choose the alerts', body: 'Switch Overdue invoices, Overdue bills, Budget warnings and Monthly summary on or off.', where: 'Budget warnings' },
+        { title: 'Save', body: 'Choose Save. Alerts appear in the app’s notifications, and by email for people who chose email in My notifications. Each is sent once.', where: 'Save' },
+      ],
+    },
+  ],
+  buttons: [
+    { label: 'Bell', does: 'Shows the latest notifications of the tool you are in, with a mark when something is unread.', when: 'To see what is new.' },
+    { label: 'Mark all read', does: 'Marks every notification of the list as read.', when: 'You have seen them all.' },
+    { label: 'View all notifications', does: 'Opens the full Notifications page of Projects and Tasks.', when: 'To find an older notification.' },
+    { label: 'Inbox', does: 'Lists only the mentions, assignments, comments, replies and invitations that need you.', when: 'To work through what needs an answer.' },
+    { label: 'Unread only', does: 'Hides notifications you have read.', when: 'On a long list.' },
+    { label: 'Notification settings', does: 'Opens your notification choices in the tool.', when: 'To stop or start a kind of notification, in the app or by email.' },
+    { label: 'In-app and Email switches', does: 'Choose, per type, whether it reaches you in the app and by email.', when: 'When a type is too noisy, or too important to miss.' },
+    { label: 'Save', does: 'Saves your Projects and Tasks or Finance choices; CRM choices are saved as you switch them.', when: 'After changing the switches.' },
+    { label: 'Mark all as read (Health and Safety)', does: 'Clears the Alerts for you list on the Health and Safety overview.', when: 'You have read the alerts.' },
+  ],
+  faqs: [
+    { q: 'Why do I get no emails?', a: 'Email is sent only while BIZOMAT’s email service is connected and only for the types you switched to email. The settings pages say when email is not connected; your choices are kept and apply once it is. Check your spam folder too.' },
+    { q: 'Why do my CRM notifications not show in Projects and Tasks?', a: 'Each tool keeps its own notifications and bell: Projects and Tasks, Sales and CRM and Finance. Open the tool to see its list.' },
+    { q: 'Are my choices the same in every company?', a: 'Yes. Your CRM choices apply in every CRM organisation you belong to and your Finance choices in every Finance workspace. Your Projects and Tasks choices belong to your account.' },
+    { q: 'Why did the example company send no email?', a: 'The example company never sends email. Its notifications stay in the app.' },
+    { q: 'Where do health and safety alerts appear?', a: 'Under Alerts for you on the Health and Safety overview, and as a count of unread alerts in My Work. They are emailed too where email is set up (/learn/whs/).' },
+    { q: 'Where are maintenance and ERP approvals?', a: 'On each module’s own pages: Awaiting approval on the Maintenance overview, and the counts on Operations, such as Purchase orders to approve and Counts to approve (/learn/dashboard/).' },
+    { q: 'Can I get a reminder before a customer’s invoice is due?', a: 'Yes, if the Finance workspace sets Remind before an invoice is due (days) and you keep Invoices due soon or overdue switched on. Reminders go to your team, not to the customer: send the customer a reminder from your own email.' },
+  ],
+  related: ['dashboard', 'projects', 'crm', 'finance', 'whs', 'automations', 'account-and-sign-in'],
+  workflows: ['project-to-completion', 'invoice-to-payment', 'incident-to-action'],
+  notYet: [
+    { text: 'Notices about your membership of a company (role, access, suspension and ownership transfer), in the app and by email.', status: 'in-development' },
+  ],
+  keywords: ['notification', 'alerts', 'bell', 'inbox', 'email notifications', 'reminders', 'mentions', 'assigned to me', 'unread', 'mute', 'turn off emails', 'preferences', 'digest'],
+  sources: [
+    'apps/work/src/client/components/layout/AppShell.tsx',
+    'apps/work/src/client/pages/Inbox.tsx',
+    'apps/work/src/client/pages/settings/Notifications.tsx',
+    'apps/work/src/shared/types.ts',
+    'apps/work/src/worker/routes/me.ts',
+    'apps/work/src/client/crm/CrmApp.tsx',
+    'apps/work/src/client/crm/Settings.tsx',
+    'apps/work/src/worker/crm/notify.ts',
+    'apps/work/src/client/fin/FinApp.tsx',
+    'apps/work/src/client/fin/Settings.tsx',
+    'apps/work/src/worker/fin/util.ts',
+    'apps/work/src/client/system/whs/Whs.tsx',
+    'apps/work/src/worker/whs/util.ts',
+    'apps/work/src/client/pages/MyWork.tsx',
+    'apps/work/src/worker/system/example.ts',
+    'docs/platform/members.md',
+  ],
+  updated: '2026-11-20',
+};
+
+export default guide;

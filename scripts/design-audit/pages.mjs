@@ -1,25 +1,22 @@
 // Pages the design audit loads: one or more of every page template on the website (src/pages/), not all of the
 // thousands of tool and Library pages. `key` pages get screenshots; `ci` pages are the ones the layout check in CI
-// loads (npm run audit:layout). A new template (for example a new system's page and guide under /systems/) belongs
+// loads (npm run audit:layout). A new template (for example a new system's page under /systems/, or a Knowledge Centre page under /learn/) belongs
 // here; a page of an existing template does not.
 export const PAGES = [
   { path: '/', name: 'home', key: true, ci: true },
   { path: '/systems/', name: 'systems', key: true, ci: true },
   { path: '/systems/erp/', name: 'system-erp', key: true, ci: true },
-  { path: '/systems/erp/guide/', name: 'system-erp-guide', key: true, ci: true },
+  { path: '/learn/', name: 'learn', key: true, ci: true },
+  { path: '/learn/procurement/', name: 'learn-guide', key: true, ci: true },
+  { path: '/learn/workflows/', name: 'learn-workflows', ci: true },
+  { path: '/learn/workflows/procure-to-pay/', name: 'learn-workflow', ci: true },
   { path: '/pricing/', name: 'pricing', key: true, ci: true },
   { path: '/systems/crm/', name: 'system-crm', ci: true },
-  { path: '/systems/crm/guide/', name: 'system-crm-guide', ci: true },
   { path: '/systems/finance/', name: 'system-finance', ci: true },
-  { path: '/systems/finance/guide/', name: 'system-finance-guide', ci: true },
   { path: '/systems/projects/', name: 'system-projects', ci: true },
-  { path: '/systems/projects/guide/', name: 'system-projects-guide', ci: true },
   { path: '/systems/engineering/', name: 'system-engineering', ci: true },
-  { path: '/systems/engineering/guide/', name: 'system-engineering-guide', ci: true },
   { path: '/systems/manufacturing/', name: 'system-manufacturing', key: true, ci: true },
-  { path: '/systems/manufacturing/guide/', name: 'system-manufacturing-guide', ci: true },
   { path: '/systems/whs/', name: 'system-whs', key: true, ci: true },
-  { path: '/systems/whs/guide/', name: 'system-whs-guide', ci: true },
   { path: '/resources/', name: 'resources', key: true, ci: true },
   { path: '/tools/', name: 'tools', key: true, ci: true },
   { path: '/tools/?tool=air-pipe-drop', name: 'tool-app', ci: true },

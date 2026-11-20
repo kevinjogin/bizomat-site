@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="erp-map-title erp-map-desc" class="lv">
+  <title id="erp-map-title">BIZOMAT ERP: one company, its modules and how they connect</title>
+  <desc id="erp-map-desc">Your company sits in the middle. Around it are the modules of BIZOMAT ERP, grouped by what they do: selling (Sales and CRM, Supply Chain), money (Finance and Accounting), work (Projects and Tasks, My Work), making (Products and Engineering, Procurement, Inventory, Manufacturing, Quality), keeping things running (Maintenance, Health and Safety), engineering automation (CAD Automation with your AI assistant) and running the company (Administration, Reports). Lines show the main links: a won deal starts a draft invoice and a project, a goods receipt starts a draft bill, a sales order is filled from stock and invoiced in Finance.</desc>
+  <g class="lv-links">
+    <path d="M480 280 L190 110"/><path d="M480 280 L480 80"/><path d="M480 280 L770 110"/>
+    <path d="M480 280 L120 300"/><path d="M480 280 L840 300"/><path d="M480 280 L210 470"/>
+    <path d="M480 280 L480 490"/><path d="M480 280 L750 470"/>
+  </g>
+  <g class="lv-flows">
+    <path d="M262 112 Q370 60 404 78" marker-end="url(#lv-arrow)"/>
+    <path d="M300 118 Q460 160 700 116" marker-end="url(#lv-arrow)"/>
+    <path d="M640 452 Q560 400 556 140" marker-end="url(#lv-arrow)"/>
+  </g>
+  <defs>
+    <marker id="lv-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" class="lv-arrowhead"/></marker>
+  </defs>
+  <g class="lv-hub">
+    <rect x="390" y="236" width="180" height="88" rx="16" class="lv-core"/>
+    <text x="480" y="272" class="lv-core-title" text-anchor="middle">Your company</text>
+    <text x="480" y="298" class="lv-core-sub" text-anchor="middle">people, roles, departments</text>
+  </g>
+  <g class="lv-group"><rect x="80" y="62" width="220" height="96" rx="12" class="lv-box"/><text x="96" y="88" class="lv-head">Sell</text><text x="96" y="114" class="lv-item">Sales and CRM</text><text x="96" y="138" class="lv-item">Supply Chain (sales orders)</text></g>
+  <g class="lv-group"><rect x="380" y="34" width="200" height="88" rx="12" class="lv-box"/><text x="396" y="60" class="lv-head">Money</text><text x="396" y="86" class="lv-item">Finance and Accounting</text><text x="396" y="108" class="lv-small">quotes, invoices, bills, ledger</text></g>
+  <g class="lv-group"><rect x="660" y="62" width="220" height="96" rx="12" class="lv-box"/><text x="676" y="88" class="lv-head">Work</text><text x="676" y="114" class="lv-item">Projects and Tasks</text><text x="676" y="138" class="lv-item">My Work</text></g>
+  <g class="lv-group"><rect x="20" y="242" width="220" height="120" rx="12" class="lv-box"/><text x="36" y="268" class="lv-head">Make</text><text x="36" y="292" class="lv-item">Products and Engineering</text><text x="36" y="314" class="lv-item">Procurement · Inventory</text><text x="36" y="336" class="lv-item">Manufacturing · Quality</text></g>
+  <g class="lv-group"><rect x="720" y="242" width="220" height="110" rx="12" class="lv-box"/><text x="736" y="268" class="lv-head">Engineering automation</text><text x="736" y="294" class="lv-item">CAD Automation</text><text x="736" y="318" class="lv-small">your AI assistant working in</text><text x="736" y="336" class="lv-small">SOLIDWORKS on your computer</text></g>
+  <g class="lv-group"><rect x="100" y="430" width="220" height="96" rx="12" class="lv-box"/><text x="116" y="456" class="lv-head">Keep it running</text><text x="116" y="482" class="lv-item">Maintenance (assets)</text><text x="116" y="506" class="lv-item">Health and Safety</text></g>
+  <g class="lv-group"><rect x="380" y="452" width="200" height="80" rx="12" class="lv-box"/><text x="396" y="478" class="lv-head">See</text><text x="396" y="504" class="lv-item">Dashboard · Reports</text></g>
+  <g class="lv-group"><rect x="640" y="430" width="220" height="96" rx="12" class="lv-box"/><text x="656" y="456" class="lv-head">Run the company</text><text x="656" y="482" class="lv-item">Administration</text><text x="656" y="506" class="lv-small">members, roles, settings</text></g>
+</svg>

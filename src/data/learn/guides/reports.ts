@@ -1,0 +1,123 @@
+import type { Guide } from '../types.ts';
+
+// The ERP's Reports module. Facts: the Reports page (apps/work/src/client/system/SystemApp.tsx: ReportsPage,
+// ERP_REPORT_LINKS, WHS_REPORT_LINKS), the ERP report pages with filters in the address and CSV export
+// (apps/work/src/client/system/erp/Reports.tsx, StockReports.tsx, MfgReports.tsx, QualityReports.tsx, SupplyReports.tsx,
+// common.tsx CsvLink), the server's rule that every ERP role may read reports (apps/work/src/worker/erp/access.ts,
+// 'reports.view'), and each tool's own reports (apps/work/src/client/crm/Insights.tsx, apps/work/src/client/fin/Reports.tsx,
+// apps/work/src/client/board/ReportsDialog.tsx).
+const guide: Guide = {
+  id: 'reports',
+  section: 'modules',
+  title: 'Reports',
+  short: 'Reports',
+  status: 'live',
+  what: 'Reports puts every report of a company in one place: the ERP reports for products, engineering, purchasing, stock, manufacturing, quality and supply chain, the health and safety registers, and links to the reports of Sales and CRM, Finance and Accounting and Projects and Tasks. Each report opens in its own module, with that module’s permissions.',
+  purpose: [
+    'Find any report of the company without knowing which module holds it.',
+    'Filter a report and open the record behind each row.',
+    'Export a report to CSV for a spreadsheet.',
+    'Share a filtered report by its address.',
+    'Read stock, purchasing, production, quality and delivery figures from the company’s own records.',
+  ],
+  who: ['Owners and managers', 'Buyers, warehouse, production, quality and sales managers', 'Accountants and finance staff', 'Health and safety officers', 'Anyone asked to bring numbers to a meeting'],
+  access: {
+    path: ['BIZOMAT ERP', 'Reports'],
+    href: 'https://bizomat.ai/erp/reports',
+    label: 'Open Reports',
+  },
+  tutorials: [
+    {
+      id: 'find-a-report',
+      title: 'Find and open a report',
+      outcome: 'You have opened the report you need for the company you are working in.',
+      steps: [
+        { title: 'Choose the company', body: 'Reports shows the company you are working in. Switch company first in the company switcher if needed.' },
+        { title: 'Open Reports', body: 'Choose Reports in the rail. The page lists the reports of the company’s modules.', where: 'Reports' },
+        { title: 'Pick an ERP report', body: 'Under Products, engineering, purchasing, stock, manufacturing, quality and supply chain, choose a card, for example Stock on hand, Open orders or Supplier delivery. Each card says what the report shows.', where: 'Stock on hand' },
+        { title: 'Pick a health and safety register', body: 'Under Health and safety, choose WHS dashboard, Hazard register, Incident register, Risk register and heat map or Actions register. They open in the Health and Safety module.', where: 'Hazard register' },
+        { title: 'Pick a tool’s reports', body: 'At the foot, Sales and CRM reports, Finance and Accounting reports and Projects and Tasks dashboards open in those tools, one card for each such tool the company runs.', where: 'Finance and Accounting reports' },
+      ],
+    },
+    {
+      id: 'filter-and-export',
+      title: 'Filter an ERP report and export it',
+      outcome: 'You have a CSV file of exactly the rows you filtered.',
+      steps: [
+        { title: 'Open an ERP report', body: 'From Reports, choose an ERP report card. The ERP reports page opens with rows of tabs: products and engineering, purchasing and stock, manufacturing, quality, and supply chain.', where: 'ERP reports' },
+        { title: 'Move to another report', body: 'Choose another tab to change report without going back.' },
+        { title: 'Set the filters', body: 'Use the filters above the report: for example Search by number or name, a type, lifecycle or category, a Warehouse, a Supplier, a Carrier, or From date and To date, depending on the report.', where: 'From date' },
+        { title: 'Open a record', body: 'Each row links to the record behind it, such as the product, purchase order or manufacturing order.' },
+        { title: 'Export CSV', body: 'Choose Export CSV. The file holds the same rows as the screen, with the same filters.', where: 'Export CSV' },
+        { title: 'Share the view', body: 'The filters are kept in the page’s address. Copy the address to share the same report, filtered, with someone who may read it.' },
+      ],
+    },
+    {
+      id: 'tool-reports',
+      title: 'Export a CRM or Finance report',
+      outcome: 'You have a CRM report as CSV, or a Finance report as CSV or PDF.',
+      needs: 'A role whose permissions include exporting reports in that tool (owners, administrators and managers by default in the CRM).',
+      steps: [
+        { title: 'Open the tool’s reports', body: 'From Reports, choose Sales and CRM reports or Finance and Accounting reports.', where: 'Sales and CRM reports' },
+        { title: 'Choose a report', body: 'Pick the report and set its period or filters.' },
+        { title: 'Export', body: 'In Sales and CRM choose Export CSV. In Finance choose CSV or PDF; All reports takes you back to the list.', where: 'Export CSV' },
+      ],
+    },
+    {
+      id: 'project-report',
+      title: 'Make a report of a project',
+      outcome: 'A saved project report, with its PDF, Excel, HTML and CSV files.',
+      needs: 'Permission to generate reports on the project (project managers and organisation administrators can give it).',
+      steps: [
+        { title: 'Open the project', body: 'Choose Projects and Tasks in the rail and open the project’s board.', where: 'Projects and Tasks' },
+        { title: 'Choose Reports', body: 'Choose Reports at the top of the board. The New report tab opens with a preview.', where: 'New report' },
+        { title: 'Save the report', body: 'Choose Save report (PDF, Excel, HTML, CSV).', where: 'Save report (PDF, Excel, HTML, CSV)' },
+        { title: 'Find it later', body: 'Report history lists each saved report with its files.', where: 'Report history' },
+      ],
+    },
+  ],
+  buttons: [
+    { label: 'Report cards', does: 'Open one report of the company.', when: 'To read a figure across the company.', after: 'The report opens in its module, with that module’s permissions.' },
+    { label: 'Report tabs', does: 'Move between the ERP reports without going back to the list.', when: 'On any ERP report page.' },
+    { label: 'Filters', does: 'Narrow a report by text, type, warehouse, supplier, carrier, status or dates.', when: 'Before reading or exporting.', after: 'The filters are kept in the address.' },
+    { label: 'Export CSV', does: 'Downloads the ERP report, or a CRM report, as a CSV file with the same rows as the screen.', when: 'To work on the figures in a spreadsheet.' },
+    { label: 'CSV and PDF', does: 'Download a Finance report.', when: 'For your accountant or your records.' },
+    { label: 'Reports (project)', does: 'Opens the project report window on a Projects and Tasks board.', when: 'To save a status report of a project.' },
+  ],
+  faqs: [
+    { q: 'Who can read the ERP reports?', a: 'Everyone in the company with an ERP role, including Viewer, which every member has until given another role. People who were only added to one of the company’s tools do not see the ERP or health and safety sections.' },
+    { q: 'Why can I not export a CRM or Finance report?', a: 'Exporting is a permission of your role in that tool. In the CRM, owners, administrators and managers may export by default; the CRM’s owner or an administrator can change it under Settings, Permissions (/learn/roles-and-permissions/).' },
+    { q: 'Where are the maintenance reports?', a: 'In Maintenance, on its Reports tab: reliability, backlog, preventive maintenance, breakdown trends and asset costs, for supervisors and administrators (/learn/maintenance/).' },
+    { q: 'Why does a report show nothing?', a: 'Reports read only the company’s own records, with the filters you set. Check the company in the company switcher, then clear the filters or widen the dates. Archived products are left out of the product reports.' },
+    { q: 'Do the stock and production reports match the Finance ledger?', a: 'They are not linked. Stock and production values are kept in the ERP; posting them to Finance’s ledger is planned and nothing is posted. Finance’s reports show only what was posted in Finance.' },
+    { q: 'Can I build my own report?', a: 'In Projects and Tasks you can build dashboards from board data and save views. A report designer across modules is not built.' },
+    { q: 'Where do the Dashboard figures come from?', a: 'From the same tools. Reports says so at the top, with a link to the Dashboard (/learn/dashboard/).' },
+  ],
+  related: ['dashboard', 'procurement', 'inventory', 'manufacturing', 'quality', 'supply-chain', 'crm', 'finance', 'whs'],
+  workflows: ['procure-to-pay', 'production-to-quality', 'sales-order-to-delivery', 'make-to-order'],
+  notYet: [
+    { text: 'A report designer that combines figures from several modules.', status: 'planned' },
+    { text: 'Measures across modules on one page, such as on-time delivery against production output.', status: 'planned' },
+  ],
+  keywords: ['report', 'analytics', 'KPI', 'export', 'CSV', 'spreadsheet', 'Excel', 'PDF', 'stock report', 'inventory report', 'purchase report', 'NCR register', 'open orders', 'job profitability', 'hazard register', 'dashboards'],
+  sources: [
+    'apps/work/src/client/system/SystemApp.tsx',
+    'apps/work/src/client/system/erp/Reports.tsx',
+    'apps/work/src/client/system/erp/StockReports.tsx',
+    'apps/work/src/client/system/erp/MfgReports.tsx',
+    'apps/work/src/client/system/erp/QualityReports.tsx',
+    'apps/work/src/client/system/erp/SupplyReports.tsx',
+    'apps/work/src/client/system/erp/common.tsx',
+    'apps/work/src/worker/erp/access.ts',
+    'apps/work/src/worker/erp/reports.ts',
+    'apps/work/src/client/crm/Insights.tsx',
+    'apps/work/src/shared/crm/roles.ts',
+    'apps/work/src/client/fin/Reports.tsx',
+    'apps/work/src/client/board/BoardPage.tsx',
+    'apps/work/src/client/board/ReportsDialog.tsx',
+    'src/data/erp-capabilities.ts',
+  ],
+  updated: '2026-11-20',
+};
+
+export default guide;

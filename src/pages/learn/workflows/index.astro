@@ -1,0 +1,47 @@
+---
+// /learn/workflows/: every end-to-end workflow BIZOMAT ERP supports today, and the ones that are not built.
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Container from '../../../components/Container.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import StatusLabel from '../../../components/StatusLabel.astro';
+import FlowChain from '../../../components/learn/FlowChain.astro';
+import LearnSearch from '../../../components/learn/LearnSearch.astro';
+import '../../../styles/learn.css';
+import { SITE } from '../../../config/site.ts';
+import { LEARN_HOME, WORKFLOWS, guideById, guideUrl, workflowUrl } from '../../../data/learn/index.ts';
+
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Knowledge Centre', href: LEARN_HOME }, { label: 'Workflows', href: '/learn/workflows/' }];
+const description = 'End-to-end workflows in BIZOMAT ERP: from a lead to a paid invoice, a requisition to a bill, a bill of materials to finished goods, and more.';
+// Processes people ask for that BIZOMAT does not run today (owner's list of 20 Nov 2026, checked against the code).
+const notBuilt = [
+  'Employee onboarding, HR and payroll: BIZOMAT has no HR or payroll module.',
+  'Timesheets to project billing: Projects and Tasks records time against tasks, but nothing turns it into an invoice.',
+  'Customer service requests to resolution: there is no service desk or ticketing module.',
+  'Carrier bookings: shipments are recorded in Supply Chain, but no carrier system is connected.',
+];
+const schema = [{ '@type': 'CollectionPage', '@id': `${SITE.url}/learn/workflows/#page`, url: `${SITE.url}/learn/workflows/`, name: 'Workflows', description, isPartOf: { '@id': `${SITE.url}/#website` } }];
+---
+<BaseLayout title="Workflows | Knowledge Centre" description={description} breadcrumbs={crumbs} schema={schema}>
+  <section class="lv-hero" aria-labelledby="wf-title">
+    <Container>
+      <Breadcrumb items={crumbs} />
+      <p class="bz-eyebrow">Knowledge Centre</p>
+      <h1 id="wf-title">Workflows</h1>
+      <p class="lv-hero__lead">How a piece of work moves through BIZOMAT ERP from start to finish, module by module. Each workflow has its own step-by-step tutorial.</p>
+      <LearnSearch compact />
+    </Container>
+  </section>
+  <Container class="lv-narrow lv-wf-list">
+    {WORKFLOWS.map((w) => (
+      <section class="lv-sec" aria-labelledby={`wf-${w.id}`}>
+        <h2 id={`wf-${w.id}`}><a href={workflowUrl(w.id)}>{w.title}</a> {w.status !== 'live' && w.status !== 'connected' ? <StatusLabel status={w.status} /> : null}</h2>
+        <p>{w.summary}</p>
+        <FlowChain items={w.stages.map((s) => ({ href: guideUrl(s.guide), title: s.label, detail: guideById(s.guide).short ?? guideById(s.guide).title }))} label={w.title} />
+      </section>
+    ))}
+    <section class="lv-sec" aria-labelledby="not-built">
+      <h2 id="not-built">Not available in BIZOMAT</h2>
+      <ul class="lv-notyet">{notBuilt.map((n) => <li><StatusLabel status="planned" /> {n}</li>)}</ul>
+    </section>
+  </Container>
+</BaseLayout>

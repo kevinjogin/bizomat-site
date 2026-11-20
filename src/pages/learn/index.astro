@@ -1,0 +1,142 @@
+---
+// /learn/: the BIZOMAT ERP Knowledge Centre (owner's brief of 20 Nov 2026): one searchable place to learn every part of
+// BIZOMAT ERP. Search first (src/scripts/learn.ts over /learn/search.json), then the sections: getting started, the
+// modules, workflows, AI and integrations, CAD and engineering, the administrator guide and troubleshooting. Content is
+// typed data in src/data/learn/; nothing here is a claim the code does not back.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import StatusLabel from '../../components/StatusLabel.astro';
+import Diagram from '../../components/learn/Diagram.astro';
+import Answer from '../../components/learn/Answer.astro';
+import LearnSearch from '../../components/learn/LearnSearch.astro';
+import '../../styles/learn.css';
+import { SITE } from '../../config/site.ts';
+import { APP_LINKS } from '../../config/platform.ts';
+import { GUIDES, LEARN_HOME, LEARN_TITLE, SECTIONS, WORKFLOWS, guideById, guideUrl, guidesIn, workflowUrl } from '../../data/learn/index.ts';
+
+const title = LEARN_TITLE;
+const description = 'Learn BIZOMAT ERP: search any question, follow step-by-step tutorials for every module and workflow, and fix common problems.';
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Knowledge Centre', href: LEARN_HOME }];
+const popular = ['create a purchase order', 'invite someone', 'import contacts', 'why can\'t I see', 'connect Claude', 'convert a lead'];
+// A few questions people ask first, from the guides themselves.
+const firstQuestions = (['account-and-sign-in', 'navigation', 'roles-and-permissions', 'trouble-access'] as const)
+  .flatMap((id) => guideById(id).faqs.slice(0, 2).map((f, i) => ({ ...f, id, i })));
+const counts = {
+  guides: GUIDES.length,
+  tutorials: GUIDES.reduce((n, g) => n + g.tutorials.length, 0) + WORKFLOWS.length,
+  questions: GUIDES.reduce((n, g) => n + g.faqs.length, 0) + WORKFLOWS.reduce((n, w) => n + w.faqs.length, 0),
+};
+const schema = [{
+  '@type': 'CollectionPage', '@id': `${SITE.url}${LEARN_HOME}#page`, url: `${SITE.url}${LEARN_HOME}`, name: title, description, inLanguage: SITE.locale,
+  isPartOf: { '@id': `${SITE.url}/#website` },
+  hasPart: GUIDES.map((g) => ({ '@type': 'TechArticle', name: g.title, url: `${SITE.url}${guideUrl(g.id)}` })),
+}];
+---
+<BaseLayout title="Knowledge Centre" description={description} breadcrumbs={crumbs} schema={schema}>
+  <section class="lv-hero" aria-labelledby="learn-title">
+    <Container>
+      <Breadcrumb items={crumbs} />
+      <p class="bz-eyebrow">Learn BIZOMAT</p>
+      <h1 id="learn-title">{title}</h1>
+      <p class="lv-hero__lead">Need help using BIZOMAT? Find a tutorial, search a question, or learn any module. {counts.guides} guides, {counts.tutorials} step-by-step tutorials and {counts.questions} answered questions, checked against the application.</p>
+      <LearnSearch local autofocus />
+      <p class="lv-popular">Try:
+        {popular.map((q) => <a href={`${LEARN_HOME}?q=${encodeURIComponent(q)}`}>{q}</a>)}
+      </p>
+    </Container>
+  </section>
+
+  <div data-browse>
+    <section class="lv-band" aria-labelledby="getting-started">
+      <Container>
+        <h2 id="getting-started">{SECTIONS[0].title}</h2>
+        <p class="lv-band__lead">{SECTIONS[0].lead}</p>
+        <ol class="lv-start lv-start--grid">
+          {guidesIn('getting-started').map((g) => (
+            <li><a href={guideUrl(g.id)}><strong>{g.title}</strong><span>{g.what}</span></a></li>
+          ))}
+        </ol>
+        <p><a class="bz-btn bz-btn--accent" href={APP_LINKS.erp.signIn} rel="noopener" data-cta="learn-open-erp">Open BIZOMAT ERP <span aria-hidden="true">↗</span></a></p>
+        <Diagram name="erp-map" wide caption="BIZOMAT ERP around your company. Each group is a set of modules in the module rail." />
+      </Container>
+    </section>
+
+    <section class="lv-band lv-band--tint" aria-labelledby="modules">
+      <Container>
+        <h2 id="modules">{SECTIONS[1].title}</h2>
+        <p class="lv-band__lead">{SECTIONS[1].lead}</p>
+        <ul class="lv-cards" role="list">
+          {guidesIn('modules').map((g) => (
+            <li class="lv-card">
+              <a href={guideUrl(g.id)} class="lv-card__link">
+                <span class="lv-card__title">{g.title}</span>
+                <span class="lv-card__text">{g.what}</span>
+              </a>
+              <span class="lv-card__meta"><StatusLabel status={g.status} /> {g.tutorials.length} tutorials · {g.faqs.length} questions</span>
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </section>
+
+    <section class="lv-band" aria-labelledby="workflows">
+      <Container>
+        <h2 id="workflows">{SECTIONS[2].title}</h2>
+        <p class="lv-band__lead">{SECTIONS[2].lead} <a href="/learn/workflows/">All workflows</a>.</p>
+        <ul class="lv-flows" role="list">
+          {WORKFLOWS.map((w) => (
+            <li>
+              <a href={workflowUrl(w.id)}>{w.title}</a>
+              <span class="lv-flows__stages">{w.stages.map((s) => s.label).join(' → ')}</span>
+              {w.status !== 'live' && w.status !== 'connected' ? <StatusLabel status={w.status} /> : null}
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </section>
+
+    {(['ai', 'cad', 'admin', 'troubleshooting'] as const).map((sid, k) => {
+      const s = SECTIONS.find((x) => x.id === sid)!;
+      return (
+        <section class:list={['lv-band', { 'lv-band--tint': k % 2 === 0 }]} aria-labelledby={sid}>
+          <Container>
+            <h2 id={sid}>{s.title}</h2>
+            <p class="lv-band__lead">{s.lead}</p>
+            <ul class="lv-cards lv-cards--compact" role="list">
+              {guidesIn(sid).map((g) => (
+                <li class="lv-card">
+                  <a href={guideUrl(g.id)} class="lv-card__link">
+                    <span class="lv-card__title">{g.title}</span>
+                    <span class="lv-card__text">{g.what}</span>
+                  </a>
+                  {g.status !== 'live' && g.status !== 'connected' ? <span class="lv-card__meta"><StatusLabel status={g.status} /></span> : null}
+                </li>
+              ))}
+            </ul>
+          </Container>
+        </section>
+      );
+    })}
+
+    <section class="lv-band" aria-labelledby="first-questions">
+      <Container class="lv-narrow">
+        <h2 id="first-questions">Questions people ask first</h2>
+        {firstQuestions.map((f) => (
+          <details class="lv-faq">
+            <summary><span>{f.q}</span></summary>
+            <div class="lv-faq__a"><p><Answer text={f.a} /> <a href={`${guideUrl(f.id)}#${f.id}-q${f.i + 1}`}>More in {guideById(f.id).title}</a></p></div>
+          </details>
+        ))}
+        <div class="lv-help">
+          <h3>Can't find it?</h3>
+          <p>Ask <a href="/#ai-search">AI Search</a>, which also finds BIZOMAT's pages, tools and Library chapters, read the <a href={guideUrl('trouble-access')}>troubleshooting guides</a>, or <a href="/contact/">contact us</a>. In BIZOMAT ERP, <strong>Report a fault</strong> in the module rail raises a maintenance request for your company's equipment: it does not send a message to BIZOMAT.</p>
+        </div>
+      </Container>
+    </section>
+  </div>
+</BaseLayout>
+
+<script>
+  import '../../scripts/learn.ts';
+</script>
