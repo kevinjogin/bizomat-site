@@ -48,6 +48,8 @@ export const MODULES = {
   quality: { label: 'Quality', enforcedFrom: 'R4' },
   supply_chain: { label: 'Warehouse: orders and dispatch', enforcedFrom: 'R4' },
   cad: { label: 'CAD Automation', enforcedFrom: 'CAD' },
+  // Product Management's sales and margin analysis (owner, 20 Nov 2026: in the style of Phocas; released on for everyone).
+  analysis: { label: 'Product Management: sales and margin analysis', enforcedFrom: 'Analysis' },
   // The modules framework (owner's brief "97-module enterprise expansion", 20 Nov 2026): on by default like every module,
   // so the owner's request to publish them for testing is met; a platform admin switches any of them off per company,
   // rollout stage or everyone (src/shared/erp-objects FRAMEWORK_SWITCHES).
