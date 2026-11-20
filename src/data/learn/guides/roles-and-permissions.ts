@@ -16,7 +16,7 @@ const guide: Guide = {
   purpose: [
     'Understand the five company roles and what each sets in the tools.',
     'See the roles you hold in a company.',
-    'Give people roles in Projects and Tasks, Sales and CRM and Finance.',
+    'Give people roles in Project Management, Sales and CRM and Finance.',
     'Give ERP, Health and Safety and Maintenance job roles.',
     'Understand segregation of duties: why someone else must approve.',
   ],
@@ -90,7 +90,7 @@ const guide: Guide = {
   ],
   buttons: [
     { label: 'Company role', does: 'Sets a person’s role in the company and, from its preset, their role in each tool.', when: 'When someone joins or their job changes.', after: '"Saved. The tools are updated."' },
-    { label: 'Tool role lists', does: 'Set a person’s role in one tool: Projects and Tasks, Sales and CRM or Finance. No access takes them out.', when: 'When one tool needs a different role from the preset.' },
+    { label: 'Tool role lists', does: 'Set a person’s role in one tool: Project Management, Sales and CRM or Finance. No access takes them out.', when: 'When one tool needs a different role from the preset.' },
     { label: 'ERP roles', does: 'Opens the ERP roles page: your own roles, and for administrators everyone’s.', when: 'To let people draft, approve, buy, receive, produce, inspect or sell.' },
     { label: 'WHS roles', does: 'Opens the same ERP roles page for the Health and Safety roles.', when: 'To name WHS managers, officers, investigators, representatives and health officers.' },
     { label: 'Save', does: 'Saves one person’s ERP roles.', when: 'After ticking their roles.' },
@@ -99,7 +99,7 @@ const guide: Guide = {
   ],
   faqs: [
     { q: 'What are the five company roles?', a: 'Owner (one per company; owns every tool, transfers ownership and closes the company), Administrator (manages people, departments, invitations and details), Manager, Employee and Read-only (all three see the company and its people). Each sets tool roles by preset: an administrator is Administrator in every tool; a manager is Project manager, Manager and Finance Manager; an employee is Member, Member and Contributor; read-only is Viewer in each.' },
-    { q: 'What roles does each tool have?', a: 'Projects and Tasks: Administrator, Project manager, Member or Viewer. Sales and CRM: Administrator, Manager, Sales Executive, Member or Viewer. Finance: Administrator, Accountant, Finance Manager, Contributor or Viewer. The owner is the owner of every tool.' },
+    { q: 'What roles does each tool have?', a: 'Project Management: Administrator, Project manager, Member or Viewer. Sales and CRM: Administrator, Manager, Sales Executive, Member or Viewer. Finance: Administrator, Accountant, Finance Manager, Contributor or Viewer. The owner is the owner of every tool.' },
     { q: 'Why can I not approve something I drafted?', a: 'Segregation of duties: nobody approves a change order they drafted, a supplier they created, a requisition they raised, a purchase order or quotation choice they made, an adjustment they asked for or a count they counted; nobody releases a routing they drafted; nobody approves a corrective action they proposed or are to carry out. Someone else with the right role must do it. In a company of one person (your own company, the example company, or a registered company with one member) you may, and the exception is recorded on the record.' },
     { q: 'Why can I not change my own role?', a: 'Only the owner changes their own role. Everyone else asks the owner, so nobody can give themselves more access.' },
     { q: 'Why can I not make someone an administrator?', a: 'Only the owner makes administrators, of the company or of any tool, and only the owner changes or removes an administrator.' },

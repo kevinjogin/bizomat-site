@@ -300,7 +300,7 @@ companyAdminRoutes.get('/c/:company/admin/access-review', async (c) => {
   const t = now();
   await coAuditStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'company.access_review', metadata: { members: rows.length, format: c.req.query('format') === 'csv' ? 'csv' : 'json' }, ip: clientIp(c) }).run();
   if (c.req.query('format') === 'csv') {
-    const head = ['Name', 'Email', 'Company role', 'Status', 'Title', 'Departments', 'Projects and Tasks role', 'CRM role', 'Finance role', ...(v2 ? ['Module access (changed from the role)'] : []), 'API tokens for this company', 'Joined', 'Last active'];
+    const head = ['Name', 'Email', 'Company role', 'Status', 'Title', 'Departments', 'Project Management role', 'CRM role', 'Finance role', ...(v2 ? ['Module access (changed from the role)'] : []), 'API tokens for this company', 'Joined', 'Last active'];
     return csvResponse(`access-review-${a.company.name}-${new Date(t).toISOString().slice(0, 10)}`, [
       head,
       ...rows.map((r) => [r.name, r.email, r.role, r.status, r.title, r.departments, r.tasks, r.crm, r.finance, ...(v2 ? [r.modules] : []), r.tokens, r.joined, r.lastActive]),

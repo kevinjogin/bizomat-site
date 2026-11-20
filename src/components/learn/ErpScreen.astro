@@ -5,14 +5,14 @@
 interface Props { rail?: string; page: string; control?: string; tabs?: string[]; tab?: string; id: string; /** Beside a tutorial: the control follows the step on show (src/scripts/learn.ts). */ dynamic?: boolean }
 const { rail, page, control, tabs = [], tab, id, dynamic } = Astro.props;
 const cut = (s: string) => (s.length > 22 ? `${s.slice(0, 21)}…` : s);
-export const RAIL = ['Dashboard', 'My Work', 'Sales and CRM', 'Finance and Accounting', 'Projects and Tasks', 'Products and Engineering', 'Maintenance', 'Health and Safety', 'Operations', 'Reports', 'Administration'];
+export const RAIL = ['Dashboard', 'Project Management', 'Sales and CRM', 'Finance and Accounting', 'Product Management', 'Engineering', 'Procurement', 'Warehouse', 'Maintenance', 'Health and Safety', 'Reports', 'Administration'];
 const W = 720;
 const H = 380;
 const railW = 168;
 const rowH = 28;
 const tabW = 118;
 const shown = tabs.slice(0, 4);
-const label = `Illustration of BIZOMAT ERP: in the module rail at the left choose ${rail ?? 'the module'}${shown.length && tab ? `, then the ${tab} tab` : ''}${control ? `, then ${control}` : ''}. The page is ${page}.`;
+const label = `Illustration of BIZOMAT ERP: in the module rail at the left choose ${rail ?? 'the module'}${shown.length && tab ? `, then ${tab} in its side menu` : ''}${control ? `, then ${control}` : ''}. The page is ${page}.`;
 ---
 <figure class="lv-figure lv-figure--screen" data-screen={dynamic ? '' : undefined}>
   <svg class="lv lv-screen" viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby={`${id}-t`}>

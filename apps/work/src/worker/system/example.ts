@@ -404,7 +404,7 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
   const record = (app: ExampleApp, id: string) => db.prepare(`UPDATE sys_demo SET ${COLUMN[app]} = ?, updated_at = ? WHERE user_id = ?`).bind(id, now(), user.id).run();
 
   await withApi(c, user, async (api) => {
-    // ---------------------------------------------------------------- Projects and Tasks
+    // ---------------------------------------------------------------- Project Management
     const ws = await api('Projects', 'POST', '/api/workspaces', { name: EXAMPLE_NAME, description: 'Invented example data to learn BIZOMAT. Only you can see it, and changes here affect nothing else.' });
     await record('tasks', ws.id);
     const boardIds: string[] = [];

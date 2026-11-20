@@ -150,11 +150,11 @@ const guide: Guide = {
     },
     {
       q: 'My API token stopped working.',
-      a: 'An expired, revoked or ended token gets "Authentication required": every token ends when you change your password, and new tokens expire (90 days unless you chose otherwise). "This API token is limited to one company, and this address is not in it." means it is calling another company. "This API token can only read." and "This API token is not allowed to use this application." mean it was made with those limits. Make a new token in Projects and Tasks, Settings, Security (see /learn/integrations/).',
+      a: 'An expired, revoked or ended token gets "Authentication required": every token ends when you change your password, and new tokens expire (90 days unless you chose otherwise). "This API token is limited to one company, and this address is not in it." means it is calling another company. "This API token can only read." and "This API token is not allowed to use this application." mean it was made with those limits. Make a new token in Project Management, Settings, Security (see /learn/integrations/).',
     },
     {
       q: 'A webhook, Slack or Teams integration shows Delivery failing.',
-      a: 'The last delivery to its address failed. In Projects and Tasks, Integrations, choose Deliveries to see the error, check the address still works, and choose Send test. It shows Connected again after a delivery succeeds.',
+      a: 'The last delivery to its address failed. In Project Management, Integrations, choose Deliveries to see the error, check the address still works, and choose Send test. It shows Connected again after a delivery succeeds.',
     },
     {
       q: 'My CRM calendar feed stopped updating.',

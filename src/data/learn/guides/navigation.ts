@@ -4,7 +4,7 @@ import type { Guide } from '../types.ts';
 // (apps/work/src/client/components/layout/SuiteRail.tsx, apps/work/src/client/system/maintenance/ReportFault.tsx and
 // Requests.tsx), the top bar, company switcher and side menu (apps/work/src/client/system/SystemApp.tsx: Shell,
 // CompanySwitcher, ThemeButton, Profile), the phone layout (apps/work/src/client/styles/app.css) and the company being
-// worked in (apps/work/src/client/lib/company-context.ts). The new look is behind the flag new_ui_enabled (off).
+// worked in (apps/work/src/client/lib/company-context.ts). Each module's side menu: apps/work/src/client/system/modules.tsx. The new look is behind the flag new_ui_enabled (off).
 const guide: Guide = {
   id: 'navigation',
   section: 'getting-started',
@@ -15,7 +15,7 @@ const guide: Guide = {
   purpose: [
     'Move between modules with the module rail.',
     'Change the company you are working in.',
-    'Find Procurement, Inventory, Manufacturing, Quality and Supply Chain in the side menu or on Operations.',
+    'Use each module’s own side menu: Engineering, Procurement, Warehouse, Maintenance and Health and Safety list only their own sections.',
     'Report a fault from any screen.',
     'Use BIZOMAT ERP on a phone.',
   ],
@@ -32,10 +32,10 @@ const guide: Guide = {
       outcome: 'You can open any module and come back to the Dashboard.',
       steps: [
         { title: 'Find the rail', body: 'The dark bar on the left of every screen is the module rail. The BIZOMAT mark at its top opens the Dashboard.', where: 'Dashboard' },
-        { title: 'Open a module', body: 'Choose an entry: Dashboard, My Work, Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering, Maintenance, Health and Safety, Operations, Reports or Administration. The entry you are in is highlighted.', where: 'Projects and Tasks' },
+        { title: 'Open a module', body: 'Choose an entry: Dashboard, Project Management, Sales and CRM, Finance and Accounting, Product Management, Engineering, Procurement, Warehouse, Maintenance, Health and Safety, Reports or Administration. The entry you are in is highlighted.', where: 'Project Management' },
         { title: 'Read a module’s description', body: 'Rest the pointer on an entry to see what it holds, for example "Reports: every report of your tools in one place".' },
-        { title: 'Use the module’s own menu', body: 'Each tool keeps its own menu next to the rail. In Sales and CRM it lists Overview, Leads, Contacts, Companies, Deals and more; in Projects and Tasks, Home, My Work, Inbox, Boards and more.' },
-        { title: 'Open the operations modules', body: 'Choose Operations in the rail. Each card opens one module: Procurement, Inventory, Manufacturing, Quality, Supply Chain, Maintenance or Products and Engineering.', where: 'Operations' },
+        { title: 'Use the module’s own menu', body: 'Each tool keeps its own menu next to the rail. In Sales and CRM it lists Overview, Leads, Contacts, Companies, Deals and more; in Project Management, Home, My Work, Inbox, Boards and more.' },
+        { title: 'Find a module’s sections', body: 'Engineering’s side menu groups Design (Engineering changes, Documents), CAD Automation, Manufacturing and Quality; Warehouse’s groups Stock and Orders and dispatch. Each module’s side menu lists only its own sections.', where: 'Engineering' },
       ],
     },
     {
@@ -44,8 +44,7 @@ const guide: Guide = {
       outcome: 'You can switch company, open your profile and reach every ERP page from the side menu.',
       steps: [
         { title: 'Switch company', body: 'In the top bar, choose the company’s name. The list shows Your companies, then Shared with you, then Example company, and Register a company at the bottom. Choose a company to open its Dashboard.', where: 'Your companies' },
-        { title: 'Read the side menu', body: 'On the ERP’s own pages the side menu lists Dashboard, Products and Engineering, Procurement, Inventory, Manufacturing, Quality, Supply Chain, Maintenance, Health and Safety and Company, for the company you are in.', where: 'Company' },
-        { title: 'Open a tool from the side menu', body: 'Under Open a tool, the side menu lists the company’s Projects and Tasks, Sales and CRM and Finance and Accounting that you belong to.', where: 'Open a tool' },
+        { title: 'Read the side menu', body: 'The side menu belongs to the module you are in: its name heads it and it lists only that module’s sections, for the company you are in. On the Dashboard it lists Dashboard and Company (and Company Admin where you may use it). Below every module’s sections, Dashboard takes you back, and Help opens that module’s guide.', where: 'Company' },
         { title: 'Open the profile menu', body: 'Choose your picture or initials at the right of the top bar: Profile and security opens your account settings, and Sign out ends your session.', where: 'Profile and security' },
         { title: 'Change the theme', body: 'The sun or moon button in the top bar switches between Light, Dark and Match this computer.', where: 'Theme' },
       ],
@@ -79,10 +78,10 @@ const guide: Guide = {
     {
       id: 'company-follows-you',
       title: 'Open the right company’s tools',
-      outcome: 'Sales and CRM, Finance and Accounting, Projects and Tasks and My Work open the company you chose.',
+      outcome: 'Sales and CRM, Finance and Accounting and Project Management open the company you chose.',
       steps: [
         { title: 'Choose the company first', body: 'In the company switcher, choose the company you want to work in. Its Dashboard opens.' },
-        { title: 'Open a tool from the rail', body: 'Choose Sales and CRM, Finance and Accounting, Projects and Tasks or My Work. Each opens that company’s own tool.', where: 'Sales and CRM' },
+        { title: 'Open a tool from the rail', body: 'Choose Sales and CRM, Finance and Accounting or Project Management. Each opens that company’s own tool; My Work is inside Project Management.', where: 'Sales and CRM' },
         { title: 'When a company has no such tool', body: 'If the company has no CRM, for example, Sales and CRM opens the CRM you used last instead, or the CRM’s start page if you have none. Check the name at the top of the tool before you add records.' },
       ],
       after: 'The company you chose is remembered on this computer, for the rail and Report a fault. The server still checks your access every time.',
@@ -92,17 +91,16 @@ const guide: Guide = {
     { label: 'Module rail', does: 'Opens a module of the company you are working in.', when: 'Any time, from any screen.', after: 'The module opens with the rail still beside it.' },
     { label: 'Company switcher', does: 'Lists your companies, companies that shared a tool with you and your example company; Register a company is at the bottom.', when: 'To work in another company.', after: 'The chosen company’s Dashboard opens, and nothing of the previous company stays on screen.' },
     { label: 'Report a fault', does: 'Opens a short form for a maintenance request.', when: 'Something is broken or needs maintenance.', after: 'The request goes to the company’s maintenance team, or to a supervisor for approval first.' },
-    { label: 'Operations', does: 'Shows the operations modules and what waits in the company.', when: 'To open Procurement, Inventory, Manufacturing, Quality, Supply Chain or Maintenance.' },
-    { label: 'Open a tool', does: 'The side menu’s list of the company’s tools you belong to.', when: 'To jump to a particular Projects and Tasks workspace, CRM or Finance workspace.' },
+    { label: 'Side menu', does: 'Lists the sections of the module you are in, then Dashboard and the module’s guide.', when: 'To move within a module.' },
     { label: 'Profile menu', does: 'Holds Profile and security and Sign out.', when: 'To change your account settings or end your session.' },
     { label: 'Theme', does: 'Light, Dark or Match this computer.', when: 'On a computer; on a phone use Profile and security.' },
     { label: 'Toggle navigation', does: 'Shows or hides the side menu on a narrow screen.', when: 'On a phone or a small window.' },
   ],
   faqs: [
     { q: 'Why did Sales and CRM open another company’s CRM?', a: 'The rail opens the tools of the company you last opened on this computer. Choose the company you want in the company switcher first, then choose Sales and CRM again. If that company has no CRM, the CRM you used last opens instead.' },
-    { q: 'Where are Procurement, Inventory, Manufacturing, Quality and Supply Chain?', a: 'They are not in the rail. Open them from Operations in the rail, or from the side menu on the ERP’s own pages.' },
-    { q: 'Why does the menu look different inside Sales and CRM or Projects and Tasks?', a: 'Each tool keeps its own menu and top bar. The module rail stays on the left, so you can always get back to the Dashboard or another module.' },
-    { q: 'I do not see Company Admin or CAD Automation in the menus. Why?', a: 'Company Admin shows only for the owner and administrators of a registered company where the Company Admin console is switched on, which it is not yet. CAD Automation is under Products and Engineering; it gets its own side menu entry only where it works inside the ERP for the company (/learn/cad-automation/).' },
+    { q: 'Where are Inventory, Supply Chain, Manufacturing and Quality now?', a: 'Inventory is Stock and Supply Chain is Orders and dispatch, both in Warehouse; Manufacturing and Quality are in Engineering, with Design and CAD Automation. Procurement has its own entry in the rail. The old Operations page now opens the Dashboard, which shows every module’s progress.' },
+    { q: 'Why does the menu look different inside Sales and CRM or Project Management?', a: 'Each tool keeps its own menu and top bar. The module rail stays on the left, so you can always get back to the Dashboard or another module.' },
+    { q: 'I do not see Company Admin or CAD Automation in the menus. Why?', a: 'Company Admin shows only for the owner and administrators of a registered company where the Company Admin console is switched on, which it is not yet. CAD Automation is in Engineering’s side menu, under CAD Automation (/learn/cad-automation/).' },
     { q: 'A module says it is off for this company. What does that mean?', a: 'A BIZOMAT platform administrator can switch a module off for a company. Its pages then say the module is off for that company. Ask BIZOMAT support through bizomat.ai/contact/ (/learn/trouble-access/).' },
     { q: 'My old bookmarks go to bizomat.ai/tasks, /crm or /finance. Do they still work?', a: 'Yes. Those addresses forward to the same page inside BIZOMAT ERP, at bizomat.ai/erp/tasks, /erp/crm and /erp/finance.' },
     { q: 'Who can use Report a fault?', a: 'Anyone who works in a company, whatever their role. People who were only added to one of a company’s tools do not see its maintenance, and the window says "You are not in a company with maintenance yet." when there is no company to report to.' },
@@ -115,6 +113,7 @@ const guide: Guide = {
   keywords: ['menu', 'sidebar', 'side menu', 'rail', 'module rail', 'navigation bar', 'top bar', 'switch company', 'mobile', 'phone', 'tablet', 'report a fault', 'breakdown', 'where is'],
   sources: [
     'apps/work/src/client/components/layout/SuiteRail.tsx',
+    'apps/work/src/client/system/modules.tsx',
     'apps/work/src/client/system/SystemApp.tsx',
     'apps/work/src/client/lib/company-context.ts',
     'apps/work/src/client/system/maintenance/ReportFault.tsx',

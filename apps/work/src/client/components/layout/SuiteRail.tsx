@@ -1,12 +1,10 @@
 // BIZOMAT ERP's module rail: one workspace for signed-in people (owner, 14 Nov 2026). Every tool opens inside the ERP
-// at /erp/<tool> (src/worker/mount.ts), and this rail sits at the left of each one (Projects and Tasks, Sales and CRM,
-// Finance and Accounting, Administration and the ERP's own pages), so moving between them never leaves the ERP. On a
-// phone it is a bar along the bottom. Maintenance (Asset Management and Maintenance, Stage 1) is live; its "Report a
-// fault" button sits at the foot of the rail on every screen. Products and Engineering (ERP Release 1) opens the product
-// master, and Procurement's suppliers open from Operations. Each tool keeps its own navigation beside it; nothing here
-// changes who may see what. The modules that are planned but not built (purchase orders, inventory, manufacturing and the
-// rest) are listed on the Operations page as planned, never as working. Health and Safety (BIZOMAT WHS, Release 1) opens
-// the WHS module of the company used last.
+// at /erp/<tool> (src/worker/mount.ts), and this rail sits at the left of each one, so moving between them never leaves
+// the ERP. On a phone it is a bar along the bottom. The modules (owner, 20 Nov 2026): Dashboard, Project Management (My
+// Work and Project Management in one), Sales and CRM, Finance and Accounting, Product Management, Engineering (Design,
+// CAD Automation, Manufacturing, Quality), Procurement, Warehouse (Stock and Orders and dispatch), Maintenance, Health and
+// Safety, Reports and Administration. Each module of the ERP's own has its own side menu (system/modules.tsx). "Report a
+// fault" (a maintenance request) sits at the foot of the rail on every screen. Nothing here changes who may see what.
 import { lazy, Suspense, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -31,21 +29,27 @@ interface Module {
 }
 
 const own = (re: RegExp) => (p: string) => IS_SYSTEM && re.test(p);
-const ERP_PAGES = /^\/(my-work|cad|products|procurement|inventory|manufacturing|quality|maintenance|whs|operations|reports|administration|admin|company-admin|modules|inbox|m)(\/|$)|^\/c\/[^/]+\/(company-admin|cad|products|procurement|inventory|manufacturing|quality|erp-roles|erp-settings|erp-reports|settings|maintenance|whs|modules|inbox|m)(\/|$)/;
+const ERP_PAGES = /^\/(my-work|cad|products|engineering|procurement|inventory|manufacturing|quality|supply-chain|warehouse|maintenance|whs|operations|reports|administration|admin|company-admin|modules|inbox|m)(\/|$)|^\/c\/[^/]+\/(company-admin|cad|products|engineering|procurement|inventory|manufacturing|quality|supply-chain|warehouse|erp-roles|erp-settings|erp-reports|settings|maintenance|whs|modules|inbox|m)(\/|$)/;
 
+// The modules (owner, 20 Nov 2026): My Work and Project Management are one, Project Management; Products and Engineering
+// is Product Management; Engineering holds Design, CAD Automation, Manufacturing and Quality; Procurement is its own;
+// Warehouse holds Stock (Inventory) and Orders and dispatch (Supply Chain); People and HR and All modules come from the
+// modules framework. Each has its own side menu (system/modules.tsx).
 const MODULES: Module[] = [
-  { id: 'home', label: 'Dashboard', title: 'Dashboard: your company, its tools and their figures', icon: 'home', to: '/', active: (p) => IS_SYSTEM && !ERP_PAGES.test(p) },
-  // The modules framework (20 Nov 2026): the 97-module catalogue and every new module, and People and HR.
-  { id: 'modules', label: 'All modules', title: 'All modules: the 97 modules of BIZOMAT ERP, a search across them, and what is waiting for you', icon: 'grid', to: '/modules', active: own(/^\/(c\/[^/]+\/)?(modules|inbox)(\/|$)|^\/(c\/[^/]+\/)?m\/(?!hr|recruitment|onboarding|training|performance|payroll)[a-z_]+(\/|$)/) },
-  { id: 'people', label: 'People and HR', title: 'People and HR: employees, leave, recruitment, onboarding, training, performance and payroll', icon: 'users', to: '/m/hr', active: own(/^\/(c\/[^/]+\/)?m\/(hr|recruitment|onboarding|training|performance|payroll)(\/|$)/) },
-  { id: 'my-work', label: 'My Work', title: 'My Work: everything assigned to you in Projects and Tasks', icon: 'checkSquare', to: '/my-work', active: (p) => APP_BASE === '/tasks' && /\/my-work(\/|$)/.test(p) },
+  { id: 'home', label: 'Dashboard', title: 'Dashboard: your company and the progress of every module', icon: 'home', to: '/', active: (p) => IS_SYSTEM && !ERP_PAGES.test(p) },
+  { id: 'tasks', label: 'Project Management', title: 'Project Management: my work, projects, boards, timelines, documents and dashboards', icon: 'grid', to: '/tasks/', active: (p) => APP_BASE === '/tasks' || (IS_SYSTEM && /^\/my-work(\/|$)/.test(p)) },
   { id: 'crm', label: 'Sales and CRM', title: 'Sales and CRM: customers, leads, deals and follow-ups', icon: 'briefcase', to: '/crm/', active: () => APP_BASE === '/crm' },
   { id: 'finance', label: 'Finance and Accounting', title: 'Finance and Accounting: quotes, invoices, bills, banking, GST and reports', icon: 'dollar', to: '/finance/', active: () => APP_BASE === '/finance' },
-  { id: 'tasks', label: 'Projects and Tasks', title: 'Projects and Tasks: boards, timelines, documents and dashboards', icon: 'grid', to: '/tasks/', active: (p) => APP_BASE === '/tasks' && !/\/my-work(\/|$)/.test(p) },
-  { id: 'cad', label: 'Products and Engineering', title: 'Products and Engineering: products, bills of materials, revisions, engineering changes, documents and CAD Automation', icon: 'diamond', to: '/products', active: own(/^\/(c\/[^/]+\/)?(cad|products)(\/|$)/) },
-  { id: 'maintenance', label: 'Maintenance', title: 'Asset Management and Maintenance', icon: 'wrench', to: '/maintenance', active: own(/^\/(c\/[^/]+\/)?maintenance(\/|$)/) },
-  { id: 'whs', label: 'Health and Safety', title: 'Health and Safety (BIZOMAT WHS): report a hazard or an incident, risk assessments, investigations, regulator notification records and actions', icon: 'shield', to: '/whs', active: own(/^\/(c\/[^/]+\/)?whs(\/|$)/) },
-  { id: 'operations', label: 'Operations', title: 'Operations: procurement, inventory, manufacturing, quality and supply chain (live), and what is live of Asset Management and Maintenance', icon: 'layers', to: '/operations', active: own(/^\/(c\/[^/]+\/)?(operations|procurement|inventory|manufacturing|quality|supply-chain)(\/|$)/) },
+  { id: 'product', label: 'Product Management', title: 'Product Management: your products and variants', icon: 'diamond', to: '/products', active: own(/^\/(c\/[^/]+\/)?products(\/(?!changes|documents|cad)[^/]+)?\/?$/) },
+  { id: 'engineering', label: 'Engineering', title: 'Engineering: design changes and documents, CAD Automation, manufacturing and quality', icon: 'bolt', to: '/engineering', active: own(/^\/(c\/[^/]+\/)?(engineering|cad|manufacturing|quality|products\/(changes|documents|cad))(\/|$)/) },
+  { id: 'procurement', label: 'Procurement', title: 'Procurement: suppliers, requisitions, quotations, purchase orders and receipts', icon: 'inbox', to: '/procurement', active: own(/^\/(c\/[^/]+\/)?procurement(\/|$)/) },
+  { id: 'warehouse', label: 'Warehouse', title: 'Warehouse: stock, warehouses, movements and counts; sales orders, picking, dispatch, deliveries and returns', icon: 'archive', to: '/warehouse', active: own(/^\/(c\/[^/]+\/)?(warehouse|inventory|supply-chain)(\/|$)/) },
+  { id: 'maintenance', label: 'Maintenance', title: 'Maintenance: requests, work orders, assets, preventive maintenance and inspections', icon: 'wrench', to: '/maintenance', active: own(/^\/(c\/[^/]+\/)?maintenance(\/|$)/) },
+  { id: 'whs', label: 'Health and Safety', title: 'Health and Safety (BIZOMAT WHS): hazards, incidents, risk assessments, investigations, regulator notification records and actions', icon: 'shield', to: '/whs', active: own(/^\/(c\/[^/]+\/)?whs(\/|$)/) },
+  // The modules framework (20 Nov 2026): People and HR, and All modules (the 97-module catalogue, every new module and what
+  // is waiting for you).
+  { id: 'people', label: 'People and HR', title: 'People and HR: employees, leave, recruitment, onboarding, training, performance and payroll', icon: 'users', to: '/m/hr', active: own(/^\/(c\/[^/]+\/)?m\/(hr|recruitment|onboarding|training|performance|payroll)(\/|$)/) },
+  { id: 'modules', label: 'All modules', title: 'All modules: the 97 modules of BIZOMAT ERP, a search across them, and what is waiting for you', icon: 'layers', to: '/modules', active: own(/^\/(c\/[^/]+\/)?(modules|inbox)(\/|$)|^\/(c\/[^/]+\/)?m\/(?!hr|recruitment|onboarding|training|performance|payroll)[a-z_]+(\/|$)/) },
   { id: 'reports', label: 'Reports', title: 'Reports: every report of your tools in one place', icon: 'chart', to: '/reports', active: own(/^\/reports(\/|$)|^\/c\/[^/]+\/erp-reports(\/|$)/) },
   { id: 'admin', label: 'Administration', title: 'Administration: company, people, departments, tools, ERP roles and permissions', icon: 'settings', to: '/administration', active: (p) => APP_BASE === '/company' || (IS_SYSTEM && /^\/(administration|admin)(\/|$)|^\/c\/[^/]+\/(settings|erp-roles|erp-settings)/.test(p)) },
 ];
@@ -63,8 +67,8 @@ export function SuiteRail() {
   const toolPaths = useCompanyToolPaths(SUITE_SHELL && !!session);
   if (!SUITE_SHELL || !session) return null;
   const path = location.pathname;
-  // The company being worked in: its own Projects and Tasks, CRM and Finance (lib/company-context.ts).
-  const own: Record<string, string | undefined> = { tasks: toolPaths.tasks, crm: toolPaths.crm, finance: toolPaths.finance, 'my-work': toolPaths.myWork };
+  // The company being worked in: its own Project Management, CRM and Finance (lib/company-context.ts).
+  const own: Record<string, string | undefined> = { tasks: toolPaths.tasks, crm: toolPaths.crm, finance: toolPaths.finance };
   const modules = (adminCompanies.data?.companies.length ? [...MODULES, COMPANY_ADMIN] : MODULES).map((m) => (own[m.id] ? { ...m, to: own[m.id]! } : m));
   return (
     <nav className="suite-rail" aria-label="BIZOMAT ERP modules">

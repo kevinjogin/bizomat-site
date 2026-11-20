@@ -416,7 +416,7 @@ function RolesTab({ v }: { v: Overview }) {
     },
     {
       app: "tasks",
-      label: "Projects and Tasks: workspace members",
+      label: "Project Management: workspace members",
       href: (t) => toolUrl(`/tasks/w/${encodeURIComponent(t)}/settings`),
     },
   ];

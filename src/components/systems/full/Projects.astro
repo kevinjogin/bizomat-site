@@ -2,7 +2,7 @@
 // Moved from src/components/systems/full/Projects.astro into the one-page Systems (owner, 20 Nov 2026: every module on one
 // page under Systems). /systems/#projects answers 301 to /systems/#projects; every id here starts with "projects-".
 // /systems/#projects: BIZOMAT Projects, the Project Management System (formerly BIZOMAT Project Management, and KEVOS
-// Work before that). It opens inside BIZOMAT ERP, in the Projects and Tasks module (src/config/systems.ts). Facts come
+// Work before that). It opens inside BIZOMAT ERP, in the Project Management module (src/config/systems.ts). Facts come
 // from src/data/platform-catalog.ts (WORK), which records its sources in apps/work, and from the application's code:
 // roles (apps/work/src/shared/permissions.ts), templates (src/worker/services/boards.ts), widgets
 // (src/client/pages/DashboardPage.tsx), project reports (src/shared/reports.ts), project finance
@@ -102,11 +102,11 @@ const dashboardParts: Feature[] = [
   { t: 'Home', x: 'Your start page in a workspace: what is overdue, due today, due in the next 7 days and planned today; a Needs your attention list; recent activity; My Day; favourites and recently visited places. New board, New doc and New dashboard are at the top.', s: 'live' },
   { t: 'My Work and My Day', x: 'My Work lists everything assigned to you across the boards you can open, and the tasks shared with you. My Day is what you choose to focus on today, with a weekly planner.', s: 'live' },
   { t: 'Dashboards', x: `Live overviews built from your boards. Add widgets (${widgets.length} types), choose their source boards, filters and date ranges, then resize and reorder them.`, s: 'live' },
-  { t: 'The BIZOMAT ERP Dashboard', x: 'The ERP\'s first page shows your company with a card for each tool. The Projects and Tasks card shows open tasks, overdue, due in 7 days and the number of projects, to people whose role may see them.', s: 'connected' },
+  { t: 'The BIZOMAT ERP Dashboard', x: 'The ERP\'s first page shows your company with a card for each tool. The Project Management card shows open tasks, overdue, due in 7 days and the number of projects, to people whose role may see them.', s: 'connected' },
 ];
 const walkthrough = [
   { t: 'Sign in', x: 'At bizomat.ai/erp, with your BIZOMAT email and password, or Google where it is configured.' },
-  { t: 'The ERP module rail', x: 'Projects and Tasks opens your workspace; My Work opens what is assigned to you. The rail stays at the left of every screen.' },
+  { t: 'The ERP module rail', x: 'Project Management opens your workspace; My Work, in its side menu, opens what is assigned to you. The rail stays at the left of every screen.' },
   { t: 'Workspace Home', x: 'Counts of overdue and upcoming work, what needs your attention, recent activity and My Day.' },
   { t: 'Boards', x: 'Every board you can open, in folders, with All, Personal and Archived tabs, New board and Personal board.' },
   { t: 'A board', x: 'Groups, items and columns in the Table view. The header has Members, Activity, Automate, Project controls and, for people who may, Reports.' },
@@ -119,7 +119,7 @@ const walkthrough = [
 ];
 const steps = [
   { t: 'Sign in', x: 'Open BIZOMAT ERP and sign in with your BIZOMAT account, or create one on the sign-in page where it is offered.' },
-  { t: 'Open Projects and Tasks', x: 'Choose Projects and Tasks in the module rail on the left.' },
+  { t: 'Open Project Management', x: 'Choose Project Management in the module rail on the left.' },
   { t: 'Create a workspace', x: 'Name it and choose Create workspace. A registered company already has one: its owner gives you a role in it.' },
   { t: 'Create a board', x: 'Choose New board, name it, and pick a template such as Project plan, or a blank board.' },
   { t: 'Add the work', x: 'Add items, give each an owner, a status and dates, and break big ones into subitems.' },
@@ -160,7 +160,7 @@ const workflows: { t: string; s: FeatureStatus; note?: string; steps: string[] }
   },
 ];
 const bizomatLinks: { t: string; x: string; s: FeatureStatus }[] = [
-  { t: 'BIZOMAT ERP', x: 'Projects opens inside the ERP, in Projects and Tasks, with My Work in the rail. The ERP Dashboard shows the workspace\'s open, overdue and upcoming tasks, and Reports lists its dashboards.', s: 'connected' },
+  { t: 'BIZOMAT ERP', x: 'Projects opens inside the ERP, in Project Management, with My Work in its side menu. The ERP Dashboard shows the workspace\'s open, overdue and upcoming tasks, and Reports lists its dashboards.', s: 'connected' },
   { t: 'Sales and CRM: follow-up to task', x: 'A CRM follow-up becomes a task in a project you choose, linked back to the customer.', s: 'connected' },
   { t: 'Sales and CRM: deal to project', x: 'In a company account, a deal starts a project board named after it, once per deal.', s: 'connected' },
   { t: 'Finance: project costs and budget', x: 'In a company account, a project gets a Finance tracking project and a budget. Income and costs posted to it in Finance show against the budget, to people whose Finance role sees reports.', s: 'connected' },
@@ -171,7 +171,7 @@ const otherLinks: { t: string; x: string; s: FeatureStatus }[] = [
   { t: 'Google Drive, Calendar, Gmail and GitHub', x: 'Listed in the app as "Requires setup". They cannot be switched on yet.', s: 'planned' },
 ];
 const faq = [
-  { q: 'How do I create a project?', a: 'In BIZOMAT Projects a project is a board. Open Projects and Tasks in BIZOMAT ERP, choose New board, give it a name and pick a template (Project plan, Sprint board, Request intake and others) or a blank board, and choose who can see it. In a company account, a CRM deal can also start the project for you.' },
+  { q: 'How do I create a project?', a: 'In BIZOMAT Projects a project is a board. Open Project Management in BIZOMAT ERP, choose New board, give it a name and pick a template (Project plan, Sprint board, Request intake and others) or a blank board, and choose who can see it. In a company account, a CRM deal can also start the project for you.' },
   { q: 'How do I assign tasks?', a: 'Add an item to the board and set its owner in the person column, with a status and a due date. An automation can also assign items, for example every new item to a chosen person. The person is notified and the task appears in their My Work. A task can be shared with someone outside the project from its Access tab.' },
   { q: 'How do team members collaborate?', a: 'Each item has updates and replies with @mentions, attachments, an activity history, time tracking and linked documents. Documents have autosave, version history and comments. Notifications cover assignments, mentions, replies, status changes and due dates.' },
   { q: 'Can tasks depend on each other?', a: 'Yes. The Timeline and Gantt view supports dependencies and milestones, and you drag a task to reschedule it. Boards also have a Dependency column type.' },

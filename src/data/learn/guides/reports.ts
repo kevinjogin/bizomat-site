@@ -12,7 +12,7 @@ const guide: Guide = {
   title: 'Reports',
   short: 'Reports',
   status: 'live',
-  what: 'Reports puts every report of a company in one place: the ERP reports for products, engineering, purchasing, stock, manufacturing, quality and supply chain, the health and safety registers, and links to the reports of Sales and CRM, Finance and Accounting and Projects and Tasks. Each report opens in its own module, with that module’s permissions.',
+  what: 'Reports puts every report of a company in one place: the ERP reports for products, engineering, purchasing, stock, manufacturing, quality and supply chain, the health and safety registers, and links to the reports of Sales and CRM, Finance and Accounting and Project Management. Each report opens in its own module, with that module’s permissions.',
   purpose: [
     'Find any report of the company without knowing which module holds it.',
     'Filter a report and open the record behind each row.',
@@ -36,7 +36,7 @@ const guide: Guide = {
         { title: 'Open Reports', body: 'Choose Reports in the rail. The page lists the reports of the company’s modules.', where: 'Reports' },
         { title: 'Pick an ERP report', body: 'Under Products, engineering, purchasing, stock, manufacturing, quality and supply chain, choose a card, for example Stock on hand, Open orders or Supplier delivery. Each card says what the report shows.', where: 'Stock on hand' },
         { title: 'Pick a health and safety register', body: 'Under Health and safety, choose WHS dashboard, Hazard register, Incident register, Risk register and heat map or Actions register. They open in the Health and Safety module.', where: 'Hazard register' },
-        { title: 'Pick a tool’s reports', body: 'At the foot, Sales and CRM reports, Finance and Accounting reports and Projects and Tasks dashboards open in those tools, one card for each such tool the company runs.', where: 'Finance and Accounting reports' },
+        { title: 'Pick a tool’s reports', body: 'At the foot, Sales and CRM reports, Finance and Accounting reports and Project Management dashboards open in those tools, one card for each such tool the company runs.', where: 'Finance and Accounting reports' },
       ],
     },
     {
@@ -69,7 +69,7 @@ const guide: Guide = {
       outcome: 'A saved project report, with its PDF, Excel, HTML and CSV files.',
       needs: 'Permission to generate reports on the project (project managers and organisation administrators can give it).',
       steps: [
-        { title: 'Open the project', body: 'Choose Projects and Tasks in the rail and open the project’s board.', where: 'Projects and Tasks' },
+        { title: 'Open the project', body: 'Choose Project Management in the rail and open the project’s board.', where: 'Project Management' },
         { title: 'Choose Reports', body: 'Choose Reports at the top of the board. The New report tab opens with a preview.', where: 'New report' },
         { title: 'Save the report', body: 'Choose Save report (PDF, Excel, HTML, CSV).', where: 'Save report (PDF, Excel, HTML, CSV)' },
         { title: 'Find it later', body: 'Report history lists each saved report with its files.', where: 'Report history' },
@@ -82,7 +82,7 @@ const guide: Guide = {
     { label: 'Filters', does: 'Narrow a report by text, type, warehouse, supplier, carrier, status or dates.', when: 'Before reading or exporting.', after: 'The filters are kept in the address.' },
     { label: 'Export CSV', does: 'Downloads the ERP report, or a CRM report, as a CSV file with the same rows as the screen.', when: 'To work on the figures in a spreadsheet.' },
     { label: 'CSV and PDF', does: 'Download a Finance report.', when: 'For your accountant or your records.' },
-    { label: 'Reports (project)', does: 'Opens the project report window on a Projects and Tasks board.', when: 'To save a status report of a project.' },
+    { label: 'Reports (project)', does: 'Opens the project report window on a Project Management board.', when: 'To save a status report of a project.' },
   ],
   faqs: [
     { q: 'Who can read the ERP reports?', a: 'Everyone in the company with an ERP role, including Viewer, which every member has until given another role. People who were only added to one of the company’s tools do not see the ERP or health and safety sections.' },
@@ -90,7 +90,7 @@ const guide: Guide = {
     { q: 'Where are the maintenance reports?', a: 'In Maintenance, on its Reports tab: reliability, backlog, preventive maintenance, breakdown trends and asset costs, for supervisors and administrators (/learn/maintenance/).' },
     { q: 'Why does a report show nothing?', a: 'Reports read only the company’s own records, with the filters you set. Check the company in the company switcher, then clear the filters or widen the dates. Archived products are left out of the product reports.' },
     { q: 'Do the stock and production reports match the Finance ledger?', a: 'They are not linked. Stock and production values are kept in the ERP; posting them to Finance’s ledger is planned and nothing is posted. Finance’s reports show only what was posted in Finance.' },
-    { q: 'Can I build my own report?', a: 'In Projects and Tasks you can build dashboards from board data and save views. A report designer across modules is not built.' },
+    { q: 'Can I build my own report?', a: 'In Project Management you can build dashboards from board data and save views. A report designer across modules is not built.' },
     { q: 'Where do the Dashboard figures come from?', a: 'From the same tools. Reports says so at the top, with a link to the Dashboard (/learn/dashboard/).' },
   ],
   related: ['dashboard', 'procurement', 'inventory', 'manufacturing', 'quality', 'supply-chain', 'crm', 'finance', 'whs'],

@@ -23,3 +23,15 @@ a.sys-tool-card:hover { border-color: var(--accent); text-decoration: none; }
 .sys-stat { display: grid; gap: 2px; text-decoration: none; color: inherit; }
 .sys-stat strong { font-size: 22px; font-variant-numeric: tabular-nums; }
 .sys-stat:hover { border-color: var(--accent); }
+
+/* The ERP's per-module side menus (system/modules.tsx; owner, 20 Nov 2026), here because every ERP page loads this
+   stylesheet. The module's name heads its menu; a section not built yet shows its status, never as a link. Each
+   module's sections are in its side menu, so the tab bar that repeats them shows only where the side menu folds away
+   (a phone). */
+.erp-module-title { color: var(--text); font-size: 12px; letter-spacing: .06em; }
+.erp-menu-group { display: flex; flex-direction: column; gap: inherit; }
+.nav-item.erp-menu-planned { cursor: default; color: var(--text-3, var(--text-2)); }
+.nav-item.erp-menu-planned:hover { background: none; color: var(--text-3, var(--text-2)); }
+.nav-item.erp-menu-planned .badge { font-size: 10.5px; }
+@media (min-width: 761px) { .shell.sys-shell .erp-area-tabs { display: none; } }
+.erp-module-card .co-figures { margin-top: auto; }

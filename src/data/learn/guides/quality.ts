@@ -26,10 +26,10 @@ const guide: Guide = {
     'Executives and other ERP roles, who read the records and reports.',
   ],
   access: {
-    path: ['BIZOMAT ERP', 'Operations', 'Quality'],
+    path: ['BIZOMAT ERP', 'Engineering', 'Quality'],
     href: 'https://bizomat.ai/erp/quality',
     label: 'Open Quality',
-    note: 'On the Operations page, the Quality card has an Open Quality button. Inside a company, Quality is also in the side menu. The address opens Quality in the company you used last.',
+    note: 'Choose Engineering in the module rail. Under Quality its side menu lists Quality overview, Inspections, Nonconformances, Corrective actions and Inspection plans. The address opens Quality in the company you used last.',
   },
   tutorials: [
     {
@@ -116,7 +116,7 @@ const guide: Guide = {
     { q: 'Why can I not quarantine the stock?', a: 'Quarantine needs a location of the kind Quarantine (add one in Inventory, Warehouses). Reserved stock cannot be moved into quarantine until its reservation is released.' },
     { q: 'Can I change a disposition after it is decided?', a: 'No. A disposition is decided once. Before it is decided, a quality manager can cancel the nonconformance; after it, raise another if more is needed.' },
     { q: 'Why can I not approve or close this corrective action?', a: 'Nobody approves an action they proposed or are responsible for, and nobody closes one they carried out. In a company of one person (your own or example company) you may, and the exception is recorded on the action and in its history.' },
-    { q: 'Do corrective actions show in My Work?', a: 'No. My Work lists Projects and Tasks items. Quality actions show on the Quality overview, under Your corrective actions and Corrective actions overdue, and in the Corrective actions list with the Mine filter.' },
+    { q: 'Do corrective actions show in My Work?', a: 'No. My Work lists Project Management items. Quality actions show on the Quality overview, under Your corrective actions and Corrective actions overdue, and in the Corrective actions list with the Mine filter.' },
     { q: 'Does scrapping stock change my Finance ledger?', a: 'No. Scrap and returns under a nonconformance move stock in Inventory, valued in the stock ledger. Their Finance posting is recorded as planned; nothing is posted to Finance.' },
     { q: 'Where are the quality reports?', a: 'Choose Quality reports on the Overview, or open Reports in the rail: Inspection results, Rejection rates, Supplier defects, NCR register, Corrective actions, Rework and Cost of poor quality. Each filters by dates, links to its records and exports CSV (see /learn/reports/).' },
   ],

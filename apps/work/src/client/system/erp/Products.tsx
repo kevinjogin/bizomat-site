@@ -2,7 +2,7 @@
 // product master), Changes (change requests and change orders), Documents (engineering documents) and CAD Automation
 // (its setup and the company's computers). The server (src/worker/erp) decides who may see and do what.
 import { useMemo, useState, type FormEvent, type ReactNode } from 'react';
-import { Link, NavLink, Navigate, Route, Routes, useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, del, errorMessage, get, patch, post, put } from '../../lib/api';
 import { usePageTitle } from '../../lib/hooks';
@@ -39,29 +39,38 @@ import { RevisionCadPanel } from '../cad/Cad';
 
 export function ProductsArea({ companyId, companyName, cad }: { companyId: string; companyName: string; cad: ReactNode }) {
   const me = useErpMe(companyId);
+  const location = useLocation();
   if (me.error) {
     if (me.error instanceof ApiError && me.error.status === 404) {
       return (
         <div className="page crm-page">
-          <PageHeader title="Products and Engineering" />
+          <PageHeader title="Product Management" />
           <section className="co-prompt"><p>You do not have access to products and engineering in {companyName}. People in the company have access; people who only share a tool with it do not.</p></section>
         </div>
       );
     }
     return <div className="page"><ErrorBox error={me.error} retry={() => me.refetch()} /></div>;
   }
-  if (!me.data) return <Loading label="Opening Products and Engineering…" />;
+  if (!me.data) return <Loading label="Opening Product Management…" />;
   const m = me.data;
-  const tabs: [string, string, string][] = [
-    ['', 'Products', 'diamond'],
-    ['/changes', 'Changes', 'history'],
-    ['/documents', 'Documents', 'file'],
-    ['/cad', 'CAD Automation', 'settings'],
-  ];
+  // Product Management is the products themselves; their engineering changes, documents and CAD Automation are
+  // Engineering's Design (owner, 20 Nov 2026), at the same addresses.
+  const design = /\/products\/(changes|documents|cad)(\/|$)/.test(location.pathname);
+  const tabs: [string, string, string][] = design
+    ? [
+        ['/changes', 'Engineering changes', 'history'],
+        ['/documents', 'Documents', 'file'],
+        ['/cad', 'CAD Automation', 'bolt'],
+      ]
+    : [];
   return (
     <div className="page crm-page">
-      <PageHeader title="Products and Engineering" subtitle={`Products, bills of materials, revisions, engineering changes and documents for ${m.company.name}. Your ERP roles: ${m.roleLabels.join(', ')}.`} />
-      <nav className="tabs mt-tabs" aria-label="Products and Engineering sections">
+      {design ? (
+        <PageHeader title="Engineering" subtitle={`Design for ${m.company.name}: engineering changes, documents and CAD Automation. Your ERP roles: ${m.roleLabels.join(', ')}.`} />
+      ) : (
+        <PageHeader title="Product Management" subtitle={`Products and variants of ${m.company.name}, with their bills of materials and revisions. Your ERP roles: ${m.roleLabels.join(', ')}.`} />
+      )}
+      <nav className="tabs mt-tabs erp-area-tabs" aria-label={design ? 'Design sections' : 'Product Management sections'} hidden={!tabs.length}>
         {tabs.map(([to, label, icon]) => (
           <NavLink key={label} end={to === ''} to={productsPage(companyId, to)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>
             <Icon name={icon} size={14} /> {label}

@@ -1,6 +1,6 @@
 // The company a person is working in, shared by the ERP and every tool inside it (owner, 20 Nov 2026: "when logged in
 // to that particular company all tools should link or auto select that company"). The ERP remembers the company last
-// opened on this computer; the module rail and My Work then open that company's own Projects and Tasks workspace, CRM
+// opened on this computer; the module rail and My Work then open that company's own Project Management workspace, CRM
 // and Finance, never whichever one was used last. A company without one of the tools falls back to the tool's own home.
 // The server still decides who may open what.
 import { useQuery } from '@tanstack/react-query';

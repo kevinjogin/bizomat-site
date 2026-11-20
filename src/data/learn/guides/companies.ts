@@ -30,7 +30,7 @@ const guide: Guide = {
     {
       id: 'register',
       title: 'Register a company',
-      outcome: 'Your business is a registered company with its own Projects and Tasks, Sales and CRM and Finance tools.',
+      outcome: 'Your business is a registered company with its own Project Management, Sales and CRM and Finance tools.',
       steps: [
         { title: 'Choose Register a company', body: 'Open the company switcher in the top bar and choose Register a company at the bottom. The Register your company page opens.', where: 'Register a company' },
         { title: 'Say who the account is for', body: 'Choose A business (a company, partnership, trust or sole trader, registered with its ABN) or Myself, in my own name (an ABN is optional).', where: 'A business' },
@@ -50,7 +50,7 @@ const guide: Guide = {
         { title: 'Open the company switcher', body: 'Choose the company’s name in the top bar.', where: 'Your companies' },
         { title: 'Read the list', body: 'Your companies come first, with your role or "Own" beside each. Shared with you lists companies where someone added you to a tool, with the number of tools. Example company lists Acme Studio (example).', where: 'Shared with you' },
         { title: 'Choose a company', body: 'Its Dashboard opens. Records of the company you left are cleared from the screen, so nothing of it shows in the new one.', where: 'Dashboard' },
-        { title: 'Open its tools', body: 'Sales and CRM, Finance and Accounting, Projects and Tasks and My Work in the rail now open this company’s own tools.' },
+        { title: 'Open its tools', body: 'Sales and CRM, Finance and Accounting and Project Management in the rail now open this company’s own tools.' },
       ],
     },
     {
@@ -85,7 +85,7 @@ const guide: Guide = {
         { title: 'Open Departments', body: 'Choose Administration in the rail, then Departments.', where: 'Departments' },
         { title: 'Choose New department', body: 'Give it a Name, and under Part of choose the department it sits in, or The company (top level). Add a Description if you like.', where: 'New department' },
         { title: 'Choose the head and people', body: 'Pick the Head and tick the People in it. The head sees this department’s figures in every tool.', where: 'Head' },
-        { title: 'Save', body: 'Choose Save. You see "Department made in every tool": it is a team in Projects and Tasks and the CRM and a department in Finance’s tracking.', where: 'Save' },
+        { title: 'Save', body: 'Choose Save. You see "Department made in every tool": it is a team in Project Management and the CRM and a department in Finance’s tracking.', where: 'Save' },
         { title: 'Archive what you no longer use', body: 'Archive takes a department out of use; tick Show archived departments and choose Restore to bring it back.', where: 'Archive' },
       ],
     },

@@ -21,7 +21,7 @@ const guide: Guide = {
     path: ['BIZOMAT ERP', 'Administration', 'ERP roles'],
     href: 'https://bizomat.ai/erp/administration',
     label: 'Open Administration',
-    note: 'ERP roles are given by the company owner and administrators (ERP administrators). Roles in Sales and CRM, Finance and Projects and Tasks are set in each tool, also reached from Administration.',
+    note: 'ERP roles are given by the company owner and administrators (ERP administrators). Roles in Sales and CRM, Finance and Project Management are set in each tool, also reached from Administration.',
   },
   tutorials: [
     {
@@ -44,12 +44,12 @@ const guide: Guide = {
         },
         {
           title: 'Check your ERP roles',
-          body: 'Products and Engineering shows "Your ERP roles" under its title, and Administration, ERP roles lists yours under Your roles. Owners and administrators are ERP administrators; other members are viewers until an ERP administrator gives them roles.',
+          body: 'Product Management shows "Your ERP roles" under its title, and Administration, ERP roles lists yours under Your roles. Owners and administrators are ERP administrators; other members are viewers until an ERP administrator gives them roles.',
           where: 'Your roles',
         },
         {
           title: "Check your role in the tool",
-          body: 'Sales and CRM, Finance and Projects and Tasks each give you a role of their own (for example Sales Executive in the CRM, or view access to a board). Their administrators change it in the tool: Team in Sales and CRM and in Finance, and Board members on a board in Projects and Tasks.',
+          body: 'Sales and CRM, Finance and Project Management each give you a role of their own (for example Sales Executive in the CRM, or view access to a board). Their administrators change it in the tool: Team in Sales and CRM and in Finance, and Board members on a board in Project Management.',
         },
         {
           title: 'Read "not found" carefully',
@@ -102,14 +102,14 @@ const guide: Guide = {
     },
     {
       q: 'BIZOMAT ERP opened the wrong company.',
-      a: 'It opens the company you used last on this computer. Switch with the company menu at the top of the side menu. Projects and Tasks, Sales and CRM, Finance and My Work then open that company\'s own tools.',
+      a: 'It opens the company you used last on this computer. Switch with the company menu at the top of the side menu. Project Management, Sales and CRM, Finance and My Work then open that company\'s own tools.',
     },
     {
       q: 'In Sales and CRM I can see a record but not change it.',
       a: 'A Sales Executive or Member changes only the records they own; a Viewer only reads. The record\'s owner, a Manager or an Administrator can change it, or reassign it to you (see /learn/crm/).',
     },
     {
-      q: 'Projects and Tasks says "You need edit access to this board".',
+      q: 'Project Management says "You need edit access to this board".',
       a: 'You have view access to that board. Ask the board owner or a workspace administrator to give you edit access under Board members in the board header (see /learn/projects/).',
     },
     {

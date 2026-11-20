@@ -1,6 +1,6 @@
 import type { Workflow } from '../types.ts';
 
-// Bill of materials to production: Products and Engineering (released bill of materials), Manufacturing (routing,
+// Bill of materials to production: Product Management (released bill of materials), Manufacturing (routing,
 // planning, order, shop floor, close), Procurement (requisitions from MRP) and Inventory (materials and finished
 // goods). Labels from apps/work/src/client/system/erp/Products.tsx, Changes.tsx, Manufacturing.tsx and ShopFloor.tsx.
 const workflow: Workflow = {
@@ -25,7 +25,7 @@ const workflow: Workflow = {
     steps: [
       {
         title: 'Release the bill of materials',
-        body: 'In Products and Engineering, build the product’s draft revision on its Bill of materials tab with Add a line. Choose Change order, then Submit for approval; an engineering approver who did not draft it chooses Approve and Release.',
+        body: 'In Product Management, build the product’s draft revision on its Bill of materials tab with Add a line. Choose Change order, then Submit for approval; an engineering approver who did not draft it chooses Approve and Release.',
         where: 'Bill of materials',
       },
       {

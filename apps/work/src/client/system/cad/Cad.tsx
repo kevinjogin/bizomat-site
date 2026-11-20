@@ -1312,7 +1312,7 @@ export function RecordDrawings({ companyId, kind, id }: { companyId: string; kin
 
 // ------------------------------------------------------------------ review tasks in Projects
 
-/** On an engineering document: ask for a review as a task on a Projects and Tasks board (flag cad_projects). */
+/** On an engineering document: ask for a review as a task on a Project Management board (flag cad_projects). */
 export function ReviewTaskButton({ companyId, documentId }: { companyId: string; documentId: string }) {
   const q = useQuery({ queryKey: ['cad', companyId, 'review-boards'], queryFn: () => get<{ enabled: boolean; boards: { id: string; name: string }[] }>(erpPath(companyId, '/cad/review-boards')), retry: false, staleTime: 60_000 });
   const [open, setOpen] = useState(false);
@@ -1335,7 +1335,7 @@ export function ReviewTaskButton({ companyId, documentId }: { companyId: string;
       <button className="btn" onClick={() => { setBoardId(q.data!.boards[0]?.id ?? ''); setOpen(true); }}><Icon name="checkSquare" /> Ask for a review</button>
       {open ? (
         <Modal title="Ask for a review in Projects" onClose={() => setOpen(false)} footer={<div className="row"><button className="btn ghost" onClick={() => setOpen(false)}>Cancel</button><button className="btn primary" form="cad-review" type="submit" disabled={!boardId}>Add the task</button></div>}>
-          {!q.data.boards.length ? <p className="muted">You have no board in this company’s Projects and Tasks workspaces that you can add tasks to.</p> : (
+          {!q.data.boards.length ? <p className="muted">You have no board in this company’s Project Management workspaces that you can add tasks to.</p> : (
             <form id="cad-review" className="stack" onSubmit={send}>
               <div className="field">
                 <label htmlFor="cad-board">Board</label>

@@ -45,7 +45,7 @@ export const SYSTEMS: readonly SystemInfo[] = [
     formerly: 'BIZOMAT System',
     line: 'One workspace for your company: sales, finance, projects, engineering and administration, by company.',
     status: 'partial',
-    statusNote: 'Working today: the workspace, the dashboard by company, Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering (products, bills of materials, revisions, engineering changes, documents and CAD Automation), Procurement (suppliers, requisitions, quotations, purchase orders and goods receipts), Inventory (warehouses, stock, movements, counts and valuation), Manufacturing (work centres, routings, manufacturing orders, the shop floor, MRP, capacity and job costing), Quality (inspection plans, inspections, nonconformances and corrective actions), Supply Chain (sales orders, allocation, make to order, picking, packing, dispatch, deliveries, returns, carriers and the draft invoice in Finance), Maintenance (assets, requests, work orders, preventive maintenance, readings, inspections, prestart checks, parts from Inventory, sites and reliability reports), Reports and Administration. Planned: postings of stock, production and maintenance value to Finance’s ledger.',
+    statusNote: 'Working today: the workspace, the dashboard by company, Sales and CRM, Finance and Accounting, Project Management, Product Management (products, bills of materials and revisions), Engineering (engineering changes, documents, CAD Automation, manufacturing and quality), Procurement (suppliers, requisitions, quotations, purchase orders and goods receipts), Inventory (warehouses, stock, movements, counts and valuation), Manufacturing (work centres, routings, manufacturing orders, the shop floor, MRP, capacity and job costing), Quality (inspection plans, inspections, nonconformances and corrective actions), Supply Chain (sales orders, allocation, make to order, picking, packing, dispatch, deliveries, returns, carriers and the draft invoice in Finance), Maintenance (assets, requests, work orders, preventive maintenance, readings, inspections, prestart checks, parts from Inventory, sites and reliability reports), Reports and Administration. Planned: postings of stock, production and maintenance value to Finance’s ledger.',
     url: '/systems/#erp',
     guide: '/learn/#getting-started',
     access: { href: erp, label: 'Open BIZOMAT ERP', note: 'Sign in with your BIZOMAT account. Every module opens inside the ERP.' },
@@ -86,8 +86,8 @@ export const SYSTEMS: readonly SystemInfo[] = [
     status: 'available',
     url: '/systems/#projects',
     guide: '/learn/#projects',
-    access: { href: `${erp}tasks/`, label: 'Open Projects and Tasks', note: 'Opens inside BIZOMAT ERP, in the Projects and Tasks module.' },
-    module: 'Projects and Tasks',
+    access: { href: `${erp}tasks/`, label: 'Open Project Management', note: 'Opens inside BIZOMAT ERP, in the Project Management module.' },
+    module: 'Project Management',
   },
   {
     id: 'engineering',
@@ -100,8 +100,8 @@ export const SYSTEMS: readonly SystemInfo[] = [
     statusNote: 'Needs SOLIDWORKS on your own Windows computer, the BIZOMAT add-in and Companion, and an AI assistant that supports MCP connectors. One BIZOMAT account and sign-in, as for every system.',
     url: '/systems/#engineering',
     guide: '/learn/#cad-automation',
-    access: { href: `${erp}cad`, label: 'Open CAD Automation', note: 'Opens inside BIZOMAT ERP, under Products and Engineering. CAD Automation takes the same BIZOMAT account: choose Continue with BIZOMAT.' },
-    module: 'Products and Engineering',
+    access: { href: `${erp}cad`, label: 'Open CAD Automation', note: 'Opens inside BIZOMAT ERP, under Engineering. CAD Automation takes the same BIZOMAT account: choose Continue with BIZOMAT.' },
+    module: 'Engineering',
   },
   {
     id: 'manufacturing',
@@ -113,8 +113,8 @@ export const SYSTEMS: readonly SystemInfo[] = [
     statusNote: 'Working today inside BIZOMAT ERP: Procurement (suppliers, requisitions, quotations, purchase orders, goods receipts and the draft bill in Finance), Inventory (warehouses, stock by lot and serial, movements, counts and valuation), Manufacturing (work centres, routings, manufacturing orders, the shop floor, MRP, capacity, job costing and job profitability), Quality (inspection plans, inspections, nonconformances and corrective actions), Maintenance (assets, work orders, preventive maintenance, inspections, prestart checks, parts and reliability reports) and Supply Chain (sales orders, allocation, make to order, picking, packing, dispatch, delivery confirmation, returns, carriers and the draft invoice and credit note in Finance); and since 20 Nov 2026 Calibration, Subcontracting, Trade compliance, Invoice matching, Fleet and Transportation. Planned: posting stock, production and maintenance value to Finance’s ledger (recorded as planned, nothing is posted); the AI scheduling assistant and offline field work in Maintenance; statistical process control and quality audits; and in Supply Chain, connections to carriers’ own systems, landed costs and demand forecasting.',
     url: '/systems/#manufacturing',
     guide: '/learn/#manufacturing',
-    access: { href: `${erp}operations`, label: 'Open Operations', note: 'Opens inside BIZOMAT ERP, in the Operations module: Procurement, Inventory, Manufacturing, Quality, Supply Chain and Maintenance.' },
-    module: 'Operations',
+    access: { href: `${erp}engineering`, label: 'Open Engineering', note: 'Opens inside BIZOMAT ERP: Manufacturing and Quality are in Engineering, Procurement has its own module, Stock and Orders and dispatch are in Warehouse, and Maintenance has its own.' },
+    module: 'Engineering',
   },
   {
     // BIZOMAT WHS, Release 1 (the core): apps/work/src/worker/whs, migration 0026_whs_core.sql, docs/whs/README.md;

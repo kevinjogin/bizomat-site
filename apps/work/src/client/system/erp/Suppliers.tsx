@@ -36,7 +36,7 @@ export function ProcurementArea({ companyId, companyName }: { companyId: string;
   return (
     <div className="page crm-page">
       <PageHeader title="Procurement" subtitle={`Buying for ${m.company.name}: suppliers, requisitions, requests for quotation, purchase orders and goods receipts.`} />
-      <nav className="tabs mt-tabs" aria-label="Procurement sections">
+      <nav className="tabs mt-tabs erp-area-tabs" aria-label="Procurement sections">
         <NavLink to={procurementPage(companyId)} end className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="building" size={14} /> Suppliers</NavLink>
         <NavLink to={procurementPage(companyId, '/requisitions')} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="doc" size={14} /> Requisitions</NavLink>
         <NavLink to={procurementPage(companyId, '/rfqs')} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}><Icon name="message" size={14} /> Quotations</NavLink>

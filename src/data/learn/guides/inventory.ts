@@ -5,7 +5,7 @@ import type { Guide } from '../types.ts';
 const guide: Guide = {
   id: 'inventory',
   section: 'modules',
-  title: 'Inventory',
+  title: 'Warehouse: Stock',
   status: 'live',
   what:
     'Inventory shows what stock the company holds, where it is and every movement of it. Warehouses hold a tree of locations, stock is kept by product, location, lot and serial number, and every change is a line in a movement ledger that is never changed or deleted.',
@@ -25,10 +25,10 @@ const guide: Guide = {
     'Executives and viewers, who read stock and its value.',
   ],
   access: {
-    path: ['BIZOMAT ERP', 'Operations', 'Inventory'],
+    path: ['BIZOMAT ERP', 'Warehouse', 'Stock'],
     href: 'https://bizomat.ai/erp/inventory',
     label: 'Open Inventory',
-    note: 'On Operations, the Inventory and Warehouse card has Open Inventory; the company’s side menu lists Inventory too. Its tabs are Stock, Warehouses, Movements, Adjustments, Counts, Valuation and Warehouse screen.',
+    note: 'Choose Warehouse in the module rail, then Stock in its side menu. Under Stock the side menu lists Stock, Warehouses, Movements, Adjustments, Counts, Valuation and Warehouse screen.',
   },
   tutorials: [
     {

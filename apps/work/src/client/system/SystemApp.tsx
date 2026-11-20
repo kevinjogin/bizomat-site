@@ -24,10 +24,12 @@ import '../styles/company.css';
 import '../styles/system.css';
 import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
 import { MODULE_DEFS } from '../../shared/erp-objects';
+import { ModuleMenu } from './modules';
+import { EngineeringHome, ModuleProgress, WarehouseHome } from './ModuleHome';
 
 // Asset Management and Maintenance (stages M1 to M3), inside a company at /c/<company>/maintenance; loaded when it is opened.
 const MaintenanceArea = lazy(() => import('./maintenance/Maintenance').then((m) => ({ default: m.MaintenanceArea })));
-// ERP Release 1 (src/client/system/erp): Products and Engineering at /c/<company>/products, Procurement (suppliers) at
+// ERP Release 1 (src/client/system/erp): Product Management at /c/<company>/products, Procurement (suppliers) at
 // /c/<company>/procurement, ERP roles and the products, engineering and supplier reports; loaded when opened.
 const ProductsArea = lazy(() => import('./erp/Products').then((m) => ({ default: m.ProductsArea })));
 const ProcurementArea = lazy(() => import('./erp/Suppliers').then((m) => ({ default: m.ProcurementArea })));
@@ -196,7 +198,7 @@ interface CadPerson {
 }
 
 // The ERP's module names (the tools underneath keep their own names).
-const APP_NAMES: Record<SysApp, string> = { tasks: 'Projects and Tasks', crm: 'Sales and CRM', finance: 'Finance and Accounting' };
+const APP_NAMES: Record<SysApp, string> = { tasks: 'Project Management', crm: 'Sales and CRM', finance: 'Finance and Accounting' };
 const APP_ICONS: Record<SysApp, string> = { tasks: 'grid', crm: 'briefcase', finance: 'dollar' };
 const ROLE_LABELS: Record<SysRole, string> = { owner: 'Owner', admin: 'Administrator', manager: 'Manager', employee: 'Employee', read_only: 'Read-only', member: 'Employee', guest: 'Shared with you' };
 // CAD Automation's own pages, linked only while the ERP's CAD Automation module (flag cad_in_erp) is off for a company:
@@ -244,8 +246,11 @@ export function SystemRoutes() {
       <Route path="/my-work" element={<MyWorkRedirect />} />
       {/* The module rail's Maintenance: the maintenance of the company used last. */}
       <Route path="/maintenance/*" element={<MaintenanceRedirect />} />
-      {/* The module rail's Products and Engineering and the Operations page's Procurement: in the company used last. */}
+      {/* The module rail's modules: the same section in the company used last. */}
       <Route path="/products/*" element={<CompanyRedirect section="products" />} />
+      {/* The module rail's Engineering and Warehouse (owner, 20 Nov 2026): their overview in the company used last. */}
+      <Route path="/engineering/*" element={<CompanyRedirect section="engineering" />} />
+      <Route path="/warehouse/*" element={<CompanyRedirect section="warehouse" />} />
       <Route path="/procurement/*" element={<CompanyRedirect section="procurement" />} />
       <Route path="/inventory/*" element={<CompanyRedirect section="inventory" />} />
       <Route path="/manufacturing/*" element={<CompanyRedirect section="manufacturing" />} />
@@ -256,7 +261,9 @@ export function SystemRoutes() {
       <Route path="/modules/*" element={<CompanyRedirect section="modules" />} />
       <Route path="/inbox" element={<CompanyRedirect section="inbox" />} />
       <Route path="/m/*" element={<CompanyRedirect section="m" />} />
-      <Route path="/operations" element={<Shell><Operations /></Shell>} />
+      {/* Operations is retired (owner, 20 Nov 2026): its modules are Engineering, Procurement and Warehouse, and the
+          dashboard shows every module's progress. */}
+      <Route path="/operations" element={<Navigate to="/" replace />} />
       <Route path="/reports" element={<Shell><ReportsPage /></Shell>} />
       <Route path="/administration" element={<Shell><Administration /></Shell>} />
       {/* A tool's address reached from here (/crm/..., /tasks/...): open it inside the ERP with a page load. */}
@@ -278,7 +285,7 @@ function OpenTool() {
   return <Loading label="Opening…" />;
 }
 
-/** My Work: everything assigned to you, in the Projects and Tasks workspace used last. */
+/** My Work: everything assigned to you, in the Project Management workspace used last. */
 function MyWorkRedirect() {
   const { session } = useSession();
   const own = useCompanyToolPaths();
@@ -303,7 +310,7 @@ function MaintenanceRedirect() {
 }
 
 /** /products, /procurement, /inventory and /manufacturing: the same section of the company used last, else the first one. */
-function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'inventory' | 'manufacturing' | 'quality' | 'supply-chain' | 'whs' | 'modules' | 'inbox' | 'm' }) {
+function CompanyRedirect({ section }: { section: 'products' | 'engineering' | 'procurement' | 'warehouse' | 'inventory' | 'manufacturing' | 'quality' | 'supply-chain' | 'whs' | 'modules' | 'inbox' | 'm' }) {
   const location = useLocation();
   const q = useMe();
   if (q.error) return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
@@ -393,6 +400,7 @@ function SystemHome({ page = 'home' }: { page?: 'home' | 'cad' }) {
 function CompanyArea() {
   const { companyId = '' } = useParams();
   const q = useCompanyView(companyId);
+  const cadCompanies = useCadCompanies();
   useEffect(() => {
     if (q.data) rememberCompany(q.data.company.id);
   }, [q.data]);
@@ -401,6 +409,7 @@ function CompanyArea() {
     return <div className="page"><ErrorBox error={q.error} retry={() => q.refetch()} /></div>;
   }
   if (!q.data) return <Loading label="Opening the company…" />;
+  const cadOn = (cadCompanies.data?.companies ?? []).some((x) => x.id === q.data.company.id);
   return (
     <Shell view={q.data}>
       <Routes>
@@ -410,6 +419,8 @@ function CompanyArea() {
         <Route path="settings" element={<CompanySettings view={q.data} />} />
         <Route path="maintenance/*" element={<Suspense fallback={<Loading />}><MaintenanceArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="products/*" element={<Suspense fallback={<Loading />}><ProductsArea companyId={q.data.company.id} companyName={q.data.company.name} cad={<CadPage view={q.data} embedded />} /></Suspense>} />
+        <Route path="engineering" element={<EngineeringHome companyId={q.data.company.id} companyName={q.data.company.name} cad={cadOn} />} />
+        <Route path="warehouse" element={<WarehouseHome companyId={q.data.company.id} companyName={q.data.company.name} />} />
         <Route path="procurement/*" element={<Suspense fallback={<Loading />}><ProcurementArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="erp-roles" element={<Suspense fallback={<Loading />}><ErpRolesPage companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="erp-reports/*" element={<Suspense fallback={<Loading />}><ErpReportsArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
@@ -437,7 +448,6 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
   const location = useLocation();
   useEffect(() => setNavOpen(false), [location.pathname]);
   const id = view?.company.id ?? lastCompany() ?? me?.companies[0]?.id;
-  const base = id ? `/c/${id}` : '';
   const cadCompanies = useCadCompanies().data?.companies ?? [];
   const cadHere = !!id && cadCompanies.some((c) => c.id === id);
   const adminCompanies = useAdminCompanies().data?.companies ?? [];
@@ -460,49 +470,35 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
         <Profile />
       </header>
       <nav className="sidebar" aria-label="ERP navigation">
-        {base ? (
+        {/* Each module has its own side menu (owner, 20 Nov 2026; system/modules.tsx): the module rail picks the module,
+            this shows its sections only. Every tool is in the module rail and stays inside the ERP. */}
+        {id ? (
+          <ModuleMenu
+            companyId={id}
+            cad={cadHere}
+            admin={adminHere}
+            shortcuts={<ModuleShortcuts base={`/c/${id}`} />}
+            footer={me?.platformRole ? (
+              <>
+                <div className="nav-section">Super admin</div>
+                <NavLink to="/admin/overview" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> ERP console</NavLink>
+              </>
+            ) : null}
+          />
+        ) : (
           <>
-            <NavLink to={`${base}/home`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="home" /> Dashboard</NavLink>
-            <NavLink to={`${base}/modules`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="grid" /> All modules</NavLink>
-            <NavLink to={`${base}/inbox`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="inbox" /> Waiting for me</NavLink>
-            <ModuleShortcuts base={base} />
-            <NavLink to={`${base}/products`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="diamond" /> Products and Engineering</NavLink>
-            {cadHere ? <NavLink to={`${base}/cad`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="bolt" /> CAD Automation</NavLink> : null}
-            <NavLink to={`${base}/procurement`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="inbox" /> Procurement</NavLink>
-            <NavLink to={`${base}/inventory`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="layers" /> Inventory</NavLink>
-            <NavLink to={`${base}/manufacturing`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Manufacturing</NavLink>
-            <NavLink to={`${base}/quality`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="checkSquare" /> Quality</NavLink>
-            <NavLink to={`${base}/supply-chain`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="globe" /> Supply Chain</NavLink>
-            <NavLink to={`${base}/maintenance`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="wrench" /> Maintenance</NavLink>
-            <NavLink to={`${base}/whs`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> Health and Safety</NavLink>
-            <NavLink to={`${base}/settings`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Company</NavLink>
-            {adminHere ? <NavLink to={`${base}/company-admin`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="users" /> Company Admin</NavLink> : null}
+            {me?.platformRole ? (
+              <>
+                <div className="nav-section">Super admin</div>
+                <NavLink to="/admin/overview" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> ERP console</NavLink>
+              </>
+            ) : null}
+            <div className="nav-section">Help</div>
+            <a className="nav-item" href={PLATFORM_URLS.learn} rel="noopener" title="BIZOMAT ERP Knowledge Centre: guides, tutorials and answers for every module">
+              <Icon name="help" /> Knowledge Centre
+            </a>
           </>
-        ) : null}
-        {view?.tools.length ? (
-          <>
-            <div className="nav-section">Open a tool</div>
-            {view.tools.map((t) => (
-              <a key={`${t.app}:${t.id}`} className="nav-item" href={t.url} title={`${APP_NAMES[t.app]}: ${t.name}`}>
-                <Icon name={APP_ICONS[t.app]} /> <span className="ellipsis">{APP_NAMES[t.app]}</span>
-              </a>
-            ))}
-          </>
-        ) : null}
-        {me?.platformRole ? (
-          <>
-            <div className="nav-section">Super admin</div>
-            <NavLink to="/admin/overview" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> ERP console</NavLink>
-          </>
-        ) : null}
-        {/* The Knowledge Centre (owner, 20 Nov 2026): guides, tutorials and answers for every module, on the website. */}
-        <div className="nav-section">Help</div>
-        <a className="nav-item" href={PLATFORM_URLS.learn} rel="noopener" title="BIZOMAT ERP Knowledge Centre: guides, tutorials and answers for every module">
-          <Icon name="help" /> Knowledge Centre
-        </a>
-        {/* Every tool is in the module rail (SuiteRail) and stays inside the ERP: no link out to CAD Automation's own
-            application here (owner, 20 Nov 2026); CAD Automation is under Products and Engineering, or its own entry
-            above where it works inside the ERP (flag cad_in_erp). */}
+        )}
         <PlatformFooter />
       </nav>
       <main className="main" id="main">
@@ -771,7 +767,6 @@ function ExampleCard() {
 // ------------------------------------------------------------------ company pages
 
 function CompanyHome({ view }: { view: CompanyView }) {
-  const me = useMe().data;
   const c = view.company;
   const byApp = (app: SysApp) => view.tools.filter((t) => t.app === app);
   return (
@@ -792,56 +787,9 @@ function CompanyHome({ view }: { view: CompanyView }) {
       {c.registration?.suspended ? <p className="warning-text">This company is suspended. Its tools stay as they are; ask BIZOMAT support for details.</p> : null}
       <div className="co-tools-grid">
         {(['tasks', 'crm', 'finance'] as SysApp[]).flatMap((app) => byApp(app).map((t) => <ToolCard key={`${t.app}:${t.id}`} tool={t} />))}
-        {c.role !== 'guest' ? (
-          <Link to={`/c/${c.id}/maintenance`} className="card card-pad co-tool-card sys-tool-card">
-            <div className="row"><Icon name="wrench" /> <strong>Maintenance</strong></div>
-            <p className="muted small">Asset Management and Maintenance: the asset register, requests and work orders.</p>
-            <p className="small">Report a fault, follow your requests, or plan and record the work.</p>
-          </Link>
-        ) : null}
+        {/* Every module's progress (owner, 20 Nov 2026), in the order of the module rail. */}
+        <ModuleProgress companyId={c.id} guest={c.role === 'guest'} />
         {c.role !== 'guest' ? <WhsCard companyId={c.id} demo={c.kind === 'demo'} /> : null}
-        {c.role !== 'guest' ? (
-          <Link to={`/c/${c.id}/products`} className="card card-pad co-tool-card sys-tool-card">
-            <div className="row"><Icon name="diamond" /> <strong>Products and Engineering</strong></div>
-            <p className="muted small">Products and variants, bills of materials, revisions, engineering changes and documents.</p>
-            <p className="small">{c.kind === 'demo' ? 'A kit with a two-level bill of materials, released through a change order.' : me?.cadConnected ? 'CAD Automation: see computers, AI apps and recent jobs.' : 'CAD Automation: set it up from the CAD Automation tab.'}</p>
-          </Link>
-        ) : null}
-        {c.role !== 'guest' ? (
-          <Link to={`/c/${c.id}/procurement`} className="card card-pad co-tool-card sys-tool-card">
-            <div className="row"><Icon name="inbox" /> <strong>Procurement</strong></div>
-            <p className="muted small">Suppliers, requisitions, requests for quotation, purchase orders and goods receipts.</p>
-            <p className="small">{c.kind === 'demo' ? 'A requisition, two quotations to compare and a purchase order received into stock.' : 'Buy from approved suppliers, with approval limits and a draft bill in Finance.'}</p>
-          </Link>
-        ) : null}
-        {c.role !== 'guest' ? (
-          <Link to={`/c/${c.id}/inventory`} className="card card-pad co-tool-card sys-tool-card">
-            <div className="row"><Icon name="layers" /> <strong>Inventory</strong></div>
-            <p className="muted small">Warehouses and locations, stock by lot and serial, movements, counts and valuation.</p>
-            <p className="small">Receive, issue, move and count from a phone with the warehouse screen.</p>
-          </Link>
-        ) : null}
-        {c.role !== 'guest' ? (
-          <Link to={`/c/${c.id}/manufacturing`} className="card card-pad co-tool-card sys-tool-card">
-            <div className="row"><Icon name="settings" /> <strong>Manufacturing</strong></div>
-            <p className="muted small">Manufacturing orders, routings and work centres, the shop floor, MRP and capacity, and job costing.</p>
-            <p className="small">{c.kind === 'demo' ? 'An order for ten weldments in progress, and MRP suggestions for a confirmed demand of 60 kits.' : 'Plan from demand with MRP, run the shop floor from a phone, and see estimated against actual cost.'}</p>
-          </Link>
-        ) : null}
-        {c.role !== 'guest' ? (
-          <Link to={`/c/${c.id}/quality`} className="card card-pad co-tool-card sys-tool-card">
-            <div className="row"><Icon name="checkSquare" /> <strong>Quality</strong></div>
-            <p className="muted small">Inspection plans, inspections from receipt to finished goods, nonconformances and corrective actions.</p>
-            <p className="small">{c.kind === 'demo' ? 'A failed incoming inspection of bracket arms, its nonconformance and a corrective action in progress.' : 'Record inspections on a phone; the result is worked out from the limits.'}</p>
-          </Link>
-        ) : null}
-        {c.role !== 'guest' ? (
-          <Link to={`/c/${c.id}/supply-chain`} className="card card-pad co-tool-card sys-tool-card">
-            <div className="row"><Icon name="globe" /> <strong>Supply Chain</strong></div>
-            <p className="muted small">Sales orders, allocation and make to order, pick, pack and dispatch, deliveries, returns and carriers.</p>
-            <p className="small">{c.kind === 'demo' ? 'An order for Harbour Cafe shipped, delivered and invoiced as a draft, weldments made to order, and a return.' : 'Ship from a phone; the draft invoice is made in Finance once per shipment.'}</p>
-          </Link>
-        ) : null}
       </div>
       {!view.tools.length && c.role !== 'guest' ? (
         <section className="card card-pad stack">
@@ -899,7 +847,7 @@ function ToolCard({ tool }: { tool: Tool }) {
   );
 }
 
-/** CAD Automation's setup and the company's computers: the CAD Automation tab of Products and Engineering. */
+/** CAD Automation's setup and the company's computers, in Engineering (while the module is off for the company). */
 function CadPage({ view, embedded }: { view: CompanyView; embedded?: boolean }) {
   const me = useMe().data;
   const c = view.company;
@@ -922,7 +870,7 @@ function CadPage({ view, embedded }: { view: CompanyView; embedded?: boolean }) 
   if (c.kind === 'demo') {
     return (
       <div className={embedded ? 'stack' : 'page crm-page'}>
-        {embedded ? null : <PageHeader title="Products and Engineering" subtitle="CAD Automation: your AI assistant builds native SOLIDWORKS parts, assemblies and drawings on your own computer." />}
+        {embedded ? null : <PageHeader title="Engineering" subtitle="CAD Automation: your AI assistant builds native SOLIDWORKS parts, assemblies and drawings on your own computer." />}
         <section className="card card-pad stack">
           <p>The example company has no CAD Automation. Set it up and use it in your own company: your computers, AI assistants and history stay there.</p>
           <div className="row"><Link className="btn primary" to="/cad">Open CAD Automation in my company</Link></div>
@@ -938,7 +886,7 @@ function CadPage({ view, embedded }: { view: CompanyView; embedded?: boolean }) 
           <a className="btn primary" href={CAD.app}>Open CAD Automation</a>
         </div>
       ) : (
-        <PageHeader title="Products and Engineering" subtitle="CAD Automation: your AI assistant builds native SOLIDWORKS parts, assemblies and drawings on your own computer." actions={<a className="btn primary" href={CAD.app}>Open CAD Automation</a>} />
+        <PageHeader title="Engineering" subtitle="CAD Automation: your AI assistant builds native SOLIDWORKS parts, assemblies and drawings on your own computer." actions={<a className="btn primary" href={CAD.app}>Open CAD Automation</a>} />
       )}
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Set it up in four steps</h2>
@@ -1066,142 +1014,6 @@ function useCurrentCompany() {
   return { me, id, view };
 }
 
-/**
- * The ERP's operations modules (docs/erp/architecture/08). Planned ones are shown as planned, never as working. Asset
- * Management and Maintenance is partly live (stages M1 to M3): exactly what is live is said, and the rest is labelled planned.
- */
-const PLANNED: { name: string; icon: string; covers: string; today?: string; badge?: string; live?: { to: string; label: string } }[] = [
-  {
-    name: 'Procurement',
-    icon: 'inbox',
-    covers: 'Live now: suppliers with approval (segregation of duties); purchase requisitions with approval; requests for quotation to approved suppliers with a PDF, recorded quotations and a comparison marking the cheapest and fastest; purchase orders with an approval limit, amendments with their history and a PDF; goods receipts with lots, serial numbers, expiry dates and damaged or rejected quantities; supplier performance from receipts; and one draft bill in Finance per receipt.',
-    today: 'Not yet: sending orders and requests by email with the PDF attached (download it and send it from your email, then record it as sent). Bills are approved and paid in Finance and Accounting.',
-    badge: 'Live',
-    live: { to: '/procurement', label: 'Open Procurement' },
-  },
-  {
-    name: 'Inventory and Warehouse',
-    icon: 'layers',
-    covers: 'Live now: warehouses with a location tree (store, zone, rack, shelf, bin; quarantine, receiving and dispatch); stock by product, location, lot and serial; an append-only movement ledger; issues, transfers, reservations, quarantine, customer and supplier returns, scrap; adjustments with approval; stocktakes and cycle counts; weighted average or FIFO valuation; traceability; QR labels and a warehouse screen for phones.',
-    today: 'Planned: posting stock value to Finance’s ledger (recorded as planned, nothing is posted). Goods flagged for inspection on receipt are inspected in Quality.',
-    badge: 'Live',
-    live: { to: '/inventory', label: 'Open Inventory' },
-  },
-  {
-    name: 'Manufacturing',
-    icon: 'settings',
-    covers: 'Live now: work centres and machines with a capacity calendar and cost rates; routings with revisions released by an engineering approver who did not draft them; manufacturing orders from a released bill of materials and routing, with materials reserved, issued and returned through Inventory; operations with labour and machine time, output, scrap, rework, downtime and inspection results; finished goods received at actual cost; a shop-floor screen for phones; the master production schedule, MRP with make, buy and expedite suggestions, and rough-cut capacity; estimated against actual cost by element, with variances at close.',
-    today: 'Not yet: posting production value to Finance’s ledger (recorded as planned, nothing is posted) and finite scheduling. Full inspections of operations are in Quality. Job profitability of orders made to order is live with Supply Chain.',
-    badge: 'Live',
-    live: { to: '/manufacturing', label: 'Open Manufacturing' },
-  },
-  {
-    name: 'Quality',
-    icon: 'checkSquare',
-    covers: 'Live now: inspection plans with versions and characteristics (dimensions with limits, attributes, visual checks, samples, photos); inspections of goods receipts, manufacturing operations, finished goods and suppliers, recorded on a phone, with the result worked out from the limits; quarantine and release through Inventory; nonconformance reports with containment, root cause, disposition (use as is, rework, repair, scrap, return to supplier, regrade) and verification; corrective and preventive actions with approval and closure under segregation of duties; seven quality reports.',
-    today: 'Planned: statistical process control, calibration, quality audits, and appraisal and external failure costs. Overdue corrective actions show on the Quality overview, not in My Work.',
-    badge: 'Live',
-    live: { to: '/quality', label: 'Open Quality' },
-  },
-  {
-    name: 'Asset Management and Maintenance',
-    icon: 'wrench',
-    covers: 'Live now: the asset register with its hierarchy, sites, CSV import and files; maintenance requests with approval; work orders with tasks, parts issued from maintenance stores through Inventory, a labour timer and time entered by hand with its cost, downtime, inspections, photos, completion and reopening; preventive maintenance by time, meter or condition, with templates and a calendar; meters, gauges and readings; prestart checks on a phone; trades and labour rates; QR labels and scanning; reliability reports (MTBF, MTTR, downtime, PM compliance, backlog, breakdown trends and asset costs); maintenance roles per company; and the history of every change.',
-    today: 'Planned: an AI scheduling assistant (it would only propose; a person would approve), workload planning, offline field work, and posting maintenance costs to Finance (costs are recorded; nothing is posted).',
-    live: { to: '/maintenance', label: 'Open Maintenance' },
-  },
-  {
-    name: 'Supply Chain',
-    icon: 'globe',
-    covers: 'Live now: sales orders for the company’s CRM and Finance customer record, priced as Finance prices lines, with amendments and their history; stock allocated soonest expiry first; lines made to order through a linked manufacturing order, with job profitability; confirmed orders as demand in MRP; carriers; shipments with a pick list, packages, dispatch from a phone (once, never beyond stock) and delivery confirmation with a photo, signature or document; an optional dispatch email; the delivery schedule; returns authorised by a sales manager and received back into stock; one draft invoice per shipment and one draft credit note per return in Finance; traceability to the delivery; seven reports.',
-    today: 'Not yet: posting the value of stock sold to Finance’s ledger (recorded as planned, nothing is posted), carrier bookings and labels through a carrier’s own system, and service lines on sales orders. The dispatch email goes out only where email is set up on this service.',
-    badge: 'Live',
-    live: { to: '/supply-chain', label: 'Open Supply Chain' },
-  },
-  {
-    name: 'Products and Engineering records',
-    icon: 'diamond',
-    covers: 'Live now: the product master with variants, revisions with change requests and change orders (approval and release with segregation of duties), multi-level bills of materials with where-used, comparison and cost roll-up, and engineering documents with versions and CAD references.',
-    today: 'Live with Inventory: each component’s available stock in the bill of materials, and shortages for a build quantity. Live with Manufacturing: routings and work centres. CAD Automation builds SOLIDWORKS parts, assemblies and drawings from your AI assistant on your own computer.',
-    badge: 'Partly live',
-    live: { to: '/products', label: 'Open Products and Engineering' },
-  },
-];
-
-function Operations() {
-  usePageTitle('Operations');
-  return (
-    <div className="page crm-page">
-      <PageHeader title="Operations" subtitle="Procurement, inventory, manufacturing, quality, supply chain, assets and maintenance. Procurement, Inventory, Manufacturing, Quality and Supply Chain are live; Products and Engineering records and Asset Management and Maintenance are partly live. Postings of stock and production value to Finance’s ledger are planned." />
-      <OperationsToday />
-      <div className="co-tools-grid">
-        {PLANNED.map((m) => (
-          <section key={m.name} className="card card-pad co-tool-card">
-            <div className="row"><Icon name={m.icon} /> <strong className="grow">{m.name}</strong>{m.live ? <span className="badge success">{m.badge ?? 'Partly live'}</span> : <span className="badge">Planned</span>}</div>
-            <p className="small">{m.covers}</p>
-            {m.today ? <p className="muted small">{m.today}</p> : null}
-            {m.live ? <div className="row"><Link className="btn sm" to={m.live.to}>{m.live.label}</Link></div> : null}
-          </section>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-interface OperationsCounts {
-  requisitions: { draft: number; submitted: number; approved: number };
-  rfqs: { open: number; awarded: number };
-  purchaseOrders: { draft: number; awaitingApproval: number; toReceive: number };
-  receipts: { last30Days: number; inspection: number };
-  stock: { belowReorder: number; pendingAdjustments: number; openCounts: number; countsToApprove: number; warehouses: number; valueCents: number };
-  manufacturing?: { draft: number; released: number; inProgress: number; toClose: number; late: number; inspections: number; suggestions: { make: number; buy: number; expedite: number } };
-  // Release 4 part A
-  quality?: { toInspect: number; openInspections: number; openNcrs: number; ncrsToDisposition: number; capasToApprove: number; overdueCapas: number };
-  // Release 5 part A
-  supplyChain?: { ordersDraft: number; ordersToAllocate: number; ordersLate: number; toPick: number; toPack: number; toDispatch: number; inTransit: number; toInvoice: number; returnsToAuthorise: number; returnsToReceive: number };
-}
-
-/** What waits in the company used last: approvals, orders to receive, stock to reorder, counts and adjustments. */
-function OperationsToday() {
-  const { view } = useCurrentCompany();
-  const c = view.data?.company;
-  const q = useQuery({ queryKey: ['erp', c?.id ?? '', 'operations'], queryFn: () => get<OperationsCounts>(`/erp/c/${encodeURIComponent(c!.id)}/operations`), enabled: !!c && c.role !== 'guest', retry: false });
-  if (!c || c.role === 'guest' || !q.data) return null;
-  const d = q.data;
-  const item = (n: number, label: string, to: string) => (
-    <Link key={label} to={`/c/${c.id}${to}`} className="card card-pad sys-stat">
-      <strong>{n}</strong>
-      <span className="muted small">{label}</span>
-    </Link>
-  );
-  return (
-    <section className="stack">
-      <h2 className="crm-subhead">Waiting in {c.name}</h2>
-      <div className="sys-stats">
-        {item(d.requisitions.submitted, 'Requisitions to approve', '/procurement/requisitions?status=submitted')}
-        {item(d.rfqs.awarded, 'Supplier choices to approve', '/procurement/rfqs?status=awarded')}
-        {item(d.purchaseOrders.awaitingApproval, 'Purchase orders to approve', '/procurement/purchase-orders?status=awaiting_approval')}
-        {item(d.purchaseOrders.toReceive, 'Purchase orders to receive', '/procurement/purchase-orders?status=to_receive')}
-        {item(d.stock.belowReorder, 'Products to reorder', '/erp-reports/shortages')}
-        {item(d.stock.pendingAdjustments, 'Adjustments to approve', '/inventory/adjustments')}
-        {item(d.stock.countsToApprove, 'Counts to approve', '/inventory/counts')}
-        {d.manufacturing ? item(d.manufacturing.draft, 'Manufacturing orders to release', '/manufacturing?status=draft') : null}
-        {d.manufacturing ? item(d.manufacturing.late, 'Manufacturing orders late', '/manufacturing?late=1') : null}
-        {d.manufacturing ? item(d.manufacturing.toClose, 'Manufacturing orders to close', '/manufacturing?status=completed') : null}
-        {d.manufacturing ? item(d.manufacturing.inspections, 'Inspections outstanding', '/manufacturing/shop-floor') : null}
-        {d.manufacturing ? item(d.manufacturing.suggestions.make + d.manufacturing.suggestions.buy + d.manufacturing.suggestions.expedite, 'MRP suggestions open', '/manufacturing/planning') : null}
-        {d.quality ? item(d.quality.toInspect, 'Waiting for inspection', '/quality') : null}
-        {d.quality ? item(d.quality.ncrsToDisposition, 'Nonconformances to disposition', '/quality/ncrs?status=open') : null}
-        {d.quality ? item(d.quality.overdueCapas, 'Corrective actions overdue', '/quality/capas?overdue=1') : null}
-        {d.supplyChain ? item(d.supplyChain.ordersToAllocate, 'Sales orders to allocate', '/supply-chain/orders?status=confirmed') : null}
-        {d.supplyChain ? item(d.supplyChain.toPick + d.supplyChain.toPack + d.supplyChain.toDispatch, 'Shipments to pick, pack or dispatch', '/supply-chain/floor') : null}
-        {d.supplyChain ? item(d.supplyChain.toInvoice, 'Shipments to invoice', '/supply-chain/shipments?uninvoiced=1') : null}
-        {d.supplyChain ? item(d.supplyChain.returnsToAuthorise + d.supplyChain.returnsToReceive, 'Returns to authorise or receive', '/supply-chain/returns?status=open') : null}
-      </div>
-    </section>
-  );
-}
-
 function ReportsPage() {
   usePageTitle('Reports');
   const { me, view } = useCurrentCompany();
@@ -1213,7 +1025,7 @@ function ReportsPage() {
   const links: { app: SysApp; label: string; what: string; href: (id: string) => string }[] = [
     { app: 'crm', label: 'Sales and CRM reports', what: 'Pipeline, forecast, won and lost deals, lead sources and team activity.', href: (id) => toolUrl(`/crm/o/${encodeURIComponent(id)}/reports`) },
     { app: 'finance', label: 'Finance and Accounting reports', what: 'Profit and loss, balance sheet, cash, what is owed both ways, budgets and the GST and BAS worksheet.', href: (id) => toolUrl(`/finance/o/${encodeURIComponent(id)}/reports`) },
-    { app: 'tasks', label: 'Projects and Tasks dashboards', what: 'Dashboards built from live board data: counts, progress, workload and dates.', href: (id) => toolUrl(`/tasks/w/${encodeURIComponent(id)}/dashboards`) },
+    { app: 'tasks', label: 'Project Management dashboards', what: 'Dashboards built from live board data: counts, progress, workload and dates.', href: (id) => toolUrl(`/tasks/w/${encodeURIComponent(id)}/dashboards`) },
   ];
   return (
     <div className="page crm-page">
@@ -1256,7 +1068,7 @@ function ReportsPage() {
           )),
         )}
       </div>
-      {!tools.length ? <p className="muted">No tools in {c.name} yet, so there are no reports. Start Sales and CRM, Finance and Accounting or Projects and Tasks from the rail.</p> : null}
+      {!tools.length ? <p className="muted">No tools in {c.name} yet, so there are no reports. Start Sales and CRM, Finance and Accounting or Project Management from the rail.</p> : null}
     </div>
   );
 }
@@ -1283,7 +1095,7 @@ function Administration() {
   const toolAdmin: { app: SysApp; label: string; href: (id: string) => string }[] = [
     { app: 'crm', label: 'Sales and CRM: team, roles and settings', href: (id) => toolUrl(`/crm/o/${encodeURIComponent(id)}/team`) },
     { app: 'finance', label: 'Finance: team, roles and settings', href: (id) => toolUrl(`/finance/o/${encodeURIComponent(id)}/team`) },
-    { app: 'tasks', label: 'Projects and Tasks: workspace settings', href: (id) => toolUrl(`/tasks/w/${encodeURIComponent(id)}/settings`) },
+    { app: 'tasks', label: 'Project Management: workspace settings', href: (id) => toolUrl(`/tasks/w/${encodeURIComponent(id)}/settings`) },
   ];
   const consoleHere = adminCompanies.some((x) => x.id === c.id);
   return (
@@ -1455,7 +1267,7 @@ function AdminOverview({ founder }: { founder: boolean }) {
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Each tool's own console</h2>
         <div className="row wrap">
-          <a className="btn" href={toolUrl('/tasks/admin')}>Projects and Tasks console</a>
+          <a className="btn" href={toolUrl('/tasks/admin')}>Project Management console</a>
           <a className="btn" href={toolUrl('/crm/admin')}>Sales and CRM console</a>
           <a className="btn" href={toolUrl('/finance/admin')}>Finance console</a>
         </div>

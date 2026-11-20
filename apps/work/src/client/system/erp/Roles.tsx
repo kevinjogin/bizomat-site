@@ -28,7 +28,7 @@ export function ErpRolesPage({ companyId, companyName }: { companyId: string; co
   if (!me.data) return <Loading />;
   return (
     <div className="page crm-page">
-      <PageHeader title="ERP roles" subtitle={`Who may do what in ${companyName}'s Products and Engineering, Procurement and Inventory. The server checks every action against these roles.`} />
+      <PageHeader title="ERP roles" subtitle={`Who may do what in ${companyName}'s Product Management, Engineering, Procurement and Warehouse. The server checks every action against these roles.`} />
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Your roles</h2>
         <p>{me.data.roleLabels.join(', ')}</p>

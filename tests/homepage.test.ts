@@ -58,8 +58,8 @@ test('the ERP modules on the homepage are the module rail\'s own, each with its 
       assert.ok(guide, `${g.rail}: guide ${id} exists`);
     }
   }
-  // Every group of the rail, apart from My Work (a person's own tasks) and Company Admin (behind a flag that ships off).
-  assert.ok(railLabels.filter((l) => l !== 'My Work' && l !== 'Company Admin').every((l) => HOME_ERP_GROUPS.some((g) => g.rail === l)), 'every module group of the rail is shown');
+  // Every group of the rail, apart from Company Admin (behind a flag that ships off).
+  assert.ok(railLabels.filter((l) => l !== 'Company Admin').every((l) => HOME_ERP_GROUPS.some((g) => g.rail === l)), 'every module group of the rail is shown');
   // A module that is not built says so: the status comes from the guide, never from the homepage.
   assert.match(home, /g\.status !== 'live' && g\.status !== 'connected' \? <StatusLabel status=\{g\.status\} \/>/);
   for (const s of HOME_LEARN_STARTS) {

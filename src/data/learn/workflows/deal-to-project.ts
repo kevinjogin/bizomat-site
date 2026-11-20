@@ -5,12 +5,12 @@ const workflow: Workflow = {
   title: "Deal to project",
   status: "connected",
   summary:
-    "A deal in Sales and CRM starts a project board in the company's Projects and Tasks workspace, once per deal. The team plans and delivers the work there, CRM follow-ups can become project tasks, and the project can be tracked in Finance against a budget.",
+    "A deal in Sales and CRM starts a project board in the company's Project Management workspace, once per deal. The team plans and delivers the work there, CRM follow-ups can become project tasks, and the project can be tracked in Finance against a budget.",
   stages: [
     {
       guide: "crm",
       label: "Deal",
-      detail: "Usually a won deal, in a CRM organisation that belongs to a registered company running Projects and Tasks.",
+      detail: "Usually a won deal, in a CRM organisation that belongs to a registered company running Project Management.",
     },
     {
       guide: "projects",
@@ -33,7 +33,7 @@ const workflow: Workflow = {
     title: "Start and cost a project from a won deal",
     outcome: "The won deal has its own project board, with the work planned and its costs tracked in Finance against a budget.",
     needs:
-      "A registered company that runs Sales and CRM and Projects and Tasks. A Projects and Tasks role of Member or above to start the project. Tracking it in Finance needs a Finance role that manages accounting (Owner, Administrator or Accountant by default); seeing the figures needs a Finance role that sees reports.",
+      "A registered company that runs Sales and CRM and Project Management. A Project Management role of Member or above to start the project. Tracking it in Finance needs a Finance role that manages accounting (Owner, Administrator or Accountant by default); seeing the figures needs a Finance role that sees reports.",
     steps: [
       {
         title: "Open the deal",
@@ -42,7 +42,7 @@ const workflow: Workflow = {
       },
       {
         title: "Start the project",
-        body: "In the deal's Across panel, under Project Management, choose Start a project. A board named after the deal is made in the company's Projects and Tasks workspace, and it opens.",
+        body: "In the deal's Across panel, under Project Management, choose Start a project. A board named after the deal is made in the company's Project Management workspace, and it opens.",
         where: "Start a project",
       },
       {
@@ -81,11 +81,11 @@ const workflow: Workflow = {
   faqs: [
     {
       q: "Why don't I see Start a project on the deal?",
-      a: "The Across panel's Project Management section appears only when the CRM organisation belongs to a registered company that also runs Projects and Tasks. Starting a project needs a Projects and Tasks role of Member or above in that workspace; otherwise the panel says you cannot create projects. (see /learn/companies/)",
+      a: "The Across panel's Project Management section appears only when the CRM organisation belongs to a registered company that also runs Project Management. Starting a project needs a Project Management role of Member or above in that workspace; otherwise the panel says you cannot create projects. (see /learn/companies/)",
     },
     {
       q: "Can one deal have two projects?",
-      a: "No. Start a project works once per deal; afterwards the panel shows a link to the project. For more boards, create them in Projects and Tasks directly.",
+      a: "No. Start a project works once per deal; afterwards the panel shows a link to the project. For more boards, create them in Project Management directly.",
     },
     {
       q: "Does the project copy the deal's products or value?",

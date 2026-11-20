@@ -4,7 +4,7 @@ const workflow: Workflow = {
   id: 'cad-to-product',
   title: 'From a CAD model to a product record',
   status: 'in-development',
-  summary: 'Bring a design made in SOLIDWORKS with CAD Automation into a product\'s record in Products and Engineering. Saving exports straight to a product revision, reading a bill of materials from an open assembly and asking for a review task in Projects are built but not switched on yet. Today you export the file through CAD Automation and upload it to the product as an engineering document.',
+  summary: 'Bring a design made in SOLIDWORKS with CAD Automation into a product\'s record in Product Management. Saving exports straight to a product revision, reading a bill of materials from an open assembly and asking for a review task in Projects are built but not switched on yet. Today you export the file through CAD Automation and upload it to the product as an engineering document.',
   stages: [
     {
       guide: 'cad-automation',
@@ -24,13 +24,13 @@ const workflow: Workflow = {
     {
       guide: 'projects',
       label: 'Review task',
-      detail: 'Asking for a review of an engineering document as a task on a Projects and Tasks board is in development. Until it is switched on, add the review task to a board yourself.',
+      detail: 'Asking for a review of an engineering document as a task on a Project Management board is in development. Until it is switched on, add the review task to a board yourself.',
     },
   ],
   tutorial: {
     id: 'cad-to-product-today',
     title: 'Put a CAD export on a product today',
-    outcome: 'The product in Products and Engineering has the drawing or model as an approved engineering document, with its versions and history.',
+    outcome: 'The product in Product Management has the drawing or model as an approved engineering document, with its versions and history.',
     needs: 'CAD Automation set up on your computer. To add documents: Engineer, Engineering approver or ERP administrator. To approve them: Engineering approver or ERP administrator.',
     steps: [
       {
@@ -47,7 +47,7 @@ const workflow: Workflow = {
       },
       {
         title: 'Open the product in BIZOMAT ERP',
-        body: 'Open Products and Engineering, open the product and choose its Documents tab.',
+        body: 'Open Product Management, open the product and choose its Documents tab.',
         where: 'Documents',
       },
       {
@@ -71,7 +71,7 @@ const workflow: Workflow = {
         where: 'Add a line',
       },
     ],
-    after: 'Released revisions and approved documents are what Procurement, Manufacturing and Quality use. Ask for a review by adding a task to a Projects and Tasks board yourself until review tasks from documents are switched on.',
+    after: 'Released revisions and approved documents are what Procurement, Manufacturing and Quality use. Ask for a review by adding a task to a Project Management board yourself until review tasks from documents are switched on.',
   },
   faqs: [
     {

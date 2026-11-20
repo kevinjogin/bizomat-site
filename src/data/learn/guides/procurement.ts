@@ -26,10 +26,10 @@ const guide: Guide = {
     'Executives and viewers, who read without changing anything.',
   ],
   access: {
-    path: ['BIZOMAT ERP', 'Operations', 'Procurement'],
+    path: ['BIZOMAT ERP', 'Procurement'],
     href: 'https://bizomat.ai/erp/procurement',
     label: 'Open Procurement',
-    note: 'On Operations, the Procurement card has Open Procurement; the company’s side menu lists Procurement too. Its tabs are Suppliers, Requisitions, Quotations, Purchase orders and Receipts.',
+    note: 'Choose Procurement in the module rail: it opens in the company you used last. Its side menu lists Suppliers, Requisitions, Quotations, Purchase orders and Receipts.',
   },
   tutorials: [
     {
@@ -87,7 +87,7 @@ const guide: Guide = {
         },
         {
           title: 'Approve or reject it',
-          body: 'A procurement manager opens it and chooses Approve (a note is optional) or Reject (a reason is required). The Operations page counts requisitions waiting to be approved.',
+          body: 'A procurement manager opens it and chooses Approve (a note is optional) or Reject (a reason is required). The dashboard’s Procurement card counts requisitions waiting to be approved.',
           where: 'Approve',
         },
         {
@@ -162,7 +162,7 @@ const guide: Guide = {
         },
         {
           title: 'Approve it',
-          body: 'A procurement manager chooses Approve, or Return to draft with a reason. The Operations page counts purchase orders to approve.',
+          body: 'A procurement manager chooses Approve, or Return to draft with a reason. The dashboard’s Procurement card counts purchase orders to approve.',
           where: 'Approve',
         },
         {

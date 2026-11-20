@@ -5,7 +5,7 @@ const guide: Guide = {
   section: 'ai',
   title: 'Automations',
   status: 'live',
-  what: 'Automations are rules that BIZOMAT runs by itself on the server: when something happens (the trigger) and the conditions hold, it carries out the actions. Projects and Tasks has automations on each board, and Sales and CRM has automations for leads, contacts, deals and activities.',
+  what: 'Automations are rules that BIZOMAT runs by itself on the server: when something happens (the trigger) and the conditions hold, it carries out the actions. Project Management has automations on each board, and Sales and CRM has automations for leads, contacts, deals and activities.',
   purpose: [
     'Set a date, assign someone or move a task when its status changes.',
     'Remind people before or after a due date.',
@@ -20,9 +20,9 @@ const guide: Guide = {
     'Workspace administrators who set up integrations for webhooks.',
   ],
   access: {
-    path: ['BIZOMAT ERP', 'Projects and Tasks', 'Automations'],
+    path: ['BIZOMAT ERP', 'Project Management', 'Automations'],
     href: 'https://bizomat.ai/erp/tasks/',
-    label: 'Open Projects and Tasks',
+    label: 'Open Project Management',
     note: 'Each board also has Automate in its header. CRM automations are under Sales and CRM, Automations (https://bizomat.ai/erp/crm/).',
   },
   tutorials: [
@@ -32,7 +32,7 @@ const guide: Guide = {
       outcome: 'The board has a rule that runs on the server each time its trigger fires.',
       needs: 'Edit or admin access to the board. People with view access can see automations and their logs, but not change them.',
       steps: [
-        { title: 'Open the board', body: 'In Projects and Tasks, open the board (project) the rule is for.' },
+        { title: 'Open the board', body: 'In Project Management, open the board (project) the rule is for.' },
         { title: 'Open Automate', body: 'Choose Automate in the board header. The Automations window lists the rules on this board.', where: 'Automate' },
         {
           title: 'Start from a recipe or from scratch',
@@ -116,14 +116,14 @@ const guide: Guide = {
     },
   ],
   buttons: [
-    { label: 'Automate', does: "Opens the board's automations in Projects and Tasks.", when: 'You want to see, add or change the rules of one board.' },
+    { label: 'Automate', does: "Opens the board's automations in Project Management.", when: 'You want to see, add or change the rules of one board.' },
     { label: 'Recipes', does: 'Shows ready-made rules for the board, each with Use.', when: 'You want a common rule without building it yourself.', after: 'The rule opens in the builder for you to check and save.' },
     { label: 'Add automation', does: 'Opens an empty rule in the builder (When, If, Then).', after: 'Nothing runs until you choose Save automation.' },
     { label: 'Save automation', does: 'Saves the rule and switches it on.', after: 'It runs on the server the next time its trigger fires.' },
     { label: 'Log', does: 'Shows the run log: when each run happened, its status (succeeded, failed, skipped or running), the item, the attempts and the details.', when: 'An automation did not do what you expected.' },
     { label: 'On/off switch', does: 'Pauses or enables an automation without deleting it.', after: 'A paused automation shows Paused and does not run.' },
     { label: 'Delete', does: 'Deletes the automation after you confirm.', after: 'Its run history is deleted too.' },
-    { label: 'Manage on board', does: 'From the Automations page of Projects and Tasks, opens the board where an automation lives.', when: 'You want to edit an automation you found in the full list.' },
+    { label: 'Manage on board', does: 'From the Automations page of Project Management, opens the board where an automation lives.', when: 'You want to edit an automation you found in the full list.' },
     { label: 'New automation', does: 'Opens the CRM automation builder (When, Only if, actions).', when: 'You are an Owner, Administrator or Manager in the CRM.' },
     { label: 'Execution history', does: 'Lists each run of the CRM automations.', when: 'You want to check that a CRM automation ran.' },
   ],
@@ -138,7 +138,7 @@ const guide: Guide = {
     },
     {
       q: 'Can one automation start another?',
-      a: 'Yes, within limits. In Projects and Tasks, changes made by an automation can trigger other rules up to three levels deep, and the same rule never runs twice for the same item in one chain. In the CRM, an automation can cause one more level of triggers, never more.',
+      a: 'Yes, within limits. In Project Management, changes made by an automation can trigger other rules up to three levels deep, and the same rule never runs twice for the same item in one chain. In the CRM, an automation can cause one more level of triggers, never more.',
     },
     {
       q: 'Can the same event run an automation twice?',
@@ -154,7 +154,7 @@ const guide: Guide = {
     },
     {
       q: 'Where can I see every automation at once?',
-      a: 'In Projects and Tasks, choose Automations in the menu. It lists the automations across your boards, how many are active, their runs and logs, with Manage on board to edit one. In the CRM, Automations lists them all.',
+      a: 'In Project Management, choose Automations in the menu. It lists the automations across your boards, how many are active, their runs and logs, with Manage on board to edit one. In the CRM, Automations lists them all.',
     },
     {
       q: 'Why does my new CRM already have automations?',

@@ -55,7 +55,7 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
   return (
     <div className="page crm-page">
       <PageHeader title="Maintenance" subtitle={`Asset Management and Maintenance for ${m.company.name}. Your role: ${ROLE_LABELS[m.role]}.`} />
-      <nav className="tabs mt-tabs" aria-label="Maintenance sections">
+      <nav className="tabs mt-tabs erp-area-tabs" aria-label="Maintenance sections">
         {tabs.map(([to, label, icon]) => (
           <NavLink key={label} end={to === ''} to={mtPage(companyId, to)} className={({ isActive }) => `tab${isActive ? ' active' : ''}`}>
             <Icon name={icon} size={14} /> {label}
