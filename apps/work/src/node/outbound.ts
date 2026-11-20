@@ -64,11 +64,16 @@ export function isPublicAddress(address: string): boolean {
 type Resolver = (host: string) => Promise<string[]>;
 const resolveAll: Resolver = async (host) => (await lookup(host, { all: true, verbatim: true })).map((a) => a.address);
 
-/** Wraps fetch so requests to non-public destinations fail as a network error would. */
-export function guardFetch(original: typeof fetch, resolver: Resolver = resolveAll): typeof fetch {
+/**
+ * Wraps fetch so requests to non-public destinations fail as a network error would. `allowed`: exact origins the
+ * operator configured for a private service (CAD Automation's engine at CAD_URL, http://cados.internal:8080 on Fly's
+ * private network); only that scheme, host and port pass, never another port or path trick on the same network.
+ */
+export function guardFetch(original: typeof fetch, resolver: Resolver = resolveAll, allowed: string[] = []): typeof fetch {
+  const origins = new Set(allowed);
   return async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = new URL(input instanceof Request ? input.url : String(input));
-    if (url.protocol === 'http:' || url.protocol === 'https:') {
+    if ((url.protocol === 'http:' || url.protocol === 'https:') && !origins.has(url.origin)) {
       const host = url.hostname.replace(/^\[(.*)\]$/, '$1');
       const addresses = isIP(host) ? [host] : await resolver(host);
       if (addresses.length === 0 || !addresses.every(isPublicAddress)) {
@@ -79,6 +84,16 @@ export function guardFetch(original: typeof fetch, resolver: Resolver = resolveA
   };
 }
 
-export function installOutboundGuard(): void {
-  globalThis.fetch = guardFetch(globalThis.fetch.bind(globalThis));
+/** The origin of a configured private service address, or nothing when it is not a plain http(s) address. */
+export function serviceOrigin(raw: string | undefined): string[] {
+  try {
+    const u = new URL((raw ?? '').trim());
+    return (u.protocol === 'http:' || u.protocol === 'https:') && !u.username && !u.password ? [u.origin] : [];
+  } catch {
+    return [];
+  }
+}
+
+export function installOutboundGuard(allowed: string[] = []): void {
+  globalThis.fetch = guardFetch(globalThis.fetch.bind(globalThis), resolveAll, allowed);
 }

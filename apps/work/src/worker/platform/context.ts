@@ -55,6 +55,7 @@ erpModule('procurement', ['suppliers', 'supplier-options', 'requisitions', 'requ
 erpModule('inventory', ['warehouses', 'locations', 'stock', 'movements', 'reservations', 'adjustments', 'counts', 'labels', 'scan', 'valuation', 'trace']);
 erpModule('manufacturing', ['work-centres', 'machines', 'mfg-assets', 'mfg-settings', 'routings', 'mos', 'mo-options', 'shop-floor', 'mps', 'mrp', 'capacity']);
 erpModule('quality', ['qc-plans', 'inspections', 'quality', 'quality-options', 'ncrs', 'capas']);
+erpModule('cad', ['cad']);
 erpModule('supply_chain', ['sales-orders', 'sales-order-options', 'shipments', 'carriers', 'rmas', 'delivery-schedule', 'supply-chain']);
 
 const TOOL_MODULE: Record<ToolApp, ModuleKey> = { tasks: 'tasks', crm: 'crm', finance: 'finance' };

@@ -47,6 +47,7 @@ import { CsvLink, FilterPanel, History, Pager, Props, RecordUpload, Section, opt
 import { NoteDialog } from './Changes';
 import { useListParams } from './Purchasing';
 import { ShopFloor } from './ShopFloor';
+import { RecordDrawings } from '../cad/Cad';
 
 const tone = (map: Record<string, string>, v: string) => map[v] ?? '';
 const MO_TONE: Record<string, string> = { draft: '', released: 'accent', in_progress: 'warning', completed: 'success', closed: '', cancelled: 'danger' };
@@ -329,6 +330,7 @@ function OrderDetail({ companyId, me }: { companyId: string; me: ErpMe }) {
           ]}
         />
       </Section>
+      <RecordDrawings companyId={companyId} kind="mos" id={o.id} />
       <Section title="Materials" actions={v.can.returnMaterials ? <button className="btn sm" onClick={() => setDialog({ kind: 'return' })}>Return unused</button> : null}>
         <div className="crm-table-scroll">
           <table className="data-table responsive">

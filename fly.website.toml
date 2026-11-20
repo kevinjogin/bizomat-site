@@ -83,6 +83,9 @@ kill_timeout = 15
   # console cannot open subscriptions. The Stripe settings above and the webhook stay as they are. The entrypoint also
   # locks billing when this line is missing; only "false" here (with the owner's approval) would unlock it.
   WORK_BIZOMAT_BILLING_LOCK = "true"
+  # CAD Automation in the ERP (flag cad_in_erp, off; docs/cad/README.md): the ERP's server reaches CAD Automation's
+  # engine (the Fly app cados) over the private network, as the router does for bizomat.ai/cad.
+  WORK_CAD_URL = "http://cados.internal:8080"
   # On SIGTERM the router gives open requests 3 s (it was 10 s), then closes long polls and WebSockets, which reconnect
   # (docs/deployment/DOWNTIME-REVIEW.md, recommendation 5). kill_timeout stays 15 s.
   PROXY_SHUTDOWN_GRACE_MS = "3000"

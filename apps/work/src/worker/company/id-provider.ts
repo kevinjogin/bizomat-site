@@ -20,6 +20,9 @@ import { HttpError, body, clientIp, now, randomToken, sha256Hex, timingSafeEqual
 import { rateLimit } from '../auth/rate-limit';
 import { pkceChallenge } from '../auth/providers';
 import { audit } from '../services/audit';
+import { jwks } from '../cad/keys';
+import { flagOn } from '../platform/flags';
+import { runSync, syncInput } from '../cad/sync';
 
 export interface IdClient {
   id: string;
@@ -60,7 +63,10 @@ export const idAuthorizeRoutes = new Hono<AppEnv>();
 idAuthorizeRoutes.get('/client', async (c) => {
   const client = clientFor(c.env, c.req.query('client_id') ?? '', c.req.query('redirect_uri') ?? '');
   const user = c.get('user');
-  return c.json({ name: client.name, user: { name: user.name, email: user.email } });
+  // CAD Automation is BIZOMAT's own application: once its pages open in the ERP (flag cad_redirect, docs/cad/README.md)
+  // the person is not asked again; the authorization is still recorded and audited as for any client.
+  const auto = client.id === 'cad' && (await flagOn(c.env.DB, 'cad_redirect').catch(() => false));
+  return c.json({ name: client.name, user: { name: user.name, email: user.email }, auto });
 });
 
 idAuthorizeRoutes.post('/authorize', async (c) => {
@@ -209,4 +215,23 @@ idPublicRoutes.post('/cad-status', async (c) => {
   for (let i = 0; i < stmts.length; i += 50) await c.env.DB.batch(stmts.slice(i, i + 50));
   c.header('Cache-Control', 'no-store');
   return c.json({ ok: true, accounts: input.accounts.length });
+});
+
+// CAD Automation in the ERP (docs/cad/README.md, "The contract"). The public keys of the ERP's assertions to CAD
+// Automation (cad/keys.ts): anyone may read them; they prove nothing on their own.
+idPublicRoutes.get('/jwks', async (c) => {
+  c.header('Cache-Control', 'public, max-age=300');
+  return c.json(await jwks(c.env));
+});
+
+// CAD Automation's sync, once a minute (cad/sync.ts), with the client "cad"'s credentials.
+idPublicRoutes.post('/cad-sync', async (c) => {
+  await rateLimit(c.env.DB, `id-cad-sync:${clientIp(c)}`, 30, 60_000);
+  const client = await clientFrom(c, {});
+  if (client === 'malformed' || !client) return tokenError(c, 'invalid_client', 'Unknown client or wrong secret', 401);
+  if (client.id !== 'cad') return tokenError(c, 'unauthorized_client', 'Only CAD Automation syncs with the ERP', 403);
+  const input = await body(c, syncInput);
+  const answer = await runSync(c.env, input);
+  c.header('Cache-Control', 'no-store');
+  return c.json(answer);
 });

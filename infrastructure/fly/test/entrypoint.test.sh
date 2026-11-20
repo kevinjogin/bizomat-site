@@ -34,7 +34,7 @@ APP_ENV=(
   -e OPENSKETCH_PUBLIC_URL=https://cad.example.test -e OPENSKETCH_KEY_SECRET=throwaway-cad-key
   -e WORK_GOOGLE_CLIENT_ID=work-id -e WORK_GOOGLE_CLIENT_SECRET=throwaway-work-secret
   -e WORK_BREVO_API_KEY=throwaway-brevo-key -e WORK_EMAIL_FROM_ADDRESS=notifications@example.test
-  -e WORK_ABR_GUID=throwaway-abr-guid -e "WORK_BIZOMAT_ID_CLIENTS=$ID_CLIENTS"
+  -e WORK_ABR_GUID=throwaway-abr-guid -e "WORK_BIZOMAT_ID_CLIENTS=$ID_CLIENTS" -e WORK_CAD_URL=http://cados.internal:8080
   -e CAD_GOOGLE_CLIENT_ID=cad-id -e CAD_GOOGLE_CLIENT_SECRET=throwaway-cad-secret
   -e CF_AI_TOKEN=throwaway-web-token -e WEB_EXTRA=web-setting -e PROXY_LOG=0 -e GATE_PASSWORD=throwaway-gate-app-wide
   -e GOOGLE_CLIENT_SECRET=ambiguous-app-wide -e LD_PRELOAD=/nope.so -e NODE_OPTIONS=--inspect
@@ -162,6 +162,7 @@ run_role work /app/work/dist/node/server.mjs -v "$tmp/workvol:/data" >"$tmp/work
 [ "$(val "$tmp/work.json" BREVO_API_KEY)" = throwaway-brevo-key ] || bad "BREVO_API_KEY from WORK_BREVO_API_KEY"
 [ "$(val "$tmp/work.json" EMAIL_FROM_ADDRESS)" = notifications@example.test ] || bad "EMAIL_FROM_ADDRESS from WORK_EMAIL_FROM_ADDRESS"
 [ "$(val "$tmp/work.json" ABR_GUID)" = throwaway-abr-guid ] || bad "ABR_GUID from WORK_ABR_GUID"
+[ "$(val "$tmp/work.json" CAD_URL)" = http://cados.internal:8080 ] || bad "CAD_URL from WORK_CAD_URL"
 [ "$(val "$tmp/work.json" BIZOMAT_ID_CLIENTS)" = "$ID_CLIENTS" ] || bad "BIZOMAT_ID_CLIENTS from WORK_BIZOMAT_ID_CLIENTS (unchanged JSON)"
 [ "$(val "$tmp/work.json" GOOGLE_CLIENT_ID)" = work-id ] || bad "a linked secret file must be skipped"
 [ "$(val "$tmp/work.json" WORK_EXTRA_SECRET)" = from-the-volume ] || bad "secret file not read"

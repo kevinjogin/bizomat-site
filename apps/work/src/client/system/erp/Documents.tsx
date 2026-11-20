@@ -15,6 +15,7 @@ import { Modal, useConfirm, useToast } from '../../components/ui/overlays';
 import { DOC_KINDS, DOC_STATUS, dayText, erpPath, productsPage, type EngDocument, type ErpEvent, type ErpMe, type Revision } from './api';
 import { CsvLink, DocBadge, History, Pager, Props, Section, options } from './common';
 import { ProductPicker, type PickedProduct } from './Products';
+import { ReviewTaskButton, cadPage, useCadFlags } from '../cad/Cad';
 
 const CAD_APP = 'https://bizomat.ai/cad/';
 
@@ -213,6 +214,7 @@ export function DocumentDetail({ companyId }: { companyId: string; me: ErpMe }) 
   const q = useQuery({ queryKey: ['erp', companyId, 'document', documentId], queryFn: () => get<DocView>(erpPath(companyId, `/documents/${documentId}`)), retry: false });
   const [adding, setAdding] = useState(false);
   const [renaming, setRenaming] = useState(false);
+  const cadInErp = !!useCadFlags(companyId).data;
   usePageTitle(q.data ? `${q.data.document.number} ${q.data.document.title}` : 'Document');
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
   if (!q.data) return <Loading />;
@@ -241,6 +243,7 @@ export function DocumentDetail({ companyId }: { companyId: string; me: ErpMe }) 
           {can.edit ? <button className="btn primary" onClick={() => setAdding(true)}><Icon name="upload" /> New version</button> : null}
           {can.approve ? <button className="btn primary" onClick={() => void act('approve')}><Icon name="check" /> Approve version {d.latestVersion}</button> : null}
           {can.obsolete ? <button className="btn ghost" onClick={() => void act('obsolete')}>Mark obsolete</button> : null}
+          <ReviewTaskButton companyId={companyId} documentId={d.id} />
         </div>
       </div>
       <div className="mt-grid">
@@ -257,7 +260,7 @@ export function DocumentDetail({ companyId }: { companyId: string; me: ErpMe }) 
           </Section>
           <Section title="CAD Automation">
             <p className="small">CAD Automation connects your AI assistant to SOLIDWORKS on your own computer, where it builds native parts, assemblies and drawings. Open the referenced file there; this record keeps where it is.</p>
-            <div className="row"><a className="btn" href={CAD_APP}><Icon name="diamond" /> Open CAD Automation</a></div>
+            <div className="row">{cadInErp ? <Link className="btn" to={cadPage(companyId)}><Icon name="diamond" /> Open CAD Automation</Link> : <a className="btn" href={CAD_APP}><Icon name="diamond" /> Open CAD Automation</a>}</div>
           </Section>
         </div>
         <div className="stack">

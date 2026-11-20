@@ -28,6 +28,7 @@ export const MEMBER_MODULES = [
   { key: 'maintenance', label: 'Maintenance' },
   { key: 'whs', label: 'Health and Safety' },
   { key: 'reports', label: 'Reports' },
+  { key: 'cad', label: 'CAD Automation' },
 ] as const;
 export type MemberModule = (typeof MEMBER_MODULES)[number]['key'];
 export const MEMBER_MODULE_KEYS = MEMBER_MODULES.map((m) => m.key) as MemberModule[];
@@ -55,6 +56,7 @@ export const SCOPE_APPLIES: Record<MemberModule, 'records' | 'changes'> = {
   maintenance: 'changes',
   whs: 'changes',
   reports: 'changes',
+  cad: 'records',
 };
 
 // ------------------------------------------------------------------ the role matrix

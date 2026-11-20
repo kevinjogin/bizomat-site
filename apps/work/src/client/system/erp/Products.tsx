@@ -35,6 +35,7 @@ import {
 import { CsvLink, DocBadge, ErpFiles, ErpUpload, FilterPanel, History, LifecycleBadge, Pager, Props, RevisionBadge, Section, SupplierBadge, options } from './common';
 import { ChangeOrderDetail, ChangeRequestDetail, ChangesPage, NewChangeDialog } from './Changes';
 import { DocumentDetail, DocumentsPage, NewDocumentDialog } from './Documents';
+import { RevisionCadPanel } from '../cad/Cad';
 
 export function ProductsArea({ companyId, companyName, cad }: { companyId: string; companyName: string; cad: ReactNode }) {
   const me = useErpMe(companyId);
@@ -608,6 +609,7 @@ function Structure({ companyId, v }: { companyId: string; v: ProductView }) {
         </nav>
       </div>
       {view === 'tree' ? <BomEditor companyId={companyId} revisionId={revId} productId={v.product.id} /> : null}
+      {view === 'tree' ? <RevisionCadPanel companyId={companyId} revisionId={revId} editable={['draft', 'in_change'].includes(v.revisions.find((r) => r.id === revId)?.status ?? '')} /> : null}
       {view === 'explosion' ? <Explosion companyId={companyId} revisionId={revId} /> : null}
       {view === 'cost' ? <CostRollUp companyId={companyId} revisionId={revId} /> : null}
     </div>
