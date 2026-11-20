@@ -254,7 +254,11 @@ jobs:
           wait_for "BIZOMAT company accounts inside the ERP (/erp/company/login: 200)" '[ "$(code https://bizomat.ai/erp/company/login)" = 200 ]' || fail=1
           wait_for "Maintenance is running in the ERP (its API without a session: 401)" '[ "$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 -H "Accept: application/json" https://bizomat.ai/erp/api/maintenance/companies)" = 401 ]' || fail=1
           wait_for "the CRM's own address leads into the ERP (a page at /crm/login: 302)" '[ "$(curl -s -o /dev/null -w "%{http_code}" --max-time 15 -H "Accept: text/html" https://bizomat.ai/crm/login)" = 302 ]' || fail=1
-          wait_for "the retired design preview answers 301 to the ERP page (/system-preview/)" '[ "$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 15 https://bizomat.ai/system-preview/)" = "301 https://bizomat.ai/systems/erp/" ]' || fail=1
+          wait_for "the retired design preview answers 301 to the ERP section (/system-preview/)" '[ "$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 15 https://bizomat.ai/system-preview/)" = "301 https://bizomat.ai/systems/#erp" ]' || fail=1
+          # Every system and every tutorial on one page (owner, 20 Nov 2026): the old pages answer 301 to their toggle.
+          wait_for "a system's old page answers 301 to its section (/systems/crm/)" '[ "$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 15 https://bizomat.ai/systems/crm/)" = "301 https://bizomat.ai/systems/#crm" ]' || fail=1
+          wait_for "the Knowledge Centre answers (/learn/: 200)" '[ "$(code https://bizomat.ai/learn/)" = 200 ]' || fail=1
+          wait_for "a guide's old page answers 301 to its toggle (/learn/procurement/)" '[ "$(curl -s -o /dev/null -w "%{http_code} %{redirect_url}" --max-time 15 https://bizomat.ai/learn/procurement/)" = "301 https://bizomat.ai/learn/#procurement" ]' || fail=1
           wait_for "the public Systems pages answer (/systems/: 200)" '[ "$(code https://bizomat.ai/systems/)" = 200 ]' || fail=1
           wait_for "Resources stay public (/resources/: 200, no sign-in)" '[ "$(code https://bizomat.ai/resources/)" = 200 ]' || fail=1
           # Free mode (owner, 19 Nov 2026; docs/billing/README.md): no page shows a price, and /pricing/ answers 301 there.
