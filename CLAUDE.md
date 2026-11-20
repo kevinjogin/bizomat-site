@@ -217,6 +217,14 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   last opened on this computer (localStorage `bizomat-system-company`, written by the ERP and the company area) decides
   where the module rail's Projects and Tasks, Sales and CRM, Finance and My Work open: that company's own linked tools,
   never whichever was used last (a company without one falls back to the tool's home). The server still decides access.
+  **Moving tasks** (owner, 20 Nov 2026; `docs/platform/moving-records.md`; flag `move_records`, off, needed on for both
+  companies): one task or many (the selection bar) to another project in the same company or another company the person
+  works in, with subtasks, comments, files, time, schedule and history, a new key, values carried by column type and
+  title (labels by name, people only if they may open the new project, amounts only in the same currency), what does not
+  carry listed first and kept in the audit trail (`apps/work/src/worker/services/item-transfer.ts`). A task with
+  financial data moves only for someone who may see and change it; the example company's data never leaves it. CRM
+  records are next; posted Finance entries are never moved (reverse and re-enter). Never switch the flag on without the
+  owner's approval.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
@@ -229,8 +237,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   (`src/config/systems.ts`, one source), a page and a user guide per system: BIZOMAT ERP (Business Management System,
   `/systems/erp/`), BIZOMAT CRM (Customer Management System, `/systems/crm/`), BIZOMAT Finance (Finance Management
   System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
-  Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, own sign-in
-  for now) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`, guide `/systems/manufacturing/guide/`:
+  Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, with the same
+  BIZOMAT account: Continue with BIZOMAT) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`, guide `/systems/manufacturing/guide/`:
   Maintenance, Procurement and Inventory work in the ERP today, Manufacturing since Release 3, Quality and Maintenance
   M2 and M3 since Release 4, and Supply Chain with Release 5 part A; the owner asked for it to turn green once every
   tool works, so it is Available since Release 5 part A was deployed (15 Nov 2026), with what is not built inside it labelled Planned). The old product pages
@@ -399,7 +407,8 @@ that `/system-preview/` (the retired design preview) answers 301 to `/systems/er
 (`docs/seo/README.md`), `/erp/` (BIZOMAT ERP, signed in, answering X-Robots-Tag noindex; the tools inside it at
 `/erp/tasks/`, `/erp/crm/`, `/erp/finance/`, `/erp/company/`; `/system/` answers 302 there), and every new chapter URL.
 Confirm the BIZOMAT wordmark and favicon, the navigation **Home, Systems, Resources, About, Contact** (owner,
-14 Nov 2026) with **AI Search** and **Sign in** (BIZOMAT ERP; Engineering Automation), that a new visit opens in the
+14 Nov 2026) with **AI Search** and one **Sign in** (BIZOMAT ERP only, owner 20 Nov 2026: one account, one sign-in;
+never a second sign-in on the website), that a new visit opens in the
 computer's system theme, and that AI
 search answers. For the apps (`/cad/`, `/erp/`, and `/tasks/`, `/crm/`, `/finance/`, `/company/`, `/system/` on bizomat.ai, and their old hosts),
 run the smoke test (`infrastructure/smoke/smoke.mjs`) against each host. Do not report anything as live until its
