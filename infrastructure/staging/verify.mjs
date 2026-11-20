@@ -304,10 +304,11 @@ if (tester.companyId) {
 // Moving tasks (move_records, docs/platform/moving-records.md): from the tester's own company to the invented company.
 if (tester.companyId) {
   const moveOn = phase === 'on';
+  // /system/me lists the companies; each company's own answer lists its tools.
   const companies = (await api('GET', '/system/me')).body?.companies ?? [];
-  const tasksOf = (c) => (c?.tools ?? []).find((t) => t.app === 'tasks')?.id;
-  const ownWs = tasksOf(companies.find((c) => c.kind === 'own'));
-  const coWs = tasksOf(companies.find((c) => c.id === tester.companyId));
+  const tasksOf = async (id) => (id ? ((await api('GET', `/system/companies/${id}`)).body?.tools ?? []).find((t) => t.app === 'tasks')?.id : undefined);
+  const ownWs = await tasksOf(companies.find((c) => c.kind === 'own')?.id);
+  const coWs = await tasksOf(tester.companyId);
   if (!ownWs || !coWs) bad(`both companies have a Projects and Tasks workspace (own ${Boolean(ownWs)}, company ${Boolean(coWs)})`);
   else {
     const stamp = new Date().toISOString().slice(0, 16);
