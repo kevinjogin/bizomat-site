@@ -5,7 +5,7 @@
 import { useState, type FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { del, errorMessage, get, post, put } from '../../lib/api';
+import { ApiError, del, errorMessage, get, post, put } from '../../lib/api';
 import { timeAgo } from '../../lib/format';
 import { ErrorBox, Loading } from '../../components/ui/ui';
 import { Modal, useToast } from '../../components/ui/overlays';
@@ -47,7 +47,24 @@ export default function CadAdmin() {
   const q = useQuery({ queryKey: ['admin', 'cad'], queryFn: () => get<Overview>('/admin/platform/cad'), refetchInterval: 60_000 });
   const [assigning, setAssigning] = useState<Account | null>(null);
   const [limitsFor, setLimitsFor] = useState<{ companyId: string | null; name: string; limits: Limits } | null>(null);
-  if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
+  if (q.error) {
+    // Two-factor sign-in first (the same rule and prompt as the Control Centre): a way to Security, not an error to retry.
+    const code = q.error instanceof ApiError ? (q.error.details as { code?: string } | undefined)?.code : undefined;
+    if (code === 'MFA_ENROLMENT_REQUIRED' || code === 'MFA_REQUIRED') {
+      return (
+        <section className="card card-pad stack">
+          <h2 className="crm-subhead">Two-factor sign-in first</h2>
+          <p>
+            {code === 'MFA_ENROLMENT_REQUIRED'
+              ? 'The CAD Automation panel changes fair-use limits and places people’s CAD work in companies, so it needs two-factor sign-in, like the Control Centre. Set it up once with an authenticator app; it takes about two minutes.'
+              : 'Enter a code from your authenticator app to continue.'}
+          </p>
+          <div className="row"><Link className="btn primary" to="/admin/security">Go to Security</Link></div>
+        </section>
+      );
+    }
+    return <ErrorBox error={q.error} retry={() => q.refetch()} />;
+  }
   if (!q.data) return <Loading />;
   const v = q.data;
   const review = v.accounts.filter((a) => a.status === 'review');

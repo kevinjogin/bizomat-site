@@ -7,6 +7,7 @@ import { Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate, usePa
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { ApiError, errorMessage, get, patch, post } from '../lib/api';
 import { lastWorkspace, useSession } from '../lib/session';
+import { currentCompany, setCurrentCompany, useCompanyToolPaths } from '../lib/company-context';
 import { SUITE, appUrl, toolUrl } from '../lib/base';
 import { applyTheme, storedTheme, usePageTitle, type ThemePref } from '../lib/hooks';
 import { BRAND, PLATFORM_URLS } from '../lib/brand';
@@ -198,7 +199,6 @@ const CAD = {
   download: 'https://bizomat.ai/cad/download/solidworks',
   docs: 'https://bizomat.ai/cad/docs',
 };
-const LAST_KEY = 'bizomat-system-company';
 
 const useMe = () => useQuery({ queryKey: ['system', 'me'], queryFn: () => get<Me>('/system/me') });
 const useCompanyView = (id: string) => useQuery({ queryKey: ['system', 'company', id], queryFn: () => get<CompanyView>(`/system/companies/${encodeURIComponent(id)}`), retry: false });
@@ -206,20 +206,10 @@ const n = (v: unknown) => (typeof v === 'number' ? v.toLocaleString() : '0');
 const money = (v: unknown, cur: unknown) => formatMoney(typeof v === 'number' ? v : 0, typeof cur === 'string' ? cur : 'AUD', { compact: true });
 const when = (t: number | null | undefined) => (t ? timeAgo(t) : 'never');
 
-function lastCompany(): string | null {
-  try {
-    return localStorage.getItem(LAST_KEY);
-  } catch {
-    return null;
-  }
-}
-function rememberCompany(id: string) {
-  try {
-    localStorage.setItem(LAST_KEY, id);
-  } catch {
-    /* private mode */
-  }
-}
+// The company being worked in, shared with every tool's module rail (lib/company-context.ts).
+// (The rail's query is keyed by the company, so it follows a change at the next render.)
+const lastCompany = currentCompany;
+const rememberCompany = setCurrentCompany;
 
 function kindLine(c: Pick<CompanyLite, 'kind' | 'role'>): string {
   if (c.role === 'guest') return 'Shared with you: only the tools you were added to';
@@ -278,10 +268,12 @@ function OpenTool() {
 /** My Work: everything assigned to you, in the Projects and Tasks workspace used last. */
 function MyWorkRedirect() {
   const { session } = useSession();
+  const own = useCompanyToolPaths();
   const ws = session?.workspaces.find((w) => w.id === lastWorkspace()) ?? session?.workspaces[0];
   useEffect(() => {
-    window.location.replace(toolUrl(ws ? `/tasks/w/${encodeURIComponent(ws.id)}/my-work` : '/tasks/'));
-  }, [ws]);
+    // the current company's own workspace first; else the one used last
+    window.location.replace(toolUrl(own.myWork ?? (ws ? `/tasks/w/${encodeURIComponent(ws.id)}/my-work` : '/tasks/')));
+  }, [ws, own.myWork]);
   return <Loading label="Opening My Work…" />;
 }
 
@@ -484,14 +476,9 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             <NavLink to="/admin/overview" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> ERP console</NavLink>
           </>
         ) : null}
-        {/* Every tool is in the module rail (SuiteRail); CAD Automation's own application opens at /cad until it works
-            inside the ERP for this company (flag cad_in_erp). */}
-        {!cadHere ? (
-          <>
-            <div className="nav-section">CAD Automation application</div>
-            <a className="nav-item" href={CAD.app}><Icon name="diamond" /> Open CAD Automation</a>
-          </>
-        ) : null}
+        {/* Every tool is in the module rail (SuiteRail) and stays inside the ERP: no link out to CAD Automation's own
+            application here (owner, 20 Nov 2026); CAD Automation is under Products and Engineering, or its own entry
+            above where it works inside the ERP (flag cad_in_erp). */}
         <PlatformFooter />
       </nav>
       <main className="main" id="main">
@@ -873,14 +860,8 @@ function CadPage({ view, embedded }: { view: CompanyView; embedded?: boolean }) 
           : `CAD computers are not shared with people who only share a tool with ${c.name}.`;
   const reported = (q.data?.people ?? []).filter((p) => p.status);
   const inErp = (useCadCompanies().data?.companies ?? []).some((x) => x.id === c.id);
-  if (inErp && embedded) {
-    return (
-      <section className="co-prompt">
-        <p>CAD Automation works inside the ERP in {c.name}: its computers, AI assistants, history and exports are on its own page.</p>
-        <Link className="btn primary" to={`/c/${c.id}/cad`}>Open CAD Automation</Link>
-      </section>
-    );
-  }
+  // Inside the ERP for this company: its own page, with the setup done in place.
+  if (inErp && embedded) return <Navigate to={`/c/${c.id}/cad`} replace />;
   return (
     <div className={embedded ? 'stack' : 'page crm-page'}>
       {embedded ? (

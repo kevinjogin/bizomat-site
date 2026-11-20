@@ -159,6 +159,23 @@ cadRoutes.get('/c/:company/cad/exports/:id/file', async (c) => {
   });
 });
 
+// The installer, handed out by the ERP itself (setup step 1): nobody signs in to CAD Automation separately for it.
+cadRoutes.get('/c/:company/cad/installer', async (c) => {
+  const a = await requireCad(c);
+  await rateLimit(c.env.DB, `cad-installer:${a.erp.userId}`, 20, 60 * 60_000);
+  const f = await cadFile(c.env, a.claims, 'installer/file', 64 * 1024 * 1024);
+  return new Response(f.bytes, {
+    headers: {
+      'Content-Type': 'application/x-msi',
+      'Content-Disposition': `attachment; filename*=UTF-8''${enc(f.name)}`,
+      'Content-Length': String(f.size),
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+      'X-Content-SHA256': f.sha256,
+    },
+  });
+});
+
 const saveSchema = z.object({
   productId: zId,
   revisionId: zId.nullable().optional(),

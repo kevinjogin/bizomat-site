@@ -86,7 +86,7 @@ export async function checkSecondFactor(env: Env, row: MfaRow, input: { code?: s
 /** The Control Centre: a confirmed enrolment and a session that proved it. */
 export const requireMfa: MiddlewareHandler<AppEnv> = async (c, next) => {
   const row = await mfaOf(c.env.DB, c.get('user').id);
-  if (!row?.confirmed_at) throw new HttpError(403, 'Set up two-factor sign-in (Security) before using the Control Centre.', { code: 'MFA_ENROLMENT_REQUIRED' });
+  if (!row?.confirmed_at) throw new HttpError(403, 'Set up two-factor sign-in (ERP console, Security) first. The Control Centre, support access and the CAD Automation panel need it.', { code: 'MFA_ENROLMENT_REQUIRED' });
   const marks = await sessionMarks(c.env.DB, sessionId(c));
   if (!marks.mfa_at) throw new HttpError(403, 'Enter a code from your authenticator app to continue.', { code: 'MFA_REQUIRED' });
   await next();

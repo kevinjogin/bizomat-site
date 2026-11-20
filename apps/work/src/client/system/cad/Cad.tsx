@@ -30,7 +30,7 @@ interface ToolGroup { group: string; tools: { name: string; title: string; summa
 interface CadState {
   account: { id: string };
   connector: { url: string };
-  installer: { url: string; checksum: string };
+  installer: { available: boolean; name?: string; size?: number; sha256?: string; version?: string };
   computers: Computer[];
   assistants: Assistant[];
   commands: Command[];
@@ -166,6 +166,250 @@ function useAction(companyId: string) {
   };
 }
 
+// ------------------------------------------------------------------ setting it up, in place (a popup per step)
+
+type StepKey = 'install' | 'pair' | 'connect' | 'check';
+type Connected = Extract<CadView['cad'], { connected: true }>;
+
+/** Which steps are done, from what CAD Automation reports for this person in this company. */
+function progressOf(c: Connected) {
+  const mine = c.computers.filter((x) => x.mine);
+  const paired = mine.length > 0;
+  return {
+    install: paired,
+    pair: paired,
+    connect: c.assistants.some((a) => a.mine && !a.needsCompany),
+    check: mine.some((pc) => pc.online && (pc.solidworks ?? []).some((i) => i.ready)),
+  } as Record<StepKey, boolean>;
+}
+
+const STEPS: { key: StepKey; title: string; what: string; button: string }[] = [
+  { key: 'install', title: 'Install it on your Windows computer', what: 'One installer for the SOLIDWORKS add-in and the Companion, which keeps the computer linked.', button: 'Download' },
+  { key: 'pair', title: 'Pair the computer', what: 'Type the code the Companion shows, and the computer works in this company.', button: 'Pair' },
+  { key: 'connect', title: 'Connect your AI assistant', what: 'Add the connector address in Claude or another AI app that supports remote MCP connectors.', button: 'Connect' },
+  { key: 'check', title: 'Check it works', what: 'Open SOLIDWORKS: it shows Ready here when the add-in is connected.', button: 'Check' },
+];
+
+/** The four steps on one card; each opens a small popup on this page, so nobody leaves the ERP to set it up. */
+function SetupGuide({ v, compact }: { v: CadView; compact?: boolean }) {
+  const [open, setOpen] = useState<StepKey | null>(null);
+  if (!v.cad.connected) return null;
+  const c = v.cad;
+  const done = progressOf(c);
+  const count = STEPS.filter((s) => done[s.key]).length;
+  if (compact && count === STEPS.length) return null;
+  const canOperate = !!v.perms.operate;
+  return (
+    <Section title={count === STEPS.length ? 'Set up' : `Set up CAD Automation (${count} of ${STEPS.length} done)`}>
+      {!canOperate ? <p className="muted small">Your role in {v.company.name} can see CAD work but not set up computers or assistants.</p> : null}
+      <ol className="cad-steps">
+        {STEPS.map((s, i) => (
+          <li key={s.key} className={`cad-step${done[s.key] ? ' cad-step-done' : ''}`}>
+            <span className="cad-step-mark" aria-hidden>{done[s.key] ? <Icon name="check" size={14} /> : i + 1}</span>
+            <div className="grow">
+              <strong>{s.title}</strong>
+              <div className="muted small">{s.what}</div>
+            </div>
+            {done[s.key] ? <span className="badge success">Done</span> : null}
+            <button className={`btn sm${done[s.key] ? ' ghost' : ' primary'}`} disabled={!canOperate && s.key !== 'check'} onClick={() => setOpen(s.key)}>{done[s.key] ? 'Open' : s.button}</button>
+          </li>
+        ))}
+      </ol>
+      <p className="muted small">Your models stay on your computer; SOLIDWORKS is the master copy.</p>
+      {open === 'install' ? <InstallDialog v={v} onClose={() => setOpen(null)} onNext={() => setOpen('pair')} /> : null}
+      {open === 'pair' ? <PairDialog v={v} onClose={() => setOpen(null)} onNext={() => setOpen('connect')} /> : null}
+      {open === 'connect' ? <ConnectDialog v={v} onClose={() => setOpen(null)} onNext={() => setOpen('check')} /> : null}
+      {open === 'check' ? <CheckDialog v={v} onClose={() => setOpen(null)} /> : null}
+    </Section>
+  );
+}
+
+function InstallDialog({ v, onClose, onNext }: { v: CadView; onClose: () => void; onNext: () => void }) {
+  const c = v.cad as Connected;
+  const inst = c.installer;
+  return (
+    <Modal title="Install CAD Automation for SOLIDWORKS" onClose={onClose} footer={<div className="row"><button className="btn ghost" onClick={onClose}>Close</button><button className="btn primary" onClick={onNext}>Next: pair the computer</button></div>}>
+      <div className="stack">
+        <p>Run the installer on the Windows computer where SOLIDWORKS is installed. It adds the CAD Automation add-in to SOLIDWORKS and the Companion, which starts with Windows and keeps the computer linked.</p>
+        {inst?.available ? (
+          <>
+            <div className="row wrap">
+              <a className="btn primary" href={apiHref(v.company.id, '/cad/installer')} download><Icon name="download" size={14} /> Download the installer{inst.size ? ` (${bytes(inst.size)})` : ''}</a>
+              {inst.version ? <span className="muted small">Version {inst.version}</span> : null}
+            </div>
+            {inst.sha256 ? <p className="muted small">SHA-256: <span className="mono">{inst.sha256}</span></p> : null}
+            <p className="muted small">Windows may show a warning before it runs the installer. When it finishes, the Companion shows a pairing code: keep it open for the next step.</p>
+          </>
+        ) : (
+          <p className="co-prompt">The installer is not available here yet. Ask BIZOMAT support.</p>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+function PairDialog({ v, onClose, onNext, initialCode = '' }: { v: CadView; onClose: () => void; onNext?: () => void; initialCode?: string }) {
+  const [code, setCode] = useState(initialCode);
+  const [found, setFound] = useState<{ name: string; os: string | null; expiresIn: number } | null>(null);
+  const [paired, setPaired] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const refresh = useRefresh(v.company.id);
+  const clean = code.trim().toUpperCase().slice(0, 20);
+  const lookUp = async (e?: FormEvent) => {
+    e?.preventDefault();
+    if (!clean) return;
+    setBusy(true);
+    setError('');
+    try {
+      setFound(await get<{ name: string; os: string | null; expiresIn: number }>(erpPath(v.company.id, `/cad/pairing/${encodeURIComponent(clean)}`)));
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+  useEffect(() => {
+    if (initialCode) void lookUp();
+  }, []);
+  const approve = async () => {
+    setBusy(true);
+    setError('');
+    try {
+      const out = await post<{ name: string }>(erpPath(v.company.id, `/cad/pairing/${encodeURIComponent(clean)}`));
+      setPaired(out.name);
+      await refresh();
+    } catch (err) {
+      setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+  const footer = paired ? (
+    <div className="row"><button className="btn ghost" onClick={onClose}>Close</button>{onNext ? <button className="btn primary" onClick={onNext}>Next: connect your AI assistant</button> : null}</div>
+  ) : found ? (
+    <div className="row"><button className="btn ghost" onClick={() => { setFound(null); setCode(''); }}>Not my computer</button><button className="btn primary" disabled={busy} onClick={() => void approve()}>Add this computer</button></div>
+  ) : (
+    <div className="row"><button className="btn ghost" onClick={onClose}>Cancel</button><button className="btn primary" form="cad-pair-form" type="submit" disabled={busy || !clean}>Continue</button></div>
+  );
+  return (
+    <Modal title="Pair a computer" onClose={onClose} footer={footer}>
+      <div className="stack">
+        {paired ? (
+          <p className="co-prompt"><Icon name="check" size={14} /> <strong>{paired}</strong> is paired in {v.company.name}. It shows as online once the Companion connects, within a few seconds.</p>
+        ) : found ? (
+          <>
+            <p>Check that this is the computer showing the code, then add it to <strong>{v.company.name}</strong>.</p>
+            <Props items={[['Code', <span className="mt-num">{clean}</span>], ['Computer', found.name], ['System', found.os ?? ''], ['Code expires', `in ${Math.max(1, Math.round(found.expiresIn / 60))} minutes`]]} />
+            <p className="muted small">Only you can use it for CAD work; the owner and administrators of {v.company.name} see it and can remove it.</p>
+          </>
+        ) : (
+          <form id="cad-pair-form" className="stack" onSubmit={lookUp}>
+            <p>The Companion shows a code when it is installed, or when you choose Pair in its menu (its icon is near the clock).</p>
+            <div className="field">
+              <label htmlFor="cad-pair-code">The code the Companion shows</label>
+              <input id="cad-pair-code" className="input mono" placeholder="ABCD-EFGH" value={code} onChange={(e) => setCode(e.target.value)} autoComplete="off" maxLength={20} autoFocus />
+            </div>
+          </form>
+        )}
+        {error ? <p className="warning-text">{error}</p> : null}
+      </div>
+    </Modal>
+  );
+}
+
+function ConnectDialog({ v, onClose, onNext }: { v: CadView; onClose: () => void; onNext?: () => void }) {
+  const c = v.cad as Connected;
+  const toast = useToast();
+  const [app, setApp] = useState<'claude' | 'other'>('claude');
+  const qc = useQueryClient();
+  const connectedBefore = useMemo(() => new Set(c.assistants.filter((a) => a.mine).map((a) => a.id)), []);
+  // Watch for the assistant to arrive while the popup is open (CAD Automation reports it as soon as it signs in).
+  useEffect(() => {
+    const t = setInterval(() => void qc.invalidateQueries({ queryKey: ['cad', v.company.id] }), 4000);
+    return () => clearInterval(t);
+  }, [qc, v.company.id]);
+  const arrived = c.assistants.find((a) => a.mine && !connectedBefore.has(a.id));
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(c.connector.url);
+      toast('Connector address copied');
+    } catch {
+      toast('Select the address and copy it', 'error');
+    }
+  };
+  return (
+    <Modal title="Connect your AI assistant" onClose={onClose} wide footer={<div className="row"><button className="btn ghost" onClick={onClose}>Close</button>{onNext ? <button className="btn primary" onClick={onNext}>Next: check it works</button> : null}</div>}>
+      <div className="stack">
+        <div className="field">
+          <label htmlFor="cad-connector">Connector address</label>
+          <div className="row">
+            <input id="cad-connector" className="input grow mono" readOnly value={c.connector.url} onFocus={(e) => e.currentTarget.select()} />
+            <button className="btn" onClick={() => void copy()}><Icon name="copy" size={14} /> Copy</button>
+          </div>
+        </div>
+        <nav className="tabs" aria-label="AI app">
+          <button className={`tab${app === 'claude' ? ' active' : ''}`} onClick={() => setApp('claude')}>Claude</button>
+          <button className={`tab${app === 'other' ? ' active' : ''}`} onClick={() => setApp('other')}>Another AI app</button>
+        </nav>
+        {app === 'claude' ? (
+          <ol className="sys-steps">
+            <li>In Claude, open <strong>Settings</strong>, then <strong>Connectors</strong>, and add a custom connector.</li>
+            <li>Paste the address above and add it.</li>
+            <li>Claude opens a sign-in page: continue with BIZOMAT, choose <strong>{v.company.name}</strong> and allow.</li>
+          </ol>
+        ) : (
+          <ol className="sys-steps">
+            <li>In an AI app that supports remote MCP connectors, add a connector with the address above.</li>
+            <li>When it asks you to sign in, continue with BIZOMAT, choose <strong>{v.company.name}</strong> and allow.</li>
+          </ol>
+        )}
+        {arrived ? (
+          <p className="co-prompt"><Icon name="check" size={14} /> <strong>{arrived.name}</strong> is connected and works in {v.company.name}.</p>
+        ) : (
+          <p className="muted small"><span className="spinner" aria-hidden /> Waiting for your assistant to connect. This updates by itself.</p>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
+function CheckDialog({ v, onClose }: { v: CadView; onClose: () => void }) {
+  const c = v.cad as Connected;
+  const qc = useQueryClient();
+  useEffect(() => {
+    const t = setInterval(() => void qc.invalidateQueries({ queryKey: ['cad', v.company.id] }), 4000);
+    return () => clearInterval(t);
+  }, [qc, v.company.id]);
+  const mine = c.computers.filter((x) => x.mine);
+  const ready = mine.some((pc) => pc.online && (pc.solidworks ?? []).some((i) => i.ready));
+  return (
+    <Modal title="Check it works" onClose={onClose} footer={<div className="row"><button className="btn primary" onClick={onClose}>Close</button></div>}>
+      <div className="stack">
+        {!mine.length ? <p>Pair a computer first.</p> : (
+          <ul className="erp-list">
+            {mine.map((pc) => {
+              const sw = (pc.solidworks ?? [])[0];
+              return (
+                <li key={pc.id}>
+                  <strong>{pc.name}</strong>{' '}
+                  <span className={`badge ${pc.online ? 'success' : ''}`}>{pc.online ? 'Online' : 'Offline'}</span>{' '}
+                  {pc.online ? (sw ? <span className={`badge ${sw.ready ? 'success' : 'warning'}`}>{sw.solidworks}: {sw.ready ? 'Ready' : sw.busy ? 'Busy' : 'Not ready'}</span> : <span className="badge warning">SOLIDWORKS not open</span>) : null}
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        {ready ? (
+          <p className="co-prompt"><Icon name="check" size={14} /> Everything is connected. Ask your assistant to run the CAD Automation self test: it builds a plate, some shapes and an assembly in SOLIDWORKS and reports each step.</p>
+        ) : (
+          <p className="muted small">Start the Companion and open SOLIDWORKS on that computer. This updates by itself.</p>
+        )}
+      </div>
+    </Modal>
+  );
+}
+
 // ------------------------------------------------------------------ overview
 
 function Overview({ v }: { v: CadView }) {
@@ -177,6 +421,7 @@ function Overview({ v }: { v: CadView }) {
   const failed = c.commands.filter((x) => ['failed', 'rejected', 'expired', 'unknown'].includes(x.status) && Date.now() - x.updated < 86_400_000).length;
   return (
     <div className="stack">
+      <SetupGuide v={v} compact />
       {c.unassigned.computers || c.unassigned.assistants ? (
         <section className="co-prompt">
           <p>
@@ -193,12 +438,7 @@ function Overview({ v }: { v: CadView }) {
         <Stat label="Running now" value={`${c.usage.running} of ${v.limits.concurrent}`} to={cadPage(id, '/history')} />
         <Stat label="Failed in the last day" value={String(failed)} to={cadPage(id, '/history?status=failed')} />
       </div>
-      {!c.computers.length ? (
-        <Section title="Get started">
-          <p>No computer is in {v.company.name} yet. Install CAD Automation for SOLIDWORKS on a Windows computer and pair it here; then connect your AI assistant.</p>
-          <div className="row wrap"><Link className="btn primary" to={cadPage(id, '/setup')}>Set it up</Link></div>
-        </Section>
-      ) : null}
+
       <Section title="Recent work" actions={<Link className="btn ghost sm" to={cadPage(id, '/history')}>All history</Link>}>
         {recent.length ? <CommandTable v={v} commands={recent} /> : <p className="muted">No work yet. Ask your AI assistant to build a part.</p>}
       </Section>
@@ -239,23 +479,17 @@ function Computers({ v }: { v: CadView }) {
   const c = v.cad;
   const act = useAction(v.company.id);
   const confirm = useConfirm();
-  const navigate = useNavigate();
-  const [code, setCode] = useState('');
+  const [pairing, setPairing] = useState(false);
   if (!c.connected) return null;
   const remove = async (pc: Computer) => {
     if (!(await confirm({ title: `Remove ${pc.name}?`, message: `It stops working with CAD Automation in ${v.company.name}. ${pc.mine ? 'To use it again, pair it again from the Companion.' : 'Its owner can pair it again.'}`, confirmLabel: 'Remove', danger: true }))) return;
     await act(() => post(erpPath(v.company.id, `/cad/computers/${encodeURIComponent(pc.id)}/remove`)), `${pc.name} removed`);
   };
-  const pair = (e: FormEvent) => {
-    e.preventDefault();
-    const clean = code.trim().toUpperCase();
-    if (clean) navigate(cadPage(v.company.id, `/pair?code=${encodeURIComponent(clean)}`));
-  };
   return (
     <div className="stack">
-      <Section title={`Computers in ${v.company.name}`} actions={<span className="muted small">{v.perms.scope === 'all' ? 'Everyone’s computers in the company.' : v.perms.scope === 'team' ? 'Your team’s computers.' : 'Your own computers.'}</span>}>
+      <Section title={`Computers in ${v.company.name}`} actions={<div className="row wrap"><span className="muted small">{v.perms.scope === 'all' ? 'Everyone’s computers in the company.' : v.perms.scope === 'team' ? 'Your team’s computers.' : 'Your own computers.'}</span>{v.perms.operate ? <button className="btn primary sm" onClick={() => setPairing(true)}><Icon name="plus" size={14} /> Add a computer</button> : null}</div>}>
         {!c.computers.length ? (
-          <EmptyState icon="diamond" title="No computers yet">Install CAD Automation for SOLIDWORKS on a Windows computer; at the end, the Companion shows a code to pair it here.</EmptyState>
+          <EmptyState icon="diamond" title="No computers yet">Install CAD Automation for SOLIDWORKS on a Windows computer, then choose Add a computer and type the code the Companion shows.</EmptyState>
         ) : (
           <div className="crm-table-scroll">
             <table className="data-table responsive">
@@ -289,68 +523,22 @@ function Computers({ v }: { v: CadView }) {
           </div>
         )}
       </Section>
-      {v.perms.operate ? (
-        <Section title="Pair a computer">
-          <form className="row wrap" onSubmit={pair}>
-            <div className="field grow">
-              <label htmlFor="cad-code">The code the Companion shows</label>
-              <input id="cad-code" className="input" placeholder="ABCD-EFGH" value={code} onChange={(e) => setCode(e.target.value)} autoComplete="off" maxLength={20} />
-            </div>
-            <button className="btn primary" type="submit" disabled={!code.trim()}>Continue</button>
-          </form>
-          <p className="muted small">The Companion usually opens this page by itself, with its code, when it is installed or when you choose Pair in its menu.</p>
-        </Section>
-      ) : null}
+      {pairing ? <PairDialog v={v} onClose={() => setPairing(false)} /> : null}
     </div>
   );
 }
 
 function Pair({ v }: { v: CadView }) {
   const [params] = useSearchParams();
-  const code = (params.get('code') ?? '').trim().toUpperCase().slice(0, 20);
   const navigate = useNavigate();
-  const toast = useToast();
-  const refresh = useRefresh(v.company.id);
-  const [busy, setBusy] = useState(false);
-  const q = useQuery({
-    queryKey: ['cad', v.company.id, 'pair', code],
-    queryFn: () => get<{ name: string; os: string | null; expiresIn: number }>(erpPath(v.company.id, `/cad/pairing/${encodeURIComponent(code)}`)),
-    enabled: !!code && !!v.perms.operate,
-    retry: false,
-  });
+  const code = (params.get('code') ?? '').trim().toUpperCase().slice(0, 20);
   if (!v.perms.operate) return <section className="co-prompt"><p>Your role in {v.company.name} cannot pair computers. Ask the owner or an administrator.</p></section>;
-  if (!code) return <Navigate to={cadPage(v.company.id, '/computers')} replace />;
-  const approve = async () => {
-    setBusy(true);
-    try {
-      const out = await post<{ name: string }>(erpPath(v.company.id, `/cad/pairing/${encodeURIComponent(code)}`));
-      toast(`${out.name} is paired in ${v.company.name}`);
-      await refresh();
-      navigate(cadPage(v.company.id, '/computers'));
-    } catch (err) {
-      toast(errorMessage(err), 'error');
-    } finally {
-      setBusy(false);
-    }
-  };
+  // The Companion opens /erp/cad/pair?code=...: the computers list with the pairing popup already filled in.
   return (
-    <Section title="Add a computer">
-      {q.error ? (
-        <ErrorBox error={q.error} />
-      ) : !q.data ? (
-        <Loading />
-      ) : (
-        <div className="stack">
-          <p>Check that this code is the one the Companion shows on your computer, then add it to <strong>{v.company.name}</strong>. Wrong company? Choose another with the company switcher above first.</p>
-          <Props items={[['Code', <span className="mt-num">{code}</span>], ['Computer', q.data.name], ['System', q.data.os ?? ''], ['Code expires', `in ${Math.max(1, Math.round(q.data.expiresIn / 60))} minutes`]]} />
-          <div className="row wrap">
-            <button className="btn primary" disabled={busy} onClick={() => void approve()}>Add this computer</button>
-            <Link className="btn ghost" to={cadPage(v.company.id, '/computers')}>Not my computer</Link>
-          </div>
-          <p className="muted small">Only you can use it for CAD work; the owner and administrators of {v.company.name} see it and can remove it.</p>
-        </div>
-      )}
-    </Section>
+    <>
+      <Computers v={v} />
+      <PairDialog v={v} initialCode={code} onClose={() => navigate(cadPage(v.company.id, '/computers'), { replace: true })} />
+    </>
   );
 }
 
@@ -361,6 +549,7 @@ function Assistants({ v }: { v: CadView }) {
   const act = useAction(v.company.id);
   const confirm = useConfirm();
   const toast = useToast();
+  const [connecting, setConnecting] = useState(false);
   if (!c.connected) return null;
   const copy = async () => {
     try {
@@ -376,8 +565,8 @@ function Assistants({ v }: { v: CadView }) {
   };
   return (
     <div className="stack">
-      <Section title="Connect an AI assistant">
-        <p>Add this address as a custom connector (a remote MCP server) in Claude, ChatGPT or another AI app. When it asks you to sign in, sign in with BIZOMAT and choose <strong>{v.company.name}</strong>: the assistant then works with this company’s computers only.</p>
+      <Section title="Connect an AI assistant" actions={v.perms.operate ? <button className="btn primary sm" onClick={() => setConnecting(true)}>Show me how</button> : undefined}>
+        <p>Add this address as a custom connector (a remote MCP server) in Claude or another AI app. When it asks you to sign in, continue with BIZOMAT and choose <strong>{v.company.name}</strong>: the assistant then works with this company’s computers only.</p>
         <div className="row wrap">
           <input className="input grow mono" readOnly value={c.connector.url} aria-label="Connector address" onFocus={(e) => e.currentTarget.select()} />
           <button className="btn" onClick={() => void copy()}><Icon name="copy" size={14} /> Copy</button>
@@ -408,6 +597,7 @@ function Assistants({ v }: { v: CadView }) {
           </div>
         )}
       </Section>
+      {connecting ? <ConnectDialog v={v} onClose={() => setConnecting(false)} /> : null}
     </div>
   );
 }
@@ -613,21 +803,12 @@ function Tools({ v }: { v: CadView }) {
 }
 
 function Setup({ v }: { v: CadView }) {
-  const c = v.cad;
   const id = v.company.id;
   const settings = useQuery({ queryKey: ['cad', id, 'settings'], queryFn: () => get<{ download: { manager: boolean; employee: boolean }; canChange: boolean }>(erpPath(id, '/cad/settings')) });
   const act = useAction(id);
   return (
     <div className="stack">
-      <Section title="Set it up in four steps">
-        <ol className="sys-steps">
-          <li><strong>Install it on your Windows computer.</strong> <span className="muted">{c.connected ? <>Download <a href={c.installer.url}>BIZOMAT CAD Automation for SOLIDWORKS</a> (<a href={c.installer.checksum}>checksum</a>): one installer for the SOLIDWORKS add-in and the Companion.</> : 'The installer link shows here once CAD Automation answers.'}</span></li>
-          <li><strong>Pair the computer.</strong> <span className="muted">At the end of the install the Companion opens this ERP with a code. Choose <Link to={cadPage(id, '/computers')}>Add this computer</Link> in {v.company.name}.</span></li>
-          <li><strong>Connect your AI assistant.</strong> <span className="muted">Copy the connector address from <Link to={cadPage(id, '/assistants')}>AI assistants</Link>, add it in Claude, ChatGPT or another app, sign in with BIZOMAT and choose {v.company.name}.</span></li>
-          <li><strong>Check it.</strong> <span className="muted">Ask your assistant to run the CAD Automation self test. It builds a plate, some shapes and an assembly in SOLIDWORKS and reports each step.</span></li>
-        </ol>
-        <p className="muted small">Your models stay on your computer; SOLIDWORKS is the master copy. CAD Automation keeps the record of each command, and exports for one hour.</p>
-      </Section>
+      <SetupGuide v={v} />
       <Section title="Who may download CAD files">
         {settings.error ? <ErrorBox error={settings.error} /> : !settings.data ? <Loading /> : (
           <div className="stack">
