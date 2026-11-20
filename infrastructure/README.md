@@ -27,8 +27,7 @@ of its own with one role. Only the proxy is public.
 | `proxy/` | the edge proxy (Node 22, no dependencies): `routes.mjs` (the routing table), `headers.mjs` (header hygiene, trust model), `upstreams.mjs` (6PN lookups), `proxy.mjs`, `server.mjs`; tests in `proxy/test/` |
 | `fly/Dockerfile` | the image (build context: the repository root; `.dockerignore` at the root) |
 | `fly/entrypoint.sh` | `bizomat-entrypoint <role>`: volume checks, a clean environment per role, drop to the role's user |
-| `preview/gate.mjs` | the password gate: in front of the review preview's local stack, and the `gate` role of the staging app (`../fly.staging.toml`, `docs/deployment/staging.md`; refused outside an app named `*-staging`) |
-| `../fly.staging.toml` | the staging app `bizomat-staging`: production's groups and sizes plus the gate; upstreams only on staging's own Machines |
+| `preview/gate.mjs` | the password gate in front of the review preview's local stack. The image's `gate` role (refused outside an app named `*-staging`) is dormant: the staging app was retired on the owner's request (20 Nov 2026) |
 | `../fly.toml` | the app: process groups, the one service, checks, volumes, Machine sizes, restart policy |
 | `local/` | the same image as four compose services; stand-ins for unbuilt backends; the secret-isolation check |
 | `smoke/smoke.mjs` | checks every host through the proxy (compose, `bizomat.fly.dev` before DNS, live after) |

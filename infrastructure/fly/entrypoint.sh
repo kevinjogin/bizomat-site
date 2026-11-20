@@ -42,7 +42,7 @@
 #              (company accounts: the register lookup and BIZOMAT sign-in, docs/company/README.md);
 #              a secret file may also carry any of these app names directly
 #   cad        OPENSKETCH_* ; GOOGLE_CLIENT_ID <- CAD_GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET <- CAD_GOOGLE_CLIENT_SECRET
-#   gate       GATE_* (staging only: the password gate, fly.staging.toml; refused outside an app named *-staging)
+#   gate       GATE_* (staging only: the password gate; refused outside an app named *-staging; staging retired 20 Nov 2026)
 # The prefixed names keep the work and cad Google sign-in clients apart (both apps read GOOGLE_CLIENT_ID).
 # Fixed by this script (not overridable): PORT, HOST, the data and static directories, *_TRUST_PROXY, PATH,
 # HOME, LANG, NODE_ENV.
@@ -86,7 +86,7 @@ if [ -n "${FLY_PROCESS_GROUP:-}" ] && [ "$FLY_PROCESS_GROUP" != "$ROLE" ]; then
   die "this Machine is in process group '$FLY_PROCESS_GROUP' but was asked to run '$ROLE'"
 fi
 
-# The gate is the staging app's front door (fly.staging.toml, docs/deployment/staging.md). It never runs in production:
+# The gate was the staging app's front door (the app was retired on the owner's request, 20 Nov 2026). It never runs in production:
 # only in a Fly app whose name ends in -staging, or outside Fly (a local test).
 if [ "$ROLE" = gate ]; then
   case "${FLY_APP_NAME:-}" in
