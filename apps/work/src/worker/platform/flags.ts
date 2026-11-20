@@ -273,6 +273,16 @@ const BASE: Record<string, FlagDef> = {
     enforcement: false,
     release: 'CAD',
   },
+  move_records: {
+    label: 'Move tasks to another project or company',
+    description:
+      'Tasks can be moved, one or many at once, to another project in the same company or in another company the person works in, with their subtasks, comments, files, time and history. Both companies must have it on.',
+    values: ONOFF,
+    scopes: ['global', 'stage', 'company'],
+    risk: 'medium',
+    enforcement: false,
+    release: 'Moves',
+  },
   billing_mode: {
     label: 'Billing mode',
     description: 'free: BIZOMAT is free for everyone. paid is refused while the server’s billing lock (BIZOMAT_BILLING_LOCK) is set.',

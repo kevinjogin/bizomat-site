@@ -13,6 +13,7 @@ import { isUnsaved, resolveId, useBoardActions, useBoardQuery, useComputedItems 
 import { applyView, visibleColumns, type QuickFilters } from './filtering';
 import { Toolbar } from './Toolbar';
 import { ItemPanel } from './ItemPanel';
+import { MoveDialog } from './MoveDialog';
 import { BoardSettingsDialog } from './BoardSettings';
 import { VIEW_REGISTRY } from './views';
 import type { BoardViewProps } from './types';
@@ -42,6 +43,7 @@ export default function BoardPage() {
   const [quick, setQuick] = useState<QuickFilters>({ search: '', personId: null });
   const [localSettings, setLocalSettings] = useState<Record<string, ViewSettings>>({});
   const [dialog, setDialog] = useState<null | 'settings' | 'members' | 'automations' | 'activity' | 'reports' | 'finance' | 'controls'>(params.get('automations') ? 'automations' : params.get('reports') ? 'reports' : params.get('controls') ? 'controls' : null);
+  const [moving, setMoving] = useState<{ itemIds: string[]; name?: string } | null>(null);
   // One schedule calculation (on the server) shared by every view, the task panel and Project controls.
   const sched = useSchedule(bundle);
   const schedIndex = useScheduleIndexValue(sched.data);
@@ -101,7 +103,9 @@ export default function BoardPage() {
   const columns = visibleColumns(bundle.columns, view);
   const reg = VIEW_REGISTRY[view.type] ?? VIEW_REGISTRY.table;
   const ViewComp = reg.component;
+  const moveItems = (itemIds: string[], name?: string) => setMoving({ itemIds, name });
   const viewProps: BoardViewProps = {
+    moveItems,
     bundle,
     view,
     items,
@@ -141,7 +145,16 @@ export default function BoardPage() {
           <ViewComp {...viewProps} />
         </Suspense>
       </div>
-      {itemId ? <ItemPanel itemId={itemId} bundle={bundle} computedItems={computed} actions={actions} canEdit={canEdit} onClose={closeItem} onOpen={openItem} members={members} memberName={memberName} /> : null}
+      {itemId ? <ItemPanel itemId={itemId} bundle={bundle} computedItems={computed} actions={actions} canEdit={canEdit} onClose={closeItem} onOpen={openItem} members={members} memberName={memberName} onMove={moveItems} /> : null}
+      {moving ? (
+        <MoveDialog
+          boardId={bundle.board.id}
+          itemIds={moving.itemIds}
+          names={moving.name}
+          onClose={() => setMoving(null)}
+          onMoved={(ids) => { if (itemId && ids.includes(itemId)) closeItem(); void actions.refresh(); }}
+        />
+      ) : null}
       {dialog === 'settings' || dialog === 'members' ? <BoardSettingsDialog bundle={bundle} onClose={() => setDialog(null)} initialTab={dialog === 'members' ? 'members' : 'general'} /> : null}
       {dialog === 'automations' ? (
         <Modal title={`Automations · ${bundle.board.name}`} onClose={() => { setDialog(null); setParams((p) => { const n = new URLSearchParams(p); n.delete('automations'); return n; }); }} wide>

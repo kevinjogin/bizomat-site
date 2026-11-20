@@ -17,6 +17,7 @@ import { isFinancialColumn, type TaskCaps } from '../../shared/permissions';
 import { TaskAccessTab } from './TaskAccess';
 import { TaskScheduleTab } from './controls/TaskSchedule';
 import { TaskKey } from './controls/schedule';
+import { useMoveEnabled } from './MoveDialog';
 
 interface ItemDetail {
   item: ItemDTO;
@@ -41,13 +42,14 @@ export function columnEditable(caps: TaskCaps | undefined, fallback: boolean) {
   };
 }
 
-export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onClose, onOpen, members, memberName }: { itemId: string; bundle: BoardBundle; computedItems: ItemDTO[]; actions: BoardActions; canEdit: boolean; onClose: () => void; onOpen: (id: string) => void; members: MemberDTO[]; memberName: (id: string) => string | undefined }) {
+export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onClose, onOpen, members, memberName, onMove }: { itemId: string; bundle: BoardBundle; computedItems: ItemDTO[]; actions: BoardActions; canEdit: boolean; onClose: () => void; onOpen: (id: string) => void; members: MemberDTO[]; memberName: (id: string) => string | undefined; onMove?: (itemIds: string[], name?: string) => void }) {
   const [tab, setTab] = useState<Tab>('updates');
   // A just-added item opened before the server has saved it: BoardPage puts its real id in the address once saved.
   const unsaved = isUnsaved(itemId);
   const detail = useQuery({ queryKey: ['item', itemId], queryFn: () => get<ItemDetail>(`/items/${itemId}`), enabled: !unsaved });
   const qc = useQueryClient();
   const toast = useToast();
+  const canMove = useMoveEnabled(bundle.board.id, canEdit && !!onMove && !unsaved) && !!bundle.board.caps?.deleteTasks;
   const confirm = useConfirm();
   const ref = useRef<HTMLDivElement>(null);
   const menuRef = useRef<HTMLButtonElement>(null);
@@ -132,6 +134,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
                 {canEdit && caps?.via !== 'task' ? (
                   <>
                     <MenuItem icon="copy" onClick={() => { setMenu(false); actions.duplicateItem(item.id); toast('Item duplicated'); }}>Duplicate</MenuItem>
+                    {canMove && !item.parentItemId ? <MenuItem icon="folder" onClick={() => { setMenu(false); onMove?.([item.id], item.name); }}>Move to another project...</MenuItem> : null}
                     <MenuSep />
                     <MenuItem icon="archive" onClick={() => { setMenu(false); actions.archiveItem(item.id); onClose(); toast('Item archived'); }}>Archive</MenuItem>
                     <MenuItem icon="trash" danger onClick={async () => { setMenu(false); if (await confirm({ title: `Delete "${item.name}"?`, message: 'This permanently deletes the item with its subitems, updates and files.', danger: true, confirmLabel: 'Delete' })) { await actions.deleteItem(item.id); onClose(); } }}>Delete</MenuItem>
