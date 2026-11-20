@@ -180,8 +180,8 @@ jobs:
       # back, a failure in the middle, the fallback ways of carrying the copy, the retirement. Root for the namespaces.
       - name: CAD move rehearsal (infrastructure/migrate/test/cad-move/rehearse.sh)
         run: sudo env "PATH=$PATH" bash infrastructure/migrate/test/cad-move/rehearse.sh
-      - name: fly.toml, fly.website.toml and fly.staging.toml (groups, the one public service, volumes, the CAD route; staging reaches only its own Machines)
-        run: python3 infrastructure/fly/test/check-config.py fly.toml fly.website.toml fly.staging.toml
+      - name: fly.toml and fly.website.toml (groups, the one public service, volumes, the CAD route)
+        run: python3 infrastructure/fly/test/check-config.py fly.toml fly.website.toml
       # apps/cad's tree hash must equal the pinned tree. The pinned commit's own tree can only be checked against the
       # private repository kevinjogin/bizomat-cad with a token that can read it (--github), so CI checks the tree here.
       - name: apps/cad is exactly the pinned CAD commit (apps/cad-source.json)

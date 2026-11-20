@@ -12,8 +12,8 @@
 //   - Strict-Transport-Security is dropped and X-Robots-Tag: noindex added, so the preview stays out of search;
 //   - with a password set, every request needs HTTP Basic sign-in (user "review").
 //
-// The same gate fronts the staging app on Fly (fly.staging.toml, role "gate" of infrastructure/fly/entrypoint.sh,
-// docs/deployment/staging.md): there it listens on every interface, takes its address from GATE_PUBLIC_ORIGIN, and
+// The same gate fronted the staging app on Fly (role "gate" of infrastructure/fly/entrypoint.sh; the app was retired on
+// the owner's request, 20 Nov 2026): there it listens on every interface, takes its address from GATE_PUBLIC_ORIGIN, and
 // refuses to start without a password.
 //
 // Settings: GATE_PORT (default 8090), GATE_HOST (default 127.0.0.1), GATE_UPSTREAM (default http://127.0.0.1:8080),
