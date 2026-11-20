@@ -17,6 +17,7 @@ import type { ActivityDTO, CompanyDTO, ContactDTO, DealDTO, FileDTO, LeadDTO, Li
 import { lineTotal } from '../../shared/crm/money';
 import { Chip, MenuButton, MoneyInput, PersonChip, RecordLink, RecordPicker, TagChips } from './ui';
 import { RecordFormDialog } from './RecordForm';
+import { MoveRecordsDialog, isMovable, useCrmMoveEnabled } from './MoveRecords';
 import { CustomerCompanyLinks, DealCompanyLinks } from './CompanyLinks';
 import { ActivityRow, EmailDialog, activityIcon } from './Activities';
 import { ENTITY_PATH, crm, dateTime, labelOf, optionsOf, recordPath, shortDate, useCurrentOrg, useCustomFields, useMembers, useMoney, usePeople, usePipelines, useRefreshOrg } from './lib';
@@ -43,6 +44,8 @@ export function RecordPage({ entity }: { entity: RecordEntity }) {
   const [editing, setEditing] = useState(false);
   const [composer, setComposer] = useState<null | 'activity' | 'email'>(null);
   const [tab, setTab] = useState<'timeline' | 'activities' | 'notes' | 'files'>('timeline');
+  const [moving, setMoving] = useState(false);
+  const canMove = useCrmMoveEnabled(org.id, isMovable(entity));
   const q = useQuery({ queryKey: ['crm', org.id, 'record', entity, id], queryFn: () => get<AnyRecord>(crm(org.id, `/${ENTITY_PATH[entity]}/${id}`)) });
   usePageTitle(q.data ? displayName(entity, q.data) : ENTITY_LABELS[entity].one);
   if (q.error) return <div className="page"><ErrorBox error={q.error} /></div>;
@@ -93,6 +96,7 @@ export function RecordPage({ entity }: { entity: RecordEntity }) {
                 label="More actions"
                 items={[
                   { label: r.archivedAt ? 'Take out of the archive' : 'Archive', icon: 'archive', hidden: !r.can.edit, onClick: () => act(() => post(crm(org.id, `/${ENTITY_PATH[entity]}/${r.id}/archive`), { archived: !r.archivedAt }), r.archivedAt ? 'Back in the lists' : 'Archived') },
+                  { label: 'Move to another company...', icon: 'building', hidden: !canMove || !r.can.delete || !isMovable(entity), onClick: () => setMoving(true) },
                   {
                     label: 'Delete',
                     icon: 'trash',
@@ -110,6 +114,16 @@ export function RecordPage({ entity }: { entity: RecordEntity }) {
           )}
         </div>
       </header>
+      {moving && isMovable(entity) ? (
+        <MoveRecordsDialog
+          orgId={org.id}
+          entity={entity}
+          ids={[r.id]}
+          name={displayName(entity, r)}
+          onClose={() => setMoving(false)}
+          onMoved={(ids, toOrgId) => { if (ids.includes(r.id)) navigate(`/o/${toOrgId}/${ENTITY_PATH[entity]}/${r.id}`); }}
+        />
+      ) : null}
       {entity === 'deal' ? <StageBar deal={r as DealDTO} /> : null}
       {entity === 'lead' && r.convertedAt ? (
         <div className="info-box">

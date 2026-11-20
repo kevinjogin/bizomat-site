@@ -223,8 +223,11 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   title (labels by name, people only if they may open the new project, amounts only in the same currency), what does not
   carry listed first and kept in the audit trail (`apps/work/src/worker/services/item-transfer.ts`). A task with
   financial data moves only for someone who may see and change it; the example company's data never leaves it. CRM
-  records are next; posted Finance entries are never moved (reverse and re-enter). Never switch the flag on without the
-  owner's approval.
+  contacts, leads and companies move the same way to another company's CRM (`apps/work/src/worker/crm/transfer.ts`):
+  with notes, activities, files, timeline, tags by name and custom fields by label; a company with its contacts, a
+  contact with its converted lead; a record on a deal, an ERP sales order or a Finance customer stays, with the reason.
+  Deals and posted Finance entries are never moved (reverse and re-enter). Never switch the flag on without the owner's
+  approval.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is

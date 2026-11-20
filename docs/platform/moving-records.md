@@ -1,11 +1,12 @@
-# Moving tasks to another project or company
+# Moving tasks and CRM records to another project or company
 
 Owner's request, 20 Nov 2026: "allow tasks and entries to move between companies as user may mistakenly entered to wrong
 company or department ... and allow mass selection move between companies."
 
-**Status:** Projects and Tasks is built behind the flag `move_records`, which ships **off**. Nothing changes for anyone
-until a platform admin switches it on, with the owner's approval, in the Control Centre (`/erp/admin/controls`). Both
-companies must have it on: the one a task is in and the one it goes to. CRM records are the next step (below).
+**Status:** Projects and Tasks and CRM records (contacts, leads, companies) are built behind the flag `move_records`,
+which ships **off**. Nothing changes for anyone until a platform admin switches it on, with the owner's approval, in the
+Control Centre (`/erp/admin/controls`). Both companies must have it on: the one a record is in and the one it goes to.
+Deals and Finance entries do not move (below).
 
 ## What a person sees
 
@@ -66,12 +67,37 @@ whole in the audit trail (`task.moved_out`, append only, with every value as it 
 | `GET /tasks/api/transfer/targets?from=<board>` | The companies, projects and groups the person may move to |
 | `POST /tasks/api/boards/<board>/items/transfer/preview` | `{ itemIds, toBoardId, toGroupId? }`: what would move and what would not, changing nothing |
 | `POST /tasks/api/boards/<board>/items/transfer` | The same body: the move. Answers each task's result and its new key |
+| `GET /tasks/api/crm/orgs/<org>/transfer/status` | Whether moving is on for the CRM's company |
+| `GET /tasks/api/crm/orgs/<org>/transfer/targets` | The CRMs of the person's other companies where moving is on |
+| `POST /tasks/api/crm/orgs/<org>/{contacts,leads,companies}/transfer/preview` | `{ ids, toOrgId }`: what would move and stay |
+| `POST /tasks/api/crm/orgs/<org>/{contacts,leads,companies}/transfer` | The same body: the move, record by record |
 
-## Not in this change (next)
+## CRM records (contacts, leads, companies)
 
-- **CRM records** (contacts, leads, companies, deals) between CRM organisations: planned. Deals need their pipeline and
-  stage matched, their products and contacts, and a company linked to Finance or to ERP sales orders must stay with the
-  company that invoiced it.
+The owner's decision (20 Nov 2026, "continue" on the recommended rule): a record moves with what belongs to it; a record
+linked to something only the old company holds stays where it is, with the reason (`src/worker/crm/transfer.ts`).
+
+- **Where:** a CRM list's selection bar, **Move to another company**, for many; a record's **More actions**, **Move to
+  another company...**, for one. One popup: the company (the CRMs of the person's other companies where moving is on and
+  they may add that kind of record), **Check what moves**, **Move**.
+- **What goes with it:** the record keeps its id; its notes, files, activities and timeline go with it. A company takes
+  its contacts (deleted ones too, as they still point at it). A contact takes the lead it was converted from.
+- **What carries:** tags by name (where the new CRM has the tag), custom fields by label and type, statuses and activity
+  types by key, then by name (else the new CRM's first). The owner stays if they work in the new CRM, else the person
+  moving becomes the owner. A contact's or lead's company that stays: the new CRM's company of the same name, else
+  none. Activities assigned to someone outside the new CRM are unassigned there. What does not carry is listed first,
+  and the whole records as they were are kept in the old CRM's audit trail (`records.moved_out`, append only).
+- **What stays (the record is refused, with the reason):** a record on a deal (deals stay with the company that made
+  them), with activities on a deal, on an ERP sales order or linked to a Finance customer of the old company; a lead
+  converted into a contact on its own (move the contact, the lead goes with it); a record the person may not delete in
+  the old CRM. People who may not add that kind of record in the new CRM are refused.
+- **Safety:** each record's move is one batch with foreign keys checked at its end, so a record and everything pointing
+  at it change organisation together or not at all. The CRM's timeline in the new company says "Moved from another
+  company". At most 100 records per move; 30 moves per person per 10 minutes.
+
+## Not moved
+
+- **Deals** stay with the company that made them (with their contacts and company, see above).
 - **Finance entries** are never moved: a posted entry stays in its ledger. The way to correct one entered in the wrong
   business is to reverse it there and enter it again in the right one.
 - **Department fields** on Maintenance, Procurement and WHS records are changed by editing the record, as today.
@@ -81,4 +107,7 @@ whole in the audit trail (`task.moved_out`, append only, with every value as it 
 `apps/work/test/transfer.test.ts`: off until both companies have the flag; one task with subtasks, comments, time and
 history, its new key and both projects' records; many at once to another company with people who cannot follow listed;
 viewers, other people's projects and company-limited API tokens refused; financial data only with the rights; the
-column matching and value carrying rules.
+column matching and value carrying rules. `apps/work/test/crm-transfer.test.ts`: off until both companies have the flag;
+a company with its contacts, notes, activities, tags and custom fields, its audit records and no broken foreign key;
+records on a deal and converted leads on their own stay, a contact takes its lead; people who may not add records there
+and records of another CRM refused; the option and custom field mapping.

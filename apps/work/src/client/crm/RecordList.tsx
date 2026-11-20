@@ -15,6 +15,7 @@ import type { ListResult, SavedViewDTO } from '../../shared/crm/types';
 import { parseCsv } from '../../shared/crm/csv';
 import { Chip, FilterBuilder, Pager, PersonChip, TagChips, UserSelect, useFilterFields } from './ui';
 import { RecordFormDialog } from './RecordForm';
+import { MoveRecordsDialog, isMovable, useCrmMoveEnabled } from './MoveRecords';
 import { ENTITY_PATH, crm, download, labelOf, optionsOf, recordPath, shortDate, useCurrentOrg, useCustomFields, useMoney, usePipelines, useRefreshOrg, useTags, dateTime } from './lib';
 
 type Query = Omit<ListQuery, 'page' | 'pageSize'>;
@@ -47,6 +48,7 @@ export function RecordList({ entity, extraActions, initialView, presetFilters, t
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [moving, setMoving] = useState(false);
   const [creating, setCreating] = useState(false);
   const [importing, setImporting] = useState(false);
   const [filterOpen, setFilterOpen] = useState(false);
@@ -243,7 +245,16 @@ export function RecordList({ entity, extraActions, initialView, presetFilters, t
         </div>
         {list.data ? <Pager page={list.data.page} pageSize={list.data.pageSize} total={list.data.total} onPage={setPage} /> : null}
       </div>
-      {selected.size ? <BulkBar entity={entity} count={selected.size} deleted={isDeleted} archived={viewQuery.scope === 'archived'} onAction={bulk} onClear={() => setSelected(new Set())} /> : null}
+      {selected.size ? <BulkBar entity={entity} count={selected.size} deleted={isDeleted} archived={viewQuery.scope === 'archived'} onAction={bulk} onClear={() => setSelected(new Set())} onMove={() => setMoving(true)} /> : null}
+      {moving && isMovable(entity) ? (
+        <MoveRecordsDialog
+          orgId={org.id}
+          entity={entity}
+          ids={[...selected]}
+          onClose={() => setMoving(false)}
+          onMoved={() => { setSelected(new Set()); void refresh(); }}
+        />
+      ) : null}
       {creating ? <RecordFormDialog entity={entity} initial={createDefaults} onClose={() => setCreating(false)} /> : null}
       {importing ? <ImportDialog entity={entity as 'lead' | 'contact' | 'company'} onClose={() => setImporting(false)} /> : null}
       {saving ? <SaveViewDialog canShare={['owner', 'admin', 'manager'].includes(org.role)} onSave={saveView} onClose={() => setSaving(false)} /> : null}
@@ -369,8 +380,9 @@ function FiltersPanel({ entity, filters, match, onChange }: { entity: CrmEntity;
   );
 }
 
-function BulkBar({ entity, count, deleted, archived, onAction, onClear }: { entity: CrmEntity; count: number; deleted: boolean; archived: boolean; onAction: (a: string, v?: string | null) => void; onClear: () => void }) {
+function BulkBar({ entity, count, deleted, archived, onAction, onClear, onMove }: { entity: CrmEntity; count: number; deleted: boolean; archived: boolean; onAction: (a: string, v?: string | null) => void; onClear: () => void; onMove: () => void }) {
   const org = useCurrentOrg();
+  const canMove = useCrmMoveEnabled(org.id, isMovable(entity) && !deleted);
   const tags = useTags().data ?? [];
   const [assign, setAssign] = useState(false);
   const statusList = entity === 'deal' ? [] : optionsOf(FIELDS[entity].find((f) => f.key === 'status')?.list, org.settings);
@@ -413,6 +425,11 @@ function BulkBar({ entity, count, deleted, archived, onAction, onClear }: { enti
           {entity !== 'activity' ? (
             <button className="btn sm" onClick={() => onAction(archived ? 'unarchive' : 'archive')}>
               <Icon name="archive" size={14} /> {archived ? 'Unarchive' : 'Archive'}
+            </button>
+          ) : null}
+          {canMove && isMovable(entity) ? (
+            <button className="btn sm" onClick={onMove}>
+              <Icon name="building" size={14} /> Move to another company
             </button>
           ) : null}
           <button className="btn sm danger" onClick={() => onAction('delete')}>

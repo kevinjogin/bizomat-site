@@ -332,6 +332,22 @@ if (tester.companyId) {
       check(problems.length === before && names.includes('Entered in the wrong company'), 'the moved task shows on the new project, no errors');
     } else check(preview.status === 403 && preview.body?.details?.code === 'MOVE_OFF', `moving tasks answers MOVE_OFF (${preview.status})`);
   }
+  // CRM records: a contact from a CRM of the tester's own to the invented company's CRM.
+  const coCrm = tester.companyId ? ((await api('GET', `/system/companies/${tester.companyId}`)).body?.tools ?? []).find((t) => t.app === 'crm')?.id : undefined;
+  const ownCrm = (await api('POST', '/crm/orgs', { name: `Move check CRM ${Date.now() % 100000}`, currency: 'AUD', timezone: 'Australia/Sydney' })).body?.id;
+  if (!coCrm || !ownCrm) bad(`both companies have a CRM (own ${Boolean(ownCrm)}, company ${Boolean(coCrm)})`);
+  else {
+    const ct = await api('POST', `/crm/orgs/${ownCrm}/contacts`, { firstName: 'Wrong', lastName: 'Company' });
+    await api('POST', `/crm/orgs/${ownCrm}/notes`, { entity: 'contact', recordId: ct.body?.id, body: 'Entered in the wrong company' });
+    const body = { ids: [ct.body?.id], toOrgId: coCrm };
+    const preview = await api('POST', `/crm/orgs/${ownCrm}/contacts/transfer/preview`, body);
+    if (moveOn) {
+      check(preview.status === 200 && preview.body?.records?.[0]?.ok === true && preview.body?.records?.[0]?.carries?.notes === 1, `the CRM preview lists the contact and its note (${preview.status})`);
+      const moved = await api('POST', `/crm/orgs/${ownCrm}/contacts/transfer`, body);
+      const there = await api('GET', `/crm/orgs/${coCrm}/contacts/${ct.body?.id}`);
+      check(moved.status === 200 && moved.body?.moved === 1 && there.status === 200, `the contact moved to the other company's CRM (${moved.status}, ${there.status})`);
+    } else check(preview.status === 403 && preview.body?.details?.code === 'MOVE_OFF', `moving CRM records answers MOVE_OFF (${preview.status})`);
+  }
 }
 
 say(problems.length ? `- browser errors: ${problems.length}` : '- ok: no browser errors');

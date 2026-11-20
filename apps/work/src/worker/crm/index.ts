@@ -9,6 +9,7 @@ import { rateLimit } from '../auth/rate-limit';
 import { validateUpload } from '../routes/files';
 import { orgRoutes, publicInviteRoutes } from './routes-orgs';
 import { recordRoutes } from './routes-records';
+import { crmTransferRoutes } from './transfer';
 import { configRoutes } from './routes-config';
 import { workRoutes, publicCalendarRoutes } from './routes-work';
 import { insightRoutes } from './routes-insights';
@@ -20,6 +21,8 @@ import { eventStmt } from './util';
 
 export const crmRoutes = new Hono<AppEnv>();
 
+// Moving records to another company's CRM (flag move_records), before the record routes so /transfer is not an id.
+crmRoutes.route('/', crmTransferRoutes);
 crmRoutes.route('/', orgRoutes);
 crmRoutes.route('/', configRoutes);
 crmRoutes.route('/', workRoutes);
