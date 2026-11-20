@@ -17,11 +17,15 @@ import { assertEditable, assertNoCycle, loadRevision } from '../erp/engineering'
 import { MAX_FILE_BYTES } from '../routes/files';
 import { companyOfTool } from '../platform/context';
 import { loadBoardAuth } from '../services/permissions';
+import { usersWithAccess } from '../services/access';
+import { notifyPeople } from '../company/members-routes';
 import { createItem } from '../services/item-ops';
 import { svcFromContext } from '../services/context';
 import { loadColumns } from '../services/mappers';
 import { CAD_SUBFLAGS, type CadAccess, DOWNLOAD_DEFAULTS, cadCompanies, cadOn, downloadConfig, need, requireCad } from './access';
 import { cadFile, cadJson, cadUnavailable } from './client';
+import { CAD_NOTICE_KINDS, cadNoticeStmts } from './notices';
+import { syncState } from './sync';
 
 export const cadRoutes = new Hono<AppEnv>();
 
@@ -57,6 +61,8 @@ cadRoutes.get('/c/:company/cad', async (c) => {
     limits: a.limits,
     flags: await flagsOf(db, a.erp.companyId),
     erp: { documentsEdit: can(a.erp, 'documents.edit'), productsEdit: can(a.erp, 'products.edit') },
+    // When CAD Automation last reported to the ERP (late after 5 minutes; after 15 it works by person until it reports).
+    sync: await syncState(db),
   };
   // ?part=flags: what this person may do here, without asking CAD Automation (the product, order and document pages).
   if (c.req.query('part') === 'flags') return c.json(base);
@@ -516,6 +522,22 @@ cadRoutes.post('/c/:company/cad/bom-proposals/:id/reject', async (c) => {
 
 // ------------------------------------------------------------------ review tasks in Projects (5.6)
 
+/** The people who may review on a board: active in the company, members of its workspace who can open the board. */
+async function reviewersOf(db: D1Database, companyId: string, board: { id: string; workspace_id: string } & Record<string, any>): Promise<{ id: string; name: string; email: string }[]> {
+  const rows = await db
+    .prepare(
+      `SELECT u.id, u.name, u.email FROM workspace_members m JOIN users u ON u.id = m.user_id AND u.disabled_at IS NULL
+        WHERE m.workspace_id = ? AND m.status = 'active'
+          AND (EXISTS (SELECT 1 FROM co_members cm WHERE cm.company_id = ? AND cm.user_id = u.id AND COALESCE(cm.status, 'active') = 'active')
+               OR EXISTS (SELECT 1 FROM sys_companies sc WHERE sc.id = ? AND sc.owner_id = u.id))
+        ORDER BY u.name LIMIT 300`,
+    )
+    .bind(board.workspace_id, companyId, companyId)
+    .all<{ id: string; name: string; email: string }>();
+  const open = await usersWithAccess(db, board as any, null, rows.results.map((r) => r.id));
+  return rows.results.filter((r) => open.has(r.id));
+}
+
 /** Boards of the company's Project Management workspaces the person can add tasks to. */
 cadRoutes.get('/c/:company/cad/review-boards', async (c) => {
   const a = await requireCad(c);
@@ -534,27 +556,80 @@ cadRoutes.get('/c/:company/cad/review-boards', async (c) => {
   return c.json({ enabled: true, boards });
 });
 
+cadRoutes.get('/c/:company/cad/review-boards/:boardId/reviewers', async (c) => {
+  const a = await requireCad(c);
+  const db = c.env.DB;
+  if (!(await cadOn(db, a.erp.companyId, 'cad_projects')) || !can(a.erp, 'documents.edit')) return c.json({ reviewers: [], assigns: false });
+  const auth = await loadBoardAuth(db, c.req.param('boardId'), a.erp.userId);
+  if (!auth || auth.access === 'view') throw notFound('Board');
+  if ((await companyOfTool(db, 'tasks', auth.board.workspace_id)) !== a.erp.companyId) throw notFound('Board');
+  const cols = await loadColumns(db, auth.board.id);
+  return c.json({ reviewers: (await reviewersOf(db, a.erp.companyId, auth.board)).map((r) => ({ id: r.id, name: r.name || r.email })), assigns: cols.some((x) => x.type === 'people' || x.type === 'person') });
+});
+
 cadRoutes.post('/c/:company/cad/documents/:id/review', async (c) => {
   const a = await requireCad(c);
   const db = c.env.DB;
   need(await cadOn(db, a.erp.companyId, 'cad_projects'), 'Review tasks in Projects are not switched on for this company.', 'CAD_FEATURE_OFF');
   assertCan(a.erp, 'documents.edit');
-  const input = await body(c, z.object({ boardId: zId, note: z.string().trim().max(1000).optional() }));
+  const input = await body(c, z.object({ boardId: zId, reviewerId: zId.optional(), note: z.string().trim().max(1000).optional() }));
   const d = docDTO(await loadDoc(db, a.erp.companyId, c.req.param('id')));
   const auth = await loadBoardAuth(db, input.boardId, a.erp.userId);
   if (!auth || auth.access === 'view') throw notFound('Board');
   if ((await companyOfTool(db, 'tasks', auth.board.workspace_id)) !== a.erp.companyId) throw notFound('Board');
+  const cols = await loadColumns(db, auth.board.id);
+  // The reviewer (G5 of the audit of 20 Nov 2026): someone in the company who can open the board. The task is given to
+  // them where the board has a People column (Projects then tells them, as for any task given to someone), and they
+  // get a notice in CAD Automation in either case; without such a column the notice is also emailed.
+  let reviewer: { id: string; name: string; email: string } | null = null;
+  let assignTo: { id: string; type: string } | undefined;
+  if (input.reviewerId) {
+    reviewer = (await reviewersOf(db, a.erp.companyId, auth.board)).find((r) => r.id === input.reviewerId) ?? null;
+    if (!reviewer) throw new HttpError(400, 'Choose someone in this company who can open that board.', { code: 'CAD_REVIEWER' });
+    assignTo = cols.find((x) => x.type === 'people') ?? cols.find((x) => x.type === 'person');
+  }
   const link = `/erp/c/${a.erp.companyId}/products/${d.productId}`;
   const item = await createItem(svcFromContext(c), auth.board, {
     name: `Review ${d.number}: ${d.title}`.slice(0, 250),
-    description: [`Please review engineering document ${d.number} (${d.kindLabel}) of ${d.productNumber ?? 'the product'}${d.revisionLabel ? `, revision ${d.revisionLabel}` : ''}.`, input.note ?? '', `Open it in BIZOMAT ERP: ${link}`].filter(Boolean).join('\n\n'),
-  }, await loadColumns(db, auth.board.id));
+    description: [`Please review engineering document ${d.number} (${d.kindLabel}) of ${d.productNumber ?? 'the product'}${d.revisionLabel ? `, revision ${d.revisionLabel}` : ''}.`, reviewer ? `Reviewer: ${reviewer.name || reviewer.email}.` : '', input.note ?? '', `Open it in BIZOMAT ERP: ${link}`].filter(Boolean).join('\n\n'),
+    values: reviewer && assignTo ? { [assignTo.id]: assignTo.type === 'people' ? [reviewer.id] : reviewer.id } : undefined,
+  }, cols);
   const t = now();
+  const title = `Review ${d.number}: ${d.title}`.slice(0, 200);
+  const noticeBody = `${a.erp.userName || 'Someone'} asked you to review ${d.number} (${d.kindLabel})${d.revisionLabel ? `, revision ${d.revisionLabel}` : ''}, as a task on ${auth.board.name}.${input.note ? ` ${input.note}` : ''}`;
   await db.batch([
-    db.prepare('INSERT INTO cad_review_tasks (company_id, document_id, item_id, board_id, requested_by, requested_at) VALUES (?, ?, ?, ?, ?, ?)').bind(a.erp.companyId, d.id, item.id, auth.board.id, a.erp.userId, t),
-    event(c, a, 'cad.review_requested', 'cad_review', d.id, `Review of ${d.number} asked for in Projects (${auth.board.name})`, { productId: d.productId }),
+    db.prepare('INSERT INTO cad_review_tasks (company_id, document_id, item_id, board_id, requested_by, requested_at, reviewer_id) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(a.erp.companyId, d.id, item.id, auth.board.id, a.erp.userId, t, reviewer?.id ?? null),
+    event(c, a, 'cad.review_requested', 'cad_review', d.id, `Review of ${d.number} asked for in Projects (${auth.board.name})${reviewer ? `, of ${reviewer.name || reviewer.email}` : ''}`, { productId: d.productId }),
+    ...(reviewer && reviewer.id !== a.erp.userId && assignTo ? cadNoticeStmts(db, { companyId: a.erp.companyId, userIds: [reviewer.id], kind: 'cad.review_requested', title, body: noticeBody, link }) : []),
   ]);
-  return c.json({ itemId: item.id, boardId: auth.board.id, workspaceId: auth.board.workspace_id }, 201);
+  if (reviewer && reviewer.id !== a.erp.userId && !assignTo) {
+    // No People column: Projects cannot tell them, so the notice is emailed too (the members' notify).
+    await notifyPeople(c, { companyId: a.erp.companyId, company: a.erp.companyName, userIds: [reviewer.id], kind: 'cad.review_requested', title, body: noticeBody, link }).catch(() => null);
+  }
+  return c.json({ itemId: item.id, boardId: auth.board.id, workspaceId: auth.board.workspace_id, assigned: !!(reviewer && assignTo) }, 201);
+});
+
+// ------------------------------------------------------------------ notices for the person (G5 of the audit of 20 Nov 2026)
+
+const KINDS_SQL = CAD_NOTICE_KINDS.map(() => '?').join(', ');
+
+cadRoutes.get('/c/:company/cad/notices', async (c) => {
+  const a = await requireCad(c);
+  const rows = await c.env.DB
+    .prepare(`SELECT id, kind, title, body, link, created_at, read_at FROM co_member_notices WHERE company_id = ? AND user_id = ? AND kind IN (${KINDS_SQL}) ORDER BY created_at DESC LIMIT 20`)
+    .bind(a.erp.companyId, a.erp.userId, ...CAD_NOTICE_KINDS)
+    .all<{ id: string; kind: string; title: string; body: string; link: string | null; created_at: number; read_at: number | null }>();
+  return c.json({ notices: rows.results.map((n) => ({ id: n.id, kind: n.kind, title: n.title, body: n.body, link: n.link, createdAt: n.created_at, read: !!n.read_at })) });
+});
+
+cadRoutes.post('/c/:company/cad/notices/read', async (c) => {
+  const a = await requireCad(c);
+  const input = await body(c, z.object({ ids: z.array(zId).min(1).max(50) }));
+  await c.env.DB
+    .prepare(`UPDATE co_member_notices SET read_at = ? WHERE company_id = ? AND user_id = ? AND read_at IS NULL AND kind IN (${KINDS_SQL}) AND id IN (${input.ids.map(() => '?').join(', ')})`)
+    .bind(now(), a.erp.companyId, a.erp.userId, ...CAD_NOTICE_KINDS, ...input.ids)
+    .run();
+  return c.json({ ok: true });
 });
 
 // ------------------------------------------------------------------ company settings: who may download

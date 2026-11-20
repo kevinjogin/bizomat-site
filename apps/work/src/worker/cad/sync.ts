@@ -9,6 +9,14 @@
 // Mapping (Part 3 of the brief, decision 2 of the audit): by BIZOMAT id, else by an email both sides have confirmed;
 // placement: the one registered company the person is an active member of, else their own company when they are in
 // none; anything else waits for a platform admin (status 'review'). An admin's decision is kept. Nothing is deleted.
+//
+// Contract 2 (owner's approval of 20 Nov 2026; docs/cad/README.md, "Contract 2"): an engine that says `contract: 2` is
+// also told the companies where the person's role is read only (operate false: refused there, never by person) and
+// whether each role may download (export); it sends the downloads made through AI assistants' links, which go into the
+// company's history once each (cad_downloads); and it is told when password sign-in is retired (flag
+// cad_password_retired, acting only while every account it reports is linked to a BIZOMAT account). An engine from
+// before is told only the companies where the person may work, as before, so the order of the two deploys never
+// widens anyone's access.
 
 import { z } from 'zod';
 import type { Env } from '../env';
@@ -24,6 +32,7 @@ const count = z.number().int().nonnegative().max(10_000_000);
 const counts = z.object({ computers: count, commands: count, grants: count }).partial();
 
 export const syncInput = z.object({
+  contract: z.number().int().min(1).max(100).default(1),
   accounts: z
     .array(
       z.object({
@@ -45,6 +54,22 @@ export const syncInput = z.object({
     .array(z.object({ id: id64, account: id64, company: id64.nullish(), tool: short(80), status: z.enum(['done', 'failed', 'cancelled', 'expired']), at: z.number().nonnegative().max(4_102_444_800_000), seconds: z.number().nonnegative().max(86400).nullish(), error: short(300).nullish() }))
     .max(1000)
     .default([]),
+  downloads: z
+    .array(
+      z.object({
+        id: z.string().regex(/^[0-9a-f]{32}$/),
+        export: id64,
+        account: id64,
+        company: id64,
+        name: short(200),
+        format: short(16),
+        size: count.max(1024 * 1024 * 1024),
+        sha256: z.string().regex(/^([0-9a-f]{64})?$/),
+        at: z.number().nonnegative().max(4_102_444_800_000),
+      }),
+    )
+    .max(1000)
+    .default([]),
   worker: z.record(z.string().max(40), z.union([z.string().max(200), z.number(), z.boolean(), z.null()])).default({}),
   checksums: z.record(z.string().max(40), z.string().regex(/^[0-9a-f]{64}$/)).default({}),
 });
@@ -58,10 +83,33 @@ interface AccountRow {
   assigned_by: string | null;
 }
 
+export interface SyncCompany {
+  id: string;
+  name: string;
+  /** May send work to SOLIDWORKS there (false: read only; sent to an engine of contract 2 only). */
+  operate: boolean;
+  /** May download CAD files there (the company's download setting). */
+  export: boolean;
+}
+
 export interface SyncAnswer {
   redirect: boolean;
-  accounts: Record<string, { userId: string | null; companies: { id: string; name: string }[]; default: string | null; review: boolean }>;
+  passwordRetired: boolean;
+  accounts: Record<string, { userId: string | null; companies: SyncCompany[]; default: string | null; review: boolean }>;
   limits: Record<string, CadLimits>;
+}
+
+/** Minutes after which the console and the module say CAD Automation's sync is late (it runs once a minute; after
+ * 15 minutes without an answer the engine works by person, and company limits and team views stop applying). */
+export const SYNC_LATE_MINUTES = 5;
+export const SYNC_STALE_MINUTES = 15;
+
+/** When CAD Automation last reported, and whether that is late (null: it never has). */
+export async function syncState(db: D1Database): Promise<{ at: number; minutes: number; late: boolean; stale: boolean } | null> {
+  const h = await db.prepare("SELECT updated_at FROM system_kv WHERE key = 'cad_health'").first<{ updated_at: number }>().catch(() => null);
+  if (!h) return null;
+  const minutes = Math.max(0, Math.floor((now() - h.updated_at) / 60_000));
+  return { at: h.updated_at, minutes, late: minutes >= SYNC_LATE_MINUTES, stale: minutes >= SYNC_STALE_MINUTES };
 }
 
 /** The BIZOMAT account of a CAD account: by BIZOMAT id, else by an email both sides confirmed. */
@@ -100,7 +148,8 @@ export async function runSync(env: Env, input: SyncInput): Promise<SyncAnswer> {
     const rows = await db.prepare(`SELECT cad_account_id, user_id, company_id, status, assigned_by FROM cad_accounts WHERE cad_account_id IN (${part.map(() => '?').join(',')})`).bind(...part).all<AccountRow>();
     for (const r of rows.results) existing.set(r.cad_account_id, r);
   }
-  const answer: SyncAnswer = { redirect: false, accounts: {}, limits: {} };
+  const answer: SyncAnswer = { redirect: false, passwordRetired: false, accounts: {}, limits: {} };
+  let linked = 0;
   const writes: D1PreparedStatement[] = [];
   const people = new Map<string, { id: string; name: string; email: string }>();
   for (const a of input.accounts) {
@@ -126,6 +175,7 @@ export async function runSync(env: Env, input: SyncInput): Promise<SyncAnswer> {
       } else reason = a.sub ? 'No active BIZOMAT account with this BIZOMAT id' : a.emailVerified ? 'No BIZOMAT account with this confirmed email' : 'The email is not confirmed on CAD Automation';
     }
     const status = userId && companyId ? 'mapped' : 'review';
+    if (userId) linked++;
     const countsJson = JSON.stringify({ ...(a.counts ?? {}), unassigned: a.unassigned ?? {} });
     writes.push(
       db
@@ -142,17 +192,18 @@ export async function runSync(env: Env, input: SyncInput): Promise<SyncAnswer> {
         )
         .bind(a.id, a.email.toLowerCase(), a.emailVerified ? 1 : 0, a.sub ?? null, userId, method, companyId, status, reason, countsJson, t, t),
     );
-    let companies: { id: string; name: string }[] = [];
+    let companies: SyncCompany[] = [];
     if (anywhere && userId) {
       if (!people.has(userId)) {
         const u = await db.prepare('SELECT id, name, email FROM users WHERE id = ? AND disabled_at IS NULL').bind(userId).first<{ id: string; name: string; email: string }>();
         if (u) people.set(u.id, u);
       }
       const person = people.get(userId);
-      if (person) companies = (await cadCompanies(env, person)).map((x) => ({ id: x.id, name: x.name }));
+      // Contract 2: read-only companies too (refused there); before it, only those where the person may work.
+      if (person) companies = (await cadCompanies(env, person, { operate: input.contract < 2 })).map((x) => ({ id: x.id, name: x.name, operate: x.operate, export: x.export }));
     }
-    // Existing work moves only into a company where CAD Automation in the ERP is on.
-    const into = companyId && companies.some((c) => c.id === companyId) ? companyId : null;
+    // Existing work moves only into a company where CAD Automation in the ERP is on and the person may work.
+    const into = companyId && companies.some((c) => c.id === companyId && c.operate) ? companyId : null;
     answer.accounts[a.id] = { userId, companies, default: into, review: status === 'review' };
   }
   for (let i = 0; i < writes.length; i += 50) await db.batch(writes.slice(i, i + 50));
@@ -192,8 +243,26 @@ export async function runSync(env: Env, input: SyncInput): Promise<SyncAnswer> {
     }
   }
 
+  // Downloads through AI assistants' links (contract 2): into the company's history once each, as a download from the
+  // ERP itself is. Only for a company the account is in.
+  for (const d of input.downloads) {
+    const userId = answer.accounts[d.account]?.userId ?? existing.get(d.account)?.user_id ?? null;
+    if (!userId || !(answer.accounts[d.account]?.companies ?? []).some((c) => c.id === d.company)) continue;
+    const inserted = await db
+      .prepare('INSERT OR IGNORE INTO cad_downloads (company_id, download_id, export_id, user_id, file_name, format, size, sha256, downloaded_at, recorded_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+      .bind(d.company, d.id, d.export, userId, d.name, d.format, d.size, d.sha256, Math.round(d.at), t)
+      .run();
+    if (!inserted.meta.changes) continue;
+    await eventStmt(db, { companyId: d.company, actorId: userId, action: 'cad.export_downloaded', entityType: 'cad_export', entityId: d.export, summary: `Downloaded ${d.name || 'a file'} (${Math.round(d.size / 1024)} KB) through an AI assistant’s link`, after: { sha256: d.sha256 || null, via: 'ai_assistant_link' } }).run();
+  }
+
+  // Password sign-in on CAD Automation (decision 4 of the audit of 20 Nov 2026): retired only while the flag is on and
+  // every account it reports is linked to a BIZOMAT account.
+  const allLinked = input.accounts.length > 0 && linked === input.accounts.length;
+  answer.passwordRetired = allLinked && (await flagOn(db, 'cad_password_retired').catch(() => false));
+
   // Health and usage for the Control Centre (platform-wide, one row).
-  const health = { at: t, worker: input.worker, companies: input.companies, checksums: input.checksums, accounts: input.accounts.length, runs: input.runs.length };
+  const health = { at: t, worker: input.worker, companies: input.companies, checksums: input.checksums, accounts: input.accounts.length, linked, runs: input.runs.length, downloads: input.downloads.length, contract: input.contract, passwordRetired: answer.passwordRetired };
   await db.prepare("INSERT INTO system_kv (key, value, updated_at) VALUES ('cad_health', ?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value, updated_at = excluded.updated_at").bind(JSON.stringify(health), t).run();
   answer.redirect = await flagOn(db, 'cad_redirect').catch(() => false);
   return answer;
@@ -245,8 +314,19 @@ export async function cadOverview(db: D1Database) {
     const n = await db.prepare('SELECT name FROM companies WHERE id = ?').bind(c.id).first<{ name: string }>();
     names.set(c.id, n?.name ?? c.id);
   }
+  const sync = await syncState(db);
+  const reported = Number(health?.accounts ?? 0);
+  const linked = Number(health?.linked ?? 0);
   return {
-    health: health ? { at: h!.updated_at, worker: health.worker ?? {}, checksums: health.checksums ?? {}, companies: (health.companies ?? []).map((c: any) => ({ ...c, name: names.get(c.id) ?? c.id })) } : null,
+    health: health ? { at: h!.updated_at, worker: health.worker ?? {}, checksums: health.checksums ?? {}, contract: Number(health.contract ?? 1), companies: (health.companies ?? []).map((c: any) => ({ ...c, name: names.get(c.id) ?? c.id })) } : null,
+    sync,
+    password: {
+      flag: await flagOn(db, 'cad_password_retired').catch(() => false),
+      accounts: reported,
+      linked,
+      ready: !!health && reported > 0 && linked === reported,
+      retired: !!health?.passwordRetired,
+    },
     totals,
     accounts,
   };
