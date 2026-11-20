@@ -11,6 +11,7 @@ const CAD = 'http://cad.test';
 const cadEnv = { ...env, CAD_URL: CAD } as typeof env;
 const CAD_AUTH = `Basic ${btoa('cad:test-cad-status-secret')}`;
 const PDF = new TextEncoder().encode('%PDF-1.4\n1 0 obj<<>>endobj\ntrailer<<>>\n%%EOF\n');
+const MSI = new TextEncoder().encode('MSI installer bytes for a test');
 
 function newAbn(): string {
   for (;;) {
@@ -61,6 +62,9 @@ beforeAll(() => {
     if (url.origin !== CAD) return realFetch(input, init);
     const op = url.pathname.replace('/api/erp/v1/', '');
     const claims = await verify(req, op);
+    if (op === 'installer/file') {
+      return new Response(MSI, { headers: { 'Content-Type': 'application/x-msi', 'Content-Disposition': `attachment; filename="BIZOMAT-CAD-Automation-x64.msi"`, 'X-Sha256': await hex(MSI), 'Content-Length': String(MSI.byteLength) } });
+    }
     if (/^exports\/[^/]+\/file$/.test(op)) {
       return new Response(PDF, { headers: { 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename*=UTF-8''Bracket%20drawing.pdf`, 'X-Sha256': await hex(PDF), 'Content-Length': String(PDF.byteLength) } });
     }
@@ -107,6 +111,18 @@ async function join(owner: Client, co: string, p: Client, role: 'manager' | 'emp
 answers.state = (claims) => ({ computers: [], assistants: [], commands: [], exports: [{ id: 'exp-1', name: 'Bracket drawing.pdf', format: 'pdf', size: PDF.byteLength, owner: { sub: claims.sub } }], connector: { url: 'https://bizomat.ai/cad/mcp' }, tools: [] });
 
 describe('CAD Automation in the ERP', () => {
+  it('hands out the installer itself, so nobody signs in to CAD Automation separately', async () => {
+    const owner = await signup('Cad Installer');
+    const co = await company(owner, 'Cad Installer Pty');
+    expect((await call(owner, 'GET', `/api/erp/c/${co}/cad/installer`)).status).toBe(403);
+    await flag('cad_in_erp', 'company', co);
+    const r = await call(owner, 'GET', `/api/erp/c/${co}/cad/installer`);
+    expect(r.status).toBe(200);
+    expect(r.headers.get('content-disposition')).toContain('BIZOMAT-CAD-Automation-x64.msi');
+    expect(new Uint8Array(await r.arrayBuffer())).toEqual(MSI);
+    expect(seen.at(-1)!.op).toBe('installer/file');
+  });
+
   it('lists the companies where it is on, and answers what a person may do without asking CAD Automation', async () => {
     const owner = await signup('Cad Lister');
     const a = await company(owner, 'Cad List A Pty');

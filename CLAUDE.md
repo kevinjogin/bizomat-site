@@ -199,7 +199,9 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Automation panel (`/erp/admin/cad`); exports saved to product revisions, bill of materials proposals from an open
   assembly (draft revisions only), drawings on orders, NCRs and plans, review tasks in Projects. Configure-to-order is
   deferred. CAD Automation is free. Never switch `cad_in_erp` or `cad_redirect` on without the owner's approval; the
-  rollback is switching them off. Released 20 Nov 2026 with every flag off (kevinjogin/bizomat-site#94, deploy run 43;
+  rollback is switching them off. Setting it up happens in place (owner, 20 Nov 2026): four steps (install, pair,
+  connect the AI assistant, check), each in a popup on the module's page; the installer comes through the ERP; no link
+  out to CAD Automation's own application in the ERP's side menu. Released 20 Nov 2026 with every flag off (kevinjogin/bizomat-site#94, deploy run 43;
   the engine kevinjogin/bizomat-cad#19, `cados` 13db582, its deploy run 10; `apps/cad` synced in #95), after the staging
   verification with `cad_in_erp` on in staging only; the engine's sync to the ERP answers 200 every minute.
   **Company Admin console** (owner, 20 Nov 2026; `docs/platform/company-admin.md`; flag `company_admin_console`, off):
@@ -211,6 +213,10 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Activity and Settings are the company area's own pages and checks; `src/worker/company/admin-console.ts` adds the
   overview, tokens and access review. Never switch the flag on without the owner's approval. Released 20 Nov 2026 with
   the flag off (kevinjogin/bizomat-site#97, deploy run 44), after the staging verification with it on in staging only.
+  **The company being worked in** (owner, 20 Nov 2026; `apps/work/src/client/lib/company-context.ts`): the company
+  last opened on this computer (localStorage `bizomat-system-company`, written by the ERP and the company area) decides
+  where the module rail's Projects and Tasks, Sales and CRM, Finance and My Work open: that company's own linked tools,
+  never whichever was used last (a company without one falls back to the tool's home). The server still decides access.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is

@@ -11,6 +11,7 @@ import { lazy, Suspense, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { get } from '../../lib/api';
+import { useCompanyToolPaths } from '../../lib/company-context';
 import { APP_BASE, SUITE } from '../../lib/base';
 import { IS_SYSTEM } from '../../lib/brand';
 import { useSession } from '../../lib/session';
@@ -56,9 +57,12 @@ export function SuiteRail() {
   const { session } = useSession();
   const location = useLocation();
   const adminCompanies = useQuery({ queryKey: ['company', 'admin-companies'], queryFn: () => get<{ companies: { id: string }[] }>('/company/admin/companies'), staleTime: 60_000, retry: false, enabled: SUITE_SHELL && !!session });
+  const toolPaths = useCompanyToolPaths(SUITE_SHELL && !!session);
   if (!SUITE_SHELL || !session) return null;
   const path = location.pathname;
-  const modules = adminCompanies.data?.companies.length ? [...MODULES, COMPANY_ADMIN] : MODULES;
+  // The company being worked in: its own Projects and Tasks, CRM and Finance (lib/company-context.ts).
+  const own: Record<string, string | undefined> = { tasks: toolPaths.tasks, crm: toolPaths.crm, finance: toolPaths.finance, 'my-work': toolPaths.myWork };
+  const modules = (adminCompanies.data?.companies.length ? [...MODULES, COMPANY_ADMIN] : MODULES).map((m) => (own[m.id] ? { ...m, to: own[m.id]! } : m));
   return (
     <nav className="suite-rail" aria-label="BIZOMAT ERP modules">
       <a className="suite-home" href={`${SUITE}/`} title="BIZOMAT ERP" aria-label="BIZOMAT ERP dashboard">

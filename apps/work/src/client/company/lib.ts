@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 import { get } from '../lib/api';
 import { toolUrl } from '../lib/base';
+import { setCurrentCompany } from '../lib/company-context';
 
 export type CompanyRole = 'owner' | 'admin' | 'manager' | 'employee' | 'read_only';
 /** A stored role as a company role (member, the name before R5, is employee). */
@@ -168,6 +169,8 @@ export function rememberCompany(id: string) {
   } catch {
     /* ignore */
   }
+  // the company being worked in, for every tool's module rail too (lib/company-context.ts)
+  setCurrentCompany(id);
 }
 export function lastCompany(): string | null {
   try {
