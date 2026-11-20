@@ -16,10 +16,7 @@ import { resolveColumnCurrency } from '../../shared/finance';
 import { isFinancialColumn } from '../../shared/permissions';
 import type { ColumnDTO } from '../../shared/types';
 import { HttpError, badRequest, now, parseJson, placeholders } from '../lib/util';
-import { flagOn, moduleEnabled } from '../platform/flags';
-import { companyOfTool } from '../platform/context';
-import { ensureOwnCompany } from '../system/system';
-import { loadMemberAccess, membersV2, roleAllows } from '../company/members-access';
+import { assertMemberRules, assertMoveAllowed, moveOn as moveOnFor, toolCompany } from '../platform/moves';
 import { broadcast } from '../realtime/board-room';
 import { activityStmt, auditEventStmt } from './audit';
 import type { Svc } from './context';
@@ -145,44 +142,22 @@ export interface TransferResult {
 interface Side {
   auth: ProjectAuth;
   companyId: string;
-  demo: boolean;
   columns: ColumnDTO[];
   currency: string | null;
 }
 
-async function isDemo(db: D1Database, companyId: string): Promise<boolean> {
-  return !!(await db.prepare("SELECT 1 FROM sys_demo WHERE company_id = ? AND status <> 'removed'").bind(companyId).first());
-}
-
-/** The company a workspace belongs to. A workspace of no registered company belongs to its owner's own company, made
- * here if the owner has not opened the ERP yet (as system/system.ts does on a first visit). */
-export async function workspaceCompany(db: D1Database, workspaceId: string): Promise<string | null> {
-  const found = await companyOfTool(db, 'tasks', workspaceId);
-  if (found) return found;
-  const owner = await db
-    .prepare("SELECT u.id, u.name, u.email FROM workspace_members m JOIN users u ON u.id = m.user_id WHERE m.workspace_id = ? AND m.role = 'owner' ORDER BY m.joined_at LIMIT 1")
-    .bind(workspaceId)
-    .first<{ id: string; name: string; email: string }>();
-  if (!owner) return null;
-  await ensureOwnCompany(db, owner, 'backfill');
-  return companyOfTool(db, 'tasks', workspaceId);
-}
+/** The company a workspace belongs to (platform/moves.ts). */
+export const workspaceCompany = (db: D1Database, workspaceId: string) => toolCompany(db, 'tasks', workspaceId);
 
 async function side(db: D1Database, auth: ProjectAuth): Promise<Side> {
   const companyId = await workspaceCompany(db, auth.board.workspace_id);
   if (!companyId) throw new HttpError(404, 'Project not found');
   const policy = await financePolicy(db, auth.board.workspace_id);
-  return { auth, companyId, demo: await isDemo(db, companyId), columns: await loadColumns(db, auth.board.id), currency: policy.defaultCurrency };
+  return { auth, companyId, columns: await loadColumns(db, auth.board.id), currency: policy.defaultCurrency };
 }
 
 /** Whether tasks may be moved from or to a company: the flag on for it, and its Projects and Tasks not switched off. */
-export async function moveOn(db: D1Database, companyId: string): Promise<boolean> {
-  try {
-    return (await flagOn(db, 'move_records', { companyId })) && (await moduleEnabled(db, 'tasks', companyId));
-  } catch {
-    return false;
-  }
-}
+export const moveOn = (db: D1Database, companyId: string) => moveOnFor(db, companyId, 'tasks');
 
 /**
  * The checks shared by the preview and the move: both companies have the flag on, the example company's invented data
@@ -192,24 +167,11 @@ async function checkMove(db: D1Database, userId: string, from: Side, to: Side, i
   if (from.auth.board.id === to.auth.board.id) throw badRequest('The tasks are already in this project. To change their group, use Move to group.');
   if (to.auth.board.kind === 'template') throw badRequest('Tasks cannot be moved into a template.');
   if (to.auth.board.archived_at) throw new HttpError(409, 'The project is archived. Restore it before moving tasks into it.');
-  if (!(await moveOn(db, from.companyId)) || !(await moveOn(db, to.companyId))) {
-    throw new HttpError(403, 'Moving tasks between projects is not switched on for this company.', { code: 'MOVE_OFF' });
-  }
-  if (from.companyId !== to.companyId && (from.demo || to.demo)) throw new HttpError(403, 'The example company’s invented data stays in it, and nothing moves into it.', { code: 'MOVE_EXAMPLE' });
+  await assertMoveAllowed(db, from.companyId, to.companyId, 'tasks', 'tasks between projects');
   if (!from.auth.caps.deleteTasks) throw new HttpError(403, 'Your access to this project does not include taking tasks out of it.');
   if (!to.auth.caps.createTasks) throw new HttpError(403, 'Your access to the new project does not include adding tasks.');
   // A company's member rules (company_members_v2), where they act: both must allow it.
-  for (const s of from.companyId === to.companyId ? [from] : [from, to]) {
-    if (!(await membersV2(db, s.companyId))) continue;
-    const a = await loadMemberAccess(db, s.companyId, userId);
-    if (!a) continue;
-    if (a.status === 'suspended') throw new HttpError(403, 'Your access to that company is suspended.', { code: 'MEMBER_SUSPENDED' });
-    if (!a.modules.projects.access) throw new HttpError(403, 'You do not have access to Projects and Tasks in that company.', { code: 'MODULE_ACCESS', module: 'projects' });
-    if (!roleAllows(a.role, 'create_edit')) throw new HttpError(403, 'Your company role can view but not change anything.', { code: 'READ_ONLY' });
-    if (s === from && !roleAllows(a.role, 'delete') && items.some((i) => i.created_by !== userId)) {
-      throw new HttpError(403, 'Your company role can move only tasks you created.', { code: 'SCOPE', scope: 'own' });
-    }
-  }
+  await assertMemberRules(db, userId, { from: from.companyId, to: to.companyId }, 'projects', 'Projects and Tasks', items.some((i) => i.created_by !== userId));
 }
 
 /** A query over a list of ids, in parts (a statement takes at most 100 bound values). */

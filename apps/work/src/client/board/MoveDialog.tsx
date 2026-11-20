@@ -100,7 +100,7 @@ export function MoveDialog({ boardId, itemIds, names, onClose, onMoved }: { boar
       <button className="btn" onClick={onClose}>Cancel</button>
       {preview ? (
         <button className="btn primary" disabled={busy || !movable} onClick={() => void move()}>
-          {busy ? 'Moving...' : movable === 1 ? 'Move 1 task' : `Move ${movable} tasks`}
+          {busy ? 'Moving...' : !movable ? 'Nothing to move' : movable === 1 ? 'Move 1 task' : `Move ${movable} tasks`}
         </button>
       ) : (
         <button className="btn primary" disabled={busy || !projectId} onClick={() => void check()}>{busy ? 'Checking...' : 'Check what moves'}</button>

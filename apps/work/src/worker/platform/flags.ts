@@ -274,9 +274,9 @@ const BASE: Record<string, FlagDef> = {
     release: 'CAD',
   },
   move_records: {
-    label: 'Move tasks to another project or company',
+    label: 'Move tasks and CRM records to another company',
     description:
-      'Tasks can be moved, one or many at once, to another project in the same company or in another company the person works in, with their subtasks, comments, files, time and history. Both companies must have it on.',
+      'Tasks can be moved, one or many at once, to another project in the same company or in another company the person works in, with their subtasks, comments, files, time and history; CRM contacts, leads and companies to another company’s CRM, with their notes, activities, files and history. Records on a deal, a sales order or a Finance customer stay. Both companies must have it on.',
     values: ONOFF,
     scopes: ['global', 'stage', 'company'],
     risk: 'medium',
