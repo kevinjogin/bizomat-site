@@ -47,10 +47,12 @@ async def lifespan(_app):
     _warm_owner()  # CAD runs in worker processes, one per person (cadworker.py): start the owner's now
     _erp_status("start")  # reports to BIZOMAT ERP when its client secret is set (erpstatus.py), in its own thread
     _evidence_scan("start")  # scans BIZOMAT ERP's verification documents with ClamAV (evidencescan.py), its own thread
+    _erp_link("start")  # CAD Automation inside BIZOMAT ERP: the sync once a minute (erplink.py), its own thread
     try:
         async with mcp_server.lifespan_context():
             yield
     finally:
+        _erp_link("stop")
         _evidence_scan("stop")
         _erp_status("stop")
         cadworker.shutdown()
@@ -62,6 +64,14 @@ def _erp_status(what: str) -> None:
         erpstatus.start() if what == "start" else erpstatus.stop()
     except Exception as e:  # a report to the ERP is never a reason for the server not to run
         print(f"OpenSketch ERP status: could not {what} ({type(e).__name__})", flush=True)
+
+
+def _erp_link(what: str) -> None:
+    try:
+        from . import erplink
+        erplink.syncer.start() if what == "start" else erplink.syncer.stop()
+    except Exception as e:  # the ERP link is never a reason for the server not to run
+        print(f"CAD Automation ERP link: could not {what} ({type(e).__name__})", flush=True)
 
 
 def _evidence_scan(what: str) -> None:
@@ -571,7 +581,10 @@ def api_admin_people(request: Request):
                            apps=[g["name"] for g in mcpauth.grants_for(u["id"])]))
     from . import erpstatus, evidencescan
     return {"people": people, "invites": accounts.list_invites(), "settings": accounts.settings(), "min_password": accounts.MIN_PASSWORD,
-            "erp": erpstatus.status(), "evidence_scan": evidencescan.status()}
+            "erp": erpstatus.status(), "evidence_scan": evidencescan.status(),
+            "erp_link": {"on": erplink.syncer._thread is not None, "fresh": erplink.fresh(), "redirect": erplink.redirect_on(),
+                         "accounts_in_erp": sum(1 for v in erplink.state()["accounts"].values() if v.get("companies")),
+                         "last": erplink.syncer.last}}
 
 
 
@@ -601,9 +614,10 @@ async def api_upload(upload_id: str, request: Request, expires: str = "", signat
     unzipped on the way in, bounded. Same 32 MiB cap as base64 imports. No sign-in: the link is the key."""
     cap = mcp_server.MAX_IMPORT_BYTES
     try:
-        uploads.check_link(upload_id, expires, signature)
+        link = uploads.check_link(upload_id, expires, signature)
     except uploads.UploadError as exc:
         return _upload_reply({"error": str(exc)}, exc.status)
+    cap = min(cap, int(link.get("cap") or cap))  # a company's smaller limit (tenancy.py), kept with the link
     if request.headers.get("content-type", "").lower().startswith("multipart/"):
         return _upload_reply({"error": "Send the file's bytes as the request body (curl -T file '<link>'), not a form."}, 400)
     gz = (request.headers.get("content-encoding", "").strip().lower() == "gzip"
@@ -890,6 +904,9 @@ def download_solidworks_sha256():
 from . import devicebridge  # noqa: E402
 
 app.include_router(devicebridge.router)
+# CAD Automation inside BIZOMAT ERP: the ERP's signed calls (erplink.py; docs/ERP-MODULE.md).
+from . import erplink  # noqa: E402
+app.include_router(erplink.router)
 
 
 # ----------------------------------------------------------------------------- the home page
@@ -914,10 +931,33 @@ def _is_owner(request: Request) -> bool:
     return bool(u and u.get("role") == "owner" and not u.get("legacy"))
 
 
+# Where each section opens in BIZOMAT ERP once CAD Automation works there (erplink.py; flag cad_redirect in the ERP).
+ERP_SECTIONS = {"home": "", "assistant": "/assistants", "solidworks": "/computers", "tools": "/tools", "history": "/history",
+                "settings": "/setup"}
+
+
+def _erp_redirect(request: Request, name: str) -> Response | None:
+    """The same section in BIZOMAT ERP, for a person who works with CAD Automation there, while the ERP says the old
+    pages open there; None otherwise (the page here, as before, and after a rollback). Admin stays here."""
+    from . import erplink
+    u = _user(request)
+    if name not in ERP_SECTIONS or not u or u.get("legacy") or not erplink.redirect_on() or not erplink.in_erp(u["id"]):
+        return None
+    q = ""
+    if name == "history" and request.query_params.get("command"):
+        from urllib.parse import quote
+        q = "?command=" + quote(request.query_params["command"][:64], safe="")
+    return RedirectResponse(erplink.erp_url("/erp/cad" + ERP_SECTIONS[name]) + q, status_code=302,
+                            headers={"Cache-Control": "no-store"})
+
+
 async def _app_page(request: Request, name: str) -> Response:
     """One section of the signed-in app (app_pages.py); the sign-in gate sends visitors to /login first. The owner
     also sees the Admin section."""
     from . import app_pages
+    moved = _erp_redirect(request, name)
+    if moved is not None:
+        return moved
     return await _text_page(request.scope, app_pages.PAGES[name](_base(request), _is_owner(request)), "text/html; charset=utf-8",
                             PAGE_HEADERS)
 
@@ -1101,8 +1141,10 @@ async def oauth_authorize(request: Request):
         return _auth_html(auth.oauth_problem_page(e.description), 400)
     u = _user(request)
     uid = u["id"] if u else "local"
+    from . import erplink
     return _auth_html(auth.consent_page(rec["name"], req["redirect_uri"], u, mcpauth.sign_request(req, uid),
-                                        rec.get("host", "") if rec.get("cimd") else ""))
+                                        rec.get("host", "") if rec.get("cimd") else "",
+                                        companies=erplink.companies_of(u["id"]) if u else None))
 
 
 @app.post("/oauth/authorize")
@@ -1124,6 +1166,13 @@ async def oauth_decide(request: Request):
     if form.get("action") == "deny":
         return RedirectResponse(mcpauth.with_query(req["redirect_uri"], error="access_denied", state=req["state"] or None,
                                                    iss=iss), status_code=303)
+    # Inside BIZOMAT ERP (erplink.py): the connection works in the company chosen on the page, one the person may use.
+    from . import erplink
+    if u and erplink.in_erp(u["id"]):
+        company = str(form.get("company") or "")
+        if not erplink.allowed(u["id"], company):
+            return _auth_html(auth.oauth_problem_page("Choose the company this AI assistant works in. Start connecting again from your AI app."), 400)
+        req = dict(req, company=company)
     code = await run_in_threadpool(mcpauth.issue_code, req, uid)
     return RedirectResponse(mcpauth.with_query(req["redirect_uri"], code=code, state=req["state"] or None, iss=iss),
                             status_code=303)

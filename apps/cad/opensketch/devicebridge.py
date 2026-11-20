@@ -42,7 +42,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import APIRouter, HTTPException, Request
-from fastapi.responses import HTMLResponse, JSONResponse, Response
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 
 from . import store
 
@@ -264,6 +264,13 @@ def _db() -> sqlite3.Connection:
             if key not in _db_ready:
                 con.execute("PRAGMA journal_mode=WAL")
                 con.executescript(SCHEMA)
+                # CAD Automation inside BIZOMAT ERP (erplink.py): the company a computer, pairing or command belongs to.
+                # NULL: from before, or used outside the ERP (by person, as always).
+                for table in ("devices", "pairings", "commands"):
+                    if "company" not in {c[1] for c in con.execute(f"PRAGMA table_info({table})")}:
+                        con.execute(f"ALTER TABLE {table} ADD COLUMN company TEXT")
+                con.execute("CREATE INDEX IF NOT EXISTS commands_company ON commands(company, status, created)")
+                con.execute("CREATE INDEX IF NOT EXISTS devices_company ON devices(company)")
                 # a restart forgets waiting tool calls: what was unfinished is marked, never re-run
                 now = time.time()
                 for r in con.execute("SELECT id, history FROM commands WHERE status NOT IN (%s)" % ",".join("?" * len(TERMINAL)),
@@ -428,8 +435,13 @@ def _instance_out(i: dict) -> dict:
 
 
 def devices_for(user: dict | None, include_revoked: bool = False) -> list[dict]:
-    rows = _q("SELECT * FROM devices WHERE owner=?" + ("" if include_revoked else " AND revoked IS NULL") + " ORDER BY created",
-              (person_id(user),))
+    """The person's computers; inside a company (tenancy.py: an AI connection or ERP request bound to one), only
+    those paired in that company."""
+    from . import tenancy
+    company = tenancy.company()
+    rows = _q("SELECT * FROM devices WHERE owner=?" + (" AND company=?" if company else "") +
+              ("" if include_revoked else " AND revoked IS NULL") + " ORDER BY created",
+              (person_id(user), company) if company else (person_id(user),))
     return rows
 
 
@@ -604,8 +616,9 @@ def pairing_by_code(code: str) -> dict | None:
     return r
 
 
-def approve_pairing(user: dict | None, code: str, name: str | None = None) -> dict:
-    """The signed-in person approves the code their computer shows: the device is made and bound to them."""
+def approve_pairing(user: dict | None, code: str, name: str | None = None, company: str | None = None) -> dict:
+    """The signed-in person approves the code their computer shows: the device is made and bound to them (and, from
+    BIZOMAT ERP, to the company they paired it in: erplink.py)."""
     r = pairing_by_code(code)
     if not r or r["status"] != "pending":
         raise ValueError("That code is not valid or has expired. Start pairing again in the Companion.")
@@ -620,9 +633,9 @@ def approve_pairing(user: dict | None, code: str, name: str | None = None) -> di
         k += 1
     now = time.time()
     first = not devices_for(user)
-    _exec("INSERT INTO devices (id, owner, name, jwk, jkt, created, last_seen, is_default, info) VALUES (?,?,?,?,?,?,?,?,?)",
-          (did, owner, name, r["jwk"], r["jkt"], now, None, 1 if first else 0, r["info"]))
-    _exec("UPDATE pairings SET status='approved', device_id=?, owner=? WHERE id=?", (did, owner, r["id"]))
+    _exec("INSERT INTO devices (id, owner, name, jwk, jkt, created, last_seen, is_default, info, company) VALUES (?,?,?,?,?,?,?,?,?,?)",
+          (did, owner, name, r["jwk"], r["jkt"], now, None, 1 if first else 0, r["info"], company))
+    _exec("UPDATE pairings SET status='approved', device_id=?, owner=?, company=? WHERE id=?", (did, owner, company, r["id"]))
     _changed()
     return {"device_id": did, "name": name}
 
@@ -786,7 +799,7 @@ def _issued_by(user: dict | None) -> dict:
 
 
 async def call(user: dict | None, device: dict, op: str, args: dict, timeout: float, blobs: dict | None = None,
-               tool: str | None = None) -> tuple[dict, dict[str, bytes]]:
+               tool: str | None = None, command_id: str | None = None) -> tuple[dict, dict[str, bytes]]:
     """Run one op on a registered computer. Returns (body, files) in swbridge.call's shape: body = {ok, result,
     error, code}. Raises swbridge.BridgeError when it cannot be delivered or does not come back in time."""
     from .swbridge import BridgeError
@@ -813,9 +826,20 @@ async def call(user: dict | None, device: dict, op: str, args: dict, timeout: fl
     now = time.time()
     effect, _ = OPS[op]
     risk = risk_of(op, params)
+    # Inside a company (BIZOMAT ERP): its fair-use limits, set by a platform admin (tenancy.py, erplink.py).
+    from . import tenancy
+    company = tenancy.company()
+    if company:
+        lim = tenancy.limits()
+        busy = _q("SELECT COUNT(*) AS n FROM commands WHERE company=? AND status NOT IN (%s) AND expires > ?"
+                  % ",".join("?" * len(TERMINAL)), (company, *TERMINAL, now), one=True)
+        if int((busy or {}).get("n") or 0) >= int(lim["concurrent"]):
+            raise BridgeError(f"Your company already has {lim['concurrent']} CAD Automation commands waiting or running, its "
+                              "fair-use limit. Wait for one to finish, or ask an administrator.", code="LIMIT_CONCURRENT")
+        timeout = min(float(timeout), float(lim["commandSeconds"]))
     window = max(5.0, min(float(timeout), MAX_START_WINDOW))
     from . import mcp_server
-    payload = {"v": PROTOCOL, "type": "command", "command_id": ulid("cmd"), "device_id": device["id"],
+    payload = {"v": PROTOCOL, "type": "command", "command_id": command_id or ulid("cmd"), "device_id": device["id"],
                "instance": {"mode": "doc", "doc": str(params["doc"])[:520]} if isinstance(params.get("doc"), str) and params.get("doc") else {"mode": "auto"},
                "issued_by": _issued_by(user), "tool": tool or "sw_" + op, "op": op, "op_version": 1,
                "params": params, "params_sha256": "sha256:" + sha256_hex(raw), "effect": effect, "risk": risk,
@@ -828,9 +852,9 @@ async def call(user: dict | None, device: dict, op: str, args: dict, timeout: fl
     p = Pending(payload, jws, fut)
     _pending[p.id] = p
     _exec("INSERT INTO commands (id, device_id, owner, tool, op, effect, risk, params_sha256, status, created, expires, updated,"
-          " attempts, history, correlation, client) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+          " attempts, history, correlation, client, company) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
           (p.id, device["id"], person_id(user), payload["tool"], op, effect, risk, payload["params_sha256"], "created",
-           now, now + window, now, 0, "[]", payload["correlation_id"], payload["issued_by"]["client"]["name"]))
+           now, now + window, now, 0, "[]", payload["correlation_id"], payload["issued_by"]["client"]["name"], company))
     _note(p, "queued")
     _deliver(s, p)
     try:
@@ -1502,7 +1526,14 @@ def _pair_page(code: str = "", pairing: dict | None = None, error: str = "", don
 
 
 @router.get("/devices/pair")
-def pair_page(code: str = ""):
+def pair_page(request: Request, code: str = ""):
+    from . import erplink
+    u = _user(request)
+    if u and not u.get("legacy") and erplink.redirect_on() and erplink.in_erp(u["id"]):
+        # inside BIZOMAT ERP a computer is added to a company: the same code, on the ERP's pairing page
+        from urllib.parse import quote
+        return RedirectResponse(erplink.erp_url("/erp/cad/pair") + ("?code=" + quote(code[:20], safe="") if code else ""),
+                                status_code=302, headers={"Cache-Control": "no-store"})
     p = pairing_by_code(code) if code else None
     return HTMLResponse(_pair_page(code if p else "", p, "" if p or not code else "That code is not valid or has expired."),
                         headers={"Cache-Control": "no-store", "X-Frame-Options": "DENY"})

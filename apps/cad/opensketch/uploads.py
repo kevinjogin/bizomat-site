@@ -134,8 +134,9 @@ def room() -> int:
     return max(0, left)
 
 
-def create(user: dict | None, filename: str, cap: int, size_bytes: int | None = None) -> dict:
-    """A new one-time upload link for this person."""
+def create(user: dict | None, filename: str, cap: int, size_bytes: int | None = None, company: str | None = None) -> dict:
+    """A new one-time upload link for this person (cap: the most bytes the link takes, kept with it; company: the
+    BIZOMAT ERP company the AI connection works in, tenancy.py)."""
     if not _NAME.fullmatch(filename or "") or filename in (".", ".."):
         raise UploadError("Use a filename without directory components, e.g. model.step.")
     if size_bytes is not None and size_bytes > cap:
@@ -153,7 +154,9 @@ def create(user: dict | None, filename: str, cap: int, size_bytes: int | None = 
         upload_id = uuid.uuid4().hex
         expires = int(now) + LINK_LIFETIME
         meta = {"upload_id": upload_id, "owner": owner, "filename": filename, "state": "waiting",
-                "created": int(now), "expires_at": expires}
+                "created": int(now), "expires_at": expires, "cap": int(cap)}
+        if company:
+            meta["company"] = company
         _write(meta)
     query = urlencode({"expires": expires, "signature": _signature(upload_id, owner, expires)})
     url = f"{canonical.machine_base() or auth.public_url()}/mcp/uploads/{upload_id}?{query}"

@@ -21,7 +21,7 @@ from mcp.server.streamable_http_manager import StreamableHTTPASGIApp
 from mcp.server.transport_security import TransportSecuritySettings
 from pydantic import Field
 
-from . import auth, uploads
+from . import auth, tenancy, uploads
 
 NAME = "BIZOMAT CAD Automation"  # the name AI apps show for this connector (it was "CADOS" until November 2026)
 PATHS = ("/mcp", "/solidworks/mcp")  # the first is the address people are given; the second is kept for early connectors
@@ -98,7 +98,10 @@ def request_upload(filename: Annotated[str, Field(description="The file's name, 
     link is for this account only, takes one upload, expires after 10 minutes, and carries no other access; the
     file waits 30 minutes for sw_import. Max 32 MiB."""
     try:
-        out = uploads.create(_who(), filename, MAX_IMPORT_BYTES, size_bytes)
+        cap = MAX_IMPORT_BYTES
+        if tenancy.company():  # inside BIZOMAT ERP: the company's fair-use limit, never above the import limit
+            cap = min(cap, int(tenancy.limits()["uploadMb"]) * 2**20)
+        out = uploads.create(_who(), filename, cap, size_bytes, company=tenancy.company())
     except uploads.UploadError as exc:
         return json.dumps({"error": f"Cannot make an upload link: {exc}"})
     out["how"] = f"curl -sS -T {_shell_quote(filename)} '{out['upload_url']}'"
@@ -117,6 +120,25 @@ def tool_names() -> list[str]:
 
 # ----------------------------------------------------------------------------- HTTP
 
+async def _company_refused(user: dict | None, grant: dict | None, send, headers: list) -> object | None:
+    """Inside BIZOMAT ERP (erplink.py) a request works in one company: the AI connection's, else the person's only
+    company there. Returns the tenancy token to reset afterwards, None outside the ERP, or False after answering 403
+    (the person reconnects the AI assistant and chooses the company)."""
+    if user is None:
+        return None
+    from . import erplink, tenancy
+    try:
+        company = erplink.company_for_connection(user["id"], grant)
+    except erplink.ErpError as e:
+        body = json.dumps({"error": e.code.lower(), "error_description": e.message}).encode()
+        await send({"type": "http.response.start", "status": 403, "headers": headers + [(b"content-type", b"application/json")]})
+        await send({"type": "http.response.body", "body": body})
+        return False
+    if not company:
+        return None
+    return tenancy.set_company(company, erplink.limits_for(company))
+
+
 class _TokenGate:
     """ASGI app for <path>/<key> (a class, so Starlette routes it as ASGI): 404 unless the key is right."""
 
@@ -129,6 +151,9 @@ class _TokenGate:
             await send({"type": "http.response.start", "status": 404, "headers": [(b"content-type", b"text/plain")]})
             await send({"type": "http.response.body", "body": b"Not found"})
             return
+        co = await _company_refused(user, None, send, [])
+        if co is False:
+            return
         token = _mcp_user.set(user)
         corr = _mcp_corr.set(_new_correlation())
         try:
@@ -136,6 +161,9 @@ class _TokenGate:
         finally:
             _mcp_corr.reset(corr)
             _mcp_user.reset(token)
+            if co is not None:
+                from . import tenancy
+                tenancy.reset(co)
 
 
 class _BearerGate:
@@ -180,6 +208,9 @@ class _BearerGate:
             if msg["type"] == "http.response.start":
                 msg = dict(msg, headers=list(msg.get("headers", [])) + cors)
             await send(msg)
+        co = await _company_refused(user, grant, send, cors)
+        if co is False:
+            return
         token = _mcp_user.set(user)
         gtok = _mcp_grant.set(grant)
         corr = _mcp_corr.set(_new_correlation())
@@ -189,6 +220,9 @@ class _BearerGate:
             _mcp_corr.reset(corr)
             _mcp_grant.reset(gtok)
             _mcp_user.reset(token)
+            if co is not None:
+                from . import tenancy
+                tenancy.reset(co)
 
 
 class Endpoint:

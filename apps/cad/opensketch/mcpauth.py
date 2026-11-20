@@ -599,6 +599,9 @@ def token(form: dict, basic: str = "", scope=None) -> dict:
                 d["grants"].pop(k, None)
             d["grants"][gid] = {"user": c["user"], "client_id": cid, "name": rec["name"], "host": host,
                                 "resource": c["resource"], "created": now, "last_used": now}
+            # Inside BIZOMAT ERP an AI connection works in one company, chosen on the consent page (erplink.py).
+            if c.get("company"):
+                d["grants"][gid]["company"] = c["company"]
             out = _new_tokens(d, gid)
             _save(d)
             return out
@@ -683,7 +686,7 @@ def grant_info(tok: str) -> dict | None:
     d = _view()
     a = d["access"].get(_h(tok))
     g = d["grants"].get(a["grant"]) if a else None
-    return {"id": a["grant"], "name": g.get("name") or "AI app"} if g else None
+    return {"id": a["grant"], "name": g.get("name") or "AI app", "company": g.get("company")} if g else None
 
 
 # ----------------------------------------------------------------------------- the person's own list
@@ -711,3 +714,36 @@ def drop_user(user_id: str) -> None:
         d = _load()
         d["grants"] = {k: g for k, g in d["grants"].items() if g["user"] != user_id}
         _save(d)
+
+
+# ----------------------------------------------------------------------------- BIZOMAT ERP (erplink.py)
+
+def grants_where(pred) -> list[dict]:
+    """Connections matching pred(grant): {id, user, name, host, created, last_used, company}, newest use first."""
+    d = _view()
+    out = [{"id": k, "user": g["user"], "name": g["name"], "host": g.get("host", ""), "created": g["created"],
+            "last_used": g.get("last_used"), "company": g.get("company")} for k, g in d["grants"].items() if pred(g)]
+    return sorted(out, key=lambda g: -(g["last_used"] or 0))
+
+
+def drop_grant_by_id(grant_id: str) -> dict | None:
+    """Ends one connection whoever it belongs to (the caller has checked they may); returns what it was."""
+    with _lock:
+        d = _load()
+        g = d["grants"].pop(grant_id, None)
+        if g is None:
+            return None
+        _save(d)
+        return {"id": grant_id, "user": g["user"], "name": g["name"], "company": g.get("company")}
+
+
+def set_grant_company(grant_id: str, company: str, user_id: str | None = None, only_if_unset: bool = False) -> dict | None:
+    """Binds a connection to a company (the person chose it, or their only company at migration)."""
+    with _lock:
+        d = _load()
+        g = d["grants"].get(grant_id)
+        if g is None or (user_id is not None and g["user"] != user_id) or (only_if_unset and g.get("company")):
+            return None
+        g["company"] = company
+        _save(d)
+        return {"id": grant_id, "user": g["user"], "name": g["name"], "company": company}

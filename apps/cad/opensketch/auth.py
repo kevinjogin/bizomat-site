@@ -283,8 +283,11 @@ def page_template() -> str:
     return t
 
 
-def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, app_host: str = "") -> bytes:
-    """Allow / Cancel for an AI app that wants to use this person's CAD Automation (mcpauth.py)."""
+def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, app_host: str = "",
+                 companies: list[dict] | None = None) -> bytes:
+    """Allow / Cancel for an AI app that wants to use this person's CAD Automation (mcpauth.py). companies: inside
+    BIZOMAT ERP (erplink.py) the companies where the person works with CAD Automation; the connection is bound to the
+    one chosen here and works only with that company's computers."""
     from urllib.parse import urlsplit
     u = urlsplit(redirect_uri)
     host = u.hostname or (u.scheme + "://")
@@ -300,6 +303,16 @@ def consent_page(app_name: str, redirect_uri: str, user: dict | None, req: str, 
            + (" That is an app on this computer: allow it only if you just started connecting it." if local else "")
            + '</div>')
     fields = [f'<input type="hidden" name="req" value="{_esc(req)}">']
+    if companies:
+        if len(companies) == 1:
+            c = companies[0]
+            fields.append(f'<input type="hidden" name="company" value="{_esc(c["id"])}">')
+            top += f'<div class="note">It will work in <b>{_esc(c.get("name") or "")}</b>, with that company\'s computers only.</div>'
+        else:
+            opts = "".join(f'<option value="{_esc(c["id"])}">{_esc(c.get("name") or c["id"])}</option>' for c in companies)
+            fields.append('<label for="company">Company it works in</label>'
+                          f'<select id="company" name="company" required><option value="">Choose a company</option>{opts}</select>'
+                          '<div class="note">It works with that company\'s computers only. To use it in another company, connect it again.</div>')
     links = ('<button type="submit" name="action" value="deny" class="ghost">Cancel</button>'
              '<div class="note center">You can disconnect it at any time on your CAD Automation dashboard.</div>')
     sub = f"{name} wants to use BIZOMAT CAD Automation to work in SOLIDWORKS for you." + (f" Its details come from <b>{_esc(app_host)}</b>." if app_host else "")
@@ -322,7 +335,7 @@ def oauth_problem_page(message: str) -> bytes:
 
 # Privacy notice: public (Google requires one before a sign-in app can be used by anyone), about this service.
 PRIVACY_BODY = """<main id="main"><div class="doc-hero"><div class="container"><span class="eyebrow">Legal</span><h1>Privacy</h1>
-<p>What BIZOMAT CAD Automation keeps about you, why, and who else sees it. Last updated 15 November 2026.</p></div></div>
+<p>What BIZOMAT CAD Automation keeps about you, why, and who else sees it. Last updated 20 November 2026.</p></div></div>
 <div class="container doc-layout"><nav class="toc" aria-label="On this page"><h4>On this page</h4><ol>
 <li><a href="#summary">Summary</a></li><li><a href="#kept">What is kept</a></li><li><a href="#bizomat">Sign in with BIZOMAT</a></li><li><a href="#erp">BIZOMAT ERP</a></li><li><a href="#google">Sign in with Google</a></li>
 <li><a href="#ai">AI assistants</a></li><li><a href="#who">Who can see your work</a></li><li><a href="#delete">Deleting your data</a></li>
@@ -368,6 +381,13 @@ they were connected and last used). It never has a password, key or token, a fil
 models.</p>
 <p>BIZOMAT ERP shows it to you and, in a company you belong to on BIZOMAT, to that company's owner and administrators.
 When your account is removed here, the report is withdrawn.</p>
+<p>Where your company uses CAD Automation inside BIZOMAT ERP, this service also tells BIZOMAT ERP once a minute which of
+its accounts exist, how many computers, commands and AI connections each has, and each finished command (its ID, the tool,
+its status, when, how long it took and the error message, if any), so the ERP can show your company's CAD work and its
+history. Inside the ERP each computer, AI connection, command and export belongs to one company, and BIZOMAT ERP decides
+who in that company sees it: by default the owner, administrators and managers see everyone's, employees their own. Nobody
+but you sees the name of the file open in SOLIDWORKS on your computer. An export you save to a product is copied into
+BIZOMAT ERP as an engineering document; other exports stay here for one hour.</p>
 <p>This server, in Amsterdam, the Netherlands, also scans company registration documents that BIZOMAT ERP's companies
 upload for verification: it fetches one document at a time from BIZOMAT ERP over an encrypted connection, scans it for
 malware with ClamAV in a private temporary folder, tells BIZOMAT ERP the result and deletes the document straight away.
@@ -743,7 +763,9 @@ def _machine_path(path: str) -> bool:
     return (path in ("/mcp", "/mcp/") or path.startswith("/mcp/") or path in OAUTH_PUBLIC
             or path in ("/solidworks/mcp", "/solidworks/mcp/") or path.startswith("/solidworks/mcp/")
             or path.startswith("/.well-known/oauth-")
-            or path.startswith(("/v2/device/", "/v2/devices/", "/v2/bridge/")) or path == "/v2/keys")
+            or path.startswith(("/v2/device/", "/v2/devices/", "/v2/bridge/")) or path == "/v2/keys"
+            # BIZOMAT ERP's server: its own signed assertion on every request (erplink.py), never a cookie
+            or path.startswith("/api/erp/v1/"))
 
 
 def _same_origin(scope) -> bool:
@@ -924,6 +946,10 @@ class PasswordGate:
         if not post:
             if current_user(scope, m) is not None:
                 return await go(nxt)  # already signed in on this browser: straight back to work
+            from . import bizomat_id, erplink
+            if erplink.redirect_on() and bizomat_id.enabled() and q.get("password") != "1":
+                # CAD Automation works inside BIZOMAT ERP: one sign-in, BIZOMAT's (/login?password=1 keeps this page)
+                return await go("/auth/bizomat?next=" + quote(nxt))
             return await _send(send, 200, _login_page(nxt), HTML)
         keys = ("ip:" + _client(scope), "email:" + form.get("email", "").strip().lower())
         if _limited(*keys):
