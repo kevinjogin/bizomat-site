@@ -4,7 +4,7 @@
 // any address that is not a *-staging app, signs up invented accounts and registers an invented company.
 //
 //   node infrastructure/staging/verify.mjs off     the release with every flag off: pages, ERP modules, no new UI
-//   node infrastructure/staging/verify.mjs on      new_ui_enabled, company_members_v2, cad_in_erp and company_admin_console on (switched by the workflow)
+//   node infrastructure/staging/verify.mjs on      new_ui_enabled, company_members_v2, cad_in_erp, company_admin_console and move_records on (switched by the workflow)
 //   node infrastructure/staging/verify.mjs reset   after the workflow switched them off again: the old look is back
 //
 // Settings: STAGING_URL, GATE_PW (the gate's password; never printed), PW_DIR (where playwright is installed),
@@ -39,7 +39,7 @@ const bad = (what) => {
 };
 const check = (cond, what) => (cond ? ok(what) : bad(what));
 const newUi = phase === 'on';
-say(`\n### Staging verification: ${phase === 'off' ? 'every flag off' : phase === 'on' ? 'new_ui_enabled, company_members_v2, cad_in_erp and company_admin_console on' : 'flags off again'}\n`);
+say(`\n### Staging verification: ${phase === 'off' ? 'every flag off' : phase === 'on' ? 'new_ui_enabled, company_members_v2, cad_in_erp, company_admin_console and move_records on' : 'flags off again'}\n`);
 
 // ------------------------------------------------------------------ the website, as the server sends it
 /** A page with a browser's Accept-Encoding, decoded here (fetch would decode on its own and hide a broken body). */
@@ -298,6 +298,38 @@ if (tester.companyId) {
       return { status: r.status, type: r.headers.get('content-type') ?? '', head: (await r.text()).split('\n')[0] };
     }, `${BASE}/erp/api/company/c/${cid}/admin/access-review?format=csv`);
     check(csv.status === 200 && csv.type.includes('text/csv') && csv.head.includes('Company role'), `the access review downloads as CSV (${csv.status})`);
+  }
+}
+
+// Moving tasks (move_records, docs/platform/moving-records.md): from the tester's own company to the invented company.
+if (tester.companyId) {
+  const moveOn = phase === 'on';
+  const companies = (await api('GET', '/system/me')).body?.companies ?? [];
+  const tasksOf = (c) => (c?.tools ?? []).find((t) => t.app === 'tasks')?.id;
+  const ownWs = tasksOf(companies.find((c) => c.kind === 'own'));
+  const coWs = tasksOf(companies.find((c) => c.id === tester.companyId));
+  if (!ownWs || !coWs) bad(`both companies have a Projects and Tasks workspace (own ${Boolean(ownWs)}, company ${Boolean(coWs)})`);
+  else {
+    const stamp = new Date().toISOString().slice(0, 16);
+    const from = await api('POST', `/workspaces/${ownWs}/boards`, { name: `Move check ${stamp}` });
+    const to = await api('POST', `/workspaces/${coWs}/boards`, { name: `Moved here ${stamp}` });
+    const task = await api('POST', `/boards/${from.body?.id}/items`, { name: 'Entered in the wrong company' });
+    await api('POST', `/boards/${from.body?.id}/items`, { name: 'Its subtask', parentItemId: task.body?.id });
+    const status = await api('GET', `/transfer/status?from=${from.body?.id}`);
+    check(status.status === 200 && status.body?.enabled === moveOn, `moving tasks is ${moveOn ? 'on' : 'off'} (${status.status})`);
+    const body = { itemIds: [task.body?.id], toBoardId: to.body?.id };
+    const preview = await api('POST', `/boards/${from.body?.id}/items/transfer/preview`, body);
+    if (moveOn) {
+      check(preview.status === 200 && preview.body?.tasks?.[0]?.ok === true && preview.body?.tasks?.[0]?.subtasks === 1 && preview.body?.sameCompany === false, `the preview lists the task and its subtask (${preview.status})`);
+      const moved = await api('POST', `/boards/${from.body?.id}/items/transfer`, body);
+      const after = await api('GET', `/items/${task.body?.id}`);
+      check(moved.status === 200 && moved.body?.moved === 1 && after.body?.board?.id === to.body?.id && after.body?.subitems?.length === 1, `the task moved to the other company with its subtask (${moved.status})`);
+      const before = problems.length;
+      await p.goto(`${BASE}/erp/tasks/w/${coWs}/boards/${to.body?.id}`, { waitUntil: 'networkidle' });
+      await p.waitForTimeout(1500);
+      const names = await p.evaluate(() => document.body.innerText);
+      check(problems.length === before && names.includes('Entered in the wrong company'), 'the moved task shows on the new project, no errors');
+    } else check(preview.status === 403 && preview.body?.details?.code === 'MOVE_OFF', `moving tasks answers MOVE_OFF (${preview.status})`);
   }
 }
 
