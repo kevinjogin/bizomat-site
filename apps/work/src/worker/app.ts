@@ -40,6 +40,7 @@ import { finPublicRoutes, finRoutes } from './fin';
 import { companyPublicRoutes, companyRoutes } from './company/routes';
 import { companyVerificationRoutes } from './company/verification-routes';
 import { membersRoutes, platformMembersRoutes } from './company/members-routes';
+import { companyAdminRoutes } from './company/admin-console';
 import { complianceGate } from './compliance/core';
 import { memberAccessGate } from './company/members-gate';
 import { flagOn } from './platform/flags';
@@ -257,6 +258,8 @@ export function createApp() {
   api.route('/company', companyVerificationRoutes);
   // Company members, roles and ownership transfer (flag company_members_v2, off): company/members-routes.ts.
   api.route('/company', membersRoutes);
+  // The Company Admin console (flag company_admin_console; docs/platform/company-admin.md).
+  api.route('/company', companyAdminRoutes);
   // BIZOMAT System, every tool in one place by company, at /system (src/worker/system).
   api.route('/system', systemRoutes);
   // BIZOMAT ERP's Asset Management and Maintenance, Stage 1 (src/worker/maintenance): assets, requests, work orders.

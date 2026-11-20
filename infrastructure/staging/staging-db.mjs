@@ -5,7 +5,7 @@
 // /data/work/db.sqlite.
 //
 //   node staging-db.mjs prepare     staging's sign-up policy accepts invented example.com addresses (email goes to the log)
-//   node staging-db.mjs flags-on    new_ui_enabled, company_members_v2 and cad_in_erp on for everyone in staging
+//   node staging-db.mjs flags-on    new_ui_enabled, company_members_v2, cad_in_erp and company_admin_console on for everyone in staging
 //   node staging-db.mjs flags-off   both off again (the global rows removed)
 //
 // Prints one JSON line with what is set now; never prints anyone's data.
@@ -16,7 +16,7 @@ const app = process.env.FLY_APP_NAME ?? '';
 const file = process.argv[3] ?? '/data/work/db.sqlite';
 if (!/-staging$/.test(app) && process.env.STAGING_DB_LOCAL !== '1') throw new Error(`refused: not a staging Machine (${app || 'no FLY_APP_NAME'})`);
 if (file !== '/data/work/db.sqlite' && process.env.STAGING_DB_LOCAL !== '1') throw new Error('refused: not the work database');
-const FLAGS = ['new_ui_enabled', 'company_members_v2', 'cad_in_erp'];
+const FLAGS = ['new_ui_enabled', 'company_members_v2', 'cad_in_erp', 'company_admin_console'];
 const db = new DatabaseSync(file);
 db.exec('PRAGMA busy_timeout = 5000');
 const t = Date.now();

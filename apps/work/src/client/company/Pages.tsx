@@ -807,7 +807,7 @@ function VerificationCard({ companyId }: { companyId: string }) {
 }
 
 /** BIZOMAT support's access to the company (R5): who, why, until when; the owner and administrators can end it. */
-function SupportAccess({ companyId }: { companyId: string }) {
+export function SupportAccess({ companyId }: { companyId: string }) {
   const qc = useQueryClient();
   const toast = useToast();
   const q = useQuery({ queryKey: ['company', companyId, 'support'], queryFn: () => get<{ id: string; admin: string; reason: string; startsAt: number; endsAt: number; endedAt: number | null; active: boolean }[]>(co(companyId, '/support')) });

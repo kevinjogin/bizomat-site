@@ -45,6 +45,8 @@ const SupplyChainArea = lazy(() => import('./erp/SupplyChain').then((m) => ({ de
 const WhsArea = lazy(() => import('./whs/Whs').then((m) => ({ default: m.WhsArea })));
 // CAD Automation inside the ERP (flag cad_in_erp): /c/<company>/cad and /cad/pair?code=... (src/client/system/cad).
 const CadArea = lazy(() => import('./cad/Cad').then((m) => ({ default: m.CadArea })));
+// The Company Admin console (flag company_admin_console): /c/<company>/company-admin for the owner and administrators.
+const CompanyAdminArea = lazy(() => import('./companyadmin/CompanyAdmin').then((m) => ({ default: m.CompanyAdminArea })));
 const WhsLegalAdmin = lazy(() => import('./whs/LegalAdmin').then((m) => ({ default: m.LegalAdmin })));
 const BillingPage = lazy(() => import('./billing/Billing').then((m) => ({ default: m.BillingPage })));
 const BillingAdmin = lazy(() => import('./billing/BillingAdmin').then((m) => ({ default: m.BillingAdmin })));
@@ -237,6 +239,8 @@ export function SystemRoutes() {
       <Route path="/admin/*" element={<Shell><AdminArea /></Shell>} />
       {/* CAD Automation: in the company used last where it works in the ERP (the Companion's pairing page included). */}
       <Route path="/cad/*" element={<CadRedirect />} />
+      {/* Company Admin: the console of the company used last where the person is the owner or an administrator. */}
+      <Route path="/company-admin/*" element={<CompanyAdminRedirect />} />
       <Route path="/my-work" element={<MyWorkRedirect />} />
       {/* The module rail's Maintenance: the maintenance of the company used last. */}
       <Route path="/maintenance/*" element={<MaintenanceRedirect />} />
@@ -309,6 +313,35 @@ function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'i
 const useCadCompanies = () =>
   useQuery({ queryKey: ['cad', 'companies'], queryFn: () => get<{ companies: { id: string; name: string; kind: string; operate: boolean }[] }>('/erp/cad/companies'), staleTime: 60_000, retry: false });
 
+/** The companies whose Company Admin console the person may open (owner or administrator, flag on). */
+const useAdminCompanies = () =>
+  useQuery({ queryKey: ['company', 'admin-companies'], queryFn: () => get<{ companies: { id: string; name: string; role: string }[] }>('/company/admin/companies'), staleTime: 60_000, retry: false });
+
+/** /company-admin/...: the console of the company used last where the person administers, else the only one, else a choice. */
+function CompanyAdminRedirect() {
+  const location = useLocation();
+  const q = useAdminCompanies();
+  if (q.isLoading) return <Loading label="Opening Company Admin…" />;
+  const list = q.data?.companies ?? [];
+  const rest = location.pathname.replace(/^\/company-admin/, '');
+  const pick = list.find((c) => c.id === lastCompany()) ?? (list.length === 1 ? list[0] : null);
+  if (pick) return <Navigate to={`/c/${pick.id}/company-admin${rest}${location.search}`} replace />;
+  return (
+    <Shell>
+      <div className="page crm-page">
+        <PageHeader title="Company Admin" subtitle={list.length ? 'Choose the company to manage.' : 'The Company Admin console is for the owner and administrators of a registered company, where it is switched on.'} />
+        {list.length ? (
+          <ul className="erp-list">
+            {list.map((c) => <li key={c.id}><Link to={`/c/${c.id}/company-admin${rest}`}>{c.name}</Link> <span className="muted small">· {ROLE_LABELS[c.role as keyof typeof ROLE_LABELS] ?? c.role}</span></li>)}
+          </ul>
+        ) : (
+          <div className="row"><Link className="btn" to="/administration">Open Administration</Link></div>
+        )}
+      </div>
+    </Shell>
+  );
+}
+
 /** /cad/...: the same CAD Automation page in the company used last where it works in the ERP, else the only one; the
  * Companion's pairing page asks which company when there are several. Where it is not on, CAD Automation's setup page. */
 function CadRedirect() {
@@ -367,6 +400,7 @@ function CompanyArea() {
     <Shell view={q.data}>
       <Routes>
         <Route path="home" element={<CompanyHome view={q.data} />} />
+        <Route path="company-admin/*" element={<Suspense fallback={<Loading />}><CompanyAdminArea companyId={q.data.company.id} /></Suspense>} />
         <Route path="cad/*" element={<Suspense fallback={<Loading />}><CadArea companyId={q.data.company.id} companyName={q.data.company.name} fallback={<CadPage view={q.data} />} /></Suspense>} />
         <Route path="settings" element={<CompanySettings view={q.data} />} />
         <Route path="maintenance/*" element={<Suspense fallback={<Loading />}><MaintenanceArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
@@ -398,6 +432,8 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
   const base = id ? `/c/${id}` : '';
   const cadCompanies = useCadCompanies().data?.companies ?? [];
   const cadHere = !!id && cadCompanies.some((c) => c.id === id);
+  const adminCompanies = useAdminCompanies().data?.companies ?? [];
+  const adminHere = !!id && adminCompanies.some((c) => c.id === id);
   return (
     <div className={`shell crm-shell co-shell sys-shell${SUITE_SHELL ? ' in-suite' : ''}${navOpen ? ' nav-open' : ''}`}>
       <SuiteRail />
@@ -429,6 +465,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             <NavLink to={`${base}/maintenance`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="wrench" /> Maintenance</NavLink>
             <NavLink to={`${base}/whs`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> Health and Safety</NavLink>
             <NavLink to={`${base}/settings`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Company</NavLink>
+            {adminHere ? <NavLink to={`${base}/company-admin`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="users" /> Company Admin</NavLink> : null}
           </>
         ) : null}
         {view?.tools.length ? (
@@ -1178,6 +1215,7 @@ function ReportsPage() {
 function Administration() {
   usePageTitle('Administration');
   const { me, view } = useCurrentCompany();
+  const adminCompanies = useAdminCompanies().data?.companies ?? [];
   if (me.error) return <div className="page"><ErrorBox error={me.error} retry={() => me.refetch()} /></div>;
   if (!view.data || !me.data) return <Loading />;
   const c = view.data.company;
@@ -1198,9 +1236,16 @@ function Administration() {
     { app: 'finance', label: 'Finance: team, roles and settings', href: (id) => toolUrl(`/finance/o/${encodeURIComponent(id)}/team`) },
     { app: 'tasks', label: 'Projects and Tasks: workspace settings', href: (id) => toolUrl(`/tasks/w/${encodeURIComponent(id)}/settings`) },
   ];
+  const consoleHere = adminCompanies.some((x) => x.id === c.id);
   return (
     <div className="page crm-page">
       <PageHeader title="Administration" subtitle={`${c.name}: its people, departments, tools and permissions. Each tool keeps its own roles; the server checks them.`} />
+      {consoleHere ? (
+        <section className="co-prompt">
+          <p><strong>Company Admin.</strong> Manage {c.name}'s team in one place: members and invitations, departments, roles and access, API tokens and support access, activity, and what needs your attention.</p>
+          <Link className="btn primary" to={`/c/${c.id}/company-admin`}><Icon name="users" /> Open Company Admin</Link>
+        </section>
+      ) : null}
       {companyLinks.length ? (
         <section className="card card-pad stack">
           <h2 className="crm-subhead">Company</h2>

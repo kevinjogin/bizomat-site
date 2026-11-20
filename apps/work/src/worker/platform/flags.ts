@@ -125,6 +125,15 @@ const BASE: Record<string, FlagDef> = {
     enforcement: true,
     release: 'Members',
   },
+  company_admin_console: {
+    label: 'Company Admin console',
+    description: 'A console in the ERP for the owner and administrators of a registered company: the team at a glance and what needs attention, members and invitations, departments, roles and access, security (the company’s API tokens and support access), activity and an access review export. Off: company administration stays on the Administration page’s links.',
+    values: ONOFF,
+    scopes: ['global', 'stage', 'company'],
+    risk: 'medium',
+    enforcement: true,
+    release: 'Company Admin',
+  },
   evidence_scanning: {
     label: 'Malware scan of verification documents',
     description: 'Uploaded verification documents are handed to the ClamAV scanner on CAD Automation’s Machine. Documents can be opened or accepted only after a clean scan, whether this is on or not.',

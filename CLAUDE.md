@@ -202,6 +202,14 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   rollback is switching them off. Released 20 Nov 2026 with every flag off (kevinjogin/bizomat-site#94, deploy run 43;
   the engine kevinjogin/bizomat-cad#19, `cados` 13db582, its deploy run 10; `apps/cad` synced in #95), after the staging
   verification with `cad_in_erp` on in staging only; the engine's sync to the ERP answers 200 every minute.
+  **Company Admin console** (owner, 20 Nov 2026; `docs/platform/company-admin.md`; flag `company_admin_console`, off):
+  the company administrators' counterpart of the super admin's ERP console, at `/erp/c/<company>/company-admin` (and
+  `/erp/company-admin`), with "Company Admin" in the module rail and side menu for the owner and active administrators
+  of a registered company only. Tabs: Overview (the team at a glance and what needs attention), Members, Departments,
+  Roles and access (with the access review, on screen and CSV), ERP roles, Security (the company's API tokens, revoked
+  with a reason, never the owner's by an administrator; support access), Activity and Settings. Members, Departments,
+  Activity and Settings are the company area's own pages and checks; `src/worker/company/admin-console.ts` adds the
+  overview, tokens and access review. Never switch the flag on without the owner's approval.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
