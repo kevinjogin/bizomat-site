@@ -257,7 +257,9 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   testing** (20 Nov 2026); a platform admin switches any off. Payroll is **not certified payroll**: it uses the rates the
   company sets, has no statutory tax tables, makes no payment and reports nothing to any tax authority; never claim
   otherwise. Depreciation, revenue schedules and pay runs are **not** posted to Finance's ledger; consolidation and the
-  supplier portal are planned. Healthcare is administration only: no clinical or patient records.
+  supplier portal are planned. Healthcare is administration only: no clinical or patient records. Released 20 Nov 2026
+  (kevinjogin/bizomat-site#111, deploy run 51, image d62af2b-run51, migration 0038 applied at start-up) after the
+  staging walk (`infrastructure/staging/verify.mjs`, every flag off) passed with the new modules in it.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
