@@ -80,7 +80,8 @@ answers are 302, not 301, because a flag decides them: switching it off is the r
 | `cad_bom` | everyone, stage, company | Read the open assembly into a bill of materials proposal for a draft revision |
 | `cad_manufacturing` | everyone, stage, company | Approved drawings of the revision on manufacturing orders and the shop floor |
 | `cad_quality` | everyone, stage, company | Approved drawings on NCRs and inspection plans |
-| `cad_projects` | everyone, stage, company | Ask for a review of an engineering document as a task on a Projects and Tasks board |
+| `cad_projects` | everyone, stage, company | Ask for a review of an engineering document as a task on a Projects and Tasks board, optionally of a named reviewer |
+| `cad_password_retired` | everyone | CAD Automation's own password sign-in, sign-up, invitations, early access and the Companion's password pairing stop; everyone signs in with BIZOMAT and pairs with the code. Acts only while every CAD Automation account is linked to a BIZOMAT account. Off: password sign-in again |
 
 Each sub-flag acts only where `cad_in_erp` is on too. The module switch for "CAD Automation" (Company settings) and, with
 `company_members_v2`, each member's module access and scope for it apply as for every other module.
@@ -117,6 +118,25 @@ too, and both must pass (`src/worker/cad/access.ts`).
 
 Someone else's computer never shows the file open in SOLIDWORKS or its installation folders, and Windows paths in
 someone else's error messages read "a file". The example company has no CAD Automation (`CAD_EXAMPLE`).
+
+The same rules reach the AI connector (contract 2, below): a read-only role is refused there inside the company, and
+where a role may not download, an AI assistant's export has no download link.
+
+## Contract 2 (owner's approval of 20 Nov 2026)
+
+The owner approved the audit (`docs/cad/AUDIT-2026-11-20.md`) and its fixes G2 to G7. CAD Automation's sync says
+`contract: 2`; the ERP then answers each company as `{id, name, operate, export}` and says whether password sign-in is
+retired. An engine from before is told only the companies where the person may work, as before, so the order of the two
+deploys never widens anyone's access. The console's CAD Automation panel shows the contract the engine speaks.
+
+| Gap | What changed |
+| --- | --- |
+| G2, downloads | Where the company's download setting does not cover the role, an AI assistant's export has no link (it stays in Exports for an hour, for someone who may download). A link is checked again when used. Each download through a link is in the company's history once (`cad_downloads`, migration 0039), as a download from the ERP is |
+| G3, read-only roles | Named to the engine with `operate: false`: the AI connector refuses them in the company (`READ_ONLY`) instead of letting them work by person; the consent page offers only companies where they may work |
+| G4, queue | The console shows commands waiting for a computer and running apart |
+| G5, notices | A review request can name a reviewer: someone in the company who can open the board (`GET .../cad/review-boards/<board>/reviewers`). The task is given to them where the board has a People column (Projects then tells them, as for any task), and they get a notice in CAD Automation; without such a column the notice is also emailed where email is set up. The people who saved CAD exports to a revision, or asked for its review, get a notice when it is released. The notices (and failed runs) show under **For you** on the module's Overview (`GET .../cad/notices`, `POST .../cad/notices/read`) |
+| G6, late sync | After 5 minutes without a report from CAD Automation, the module and the console say so; after 15 minutes the engine works by person until it reports again (company limits, team views and the read-only refusal then do not apply to new work; nothing moves between companies) |
+| G7, password sign-in | The flag `cad_password_retired` (off). The console says how many CAD Automation accounts are linked to BIZOMAT accounts and when it is ready; the engine acts only on a fresh answer, so password sign-in comes back if the ERP cannot be reached |
 
 ## AI connections
 
@@ -159,28 +179,34 @@ connections not yet in a company) and lets a platform admin place a reviewed acc
 ## Platform admin guide
 
 1. Check `SETTINGS_ENCRYPTION_KEY` and `WORK_CAD_URL` are set in production (they are: the console's panel says
-   "Connection from the ERP: Set").
-2. With the owner's approval, switch `cad_in_erp` on for the pilot company in the Control Centre, and the sub-flags
-   wanted for it.
+   "Connection from the ERP: Set"), and that the panel shows contract 2.
+2. With the owner's approval, switch `cad_in_erp` on for the pilot company in the Control Centre, with
+   `company_members_v2` for the same company (members' module access and scope), and the sub-flags wanted for it.
 3. Open the console's CAD Automation panel: the company appears under usage once CAD Automation's next sync arrives;
    place any account in the review list.
 4. With the pilot working, switch `cad_in_erp` on for everyone, then `cad_redirect` on (everyone): the old pages then
    open in the ERP for visitors and for people whose company has the module. A signed-in person whose company does not
    have it keeps the old pages.
+5. Once the panel says every CAD Automation account is linked to a BIZOMAT account, and with the owner's approval,
+   switch `cad_password_retired` on (decision 4 of the audit).
 
 ## Rollback
 
-Switch `cad_redirect` off: the old pages work again at once (CAD Automation follows the ERP's answer within a minute;
+Switch `cad_password_retired` off: password sign-in works again within a minute. Switch `cad_redirect` off: the old
+pages work again at once (CAD Automation follows the ERP's answer within a minute;
 an answer older than 15 minutes counts for nothing). Switch `cad_in_erp` off for the company: the module shows the
 earlier CAD Automation page, AI connections and computers work as before by person, and nothing is lost: the company
 recorded on computers, commands and connections stays, ready for the next time. To go back further, the code is
-additive: migration 0037 has a reverse script, and the engine's new columns are ignored by the code before it.
+additive: migrations 0037 and 0039 have reverse scripts, and the engine's new columns and keys are ignored by the code
+before them.
 
 ## Tests
 
-- ERP: `apps/work/test/cad.test.ts` (10 tests, a stand-in CAD engine that checks every assertion against the published
+- ERP: `apps/work/test/cad.test.ts` (15 tests, a stand-in CAD engine that checks every assertion against the published
   key): flags and isolation between companies, the role matrix and the download setting, members' module access and
-  scope, saving an export, bill of materials proposals, the sync and the review list, drawings, the companies list.
-- Engine: kevinjogin/bizomat-cad `tests/test_erplink.py` (18 tests, a stand-in ERP with its own key), including the
-  person's own keys and the old pages' answers to visitors and signed-in people.
+  scope, saving an export, bill of materials proposals, the sync and the review list, drawings, the companies list;
+  and contract 2: read-only roles and download permission named only to a contract 2 engine, link downloads recorded
+  once, password retirement, the late-sync warning, a reviewer and their notice, the notice when a revision is released.
+- Engine: kevinjogin/bizomat-cad `tests/test_erplink.py` (25 tests, a stand-in ERP with its own key), including the
+  person's own keys, the old pages' answers to visitors and signed-in people, and contract 2.
 - Website: `tests/cad-links.test.ts` (no link to CAD Automation's pages; the links open the ERP).
