@@ -7,6 +7,7 @@ import { HOME_DISCOVERY_EXAMPLES, HOME_ERP_GROUPS, HOME_FEATURED_BOOKS, HOME_FEA
 import { WORKFLOWS, guideById } from '../src/data/learn/index.ts';
 import { NAV, SITE } from '../src/config/site.ts';
 import { PRODUCTS, SOLUTIONS } from '../src/config/products.ts';
+import { SYSTEMS } from '../src/config/systems.ts';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const home = read('src/pages/index.astro');
@@ -62,7 +63,7 @@ test('the ERP modules on the homepage are the module rail\'s own, each with its 
   // A module that is not built says so: the status comes from the guide, never from the homepage.
   assert.match(home, /g\.status !== 'live' && g\.status !== 'connected' \? <StatusLabel status=\{g\.status\} \/>/);
   for (const s of HOME_LEARN_STARTS) {
-    const m = s.href.match(/^\/learn\/(workflows\/)?([a-z0-9-]+)\/$/);
+    const m = s.href.match(/^\/learn\/#(workflow-)?([a-z0-9-]+)$/);
     if (m) assert.ok(m[1] ? WORKFLOWS.some((w) => w.id === m[2]) : guideById(m[2]), `${s.who}: ${s.href} is a real guide`);
     else assert.equal(s.href, '/resources/');
   }
@@ -70,15 +71,21 @@ test('the ERP modules on the homepage are the module rail\'s own, each with its 
 
 test('products are described from the catalogue, and every product action leads to a real page', () => {
   assert.deepEqual(PRODUCTS.map((p) => [p.id, p.name, p.status, p.url, p.signIn]), [
-    ['erp', 'ERP', 'available', '/systems/erp/', true],
-    ['cad', 'Engineering Automation', 'available', '/systems/engineering/', true],
-    ['work', 'Projects', 'available', '/systems/projects/', true],
-    ['crm', 'Customer Relationship Management', 'available', '/systems/crm/', true],
-    ['finance', 'Finance', 'available', '/systems/finance/', true],
+    ['erp', 'ERP', 'available', '/systems/#erp', true],
+    ['cad', 'Engineering Automation', 'available', '/systems/#engineering', true],
+    ['work', 'Projects', 'available', '/systems/#projects', true],
+    ['crm', 'Customer Relationship Management', 'available', '/systems/#crm', true],
+    ['finance', 'Finance', 'available', '/systems/#finance', true],
     ['resources', 'Resources', 'available', '/resources/', false],
   ]);
   assert.deepEqual(PRODUCTS.map((p) => p.formerly), ['BIZOMAT System', 'CAD Automation (CADOS)', 'Project Management (KEVOS Work)', undefined, undefined, undefined], 'former names are stated for people who know them');
-  for (const p of PRODUCTS) assert.ok(read(`src/pages/${p.url!.replace(/^\/|\/$/g, '')}/index.astro`).length > 0, `${p.url} exists`);
+  // Every system is a section of the one Systems page (owner, 20 Nov 2026), with its full content in a toggle there.
+  const systemsPage = read('src/pages/systems/index.astro');
+  for (const p of PRODUCTS) {
+    const sid = p.url!.match(/^\/systems\/#([a-z]+)$/)?.[1];
+    if (sid) assert.ok(SYSTEMS.some((s) => s.id === sid) && /FULL\[s\.id\]/.test(systemsPage), `${p.url} is a section of /systems/`);
+    else assert.ok(read(`src/pages/${p.url!.replace(/^\/|\/$/g, '')}/index.astro`).length > 0, `${p.url} exists`);
+  }
   for (const s of SOLUTIONS) for (const path of s.paths) {
     assert.ok(/^\/(tools|reados|contact|systems)\//.test(path.href), `${s.id}: ${path.href} is a real page`);
   }

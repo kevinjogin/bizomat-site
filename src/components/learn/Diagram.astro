@@ -11,10 +11,15 @@ import companyStructure from '../../assets/learn/company-structure.svg?raw';
 export const DIAGRAMS = { 'erp-map': erpMap, 'one-account': oneAccount, 'approval-path': approvalPath, 'cad-connection': cadConnection, 'company-structure': companyStructure } as const;
 export type DiagramName = keyof typeof DIAGRAMS;
 
-interface Props { name: DiagramName; caption: string; wide?: boolean }
-const { name, caption, wide } = Astro.props;
+interface Props { name: DiagramName; caption: string; wide?: boolean; /** Prefix for the drawing's own ids, so one page can show it more than once. */ uid?: string }
+const { name, caption, wide, uid = name } = Astro.props;
+const svg = DIAGRAMS[name]
+  .replace(/\bid="([^"]+)"/g, `id="${uid}-$1"`)
+  .replace(/url\(#([^)]+)\)/g, `url(#${uid}-$1)`)
+  .replace(/\b(aria-labelledby|aria-describedby)="([^"]+)"/g, (_m, attr: string, ids: string) => `${attr}="${ids.split(/\s+/).map((x) => `${uid}-${x}`).join(' ')}"`)
+  .replace(/\b(xlink:href|href)="#([^"]+)"/g, `$1="#${uid}-$2"`);
 ---
 <figure class:list={['lv-figure', { 'lv-figure--wide': wide }]}>
-  <div class="lv-frame" set:html={DIAGRAMS[name]} />
+  <div class="lv-frame" set:html={svg} />
   <figcaption><span class="lv-tag">Illustration</span> {caption}</figcaption>
 </figure>

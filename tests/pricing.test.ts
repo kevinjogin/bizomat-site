@@ -51,19 +51,19 @@ test('no pricing page: /pricing/ answers 301 to the Systems catalogue, and nothi
   const redirects = read('public/_redirects');
   assert.match(redirects, /^\/pricing \/systems\/ 301$/m);
   assert.match(redirects, /^\/pricing\/ \/systems\/ 301$/m);
-  for (const file of ['src/config/site.ts', 'src/pages/systems/index.astro', 'src/pages/systems/erp/index.astro', 'apps/work/src/client/company/Register.tsx', 'apps/work/src/client/system/billing/Billing.tsx']) {
+  for (const file of ['src/config/site.ts', 'src/pages/systems/index.astro', 'src/components/systems/full/Erp.astro', 'apps/work/src/client/company/Register.tsx', 'apps/work/src/client/system/billing/Billing.tsx']) {
     assert.doesNotMatch(read(file), /\/pricing\//, `${file} links to the withdrawn pricing page`);
   }
 });
 
 test('no page or screen shows the subscription price, and the Systems pages say it is free', () => {
-  for (const file of ['src/pages/systems/index.astro', 'src/pages/systems/erp/index.astro', 'apps/work/src/client/company/Register.tsx', 'apps/work/src/client/system/billing/Billing.tsx']) {
+  for (const file of ['src/pages/systems/index.astro', 'src/components/systems/full/Erp.astro', 'apps/work/src/client/company/Register.tsx', 'apps/work/src/client/system/billing/Billing.tsx']) {
     const src = read(file);
     assert.doesNotMatch(src, /config\/pricing\.ts/, `${file} reads the price`);
     assert.doesNotMatch(src, /A\$\s?\d/, `${file} writes an amount`);
     assert.doesNotMatch(src, /per active user per month/, `${file} describes a per-user price`);
   }
-  assert.match(read('src/pages/systems/erp/index.astro'), /BIZOMAT ERP is free for every company: nothing is charged\./);
+  assert.match(read('src/components/systems/full/Erp.astro'), /BIZOMAT ERP is free for every company: nothing is charged\./);
   assert.match(read('src/pages/systems/index.astro'), /Every system is free to use: nothing is charged\./);
   // The billing screen's free view.
   assert.match(read('apps/work/src/client/system/billing/Billing.tsx'), /BIZOMAT is free for every company/);

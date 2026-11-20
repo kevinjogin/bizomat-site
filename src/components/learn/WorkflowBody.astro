@@ -1,0 +1,41 @@
+---
+// One end-to-end workflow, inside its toggle on the one page /learn/ (owner, 20 Nov 2026): what it achieves, the
+// modules it passes through, a step-by-step walk-through and its common questions. Every id starts with
+// "workflow-<id>". Data: src/data/learn/workflows/.
+import StatusLabel from '../StatusLabel.astro';
+import FlowChain from './FlowChain.astro';
+import TutorialStepper from './TutorialStepper.astro';
+import Faqs from './Faqs.astro';
+import { RAIL } from './ErpScreen.astro';
+import { FEATURE_STATUS } from '../../config/systems.ts';
+import { guideById, guideUrl } from '../../data/learn/index.ts';
+import type { Workflow } from '../../data/learn/types.ts';
+
+interface Props { w: Workflow }
+const { w } = Astro.props;
+const p = `workflow-${w.id}`;
+const guides = [...new Set(w.stages.map((s) => s.guide))].map(guideById);
+const first = guideById(w.stages[0].guide);
+const rail = first.access?.path.find((x) => RAIL.includes(x));
+const screen = rail && first.access ? { rail, page: first.access.path[first.access.path.length - 1] } : undefined;
+---
+<div class="lv-gbody">
+  <p class="lv-gbody__status"><StatusLabel status={w.status} /> <span>{FEATURE_STATUS[w.status].meaning}</span></p>
+  <p class="lv-gbody__what">{w.summary}</p>
+  <section class="lv-sec" aria-labelledby={`${p}-stages`}>
+    <h4 id={`${p}-stages`}>The stages</h4>
+    <FlowChain items={w.stages.map((s) => ({ href: guideUrl(s.guide), title: s.label, detail: s.detail }))} label={w.title} />
+  </section>
+  <section class="lv-sec" aria-labelledby={`${p}-steps`}>
+    <h4 id={`${p}-steps`}>Step by step</h4>
+    <TutorialStepper tutorial={w.tutorial} idPrefix={p} level={4} open screen={screen} finishHref={first.access?.href} finishLabel={first.access?.label} />
+  </section>
+  <section class="lv-sec" aria-labelledby={`${p}-questions`}>
+    <h4 id={`${p}-questions`}>Common questions</h4>
+    <Faqs faqs={w.faqs} idPrefix={p} />
+  </section>
+  <section class="lv-sec" aria-labelledby={`${p}-guides`}>
+    <h4 id={`${p}-guides`}>The modules in this workflow</h4>
+    <ul class="lv-links lv-links--inline">{guides.map((g) => <li><a href={guideUrl(g.id)}>{g.title}</a></li>)}</ul>
+  </section>
+</div>

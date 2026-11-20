@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { AI_SEARCH, CRUMB, FOOTER_NAV, NAV, QUOTE_CTA, SIGN_IN } from '../src/config/site.ts';
 
@@ -14,11 +14,11 @@ const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const 
 test('the main navigation reads Home, Systems, Learn, Resources, About, Contact', () => {
   assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['Home', '/'], ['Systems', '/systems/'], ['Learn', '/learn/'], ['Resources', '/resources/'], ['About', '/engine-room/'], ['Contact', '/contact/']]);
   const menu = (label: string) => (NAV.find((n) => n.label === label)?.children ?? []).map((c) => [c.label, c.href]);
-  assert.deepEqual(menu('Systems'), [['All systems', '/systems/'], ['BIZOMAT ERP', '/systems/erp/'], ['BIZOMAT CRM', '/systems/crm/'], ['BIZOMAT Finance', '/systems/finance/'], ['BIZOMAT Projects', '/systems/projects/'], ['BIZOMAT Engineering Automation', '/systems/engineering/'], ['BIZOMAT Manufacturing and Operations', '/systems/manufacturing/'], ['BIZOMAT WHS', '/systems/whs/'], ['Open BIZOMAT ERP', 'https://bizomat.ai/erp/']]);
+  assert.deepEqual(menu('Systems'), [['All systems', '/systems/'], ['BIZOMAT ERP', '/systems/#erp'], ['BIZOMAT CRM', '/systems/#crm'], ['BIZOMAT Finance', '/systems/#finance'], ['BIZOMAT Projects', '/systems/#projects'], ['BIZOMAT Engineering Automation', '/systems/#engineering'], ['BIZOMAT Manufacturing and Operations', '/systems/#manufacturing'], ['BIZOMAT WHS', '/systems/#whs'], ['Open BIZOMAT ERP', 'https://bizomat.ai/erp/']]);
   // A planned system says so in its menu entry. Manufacturing and Operations became Available with ERP Release 5 part A
   // (supply chain), the last of its modules: no system is labelled Planned now.
-  assert.equal(NAV.find((n) => n.label === 'Systems')!.children!.find((c) => c.href === '/systems/manufacturing/')!.status, undefined);
-  assert.deepEqual(menu('Learn'), [['Knowledge Centre', '/learn/'], ['Getting started', '/learn/what-is-bizomat/'], ['ERP modules', '/learn/#modules'], ['Workflows', '/learn/workflows/'], ['CAD and engineering', '/learn/cad-automation/'], ['Troubleshooting', '/learn/#troubleshooting']]);
+  assert.equal(NAV.find((n) => n.label === 'Systems')!.children!.find((c) => c.href === '/systems/#manufacturing')!.status, undefined);
+  assert.deepEqual(menu('Learn'), [['Knowledge Centre', '/learn/'], ['Getting started', '/learn/#what-is-bizomat'], ['ERP modules', '/learn/#modules'], ['Workflows', '/learn/#workflows'], ['CAD and engineering', '/learn/#cad-automation'], ['Troubleshooting', '/learn/#troubleshooting']]);
   assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
   assert.deepEqual(menu('About'), [['The Engine Room', '/engine-room/'], ['From the founder', '/engine-room/#founder'], ['Test record', '/engine-room/#tests']]);
   assert.deepEqual(AI_SEARCH, { href: '/#ai-search', label: 'AI Search' });
@@ -37,18 +37,25 @@ test('the main navigation reads Home, Systems, Learn, Resources, About, Contact'
   assert.match(header, /<a class="site-header__cta site-header__signin" href=\{SIGN_IN\.href\}/);
   assert.match(header, /AI_SEARCH\.label/);
   assert.match(header, /aria-expanded="false" data-nav-toggle/);
-  for (const page of ['systems/index.astro', 'systems/erp/index.astro', 'systems/crm/index.astro', 'systems/finance/index.astro', 'systems/projects/index.astro', 'systems/engineering/index.astro', 'systems/manufacturing/index.astro', 'systems/whs/index.astro', 'learn/index.astro', 'learn/[guide].astro', 'learn/workflows/index.astro', 'learn/workflows/[workflow].astro', 'engine-room.astro', 'sign-in.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
+  for (const page of ['systems/index.astro', 'learn/index.astro', 'engine-room.astro', 'sign-in.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
+  // Every system is on one page (owner, 20 Nov 2026): each system page's content is a component shown in a toggle on
+  // /systems/, and the old pages answer 301 to their section.
+  for (const c of ['Erp', 'Crm', 'Finance', 'Projects', 'Engineering', 'Manufacturing', 'Whs']) assert.ok(read(`src/components/systems/full/${c}.astro`).length > 0, `${c} is on /systems/`);
+  for (const sid of ['erp', 'crm', 'finance', 'projects', 'engineering', 'manufacturing', 'whs']) {
+    assert.ok(!existsSync(join(process.cwd(), `src/pages/systems/${sid}/index.astro`)), `/systems/${sid}/ has no page of its own`);
+    assert.match(read('public/_redirects'), new RegExp(`^/systems/${sid}/ /systems/#${sid} 301$`, 'm'), `/systems/${sid}/ answers 301 to its section`);
+  }
   // The product pages moved under /systems/ with permanent redirects (their old addresses keep working).
   const redirects = read('public/_redirects');
   // The systems' user guides moved into the Knowledge Centre (owner, 20 Nov 2026); their old addresses answer 301 there.
-  for (const [from, to] of [['/products/', '/systems/'], ['/work/', '/systems/projects/'], ['/cad-automation/', '/systems/engineering/'], ['/crm-platform/', '/systems/crm/'], ['/crm-platform/guide/', '/learn/crm/'], ['/finance-platform/', '/systems/finance/'], ['/finance-platform/guide/', '/learn/finance/'], ['/systems/erp/guide/', '/learn/'], ['/systems/crm/guide/', '/learn/crm/'], ['/systems/finance/guide/', '/learn/finance/'], ['/systems/projects/guide/', '/learn/projects/'], ['/systems/engineering/guide/', '/learn/cad-automation/'], ['/systems/manufacturing/guide/', '/learn/manufacturing/'], ['/systems/whs/guide/', '/learn/whs/'], ['/erp/learn/', '/learn/'], ['/help/', '/learn/'], ['/knowledge-centre/', '/learn/']]) {
+  for (const [from, to] of [['/products/', '/systems/'], ['/work/', '/systems/#projects'], ['/cad-automation/', '/systems/#engineering'], ['/crm-platform/', '/systems/#crm'], ['/crm-platform/guide/', '/learn/#crm'], ['/finance-platform/', '/systems/#finance'], ['/finance-platform/guide/', '/learn/#finance'], ['/systems/erp/guide/', '/learn/#getting-started'], ['/systems/crm/guide/', '/learn/#crm'], ['/systems/finance/guide/', '/learn/#finance'], ['/systems/projects/guide/', '/learn/#projects'], ['/systems/engineering/guide/', '/learn/#cad-automation'], ['/systems/manufacturing/guide/', '/learn/#manufacturing'], ['/systems/whs/guide/', '/learn/#whs'], ['/erp/learn/', '/learn/'], ['/help/', '/learn/'], ['/knowledge-centre/', '/learn/']]) {
     assert.match(redirects, new RegExp(`^${from.replace(/\//g, '\\/')} ${to.replace(/\//g, '\\/')} 301$`, 'm'), `${from} -> ${to}`);
   }
 });
 
 test('the footer covers products, resources, company and the applications, with the legal pages on every page', () => {
   const pairs = [...FOOTER_NAV.products, ...FOOTER_NAV.resources, ...FOOTER_NAV.company, ...FOOTER_NAV.apps, ...FOOTER_NAV.legal].map((n) => [n.label, n.href]);
-  for (const pair of [['All systems', '/systems/'], ['Knowledge Centre', '/learn/'], ['BIZOMAT ERP', '/systems/erp/'], ['BIZOMAT CRM', '/systems/crm/'], ['BIZOMAT Finance', '/systems/finance/'], ['BIZOMAT Projects', '/systems/projects/'], ['BIZOMAT Engineering Automation', '/systems/engineering/'], ['Sign in to BIZOMAT ERP', 'https://bizomat.ai/erp/login'], ['Resources (free)', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['Home', '/'], ['About', '/engine-room/'], ['Contact', '/contact/'], ['Solutions', '/solutions/'], ['Privacy Policy', '/privacy/'], ['Terms of Use', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
+  for (const pair of [['All systems', '/systems/'], ['Knowledge Centre', '/learn/'], ['BIZOMAT ERP', '/systems/#erp'], ['BIZOMAT CRM', '/systems/#crm'], ['BIZOMAT Finance', '/systems/#finance'], ['BIZOMAT Projects', '/systems/#projects'], ['BIZOMAT Engineering Automation', '/systems/#engineering'], ['Sign in to BIZOMAT ERP', 'https://bizomat.ai/erp/login'], ['Resources (free)', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['Home', '/'], ['About', '/engine-room/'], ['Contact', '/contact/'], ['Solutions', '/solutions/'], ['Privacy Policy', '/privacy/'], ['Terms of Use', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
     assert.ok(pairs.some(([l, h]) => l === pair[0] && h === pair[1]), `footer has ${pair[0]}`);
   }
   const labels = [...NAV, ...NAV.flatMap((n) => n.children ?? []), ...pairs.map(([label]) => ({ label }))].map((n) => n.label);

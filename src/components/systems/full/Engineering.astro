@@ -1,5 +1,7 @@
 ---
-// /systems/engineering/: BIZOMAT Engineering Automation, the Engineering Automation System. Its application is CAD
+// Moved from src/components/systems/full/Engineering.astro into the one-page Systems (owner, 20 Nov 2026: every module on one
+// page under Systems). /systems/#engineering answers 301 to /systems/#engineering; every id here starts with "engineering-".
+// /systems/#engineering: BIZOMAT Engineering Automation, the Engineering Automation System. Its application is CAD
 // Automation (formerly CADOS) at APP_LINKS.cad, with the same BIZOMAT account as every system (src/config/systems.ts). What it does, how
 // it connects, every tool, how to install it, how it is secured and how far it has been tested. Facts come from
 // src/data/platform-catalog.ts (CAD) and src/data/cad-tools.ts, which record their sources in apps/cad, and from the CAD
@@ -7,7 +9,6 @@
 // KEVOS-VERSIONS.md), its pages (apps/cad/opensketch/app_pages.py), and BIZOMAT ERP's Products and Engineering page
 // (apps/work/src/client/system/SystemApp.tsx, docs/system/README.md). Every feature carries its status (StatusLabel:
 // Live, Connected, In development, Planned). The guide is in the Knowledge Centre (/learn/cad-automation/).
-import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
 import StatusLabel from '../../../components/StatusLabel.astro';
@@ -148,12 +149,11 @@ const schema = [
   { '@type': 'FAQPage', url: `${SITE.url}${PAGE}#faq`, mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title="SOLIDWORKS AI automation: Engineering Automation" description={description} image="/brand/bizomat-social-cad.png" imageAlt="BIZOMAT Engineering Automation: your AI assistant, working in SOLIDWORKS on your own computer" breadcrumbs={crumbs} schema={schema}>
-  <section class="pp-hero" aria-labelledby="eng-title">
+  <section class="pp-hero" aria-labelledby="engineering-eng-title">
     <Container class="pp-hero__inner">
       <div>
         <p class="bz-eyebrow">{sys.name}<span class="pp-hero__formerly">Formerly {sys.formerly}</span></p>
-        <h1 id="eng-title">{CAD.headline}</h1>
+        <h2 class="sys-full__title" id="engineering-eng-title">{CAD.headline}</h2>
         <p class="pp-hero__lead">{sys.name} brings AI automation to SOLIDWORKS: an AI CAD assistant that works in your own files. It connects Claude, ChatGPT or another assistant that supports MCP connectors to SOLIDWORKS on your PC. You describe the part, the change or the check; it builds native, editable features in your own files.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="eng-access">{access.label}</Button>
@@ -161,19 +161,19 @@ const schema = [
         </div>
         <p class="pp-hero__note">Its application is called CAD Automation. {sys.statusNote}</p>
       </div>
-      <AiToCad id="eng-hero" />
+      <AiToCad id="engineering-eng-hero" />
     </Container>
   </section>
 
-  <section class="pp-section" id="how" aria-labelledby="how-title">
+  <section class="pp-section" id="engineering-how" aria-labelledby="engineering-how-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">What it does</p>
-        <h2 id="how-title">Your assistant asks. Your SOLIDWORKS does the work.</h2>
+        <h2 id="engineering-how-title">Your assistant asks. Your SOLIDWORKS does the work.</h2>
         <p>An engineering automation system takes repeated design work off your hands. Here, your AI assistant calls BIZOMAT's tools over MCP; BIZOMAT checks each step and sends it to your computer, where the add-in makes native features in your SOLIDWORKS session.</p>
         <StatusLegend />
       </div>
-      <CommandFlow id="eng-flow" />
+      <CommandFlow id="engineering-eng-flow" />
       <div class="pp-split pp-section__after">
         <ol class="pp-steps">
           {CAD.steps.map((s) => <li><h3>{s.title}</h3><p>{s.text}</p></li>)}
@@ -193,11 +193,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="who" aria-labelledby="who-title">
+  <section class="pp-section pp-section--tint" id="engineering-who" aria-labelledby="engineering-who-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Who should use it</p>
-        <h2 id="who-title">For people who design and document in SOLIDWORKS</h2>
+        <h2 id="engineering-who-title">For people who design and document in SOLIDWORKS</h2>
         <p>It needs SOLIDWORKS on a Windows computer you use. Without a local SOLIDWORKS installation it has nothing to work in.</p>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
@@ -206,11 +206,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="problems" aria-labelledby="problems-title">
+  <section class="pp-section" id="engineering-problems" aria-labelledby="engineering-problems-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Problems it solves</p>
-        <h2 id="problems-title">Less repetition, more checking</h2>
+        <h2 id="engineering-problems-title">Less repetition, more checking</h2>
       </div>
       <ul class="pp-cards" role="list">
         {problems.map((p) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status="live" /></p><h3>{p.t}</h3><p>{p.x}</p></li>)}
@@ -218,25 +218,25 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="capabilities" aria-labelledby="cap-title">
+  <section class="pp-section pp-section--tint" id="engineering-capabilities" aria-labelledby="engineering-cap-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features: capabilities</p>
-        <h2 id="cap-title">Parts, assemblies and drawings, in plain language</h2>
+        <h2 id="engineering-cap-title">Parts, assemblies and drawings, in plain language</h2>
         <p>Everything it makes is a native SOLIDWORKS feature you can edit like any other.</p>
       </div>
       <ul class="pp-cards" role="list">
         {CAD.capabilities.map((c) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status="live" /></p><h3>{c.title}</h3><p>{c.text}</p></li>)}
       </ul>
-      <p class="pp-table-note">Live means available in CAD Automation today. Testing on real SOLIDWORKS installations is still under way: see <a href="#security">Where it stands</a>.</p>
+      <p class="pp-table-note">Live means available in CAD Automation today. Testing on real SOLIDWORKS installations is still under way: see <a href="#engineering-security">Where it stands</a>.</p>
     </Container>
   </section>
 
-  <section class="pp-section" id="tools" aria-labelledby="tools-title">
+  <section class="pp-section" id="engineering-tools" aria-labelledby="engineering-tools-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features: supported operations</p>
-        <h2 id="tools-title">All {toolCount} tools your assistant can call</h2>
+        <h2 id="engineering-tools-title">All {toolCount} tools your assistant can call</h2>
         <p>The same list the application shows. Long commands report progress and can be cancelled.</p>
       </div>
       <div class="pp-tools">
@@ -254,11 +254,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="security" aria-labelledby="security-title">
+  <section class="pp-section pp-section--tint" id="engineering-security" aria-labelledby="engineering-security-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features: security</p>
-        <h2 id="security-title">Built to keep your CAD environment yours</h2>
+        <h2 id="engineering-security-title">Built to keep your CAD environment yours</h2>
       </div>
       <ul class="pp-cards" role="list">
         {security.map((s) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status="live" /></p><h3>{s.t}</h3><p>{s.x}</p></li>)}
@@ -271,11 +271,11 @@ const schema = [
   </section>
 
   {(shots.length > 0 || erpShot) && (
-    <section class="pp-section" id="screens" aria-labelledby="screens-title">
+    <section class="pp-section" id="engineering-screens" aria-labelledby="engineering-screens-title">
       <Container>
         <div class="pp-head">
           <p class="bz-eyebrow">Screenshots</p>
-          <h2 id="screens-title">Your assistant, your computers and your tools, in one place</h2>
+          <h2 id="engineering-screens-title">Your assistant, your computers and your tools, in one place</h2>
           <p>Captured from the running application with example data.</p>
         </div>
         <div class="pp-shots">
@@ -296,11 +296,11 @@ const schema = [
     </section>
   )}
 
-  <section class="pp-section pp-section--tint" id="dashboard" aria-labelledby="home-title">
+  <section class="pp-section pp-section--tint" id="engineering-dashboard" aria-labelledby="engineering-home-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">The main dashboard</p>
-        <h2 id="home-title">Where you start, and where you check</h2>
+        <h2 id="engineering-home-title">Where you start, and where you check</h2>
         <p>CAD Automation's own Home is where you work. BIZOMAT ERP shows the same set-up for your company, beside its other systems.</p>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
@@ -309,11 +309,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="walkthrough" aria-labelledby="walk-title">
+  <section class="pp-section" id="engineering-walkthrough" aria-labelledby="engineering-walk-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Screen by screen</p>
-        <h2 id="walk-title">A walk through CAD Automation</h2>
+        <h2 id="engineering-walk-title">A walk through CAD Automation</h2>
         <p>The application's pages, then what you see on your own computer. The <a href={GUIDE}>Knowledge Centre guide</a> explains each step.</p>
         <p class="pp-status-line"><StatusLabel status="live" /><span>Every screen below is in CAD Automation and its installer today.</span></p>
       </div>
@@ -323,11 +323,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="install" aria-labelledby="install-title">
+  <section class="pp-section pp-section--tint" id="engineering-install" aria-labelledby="engineering-install-title">
     <Container class="pp-split">
       <div>
         <p class="bz-eyebrow">Getting started</p>
-        <h2 id="install-title">Set up in four steps, then test</h2>
+        <h2 id="engineering-install-title">Set up in four steps, then test</h2>
         <ol class="pp-steps pp-gap-sm">
           <li><h3>Sign in to CAD Automation</h3><p>Open bizomat.ai/cad and sign in with the CAD Automation account your administrator gave you.</p></li>
           <li><h3>Install on your Windows computer</h3><p>Download BIZOMAT CAD Automation for SOLIDWORKS, close SOLIDWORKS and run the installer. It adds the add-in and the Companion.</p></li>
@@ -349,11 +349,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="workflows" aria-labelledby="flows-title">
+  <section class="pp-section" id="engineering-workflows" aria-labelledby="engineering-flows-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Typical workflows</p>
-        <h2 id="flows-title">What a session looks like</h2>
+        <h2 id="engineering-flows-title">What a session looks like</h2>
         <p>Each request is in plain words. The assistant picks the tools; you follow the work in SOLIDWORKS and in the add-in's task pane.</p>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
@@ -368,21 +368,21 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="integrations" aria-labelledby="int-title">
+  <section class="pp-section pp-section--tint" id="engineering-integrations" aria-labelledby="engineering-int-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Integration with other BIZOMAT systems</p>
-        <h2 id="int-title">What connects today, and what comes next</h2>
+        <h2 id="engineering-int-title">What connects today, and what comes next</h2>
       </div>
       <div class="pp-tools">
-        <section aria-labelledby="int-now">
-          <h3 id="int-now">Works today</h3>
+        <section aria-labelledby="engineering-int-now">
+          <h3 id="engineering-int-now">Works today</h3>
           <dl>
             {linksNow.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
           </dl>
         </section>
-        <section aria-labelledby="int-not">
-          <h3 id="int-not">Not yet</h3>
+        <section aria-labelledby="engineering-int-not">
+          <h3 id="engineering-int-not">Not yet</h3>
           <dl>
             {linksLater.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
           </dl>
@@ -392,11 +392,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="faq" aria-labelledby="faq-title">
+  <section class="pp-section" id="engineering-faq" aria-labelledby="engineering-faq-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Frequently asked questions</p>
-        <h2 id="faq-title">Questions about {sys.name}</h2>
+        <h2 id="engineering-faq-title">Questions about {sys.name}</h2>
       </div>
       <dl class="pp-faq">
         {faq.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
@@ -405,10 +405,10 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--inverse" id="access" aria-labelledby="eng-cta">
+  <section class="pp-section pp-section--inverse" id="engineering-access" aria-labelledby="engineering-eng-cta">
     <Container class="pp-band">
       <div>
-        <h2 id="eng-cta">Bring your assistant into SOLIDWORKS.</h2>
+        <h2 id="engineering-eng-cta">Bring your assistant into SOLIDWORKS.</h2>
         <p class="pp-band__note">{access.note}</p>
       </div>
       <div class="pp-band__actions">
@@ -418,11 +418,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="related" aria-labelledby="related-title">
+  <section class="pp-section" id="engineering-related" aria-labelledby="engineering-related-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Related systems</p>
-        <h2 id="related-title">The rest of BIZOMAT</h2>
+        <h2 id="engineering-related-title">The rest of BIZOMAT</h2>
         <p>Every BIZOMAT system is in the <a href={SYSTEMS_HOME}>Systems catalogue</a>.</p>
       </div>
       <ul class="pp-cards" role="list">
@@ -437,7 +437,6 @@ const schema = [
       <p class="pp-table-note">SOLIDWORKS® is a registered trade mark of Dassault Systèmes SolidWorks Corporation. BIZOMAT is not affiliated with or endorsed by Dassault Systèmes.</p>
     </Container>
   </section>
-</BaseLayout>
 
 <style>
   .pp-section__after { margin-top: clamp(2rem, 4vw, 3rem); }

@@ -1,11 +1,12 @@
 ---
-// /systems/crm/: BIZOMAT CRM, the Customer Management System (formerly BIZOMAT Customer Relationship Management).
+// Moved from src/components/systems/full/Crm.astro into the one-page Systems (owner, 20 Nov 2026: every module on one
+// page under Systems). /systems/#crm answers 301 to /systems/#crm; every id here starts with "crm-".
+// /systems/#crm: BIZOMAT CRM, the Customer Management System (formerly BIZOMAT Customer Relationship Management).
 // Introduces the system and opens it inside BIZOMAT ERP (Sales and CRM, sign-in required; the same accounts as Finance
 // and Projects). The page cannot be /crm/: that path is the application (tests/worker.test.ts). Facts come from
 // src/data/platform-catalog.ts (CRM), which records its sources in apps/work; tests/platform-catalog.test.ts compares
 // them with the application's code. The links to Finance and Projects are apps/work/src/worker/company/links.ts
 // (docs/company/README.md); the ERP is docs/system/README.md. The guide is in the Knowledge Centre (/learn/crm/).
-import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
 import CrmPipeline from '../../../components/visuals/CrmPipeline.astro';
@@ -223,16 +224,11 @@ const questions = [
   { q: 'Do I need a separate account?', a: `No. One BIZOMAT account signs you in to ${erp.name}, and with it to ${sys.name}, ${finance.name} and ${projects.name}. Each keeps its own data and its own roles.` },
 ];
 ---
-<BaseLayout title={`${sys.name}: CRM software for small business`} description={description} imageAlt="BIZOMAT CRM: customers, leads and deals in one shared place" breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Systems', href: SYSTEMS_HOME }, { label: sys.name, href: sys.url }]}
-  schema={[
-    { '@type': 'SoftwareApplication', name: sys.name, alternateName: ['BIZOMAT Customer Relationship Management', sys.kind], url: `${SITE.url}${sys.url}`, applicationCategory: 'BusinessApplication', operatingSystem: 'Web browser', description, publisher: { '@id': `${SITE.url}/#organization` } },
-    { '@type': 'FAQPage', url: `${SITE.url}${sys.url}#faq`, mainEntity: questions.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
-  ]}>
-  <section class="pp-hero" aria-labelledby="crm-title">
+  <section class="pp-hero" aria-labelledby="crm-crm-title">
     <Container class="pp-hero__inner">
       <div>
         <p class="bz-eyebrow">{sys.name} · {sys.kind}<span class="pp-hero__formerly">Formerly {sys.formerly}</span></p>
-        <h1 id="crm-title">{CRM.headline}</h1>
+        <h2 class="sys-full__title" id="crm-crm-title">{CRM.headline}</h2>
         <p class="pp-hero__lead">{sys.name} is a Customer Relationship Management (CRM) system for small businesses and their teams: one shared place for your contacts, companies, leads, deals and follow-ups. Work your pipeline on a board, plan every activity and see what is closing from live reports.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="crm-access">{access.label}</Button>
@@ -240,15 +236,15 @@ const questions = [
         </div>
         <p class="pp-hero__note">{access.note} Sign-in required: use your BIZOMAT account, the same one as {finance.name} and {projects.name}. New to BIZOMAT? Create an account on the sign-in page.</p>
       </div>
-      <CrmPipeline id="crm-hero" />
+      <CrmPipeline id="crm-crm-hero" />
     </Container>
   </section>
 
-  <section class="pp-section" id="what" aria-labelledby="what-title">
+  <section class="pp-section" id="crm-what" aria-labelledby="crm-what-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">What it does</p>
-        <h2 id="what-title">Every customer, and every conversation with them, in one place</h2>
+        <h2 id="crm-what-title">Every customer, and every conversation with them, in one place</h2>
         <p>Customer relationship management is how a business keeps track of the people it sells to and everything said and agreed with them. {sys.name} keeps contacts, companies, leads, deals and activities on shared records, so anyone on the team can pick up where a colleague left off.</p>
         <StatusLegend />
       </div>
@@ -258,11 +254,11 @@ const questions = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="who" aria-labelledby="who-title">
+  <section class="pp-section pp-section--tint" id="crm-who" aria-labelledby="crm-who-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Who it is for</p>
-        <h2 id="who-title">Who should use it</h2>
+        <h2 id="crm-who-title">Who should use it</h2>
         <p>Any business that sells to other people and wants one shared record of its customers. Someone working alone can use it too: register in your own name.</p>
       </div>
       <ul class="pp-cards" role="list">
@@ -271,11 +267,11 @@ const questions = [
     </Container>
   </section>
 
-  <section class="pp-section" id="problems" aria-labelledby="problems-title">
+  <section class="pp-section" id="crm-problems" aria-labelledby="crm-problems-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Problems it solves</p>
-        <h2 id="problems-title">What changes when the team shares one CRM</h2>
+        <h2 id="crm-problems-title">What changes when the team shares one CRM</h2>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
         {problems.map((p) => <li class="pp-card"><h3>{p.t} <StatusLabel status={p.s} /></h3><p>{p.x}</p></li>)}
@@ -283,20 +279,20 @@ const questions = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="features" aria-labelledby="features-title">
+  <section class="pp-section pp-section--tint" id="crm-features" aria-labelledby="crm-features-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features</p>
-        <h2 id="features-title">Every feature, explained</h2>
+        <h2 id="crm-features-title">Every feature, explained</h2>
         <p>What {sys.name} does today, area by area, and what is planned. The <a href={GUIDE}>Knowledge Centre guide</a> shows where each working feature is in the application.</p>
       </div>
       <div class="pp-tools">
-        <section id="records" aria-labelledby="records-title">
-          <h3 id="records-title">Leads, contacts and companies <StatusLabel status="live" /></h3>
+        <section id="crm-records" aria-labelledby="crm-records-title">
+          <h3 id="crm-records-title">Leads, contacts and companies <StatusLabel status="live" /></h3>
           <dl>{records.map((r) => <div><dt>{r.t}</dt><dd>{r.x}</dd></div>)}</dl>
         </section>
-        <section id="pipeline" aria-labelledby="pipeline-title">
-          <h3 id="pipeline-title">Pipelines and deals <StatusLabel status="live" /></h3>
+        <section id="crm-pipeline" aria-labelledby="crm-pipeline-title">
+          <h3 id="crm-pipeline-title">Pipelines and deals <StatusLabel status="live" /></h3>
           <dl>
             <div><dt>Stages</dt><dd>A new organisation starts with a sales pipeline of {CRM.stages.length} stages: {list(CRM.stages.map((s) => `${s.name} (${s.probability}%)`))}. Rename them, add your own, set each stage's probability, or add more pipelines.</dd></div>
             <div><dt>The board</dt><dd>Drag a deal to the next stage, or onto Won or Lost; a menu on each card does the same from the keyboard.</dd></div>
@@ -305,24 +301,24 @@ const questions = [
             <div><dt>Won or Lost</dt><dd>Closed deals leave the board and count in the reports. A lost deal records why.</dd></div>
           </dl>
         </section>
-        <section id="activities" aria-labelledby="activities-title">
-          <h3 id="activities-title">Activities and follow-ups <StatusLabel status="live" /></h3>
+        <section id="crm-activities" aria-labelledby="crm-activities-title">
+          <h3 id="crm-activities-title">Activities and follow-ups <StatusLabel status="live" /></h3>
           <dl>
             <div><dt>Plan every follow-up</dt><dd>Plan every call, meeting and visit against the customer and the deal, and assign it with a due date and a priority.</dd></div>
             {activities.map((a) => <div><dt>{a.t}</dt><dd>{a.x}</dd></div>)}
-            <div><dt>Log emails</dt><dd>Write to a contact from a template. Your own mail program sends it, and the CRM logs it on the record (<a href="#integrations">more below</a>).</dd></div>
+            <div><dt>Log emails</dt><dd>Write to a contact from a template. Your own mail program sends it, and the CRM logs it on the record (<a href="#crm-integrations">more below</a>).</dd></div>
           </dl>
         </section>
-        <section id="reports" aria-labelledby="reports-title">
-          <h3 id="reports-title">Dashboard and reports <StatusLabel status="live" /></h3>
+        <section id="crm-reports" aria-labelledby="crm-reports-title">
+          <h3 id="crm-reports-title">Dashboard and reports <StatusLabel status="live" /></h3>
           <dl>
-            <div><dt>Overview</dt><dd>Open pipeline, weighted forecast, value won, win rate, new leads, lead conversion, contacts and companies, and overdue follow-ups, with charts below. Computed from your records when you open it (<a href="#dashboard">figure by figure</a>).</dd></div>
+            <div><dt>Overview</dt><dd>Open pipeline, weighted forecast, value won, win rate, new leads, lead conversion, contacts and companies, and overdue follow-ups, with charts below. Computed from your records when you open it (<a href="#crm-dashboard">figure by figure</a>).</dd></div>
             <div><dt>{CRM.reports.length} reports</dt><dd>{list(CRM.reports.map((r, i) => (i ? r.toLowerCase() : r)))}.</dd></div>
             <div><dt>Each report</dt><dd>Its figures, a chart, a table and CSV export. Filter by dates, owner, team and pipeline.</dd></div>
           </dl>
         </section>
-        <section id="automations" aria-labelledby="auto-title">
-          <h3 id="auto-title">Automations <StatusLabel status="live" /></h3>
+        <section id="crm-automations" aria-labelledby="crm-auto-title">
+          <h3 id="crm-auto-title">Automations <StatusLabel status="live" /></h3>
           <dl>
             <div><dt>How they work</dt><dd>An automation is a trigger, conditions and actions. Each event runs an automation once, and every run is kept in its history.</dd></div>
             <div><dt>Triggers</dt><dd>A new or reassigned lead, a lead changing status, a new contact, a deal being created, entering a stage, won, lost or close to its expected close date, and an activity being assigned or becoming overdue.</dd></div>
@@ -330,24 +326,24 @@ const questions = [
             <div><dt>Ready-made</dt><dd>Every new organisation starts with these {CRM.automations.length}: {list(CRM.automations.map((a, i) => (i ? a.charAt(0).toLowerCase() + a.slice(1) : a)))}. Switch any of them off, change them, or add your own.</dd></div>
           </dl>
         </section>
-        <section id="roles" aria-labelledby="roles-title">
-          <h3 id="roles-title">Organisations, teams and roles <StatusLabel status="live" /></h3>
+        <section id="crm-roles" aria-labelledby="crm-roles-title">
+          <h3 id="crm-roles-title">Organisations, teams and roles <StatusLabel status="live" /></h3>
           <dl>
             <div><dt>Organisations</dt><dd>Create one for each business you run, belong to several, and switch between them. Invite colleagues and group them into teams.</dd></div>
             {CRM.roles.map((r) => <div><dt>{r.name}</dt><dd>{r.text}</dd></div>)}
             <div><dt>Permissions</dt><dd>Owners and administrators can fine-tune what the other roles may view, create, edit, delete, import and export.</dd></div>
           </dl>
         </section>
-        <section id="data" aria-labelledby="data-title">
-          <h3 id="data-title">Search, views and your data <StatusLabel status="live" /></h3>
+        <section id="crm-data" aria-labelledby="crm-data-title">
+          <h3 id="crm-data-title">Search, views and your data <StatusLabel status="live" /></h3>
           <dl>{data.map((d) => <div><dt>{d.t}</dt><dd>{d.x}</dd></div>)}</dl>
         </section>
-        <section id="security" aria-labelledby="sec-title">
-          <h3 id="sec-title">Accounts and security <StatusLabel status="live" /></h3>
+        <section id="crm-security" aria-labelledby="crm-sec-title">
+          <h3 id="crm-sec-title">Accounts and security <StatusLabel status="live" /></h3>
           <ul class="pp-list">{security.map((s) => <li>{s}</li>)}</ul>
         </section>
-        <section id="planned" aria-labelledby="planned-title">
-          <h3 id="planned-title">Not built yet</h3>
+        <section id="crm-planned" aria-labelledby="crm-planned-title">
+          <h3 id="crm-planned-title">Not built yet</h3>
           <dl>{planned.map((w) => <div><dt>{w.t} <StatusLabel status="planned" /></dt><dd>{w.x}</dd></div>)}</dl>
         </section>
       </div>
@@ -355,11 +351,11 @@ const questions = [
   </section>
 
   {(shots.length > 0 || erpShot) && (
-    <section class="pp-section" id="screens" aria-labelledby="screens-title">
+    <section class="pp-section" id="crm-screens" aria-labelledby="crm-screens-title">
       <Container>
         <div class="pp-head">
           <p class="bz-eyebrow">Screenshots</p>
-          <h2 id="screens-title">The real product</h2>
+          <h2 id="crm-screens-title">The real product</h2>
           <p>Captured from the running application with a fictional organisation and example data. Step-by-step tutorials are in the <a href={GUIDE}>Knowledge Centre</a>.</p>
         </div>
         <div class="pp-shots">
@@ -380,20 +376,20 @@ const questions = [
     </section>
   )}
 
-  <section class="pp-section pp-section--tint" id="dashboard" aria-labelledby="dashboard-title">
+  <section class="pp-section pp-section--tint" id="crm-dashboard" aria-labelledby="crm-dashboard-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">The main dashboard</p>
-        <h2 id="dashboard-title">The Overview, figure by figure</h2>
+        <h2 id="crm-dashboard-title">The Overview, figure by figure</h2>
         <p>The Overview is the CRM's dashboard. Every figure is computed from your records when you open it, and each one opens the list or report behind it.</p>
       </div>
       <div class="pp-tools">
-        <section aria-labelledby="d-figures">
-          <h3 id="d-figures">The figures <StatusLabel status="live" /></h3>
+        <section aria-labelledby="crm-d-figures">
+          <h3 id="crm-d-figures">The figures <StatusLabel status="live" /></h3>
           <dl>{figures.map((f) => <div><dt>{f.t}</dt><dd>{f.x}</dd></div>)}</dl>
         </section>
-        <section aria-labelledby="d-charts">
-          <h3 id="d-charts">Charts and lists <StatusLabel status="live" /></h3>
+        <section aria-labelledby="crm-d-charts">
+          <h3 id="crm-d-charts">Charts and lists <StatusLabel status="live" /></h3>
           <dl>{charts.map((f) => <div><dt>{f.t}</dt><dd>{f.x}</dd></div>)}</dl>
         </section>
       </div>
@@ -401,11 +397,11 @@ const questions = [
     </Container>
   </section>
 
-  <section class="pp-section" id="walkthrough" aria-labelledby="walkthrough-title">
+  <section class="pp-section" id="crm-walkthrough" aria-labelledby="crm-walkthrough-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Screen by screen</p>
-        <h2 id="walkthrough-title">What each screen is for</h2>
+        <h2 id="crm-walkthrough-title">What each screen is for</h2>
         <p><StatusLabel status="live" /> The CRM's menu lists these screens, and every one works today. Your role decides which ones you see.</p>
       </div>
       <ul class="pp-cards" role="list">
@@ -414,11 +410,11 @@ const questions = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="start" aria-labelledby="start-title">
+  <section class="pp-section pp-section--tint" id="crm-start" aria-labelledby="crm-start-title">
     <Container class="pp-split">
       <div>
         <p class="bz-eyebrow">Getting started</p>
-        <h2 id="start-title">Start in {steps.length} steps</h2>
+        <h2 id="crm-start-title">Start in {steps.length} steps</h2>
         <p class="pp-head-lead">The <a href={GUIDE}>Knowledge Centre guide</a> walks through each step, and everything after it.</p>
       </div>
       <ol class="pp-steps">
@@ -427,11 +423,11 @@ const questions = [
     </Container>
   </section>
 
-  <section class="pp-section" id="workflows" aria-labelledby="workflows-title">
+  <section class="pp-section" id="crm-workflows" aria-labelledby="crm-workflows-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Typical workflows</p>
-        <h2 id="workflows-title">How the work flows through the CRM</h2>
+        <h2 id="crm-workflows-title">How the work flows through the CRM</h2>
         <p>Four common jobs, step by step. The steps that reach {finance.name} and {projects.name} need a company that runs them.</p>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
@@ -445,37 +441,37 @@ const questions = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="integrations" aria-labelledby="int-title">
+  <section class="pp-section pp-section--tint" id="crm-integrations" aria-labelledby="crm-int-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Integration</p>
-        <h2 id="int-title">How it works with the other BIZOMAT systems</h2>
+        <h2 id="crm-int-title">How it works with the other BIZOMAT systems</h2>
         <p>Every link between BIZOMAT systems checks both tools' own permissions, joins records of tools that belong to the same company, and never copies money: figures are read from Finance when asked. Email, your calendar and CSV files connect too.</p>
       </div>
       <div class="pp-tools">
         {integrations.map((g, i) => (
-          <section aria-labelledby={`int-${i}`}>
-            <h3 id={`int-${i}`}>{g.href ? <a href={g.href}>{g.t}</a> : g.t} {g.s && <StatusLabel status={g.s} />}</h3>
+          <section aria-labelledby={`crm-int-${i}`}>
+            <h3 id={`crm-int-${i}`}>{g.href ? <a href={g.href}>{g.t}</a> : g.t} {g.s && <StatusLabel status={g.s} />}</h3>
             <dl>{g.items.map((it) => <div><dt>{it.t} {!g.s && it.s && <StatusLabel status={it.s} />}</dt><dd>{it.x}</dd></div>)}</dl>
           </section>
         ))}
-        <section aria-labelledby="int-works">
-          <h3 id="int-works">Email, calendar and CSV <StatusLabel status="live" /></h3>
+        <section aria-labelledby="crm-int-works">
+          <h3 id="crm-int-works">Email, calendar and CSV <StatusLabel status="live" /></h3>
           <dl>{works.map((w) => <div><dt>{w.t}</dt><dd>{w.x}</dd></div>)}</dl>
         </section>
-        <section aria-labelledby="int-not">
-          <h3 id="int-not">Gmail and Microsoft 365 <StatusLabel status="planned" /></h3>
+        <section aria-labelledby="crm-int-not">
+          <h3 id="crm-int-not">Gmail and Microsoft 365 <StatusLabel status="planned" /></h3>
           <p class="int-note">{planned[0].x}</p>
         </section>
       </div>
     </Container>
   </section>
 
-  <section class="pp-section" id="faq" aria-labelledby="faq-title">
+  <section class="pp-section" id="crm-faq" aria-labelledby="crm-faq-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Questions</p>
-        <h2 id="faq-title">Frequently asked questions</h2>
+        <h2 id="crm-faq-title">Frequently asked questions</h2>
       </div>
       <dl class="guide-faq">
         {questions.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
@@ -484,9 +480,9 @@ const questions = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--inverse" id="access" aria-labelledby="crm-cta">
+  <section class="pp-section pp-section--inverse" id="crm-access" aria-labelledby="crm-crm-cta">
     <Container class="pp-band">
-      <h2 id="crm-cta">Open {sys.name} in {erp.name}.</h2>
+      <h2 id="crm-crm-cta">Open {sys.name} in {erp.name}.</h2>
       <div class="pp-band__actions">
         <Button href={access.href} variant="accent" rel="noopener" data-cta="crm-band-access">{access.label}</Button>
         <Button href={GUIDE} variant="secondary" data-cta="crm-band-guide">Guides and tutorials</Button>
@@ -494,11 +490,11 @@ const questions = [
     </Container>
   </section>
 
-  <section class="pp-section" id="related" aria-labelledby="related-title">
+  <section class="pp-section" id="crm-related" aria-labelledby="crm-related-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Related systems</p>
-        <h2 id="related-title">The other BIZOMAT systems</h2>
+        <h2 id="crm-related-title">The other BIZOMAT systems</h2>
         <p>One BIZOMAT account opens {sys.short}, {finance.short} and {projects.short} inside {erp.name}. <a href={SYSTEMS_HOME}>See all systems</a>.</p>
       </div>
       <ul class="pp-cards" role="list">
@@ -512,7 +508,6 @@ const questions = [
       </ul>
     </Container>
   </section>
-</BaseLayout>
 
 <style>
   .pp-head-lead { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }

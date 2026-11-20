@@ -53,7 +53,7 @@ test('the claim check catches the claims it is meant to catch', () => {
 test('no WHS page, catalogue entry or screen claims compliance, certification or legal verification', () => {
   const sys = systemById('whs');
   const sources: [string, string][] = [
-    ['src/pages/systems/whs/index.astro', read('src/pages/systems/whs/index.astro')],
+    ['src/components/systems/full/Whs.astro', read('src/components/systems/full/Whs.astro')],
     // The guide moved into the Knowledge Centre (owner, 20 Nov 2026), with the workflow from an incident to its actions.
     ['src/data/learn/guides/whs.ts', read('src/data/learn/guides/whs.ts')],
     ['src/data/learn/workflows/incident-to-action.ts', read('src/data/learn/workflows/incident-to-action.ts')],
@@ -77,7 +77,7 @@ test('the WHS pages say what the product does not do, and label what is planned'
   assert.match(sys.statusNote ?? '', /Not verified/);
   assert.match(sys.statusNote ?? '', /does not submit to regulators/);
   assert.match(sys.statusNote ?? '', /Planned: inspections and audits/);
-  const page = read('src/pages/systems/whs/index.astro');
+  const page = read('src/components/systems/full/Whs.astro');
   assert.match(page, /Not verified until a competent person verifies it against the official source/);
   assert.match(page, /never decides whether an incident must be notified/);
   assert.match(page, /does not submit notifications to regulators/);
@@ -89,7 +89,7 @@ test('the WHS pages say what the product does not do, and label what is planned'
   }
   assert.doesNotMatch(planned, /st: '(live|connected|in-development)'/, 'every later part is labelled Planned');
   // Every product screen is a real screen of the example company, labelled as one.
-  assert.match(read('src/pages/systems/whs/index.astro'), /viz__tag viz__tag--real">Product screen/);
+  assert.match(read('src/components/systems/full/Whs.astro'), /viz__tag viz__tag--real">Product screen/);
   // The Knowledge Centre's guide says the same: BIZOMAT never works out a deadline from an unverified rule, and sending a
   // notification to a regulator is not built (labelled Planned).
   const guide = read('src/data/learn/guides/whs.ts');

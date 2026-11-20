@@ -69,11 +69,11 @@ export const HOME_ERP_GROUPS = [
 
 /** Where to start learning, by who you are (each opens a Knowledge Centre guide or a free resource). */
 export const HOME_LEARN_STARTS = [
-  { who: 'New to BIZOMAT', what: 'What BIZOMAT ERP is, and your first steps.', href: '/learn/what-is-bizomat/' },
-  { who: 'Business owners', what: 'Set up your company, its people and departments.', href: '/learn/companies/' },
-  { who: 'Administrators', what: 'Members, roles, security and settings.', href: '/learn/company-administration/' },
-  { who: 'Engineers', what: 'An AI assistant working in SOLIDWORKS on your computer.', href: '/learn/cad-automation/' },
-  { who: 'Manufacturing and operations', what: 'From a bill of materials to finished goods.', href: '/learn/workflows/bom-to-production/' },
-  { who: 'Developers', what: 'API tokens, the AI connector and how the tools link.', href: '/learn/integrations/' },
+  { who: 'New to BIZOMAT', what: 'What BIZOMAT ERP is, and your first steps.', href: '/learn/#what-is-bizomat' },
+  { who: 'Business owners', what: 'Set up your company, its people and departments.', href: '/learn/#companies' },
+  { who: 'Administrators', what: 'Members, roles, security and settings.', href: '/learn/#company-administration' },
+  { who: 'Engineers', what: 'An AI assistant working in SOLIDWORKS on your computer.', href: '/learn/#cad-automation' },
+  { who: 'Manufacturing and operations', what: 'From a bill of materials to finished goods.', href: '/learn/#workflow-bom-to-production' },
+  { who: 'Developers', what: 'API tokens, the AI connector and how the tools link.', href: '/learn/#integrations' },
   { who: 'Students', what: 'Free engineering tools and the Library, no account needed.', href: '/resources/' },
 ] as const;

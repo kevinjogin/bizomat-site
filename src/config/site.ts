@@ -98,10 +98,10 @@ export const NAV: readonly NavItem[] = [
   {
     label: 'Learn', href: '/learn/', children: [
       { label: 'Knowledge Centre', href: '/learn/', description: 'Search any question, or learn any module step by step.' },
-      { label: 'Getting started', href: '/learn/what-is-bizomat/', description: 'What BIZOMAT ERP is, your account and finding your way around.' },
+      { label: 'Getting started', href: '/learn/#what-is-bizomat', description: 'What BIZOMAT ERP is, your account and finding your way around.' },
       { label: 'ERP modules', href: '/learn/#modules', description: 'A guide to every module, with tutorials and common questions.' },
-      { label: 'Workflows', href: '/learn/workflows/', description: 'End-to-end processes, from the first record to the last.' },
-      { label: 'CAD and engineering', href: '/learn/cad-automation/', description: 'Your AI assistant working in SOLIDWORKS on your computer.' },
+      { label: 'Workflows', href: '/learn/#workflows', description: 'End-to-end processes, from the first record to the last.' },
+      { label: 'CAD and engineering', href: '/learn/#cad-automation', description: 'Your AI assistant working in SOLIDWORKS on your computer.' },
       { label: 'Troubleshooting', href: '/learn/#troubleshooting', description: 'Sign-in, access, records and connections.' },
     ],
   },

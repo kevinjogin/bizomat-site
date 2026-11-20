@@ -26,7 +26,18 @@ function stepper(root: HTMLElement): void {
   const finish = root.querySelector<HTMLElement>('[data-finish]');
   const all = root.querySelector<HTMLButtonElement>('[data-all]');
   const after = root.querySelector<HTMLElement>('[data-after]');
+  // The screen outline beside the steps: its highlighted control follows the step on show.
+  const control = root.querySelector<SVGGElement>('[data-screen-control]');
+  const controlText = root.querySelector<SVGTextElement>('[data-screen-control-text]');
+  const caption = root.querySelector<HTMLElement>('[data-screen-caption]');
+  const captionText = root.querySelector<HTMLElement>('[data-screen-caption-text]');
   if (!steps.length || !nav || !progress || !prev || !next || !all) return;
+  const showWhere = (where: string) => {
+    if (control) control.classList.toggle('is-off', !where);
+    if (controlText) controlText.textContent = where.length > 22 ? `${where.slice(0, 21)}…` : where;
+    if (caption) caption.hidden = !where;
+    if (captionText) captionText.textContent = where;
+  };
   let i = 0;
   let showAll = false;
   const render = () => {
@@ -41,13 +52,14 @@ function stepper(root: HTMLElement): void {
     if (text) text.textContent = `Step ${i + 1} of ${steps.length}`;
     if (bar) bar.style.width = `${Math.round(((i + 1) / steps.length) * 100)}%`;
     all.textContent = showAll ? 'One step at a time' : 'Show all steps';
+    showWhere(steps[i].dataset.where ?? '');
   };
   const go = (k: number) => {
     i = Math.max(0, Math.min(steps.length - 1, k));
     render();
-    steps[i].querySelector('h4')?.focus?.();
+    steps[i].querySelector<HTMLElement>('[data-step-title]')?.focus?.();
   };
-  steps.forEach((s) => s.querySelector('h4')?.setAttribute('tabindex', '-1'));
+  steps.forEach((s) => s.querySelector('[data-step-title]')?.setAttribute('tabindex', '-1'));
   prev.addEventListener('click', () => go(i - 1));
   next.addEventListener('click', () => go(i + 1));
   all.addEventListener('click', () => {
@@ -144,6 +156,15 @@ async function search(root: HTMLElement): Promise<void> {
       }),
     );
   };
+  // A result is a place on this page: show the page again, then open the toggles around it.
+  out.addEventListener('click', (ev) => {
+    const a = (ev.target as Element | null)?.closest?.('a');
+    if (!a || a.pathname !== location.pathname) return;
+    if (browse) browse.hidden = false;
+    out.replaceChildren();
+    count.textContent = '';
+    setTimeout(openFromHash, 0);
+  });
   let timer: ReturnType<typeof setTimeout> | undefined;
   input.addEventListener('input', () => {
     clearTimeout(timer);
@@ -164,16 +185,25 @@ async function search(root: HTMLElement): Promise<void> {
 
 // ------------------------------------------------------------------ open a question from the address
 
+// Everything is on one page (owner, 20 Nov 2026): a guide, tutorial or question sits inside toggles, so an address such as
+// /learn/#procurement-q3 opens every toggle around its target and brings it into view.
 function openFromHash(): void {
   const id = decodeURIComponent(location.hash.slice(1));
   if (!id) return;
   const el = document.getElementById(id);
+  if (!el) return;
   if (el instanceof HTMLDetailsElement) el.open = true;
-  const inside = el?.closest('details');
-  if (inside) inside.open = true;
+  for (let box = el.parentElement?.closest('details'); box; box = box.parentElement?.closest('details')) box.open = true;
+  const tut = el.matches('[data-tutorial]') ? el.querySelector('details') : null;
+  if (tut) tut.open = true;
+  requestAnimationFrame(() => el.scrollIntoView({ block: 'start' }));
 }
 
 document.querySelectorAll<HTMLElement>('[data-tutorial]').forEach(stepper);
+// Open or close every guide on the page at once.
+document.querySelectorAll<HTMLButtonElement>('[data-toggle-all]').forEach((btn) =>
+  btn.addEventListener('click', () => document.querySelectorAll<HTMLDetailsElement>('details.lv-guide').forEach((d) => (d.open = btn.dataset.toggleAll === 'open'))),
+);
 document.querySelectorAll<HTMLElement>('[data-learn-search]').forEach((el) => void search(el));
 openFromHash();
 window.addEventListener('hashchange', openFromHash);

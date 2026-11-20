@@ -1,5 +1,7 @@
 ---
-// /systems/projects/: BIZOMAT Projects, the Project Management System (formerly BIZOMAT Project Management, and KEVOS
+// Moved from src/components/systems/full/Projects.astro into the one-page Systems (owner, 20 Nov 2026: every module on one
+// page under Systems). /systems/#projects answers 301 to /systems/#projects; every id here starts with "projects-".
+// /systems/#projects: BIZOMAT Projects, the Project Management System (formerly BIZOMAT Project Management, and KEVOS
 // Work before that). It opens inside BIZOMAT ERP, in the Projects and Tasks module (src/config/systems.ts). Facts come
 // from src/data/platform-catalog.ts (WORK), which records its sources in apps/work, and from the application's code:
 // roles (apps/work/src/shared/permissions.ts), templates (src/worker/services/boards.ts), widgets
@@ -8,7 +10,6 @@
 // (src/client/system/SystemApp.tsx, components/layout/SuiteRail.tsx) and the links between tools
 // (src/worker/company/links.ts, docs/company/README.md). Every feature carries its status (StatusLabel: Live,
 // Connected, In development, Planned). The guide is in the Knowledge Centre (/learn/projects/).
-import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
 import StatusLabel from '../../../components/StatusLabel.astro';
@@ -185,12 +186,11 @@ const schema = [
   { '@type': 'FAQPage', url: `${SITE.url}${PAGE}#faq`, mainEntity: faq.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title={`${sys.name}: project management software`} description={description} image="/brand/bizomat-social-work.png" imageAlt="BIZOMAT Projects: projects, tasks and teams in one shared workspace" breadcrumbs={crumbs} schema={schema}>
-  <section class="pp-hero" aria-labelledby="projects-title">
+  <section class="pp-hero" aria-labelledby="projects-projects-title">
     <Container class="pp-hero__inner">
       <div>
         <p class="bz-eyebrow">{sys.name}<span class="pp-hero__formerly">Formerly {sys.formerly}, and {WORK.formerly} before that</span></p>
-        <h1 id="projects-title">{WORK.headline}</h1>
+        <h2 class="sys-full__title" id="projects-projects-title">{WORK.headline}</h2>
         <p class="pp-hero__lead">{sys.name} is project management software for teams. It brings your projects, tasks, documents and dashboards into one place: plan the work, assign it, track progress and automate the routine steps.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-access">{access.label}</Button>
@@ -198,15 +198,15 @@ const schema = [
         </div>
         <p class="pp-hero__note">{access.note} Sign in with your BIZOMAT account; existing accounts keep working with the email and password you already use.</p>
       </div>
-      <ProjectFlow id="projects-hero" />
+      <ProjectFlow id="projects-projects-hero" />
     </Container>
   </section>
 
-  <section class="pp-section" id="features" aria-labelledby="features-title">
+  <section class="pp-section" id="projects-features" aria-labelledby="projects-features-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">What it does</p>
-        <h2 id="features-title">Plan it, assign it, track it, finish it</h2>
+        <h2 id="projects-features-title">Plan it, assign it, track it, finish it</h2>
         <p>A project management system keeps the plan, the people and the progress of each piece of work in one shared place. In {sys.name}, projects, tasks, teams and the conversation around them sit on one data model, so every view and dashboard shows the same work.</p>
         <StatusLegend />
       </div>
@@ -216,11 +216,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="who" aria-labelledby="who-title">
+  <section class="pp-section pp-section--tint" id="projects-who" aria-labelledby="projects-who-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Who should use it</p>
-        <h2 id="who-title">For everyone who plans, does or oversees the work</h2>
+        <h2 id="projects-who-title">For everyone who plans, does or oversees the work</h2>
         <p>Each person gets a role, and sees and changes only what that role allows.</p>
       </div>
       <ul class="pp-cards" role="list">
@@ -229,11 +229,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="problems" aria-labelledby="problems-title">
+  <section class="pp-section" id="projects-problems" aria-labelledby="projects-problems-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Problems it solves</p>
-        <h2 id="problems-title">Less chasing, fewer surprises</h2>
+        <h2 id="projects-problems-title">Less chasing, fewer surprises</h2>
       </div>
       <ul class="pp-cards" role="list">
         {problems.map((p) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={p.s} /></p><h3>{p.t}</h3><p>{p.x}</p></li>)}
@@ -241,11 +241,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="views" aria-labelledby="views-title">
+  <section class="pp-section pp-section--tint" id="projects-views" aria-labelledby="projects-views-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features: views and boards</p>
-        <h2 id="views-title">{WORK.views.length} views of the same work</h2>
+        <h2 id="projects-views-title">{WORK.views.length} views of the same work</h2>
         <p>Change a status in the table and the Kanban, calendar and timeline follow, because every view reads the same items. Boards use {WORK.columnTypes} column types, from status and people to dates, numbers, dependencies and formulas, and start blank or from a template.</p>
         <p class="pp-status-line"><StatusLabel status="live" /><span>Every view, column type and template below works today.</span></p>
       </div>
@@ -255,11 +255,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="teams" aria-labelledby="teams-title">
+  <section class="pp-section" id="projects-teams" aria-labelledby="projects-teams-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features: teams, roles and permissions</p>
-        <h2 id="teams-title">The right people on the right work</h2>
+        <h2 id="projects-teams-title">The right people on the right work</h2>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
         {teams.map((t) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={t.s} /></p><h3>{t.t}</h3><p>{t.x}</p></li>)}
@@ -269,11 +269,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="collaboration" aria-labelledby="collab-title">
+  <section class="pp-section pp-section--tint" id="projects-collaboration" aria-labelledby="projects-collab-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features: collaboration</p>
-        <h2 id="collab-title">The conversation stays with the work</h2>
+        <h2 id="projects-collab-title">The conversation stays with the work</h2>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
         {collaboration.map((t) => <li class="pp-card"><p class="pp-card__status"><StatusLabel status={t.s} /></p><h3>{t.t}</h3><p>{t.x}</p></li>)}
@@ -281,23 +281,23 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="automations" aria-labelledby="auto-title">
+  <section class="pp-section" id="projects-automations" aria-labelledby="projects-auto-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features: automations</p>
-        <h2 id="auto-title">Automations move routine work forward</h2>
+        <h2 id="projects-auto-title">Automations move routine work forward</h2>
         <p>Choose a trigger, add conditions, pick actions. Status changes, dates and schedules start work for you; every run is logged once, failures are retried, and chains cannot loop.</p>
         <p class="pp-status-line"><StatusLabel status="live" /><span>Triggers, conditions, actions, recipes and run logs work today.</span></p>
       </div>
-      <WorkflowPipeline id="projects-flow" />
+      <WorkflowPipeline id="projects-projects-flow" />
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="dashboards" aria-labelledby="dash-title">
+  <section class="pp-section pp-section--tint" id="projects-dashboards" aria-labelledby="projects-dash-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features: dashboards, goals and reports</p>
-        <h2 id="dash-title">See the whole portfolio at a glance</h2>
+        <h2 id="projects-dash-title">See the whole portfolio at a glance</h2>
         <p>Everything here is computed from the recorded work when you open it, and each person sees only what their role allows.</p>
       </div>
       <ul class="pp-cards" role="list">
@@ -308,11 +308,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="security" aria-labelledby="sec-title">
+  <section class="pp-section" id="projects-security" aria-labelledby="projects-sec-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Features: accounts and security</p>
-        <h2 id="sec-title">Your projects are visible only to your workspace</h2>
+        <h2 id="projects-sec-title">Your projects are visible only to your workspace</h2>
         <p class="pp-status-line"><StatusLabel status="live" /><span>Every protection below is in place today.</span></p>
       </div>
       <ul class="pp-list">{security.map((s) => <li>{s}</li>)}</ul>
@@ -320,11 +320,11 @@ const schema = [
   </section>
 
   {(shots.length > 0 || erpShot) && (
-    <section class="pp-section pp-section--tint" id="screens" aria-labelledby="screens-title">
+    <section class="pp-section pp-section--tint" id="projects-screens" aria-labelledby="projects-screens-title">
       <Container>
         <div class="pp-head">
           <p class="bz-eyebrow">Screenshots</p>
-          <h2 id="screens-title">Boards, views, dashboards and documents</h2>
+          <h2 id="projects-screens-title">Boards, views, dashboards and documents</h2>
           <p>Captured from the running application with example data. Step-by-step tutorials are in the <a href={GUIDE}>Knowledge Centre</a>.</p>
         </div>
         <div class="pp-shots">
@@ -345,11 +345,11 @@ const schema = [
     </section>
   )}
 
-  <section class="pp-section" id="dashboard" aria-labelledby="home-title">
+  <section class="pp-section" id="projects-dashboard" aria-labelledby="projects-home-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">The main dashboard</p>
-        <h2 id="home-title">Where each day starts</h2>
+        <h2 id="projects-home-title">Where each day starts</h2>
         <p>Four places answer "what needs doing, and how is it going?" Each counts only the work you are allowed to see.</p>
       </div>
       <ul class="pp-cards pp-cards--2" role="list">
@@ -358,11 +358,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="walkthrough" aria-labelledby="walk-title">
+  <section class="pp-section pp-section--tint" id="projects-walkthrough" aria-labelledby="projects-walk-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Screen by screen</p>
-        <h2 id="walk-title">A walk through the application</h2>
+        <h2 id="projects-walk-title">A walk through the application</h2>
         <p>In the order you meet them. The <a href={GUIDE}>Knowledge Centre guide</a> explains each one step by step.</p>
         <p class="pp-status-line"><StatusLabel status="live" /><span>Every screen below is in the application today.</span></p>
       </div>
@@ -372,11 +372,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="start" aria-labelledby="start-title">
+  <section class="pp-section" id="projects-start" aria-labelledby="projects-start-title">
     <Container class="pp-split">
       <div>
         <p class="bz-eyebrow">Getting started</p>
-        <h2 id="start-title">Start in {steps.length} steps</h2>
+        <h2 id="projects-start-title">Start in {steps.length} steps</h2>
         <p class="pp-head-lead">Most people have a first board with real work on it in one sitting. The <a href={GUIDE}>Knowledge Centre guide</a> covers each step, and everything after it.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-start-access">{access.label}</Button>
@@ -388,11 +388,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="workflows" aria-labelledby="flows-title">
+  <section class="pp-section pp-section--tint" id="projects-workflows" aria-labelledby="projects-flows-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Typical workflows</p>
-        <h2 id="flows-title">How the pieces fit in real work</h2>
+        <h2 id="projects-flows-title">How the pieces fit in real work</h2>
       </div>
       <ul class="pp-cards" role="list">
         {workflows.map((w) => (
@@ -407,22 +407,22 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="integrations" aria-labelledby="int-title">
+  <section class="pp-section" id="projects-integrations" aria-labelledby="projects-int-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Integration with other BIZOMAT systems</p>
-        <h2 id="int-title">Connected to sales, finance and your company</h2>
+        <h2 id="projects-int-title">Connected to sales, finance and your company</h2>
         <p>Projects works on its own, and inside a company account it links to the other systems. Each link checks both systems' own permissions, and money is read from Finance, never copied.</p>
       </div>
       <div class="pp-tools">
-        <section aria-labelledby="int-bizomat">
-          <h3 id="int-bizomat">With BIZOMAT systems</h3>
+        <section aria-labelledby="projects-int-bizomat">
+          <h3 id="projects-int-bizomat">With BIZOMAT systems</h3>
           <dl>
             {bizomatLinks.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
           </dl>
         </section>
-        <section aria-labelledby="int-other">
-          <h3 id="int-other">With other tools</h3>
+        <section aria-labelledby="projects-int-other">
+          <h3 id="projects-int-other">With other tools</h3>
           <dl>
             {otherLinks.map((l) => <div><dt>{l.t}</dt><dd><StatusLabel status={l.s} /> {l.x}</dd></div>)}
           </dl>
@@ -431,11 +431,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="faq" aria-labelledby="faq-title">
+  <section class="pp-section pp-section--tint" id="projects-faq" aria-labelledby="projects-faq-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Frequently asked questions</p>
-        <h2 id="faq-title">Questions about {sys.name}</h2>
+        <h2 id="projects-faq-title">Questions about {sys.name}</h2>
       </div>
       <dl class="pp-faq">
         {faq.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
@@ -444,10 +444,10 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--inverse" id="access" aria-labelledby="projects-cta">
+  <section class="pp-section pp-section--inverse" id="projects-access" aria-labelledby="projects-projects-cta">
     <Container class="pp-band">
       <div>
-        <h2 id="projects-cta">Bring your projects and your team into one place.</h2>
+        <h2 id="projects-projects-cta">Bring your projects and your team into one place.</h2>
         <p class="pp-band__note">{access.note}</p>
       </div>
       <div class="pp-band__actions">
@@ -457,11 +457,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="related" aria-labelledby="related-title">
+  <section class="pp-section" id="projects-related" aria-labelledby="projects-related-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Related systems</p>
-        <h2 id="related-title">The rest of BIZOMAT</h2>
+        <h2 id="projects-related-title">The rest of BIZOMAT</h2>
         <p>Every BIZOMAT system is in the <a href={SYSTEMS_HOME}>Systems catalogue</a>.</p>
       </div>
       <ul class="pp-cards" role="list">
@@ -475,7 +475,6 @@ const schema = [
       </ul>
     </Container>
   </section>
-</BaseLayout>
 
 <style>
   .pp-head-lead { margin: .9rem 0 0; font-size: var(--step-1); line-height: 1.5; color: var(--ink-2); }

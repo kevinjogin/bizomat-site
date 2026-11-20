@@ -1,5 +1,7 @@
 ---
-// /systems/whs/: BIZOMAT WHS, Work Health & Safety Management System (src/config/systems.ts), a module of BIZOMAT ERP.
+// Moved from src/components/systems/full/Whs.astro into the one-page Systems (owner, 20 Nov 2026: every module on one
+// page under Systems). /systems/#whs answers 301 to /systems/#whs; every id here starts with "whs-".
+// /systems/#whs: BIZOMAT WHS, Work Health & Safety Management System (src/config/systems.ts), a module of BIZOMAT ERP.
 // Release 1 (the core) is built in apps/work/src/worker/whs and apps/work/src/client/system/whs (migration
 // 0026_whs_core.sql; tests apps/work/test/whs-core.test.ts and test-node/whs-core.test.ts; docs/whs/README.md): the
 // hazard register, risk assessments, incidents and investigations, the regulator notification record, the actions
@@ -7,10 +9,8 @@
 // verifies it in the app, so this page never says the product makes a business meet the law, or that an outside body
 // approved it (tests/whs-claims.test.ts). What is not built is labelled Planned. The product screens are of the example
 // company's invented data.
-import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
-import Breadcrumb from '../../../components/Breadcrumb.astro';
 import StatusLabel from '../../../components/StatusLabel.astro';
 import StatusLegend from '../../../components/StatusLegend.astro';
 import '../../../styles/product.css';
@@ -153,12 +153,10 @@ const schema = [
   { '@type': 'FAQPage', mainEntity: faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })) },
 ];
 ---
-<BaseLayout title="BIZOMAT WHS: Work Health & Safety Management System" description={description} imageAlt="BIZOMAT WHS: health and safety inside BIZOMAT ERP" breadcrumbs={crumbs} schema={schema}>
-  <section class="pp-hero" aria-labelledby="whs-title">
+  <section class="pp-hero" aria-labelledby="whs-whs-title">
     <Container>
-      <div class="sys-crumbs"><Breadcrumb items={crumbs} /></div>
       <p class="bz-eyebrow">{sys.name} · {sys.kind}</p>
-      <h1 id="whs-title">Workplace health and safety, inside your ERP</h1>
+      <h2 class="sys-full__title" id="whs-whs-title">Workplace health and safety, inside your ERP</h2>
       <p class="sys-planned__status sys-hero-status"><StatusLabel status="live" /> {STATUS_LABEL[sys.status]}: the core works today in BIZOMAT ERP.</p>
       <p class="pp-hero__lead">{sys.line}</p>
       <div class="pp-hero__actions">
@@ -169,11 +167,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="legal" aria-labelledby="legal-title">
+  <section class="pp-section pp-section--tint" id="whs-legal" aria-labelledby="whs-legal-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Read this first</p>
-        <h2 id="legal-title">What BIZOMAT WHS does, and does not, do</h2>
+        <h2 id="whs-legal-title">What BIZOMAT WHS does, and does not, do</h2>
       </div>
       <ul class="pp-list sys-items">
         <li><span>It keeps your health and safety records and takes them through their steps, with the history of every change.</span></li>
@@ -185,11 +183,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="modules" aria-labelledby="modules-title">
+  <section class="pp-section" id="whs-modules" aria-labelledby="whs-modules-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Release 1, the core</p>
-        <h2 id="modules-title">What works today</h2>
+        <h2 id="whs-modules-title">What works today</h2>
         <p>Every part below is labelled. Within a part, what is not built yet is labelled Planned.</p>
       </div>
       <div class="sys-legend">
@@ -198,7 +196,7 @@ const schema = [
       </div>
       <ul class="sys-features sys-features--spaced" role="list">
         {modules.map((m) => (
-          <li class="sys-feature" id={m.id}>
+          <li class="sys-feature" id={`whs-${m.id}`}>
             <div class="sys-feature__head"><h3>{m.name}</h3><StatusLabel status={m.st} /></div>
             <p class="sys-feature__state">Live: works today in BIZOMAT ERP, under Health and Safety.</p>
             <p>{m.x}</p>
@@ -209,22 +207,22 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="planned" aria-labelledby="planned-title">
+  <section class="pp-section pp-section--tint" id="whs-planned" aria-labelledby="whs-planned-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Later releases</p>
-        <h2 id="planned-title">Planned, not built</h2>
+        <h2 id="whs-planned-title">Planned, not built</h2>
         <p>Designed, not built. Nothing here is available today.</p>
       </div>
       <ul class="pp-list sys-items">{planned.map((i) => <li><span>{i.t}</span> <StatusLabel status={i.st} /></li>)}</ul>
     </Container>
   </section>
 
-  <section class="pp-section" id="people" aria-labelledby="people-title">
+  <section class="pp-section" id="whs-people" aria-labelledby="whs-people-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Who uses it</p>
-        <h2 id="people-title">A role for each person, checked on the server</h2>
+        <h2 id="whs-people-title">A role for each person, checked on the server</h2>
         <p>WHS roles are given with the other ERP roles in Administration. Every action is checked on the server; a role that may not do something is told who can.</p>
       </div>
       <dl class="sys-faq sys-faq--wide">
@@ -233,11 +231,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="workflows" aria-labelledby="workflows-title">
+  <section class="pp-section pp-section--tint" id="whs-workflows" aria-labelledby="whs-workflows-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Safety workflows</p>
-        <h2 id="workflows-title">From a report to a verified fix</h2>
+        <h2 id="whs-workflows-title">From a report to a verified fix</h2>
         <p>An example from the example company: a setter reports an open pinch point at a press brake from a phone. A WHS officer rates it high, assigns an interlocked guard as an engineering control, and closes it once the guard is fitted and checked. A cut to a worker’s hand is investigated by five whys and fishbone, and the corrective actions deburr the parts before they reach the table.</p>
       </div>
       <div class="sys-concepts">
@@ -266,17 +264,17 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section" id="connected" aria-labelledby="connected-title">
+  <section class="pp-section" id="whs-connected" aria-labelledby="whs-connected-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Related systems</p>
-        <h2 id="connected-title">Working with the ERP, Maintenance and Projects</h2>
+        <h2 id="whs-connected-title">Working with the ERP, Maintenance and Projects</h2>
         <p>Nothing is copied: sites and assets stay in Maintenance, departments in Company accounts, and your tasks in Projects.</p>
       </div>
       <div class="pp-tools">
         {fits.map((g) => (
-          <section aria-labelledby={`fit-${g.url.split('/')[2]}`}>
-            <h3 id={`fit-${g.url.split('/')[2]}`}><a href={g.url}>{g.name}</a></h3>
+          <section aria-labelledby={`whs-fit-${g.url.replace(/[^a-z0-9]+/gi, "")}`}>
+            <h3 id={`whs-fit-${g.url.replace(/[^a-z0-9]+/gi, "")}`}><a href={g.url}>{g.name}</a></h3>
             <ul class="pp-list sys-items">{g.items.map((i) => <li><span>{i.t}</span> <StatusLabel status={i.st} /></li>)}</ul>
           </section>
         ))}
@@ -284,11 +282,11 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--tint" id="faq" aria-labelledby="faq-title">
+  <section class="pp-section pp-section--tint" id="whs-faq" aria-labelledby="whs-faq-title">
     <Container>
       <div class="pp-head">
         <p class="bz-eyebrow">Questions</p>
-        <h2 id="faq-title">About BIZOMAT WHS</h2>
+        <h2 id="whs-faq-title">About BIZOMAT WHS</h2>
       </div>
       <dl class="sys-faq sys-faq--wide">
         {faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
@@ -297,10 +295,10 @@ const schema = [
     </Container>
   </section>
 
-  <section class="pp-section pp-section--inverse" aria-labelledby="whs-cta">
+  <section class="pp-section pp-section--inverse" aria-labelledby="whs-whs-cta">
     <Container class="pp-band">
       <div>
-        <h2 id="whs-cta">Getting started: report the first hazard today.</h2>
+        <h2 id="whs-whs-cta">Getting started: report the first hazard today.</h2>
         <p>{sys.access?.note} Give each site its jurisdiction and the WHS roles in Administration, then anyone in the company can report from a phone.</p>
       </div>
       <div class="pp-band__actions">
@@ -311,4 +309,3 @@ const schema = [
       </div>
     </Container>
   </section>
-</BaseLayout>

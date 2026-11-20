@@ -270,7 +270,7 @@ test('the applications are reached only on bizomat.ai; elsewhere the old CAD pag
       for (const path of ['/cad', '/cad/']) {
         const res = await worker.fetch(new Request(`https://${host}${path}?ref=x`), env());
         assert.equal(res.status, 301, `${host}${path}`);
-        assert.equal(res.headers.get('Location'), '/systems/engineering/?ref=x', `${host}${path}`);
+        assert.equal(res.headers.get('Location'), '/systems/?ref=x#engineering', `${host}${path}`);
       }
       assert.equal(await (await worker.fetch(new Request(`https://${host}/mcp`), env())).text(), 'asset:/mcp', host);
       assert.equal(await (await worker.fetch(new Request(`https://${host}/tasks/`), env())).text(), 'asset:/tasks/', host);
@@ -286,7 +286,7 @@ test('no page or file of the website takes an application\'s path, so those path
       return e.isDirectory() ? [rel, ...taken(rel)] : [rel];
     });
   const appPath = /^\/(cad|tasks|crm|finance|company|system|erp)(\/|$)/i;
-  // The retired design preview's addresses (301 to /systems/erp/, public/_redirects) are the website's, not /system's.
+  // The retired design preview's addresses (301 to /systems/#erp, public/_redirects) are the website's, not /system's.
   for (const path of ['/system-preview', '/system-preview/index.html', '/system-preview/assets/index-a1.js', '/erp-design-preview']) assert.ok(!appPath.test(path), path);
   for (const root of ['src/pages', 'public']) {
     for (const file of taken(root)) {

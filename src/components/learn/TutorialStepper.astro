@@ -1,39 +1,59 @@
 ---
 // E. A step-by-step tutorial. Without JavaScript every step is listed in order. With it, one step shows at a time with
-// Previous, Next, the progress and Finish, which leads back to the module. A tutorial only explains: it never acts on
-// anyone's records.
+// Previous, Next, the progress and Finish, which leads back to the module. A screen outline beside the steps (an
+// Illustration, never a screenshot) highlights where to click for the step on show. A tutorial only explains: it never
+// acts on anyone's records.
 import Answer from './Answer.astro';
+import ErpScreen from './ErpScreen.astro';
 import type { Tutorial } from '../../data/learn/types.ts';
-interface Props { tutorial: Tutorial; finishHref?: string; finishLabel?: string; open?: boolean }
-const { tutorial: t, finishHref, finishLabel, open } = Astro.props;
+interface Props {
+  tutorial: Tutorial;
+  /** Makes the ids unique on a page that holds many guides (the guide or workflow id). */
+  idPrefix?: string;
+  finishHref?: string;
+  finishLabel?: string;
+  open?: boolean;
+  /** Heading level of the tutorial's title (its steps are one level below). */
+  level?: 3 | 4;
+  /** The screen the tutorial happens on, for the illustration. */
+  screen?: { rail: string; page: string; tabs?: string[]; tab?: string };
+}
+const { tutorial: t, idPrefix, finishHref, finishLabel, open, level = 3, screen } = Astro.props;
 const n = t.steps.length;
+const id = idPrefix ? `tutorial-${idPrefix}-${t.id}` : `tutorial-${t.id}`;
+const Title = level === 4 ? 'h4' : 'h3';
+const StepTitle = level === 4 ? 'h5' : 'h4';
+const firstWhere = t.steps.find((s) => s.where)?.where;
 ---
-<section class="lv-tut" id={`tutorial-${t.id}`} data-tutorial aria-labelledby={`tutorial-${t.id}-title`}>
+<section class="lv-tut" id={id} data-tutorial aria-labelledby={`${id}-title`}>
   <details class="lv-tut__box" open={open}>
     <summary class="lv-tut__head">
       <span class="lv-tut__kicker">Tutorial · {n} steps</span>
-      <h3 id={`tutorial-${t.id}-title`}>{t.title}</h3>
+      <Title class="lv-tut__title" id={`${id}-title`}>{t.title}</Title>
       <span class="lv-tut__outcome">{t.outcome}</span>
     </summary>
-    <div class="lv-tut__body">
-      {t.needs && <p class="lv-tut__needs"><strong>You need:</strong> {t.needs}</p>}
-      <p class="lv-tut__progress" aria-live="polite" data-progress hidden><span data-progress-text>Step 1 of {n}</span><span class="lv-tut__bar"><span data-progress-bar></span></span></p>
-      <ol class="lv-steps">
-        {t.steps.map((s, i) => (
-          <li class="lv-step" data-step={i}>
-            <h4><span class="lv-step__n">Step {i + 1}</span> {s.title}</h4>
-            <p><Answer text={s.body} /></p>
-            {s.where && <p class="lv-step__where">On screen: <span class="lv-ui">{s.where}</span></p>}
-          </li>
-        ))}
-      </ol>
-      {t.after && <p class="lv-tut__after" data-after><strong>What happens next:</strong> <Answer text={t.after} /></p>}
-      <div class="lv-tut__nav" data-nav hidden>
-        <button type="button" class="bz-btn bz-btn--secondary" data-prev>Previous</button>
-        <button type="button" class="bz-btn" data-next>Next</button>
-        {finishHref ? <a class="bz-btn bz-btn--accent" href={finishHref} rel="noopener" data-finish hidden>{finishLabel ?? 'Finish'} <span aria-hidden="true">↗</span></a> : <button type="button" class="bz-btn bz-btn--accent" data-finish hidden>Finish</button>}
-        <button type="button" class="lv-tut__all" data-all>Show all steps</button>
+    <div class:list={['lv-tut__body', { 'lv-tut__body--screen': !!screen }]}>
+      <div class="lv-tut__main">
+        {t.needs && <p class="lv-tut__needs"><strong>You need:</strong> {t.needs}</p>}
+        <p class="lv-tut__progress" aria-live="polite" data-progress hidden><span data-progress-text>Step 1 of {n}</span><span class="lv-tut__bar"><span data-progress-bar></span></span></p>
+        <ol class="lv-steps">
+          {t.steps.map((s, i) => (
+            <li class="lv-step" data-step={i} data-where={s.where ?? ''}>
+              <StepTitle class="lv-step__title" data-step-title><span class="lv-step__n">Step {i + 1}</span> {s.title}</StepTitle>
+              <p><Answer text={s.body} /></p>
+              {s.where && <p class="lv-step__where">On screen: <span class="lv-ui">{s.where}</span></p>}
+            </li>
+          ))}
+        </ol>
+        {t.after && <p class="lv-tut__after" data-after><strong>What happens next:</strong> <Answer text={t.after} /></p>}
+        <div class="lv-tut__nav" data-nav hidden>
+          <button type="button" class="bz-btn bz-btn--secondary" data-prev>Previous</button>
+          <button type="button" class="bz-btn" data-next>Next</button>
+          {finishHref ? <a class="bz-btn bz-btn--accent" href={finishHref} rel="noopener" data-finish hidden>{finishLabel ?? 'Finish'} <span aria-hidden="true">↗</span></a> : <button type="button" class="bz-btn bz-btn--accent" data-finish hidden>Finish</button>}
+          <button type="button" class="lv-tut__all" data-all>Show all steps</button>
+        </div>
       </div>
+      {screen && <div class="lv-tut__screen"><ErpScreen id={`${id}-screen`} rail={screen.rail} page={screen.page} tabs={screen.tabs} tab={screen.tab} control={firstWhere} dynamic /></div>}
     </div>
   </details>
 </section>
