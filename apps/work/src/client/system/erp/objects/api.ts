@@ -21,7 +21,7 @@ export interface ObjectInfo {
   what: string;
   notice: string | null;
   sensitiveEditable?: string[];
-  can: { view: boolean; create: boolean; edit: boolean; approve: boolean; self: boolean; import: boolean; own: boolean };
+  can: { view: boolean; create: boolean; edit: boolean; approve: boolean; self: boolean; import: boolean; own: boolean; customFields?: boolean };
   reports: { key: string; label: string; what: string }[];
 }
 

@@ -1,5 +1,5 @@
 -- BIZOMAT ERP: postings to Finance's ledger from the modules framework (batch 2, item 1; docs/erp/postings.md), and the
--- intercompany contacts of consolidation (batch 2, item 2).
+-- intercompany contacts of consolidation (batch 2, item 2) and custom fields (batch 2, item 3).
 -- Depreciation of fixed assets, approved pay runs and earned revenue become posted journals in the company's Finance
 -- business workspace, through Finance's own ledger code (src/worker/fin/ledger.ts), into the accounts the company
 -- chooses here. Additive only. Each journal is recorded once per key in erp_integration_events (kind
@@ -30,4 +30,25 @@ CREATE TABLE erp_ic_contacts (
   contact_id TEXT NOT NULL,
   created_at INTEGER NOT NULL,
   PRIMARY KEY (company_id, entity_id, fin_org_id)
+);
+
+-- Custom fields on the modules framework's records (batch 2, item 3; src/worker/erp/objects/custom.ts): added by an ERP
+-- administrator to one kind of record. Values are kept in the record (erp_objects.data_json) under the field's key; an
+-- archived field is hidden and its values kept. The type never changes.
+CREATE TABLE erp_custom_fields (
+  company_id TEXT NOT NULL,
+  object TEXT NOT NULL CHECK (length(object) BETWEEN 3 AND 40),
+  key TEXT NOT NULL CHECK (key LIKE 'cf\_%' ESCAPE '\' AND length(key) BETWEEN 4 AND 40),
+  label TEXT NOT NULL CHECK (length(label) BETWEEN 1 AND 80),
+  type TEXT NOT NULL CHECK (type IN ('text', 'textarea', 'number', 'money', 'date', 'select', 'bool')),
+  options_json TEXT NOT NULL DEFAULT '[]',
+  required INTEGER NOT NULL DEFAULT 0 CHECK (required IN (0, 1)),
+  list INTEGER NOT NULL DEFAULT 0 CHECK (list IN (0, 1)),
+  help TEXT NOT NULL DEFAULT '',
+  position INTEGER NOT NULL DEFAULT 0,
+  archived_at INTEGER,
+  created_by TEXT REFERENCES users(id) ON DELETE SET NULL,
+  created_at INTEGER NOT NULL,
+  updated_at INTEGER NOT NULL,
+  PRIMARY KEY (company_id, object, key)
 );

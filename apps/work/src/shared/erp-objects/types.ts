@@ -60,6 +60,8 @@ export interface FieldDef {
   wide?: boolean;
   /** Shown (and kept) only while another field has one of these values; cleared otherwise. */
   showIf?: { field: string; is: readonly string[] };
+  /** A company's own field (src/worker/erp/objects/custom.ts), not part of the definition. */
+  custom?: boolean;
 }
 
 export type Tone = 'neutral' | 'info' | 'success' | 'warning' | 'danger';

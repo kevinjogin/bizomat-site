@@ -23,6 +23,7 @@
 //   GET|PUT /x/postings                   the accounts depreciation, pay runs and revenue post to in Finance
 //   POST /x/postings/run                  post every asset's depreciation or every schedule's earned revenue up to a date
 //   GET  /x/consolidation                 the group's consolidated profit and loss and balance sheet (CSV with format=csv)
+//   GET|POST /x/fields/:object, PATCH /x/fields/:object/:key   custom fields (ERP administrators)
 // Records are the company's only (404 otherwise); sensitive fields are left out for people who may not read them.
 
 import { Hono, type Context } from 'hono';
@@ -43,6 +44,7 @@ import { linesOf, removeRecord, saveRecord, takeStep, todayUtc, unarchiveRecord 
 import { runAction } from './actions';
 import { reportsOf, runReport } from './reports';
 import { consolidate } from './intercompany';
+import { CUSTOM_TYPES, CUSTOM_TYPE_LABELS, addCustom, changeCustom, listCustom, withCustom } from './custom';
 import { KIND_LABELS, POSTING_OF, financeTarget, postRecord, postingSettings, postingsOf, savePostingSettings, type PostingKind } from './postings';
 
 export const objectRoutes = new Hono<AppEnv>();
@@ -59,6 +61,13 @@ async function enter(c: Context<AppEnv>, def?: ObjectDef): Promise<ErpAccess> {
   return a;
 }
 
+/** The kind of record in the address, with the company's custom fields, after enter(). */
+async function enterObject(c: Context<AppEnv>): Promise<{ def: ObjectDef; a: ErpAccess }> {
+  const base = defOf(c.req.param('object') ?? '');
+  const a = await enter(c, base);
+  return { a, def: await withCustom(c.env.DB, a.companyId, base) };
+}
+
 function objectInfo(x: ObjAccess, a: ErpAccess) {
   const d = x.def;
   return {
@@ -70,7 +79,7 @@ function objectInfo(x: ObjAccess, a: ErpAccess) {
     closed: d.closed ?? [],
     what: d.what,
     notice: d.notice ?? null,
-    can: { view: x.view, create: !d.noCreate && (x.edit || x.self), edit: x.edit, approve: x.approve, self: x.self, import: x.edit && !d.noCreate, own: !!d.ownField },
+    can: { view: x.view, create: !d.noCreate && (x.edit || x.self), edit: x.edit, approve: x.approve, self: x.self, import: x.edit && !d.noCreate, own: !!d.ownField, customFields: x.admin },
     reports: reportsOf(d),
     /** Sensitive fields this person may set (the others are left out of their forms). */
     sensitiveEditable: d.fields.filter((f) => f.sensitive && sensitiveEditable(x, a, f)).map((f) => f.key),
@@ -222,8 +231,7 @@ function cell(f: FieldDef, v: unknown, label: string | undefined) {
 }
 
 objectRoutes.get('/c/:company/x/o/:object', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   const x = objAccess(a, def);
   if (!reachable(x)) throw new HttpError(403, `Your ERP roles do not include ${def.plural.toLowerCase()}`);
   const db = c.env.DB;
@@ -250,8 +258,7 @@ objectRoutes.get('/c/:company/x/o/:object', async (c) => {
 const zSave = z.object({ data: z.record(z.string(), z.unknown()).default({}), lines: z.array(z.record(z.string(), z.unknown())).max(2000).optional(), version: z.number().int().positive().optional() });
 
 objectRoutes.post('/c/:company/x/o/:object', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   await rateLimit(c.env.DB, `erp-obj:${a.userId}`, 240, 60_000);
   const input = await body(c, zSave);
   const row = await saveRecord(c.env, a, user(c), def, { input: input.data as Data, lines: def.lines ? (input.lines ?? []) : undefined });
@@ -261,8 +268,7 @@ objectRoutes.post('/c/:company/x/o/:object', async (c) => {
 // ------------------------------------------------------------------ CSV import (whole file checked first)
 
 objectRoutes.post('/c/:company/x/o/:object/import', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   const x = objAccess(a, def);
   if (!x.edit || def.noCreate) throw new HttpError(403, `Your ERP roles do not let you import ${def.plural.toLowerCase()}`);
   await rateLimit(c.env.DB, `erp-import:${a.userId}`, 10, 60_000);
@@ -340,8 +346,7 @@ async function visibleFor(a: ErpAccess, key: string) {
 // ------------------------------------------------------------------ reports
 
 objectRoutes.get('/c/:company/x/o/:object/report/:report', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   const x = objAccess(a, def);
   if (!reachable(x)) throw new HttpError(403, `Your ERP roles do not include ${def.plural.toLowerCase()}`);
   const r = await runReport(c.env.DB, a, x, c.req.param('report'), todayUtc());
@@ -420,14 +425,12 @@ async function visibleRow(c: Context<AppEnv>, a: ErpAccess, def: ObjectDef, id: 
 }
 
 objectRoutes.get('/c/:company/x/o/:object/:id', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   return c.json(await detail(c, a, def, await visibleRow(c, a, def, c.req.param('id'))));
 });
 
 objectRoutes.patch('/c/:company/x/o/:object/:id', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   await rateLimit(c.env.DB, `erp-obj:${a.userId}`, 240, 60_000);
   const input = await body(c, zSave);
   const row = await saveRecord(c.env, a, user(c), def, { id: c.req.param('id'), input: input.data as Data, lines: input.lines, version: input.version });
@@ -435,16 +438,14 @@ objectRoutes.patch('/c/:company/x/o/:object/:id', async (c) => {
 });
 
 objectRoutes.post('/c/:company/x/o/:object/:id/step/:step', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   const input = await body(c, z.object({ note: z.string().max(2000).optional().nullable() }));
   const row = await takeStep(c.env, a, user(c), def, c.req.param('id'), c.req.param('step'), input.note ?? null, (p) => c.executionCtx.waitUntil(p));
   return c.json(await detail(c, a, def, row));
 });
 
 objectRoutes.post('/c/:company/x/o/:object/:id/action/:action', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   await rateLimit(c.env.DB, `erp-action:${a.userId}`, 60, 60_000);
   const input = await body(c, z.object({ input: z.record(z.string(), z.unknown()).optional() }));
   const r = await runAction(c.env, a, user(c), def, c.req.param('id'), c.req.param('action'), (input.input ?? {}) as Data, (p) => c.executionCtx.waitUntil(p));
@@ -453,21 +454,18 @@ objectRoutes.post('/c/:company/x/o/:object/:id/action/:action', async (c) => {
 });
 
 objectRoutes.delete('/c/:company/x/o/:object/:id', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   const row = await removeRecord(c.env.DB, a, def, c.req.param('id'), c.req.query('archive') === '1');
   return c.json(row ? await detail(c, a, def, row) : { deleted: true });
 });
 
 objectRoutes.post('/c/:company/x/o/:object/:id/restore', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   return c.json(await detail(c, a, def, await unarchiveRecord(c.env.DB, a, def, c.req.param('id'))));
 });
 
 objectRoutes.post('/c/:company/x/o/:object/:id/comments', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   await rateLimit(c.env.DB, `erp-comment:${a.userId}`, 60, 60_000);
   const row = await visibleRow(c, a, def, c.req.param('id'));
   const input = await body(c, z.object({ body: z.string().trim().min(1).max(5000) }));
@@ -482,8 +480,7 @@ objectRoutes.post('/c/:company/x/o/:object/:id/comments', async (c) => {
 // ------------------------------------------------------------------ files (the app's file store, the same checks as every upload)
 
 objectRoutes.post('/c/:company/x/o/:object/:id/files', async (c) => {
-  const def = defOf(c.req.param('object'));
-  const a = await enter(c, def);
+  const { def, a } = await enterObject(c);
   await rateLimit(c.env.DB, `erp-upload:${a.userId}`, 60, 60_000);
   const row = await visibleRow(c, a, def, c.req.param('id'));
   const x = objAccess(a, def);
@@ -804,6 +801,32 @@ objectRoutes.post('/c/:company/x/postings/run', async (c) => {
     }
   }
   return c.json({ kind: input.kind, label: KIND_LABELS[input.kind], upTo: input.upTo, checked: rows.results.length, records, journals, problems, workspace: target.org, more: rows.results.length === 200 });
+});
+
+// ------------------------------------------------------------------ custom fields
+
+objectRoutes.get('/c/:company/x/fields/:object', async (c) => {
+  const { def, a } = await enterObject(c);
+  if (!objAccess(a, def).admin) throw new HttpError(403, 'Only an ERP administrator changes custom fields');
+  return c.json({ fields: await listCustom(c.env.DB, a.companyId, def.key), types: CUSTOM_TYPES.map((t) => ({ value: t, label: CUSTOM_TYPE_LABELS[t] })) });
+});
+
+objectRoutes.post('/c/:company/x/fields/:object', async (c) => {
+  const { def, a } = await enterObject(c);
+  if (!objAccess(a, def).admin) throw new HttpError(403, 'Only an ERP administrator changes custom fields');
+  const input = await body(c, z.object({ label: z.string().max(80), type: z.enum(CUSTOM_TYPES), options: z.array(z.string().max(80)).max(50).optional(), required: z.boolean().optional(), list: z.boolean().optional(), help: z.string().max(200).optional() }));
+  const fields = await addCustom(c.env.DB, a.companyId, a.userId, def.key, input);
+  await eventStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'fields.added', entityType: 'settings', entityId: a.companyId, summary: `Custom field ${input.label.slice(0, 80)} added to ${def.plural.toLowerCase()}` }).run();
+  return c.json({ fields }, 201);
+});
+
+objectRoutes.patch('/c/:company/x/fields/:object/:key', async (c) => {
+  const { def, a } = await enterObject(c);
+  if (!objAccess(a, def).admin) throw new HttpError(403, 'Only an ERP administrator changes custom fields');
+  const input = await body(c, z.object({ label: z.string().max(80).optional(), options: z.array(z.string().max(80)).max(50).optional(), required: z.boolean().optional(), list: z.boolean().optional(), help: z.string().max(200).optional(), archived: z.boolean().optional(), position: z.number().int().min(0).max(1000).optional() }));
+  const fields = await changeCustom(c.env.DB, a.companyId, def.key, c.req.param('key'), input);
+  await eventStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'fields.changed', entityType: 'settings', entityId: a.companyId, summary: `Custom field ${c.req.param('key').slice(0, 40)} of ${def.plural.toLowerCase()} ${input.archived ? 'archived' : input.archived === false ? 'restored' : 'changed'}` }).run();
+  return c.json({ fields });
 });
 
 // ------------------------------------------------------------------ consolidation

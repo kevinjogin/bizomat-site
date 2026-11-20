@@ -22,6 +22,7 @@ import { OBJECTS, type FieldDef } from '../../../../shared/erp-objects';
 import { FieldInput, RefPicker } from './fields';
 import { POSTING_KIND_OF_MODULE, PostingsTab, RecordPostings } from './Postings';
 import { ConsolidationTab } from './Consolidation';
+import { CustomFieldsDialog } from './CustomFields';
 import { TONE_CLASS, favourites, modulePage, moneyText, noteRecent, recordPage, toggleFavourite, useModule, valueText, xHref, xPath, type Detail, type ObjectFull, type Rec, type ReportTable } from './api';
 
 export function StatusBadge({ statuses, value }: { statuses: { key: string; label: string; tone: string }[]; value: string }) {
@@ -178,6 +179,7 @@ function ObjectList({ companyId, module }: { companyId: string; module: string }
   filters.delete('offset');
   const list = useQuery({ queryKey: ['erp', companyId, 'x', 'o', object, filters.toString(), offset], queryFn: () => get<{ object: ObjectFull; records: Rec[]; total: number }>(xPath(companyId, `/o/${object}?${filters}&limit=${limit}&offset=${offset}`)), retry: false });
   const [importing, setImporting] = useState(false);
+  const [customising, setCustomising] = useState(false);
   const def = list.data?.object;
   usePageTitle(def?.plural ?? 'Records');
   if (list.error) return <ErrorBox error={list.error} retry={() => list.refetch()} />;
@@ -195,6 +197,7 @@ function ObjectList({ companyId, module }: { companyId: string; module: string }
         <SavedFilters companyId={companyId} object={object} query={filters.toString()} onPick={(qs) => setParams(new URLSearchParams(qs), { replace: true })} />
         <a className="btn" href={xHref(companyId, `/o/${object}?${filters}&format=csv`)} download><Icon name="download" /> Export CSV</a>
         {def.can.import ? <button className="btn" onClick={() => setImporting(true)}><Icon name="upload" /> Import</button> : null}
+        {def.can.customFields ? <button className="btn" onClick={() => setCustomising(true)}><Icon name="settings" /> Custom fields</button> : null}
         {def.can.create ? <Link className="btn primary" to={`${base}/${object}/new`}><Icon name="plus" /> New {def.label.toLowerCase()}</Link> : null}
       </div>
       <FilterPanel active={active}>
@@ -253,6 +256,7 @@ function ObjectList({ companyId, module }: { companyId: string; module: string }
       </div>
       <Pager offset={offset} limit={limit} total={data.total} setOffset={(n) => set('offset', n ? String(n) : '')} />
       {importing ? <ImportDialog companyId={companyId} def={def} onClose={() => setImporting(false)} /> : null}
+      {customising ? <CustomFieldsDialog companyId={companyId} object={def.key} plural={def.plural} onClose={() => { setCustomising(false); void list.refetch(); }} /> : null}
     </div>
   );
 }

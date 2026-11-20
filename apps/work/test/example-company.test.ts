@@ -73,6 +73,19 @@ describe('the example company', () => {
     expect(overview.assets).toBe(7);
     expect(overview.openWorkOrders).toBe(2);
     expect(overview.openRequests).toBeGreaterThanOrEqual(2);
+    // the newer modules have records of their own: the person's employee record and leave waiting, a fixed asset in service
+    // with its Finance posting accounts saved (nothing posted), a price list in use, a pay run worked out
+    const xo = (o: string) => a.json('GET', `/api/erp/c/${built.companyId}/x/o/${o}`);
+    expect((await xo('hr_employee')).records).toHaveLength(1);
+    expect((await xo('hr_leave')).records[0].status).toBe('submitted');
+    expect((await xo('fa_asset')).records[0].status).toBe('in_service');
+    expect((await xo('pr_pricelist')).records[0].status).toBe('active');
+    expect((await xo('py_run')).records[0].status).toBe('calculated');
+    const posting = await a.json('GET', `/api/erp/c/${built.companyId}/x/postings`);
+    expect(posting.roles.find((r: any) => r.role === 'dep_expense').account.code).toBe('416');
+    expect((await env.DB.prepare("SELECT COUNT(*) AS n FROM erp_integration_events WHERE company_id = ? AND kind = 'finance.journal'").bind(built.companyId).first<{ n: number }>())!.n).toBe(0);
+    const payslips = await a.json('GET', `/api/erp/c/${built.companyId}/x/payslips`);
+    expect(payslips.payslips).toEqual([]);
 
     // The build's API token is gone.
     const tokens = await env.DB.prepare('SELECT COUNT(*) AS n FROM api_tokens WHERE user_id = ?').bind(a.userId).first<{ n: number }>();
@@ -162,6 +175,8 @@ describe('the example company', () => {
       const r = await env.DB.prepare(`SELECT deleted_at FROM ${table} WHERE id = ?`).bind(id).first<{ deleted_at: number | null }>();
       expect(r!.deleted_at).not.toBeNull();
     }
+    const leftModules = await env.DB.prepare('SELECT (SELECT COUNT(*) FROM erp_objects WHERE company_id = ?1) + (SELECT COUNT(*) FROM erp_posting_accounts WHERE company_id = ?1) AS n').bind(companyId).first<{ n: number }>();
+    expect(leftModules!.n).toBe(0);
     const left = await env.DB.prepare('SELECT (SELECT COUNT(*) FROM mt_assets WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_work_orders WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_requests WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_events WHERE company_id = ?1) AS n').bind(companyId).first<{ n: number }>();
     expect(left!.n).toBe(0);
     expect((await a.req('GET', `/api/maintenance/c/${companyId}/me`)).status).toBe(404);
