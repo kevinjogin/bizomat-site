@@ -6,6 +6,7 @@ import type { APIContext } from 'astro';
 import { PLATFORM, APP_LINKS } from '../config/platform.ts';
 import { SITE } from '../config/site.ts';
 import { SYSTEMS, SYSTEMS_HOME, STATUS_LABEL } from '../config/systems.ts';
+import { GUIDES, LEARN_HOME, LEARN_TITLE, guideUrl } from '../data/learn/index.ts';
 
 export function llmsTxt(site: string): string {
   const base = site.replace(/\/$/, '');
@@ -13,7 +14,7 @@ export function llmsTxt(site: string): string {
   const systems = SYSTEMS.map((s) => {
     const status = s.status === 'available' ? '' : ` (${STATUS_LABEL[s.status]})`;
     const note = s.statusNote ? ` ${s.statusNote}` : '';
-    const guide = s.guide ? ` User guide: ${abs(s.guide)}` : '';
+    const guide = s.guide ? ` Guide: ${abs(s.guide)}` : '';
     return `- [${s.name}](${abs(s.url)}): ${s.kind}${status}. ${s.line}${note}${guide}`;
   });
   return `# ${PLATFORM.name}
@@ -24,11 +25,17 @@ ${PLATFORM.name} (formerly ${PLATFORM.formerName.name}) makes business software 
 
 ## Systems
 
-The business software, each with a page and a user guide: ${abs(SYSTEMS_HOME)}
+The business software, each with a page and a guide in the Knowledge Centre: ${abs(SYSTEMS_HOME)}
 
 ${systems.join('\n')}
 
 Signed-in people use the systems inside ${PLATFORM.name} ERP: ${abs(APP_LINKS.erp.home)}
+
+## Learn ${PLATFORM.name} ERP
+
+- [${LEARN_TITLE}](${abs(LEARN_HOME)}): a guide to every module, with step-by-step tutorials, the buttons explained and answered questions, all searchable (open to everyone, no sign-in).
+- [Workflows](${abs('/learn/workflows/')}): end-to-end processes across modules, from the first record to the last.
+- Module guides: ${GUIDES.filter((g) => g.section === 'modules').map((g) => `[${g.title}](${abs(guideUrl(g.id))})`).join(', ')}.
 
 ## What the software does not do
 

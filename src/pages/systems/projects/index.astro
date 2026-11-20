@@ -7,7 +7,7 @@
 // (src/client/board/FinancePanel.tsx), integrations (src/worker/services/integrations.ts), the ERP's dashboard and rail
 // (src/client/system/SystemApp.tsx, components/layout/SuiteRail.tsx) and the links between tools
 // (src/worker/company/links.ts, docs/company/README.md). Every feature carries its status (StatusLabel: Live,
-// Connected, In development, Planned). The user guide is /systems/projects/guide/.
+// Connected, In development, Planned). The guide is in the Knowledge Centre (/learn/projects/).
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
@@ -194,7 +194,7 @@ const schema = [
         <p class="pp-hero__lead">{sys.name} is project management software for teams. It brings your projects, tasks, documents and dashboards into one place: plan the work, assign it, track progress and automate the routine steps.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-access">{access.label}</Button>
-          <Button href={GUIDE} variant="secondary" data-cta="projects-guide">Read the user guide</Button>
+          <Button href={GUIDE} variant="secondary" data-cta="projects-guide">Guides and tutorials</Button>
         </div>
         <p class="pp-hero__note">{access.note} Sign in with your BIZOMAT account; existing accounts keep working with the email and password you already use.</p>
       </div>
@@ -325,7 +325,7 @@ const schema = [
         <div class="pp-head">
           <p class="bz-eyebrow">Screenshots</p>
           <h2 id="screens-title">Boards, views, dashboards and documents</h2>
-          <p>Captured from the running application with example data. More screens are in the <a href={GUIDE}>user guide</a>.</p>
+          <p>Captured from the running application with example data. Step-by-step tutorials are in the <a href={GUIDE}>Knowledge Centre</a>.</p>
         </div>
         <div class="pp-shots">
           {erpShot && (
@@ -363,7 +363,7 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">Screen by screen</p>
         <h2 id="walk-title">A walk through the application</h2>
-        <p>In the order you meet them. The <a href={GUIDE}>user guide</a> explains each one step by step.</p>
+        <p>In the order you meet them. The <a href={GUIDE}>Knowledge Centre guide</a> explains each one step by step.</p>
         <p class="pp-status-line"><StatusLabel status="live" /><span>Every screen below is in the application today.</span></p>
       </div>
       <ol class="pp-steps pp-steps--2">
@@ -377,7 +377,7 @@ const schema = [
       <div>
         <p class="bz-eyebrow">Getting started</p>
         <h2 id="start-title">Start in {steps.length} steps</h2>
-        <p class="pp-head-lead">Most people have a first board with real work on it in one sitting. The <a href={GUIDE}>user guide</a> covers each step, and everything after it.</p>
+        <p class="pp-head-lead">Most people have a first board with real work on it in one sitting. The <a href={GUIDE}>Knowledge Centre guide</a> covers each step, and everything after it.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-start-access">{access.label}</Button>
         </div>
@@ -440,7 +440,7 @@ const schema = [
       <dl class="pp-faq">
         {faq.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
       </dl>
-      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>user guide</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
+      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>Knowledge Centre guide</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
     </Container>
   </section>
 
@@ -452,7 +452,7 @@ const schema = [
       </div>
       <div class="pp-band__actions">
         <Button href={access.href} variant="accent" rel="noopener" data-cta="projects-band-access">{access.label}</Button>
-        <Button href={GUIDE} variant="secondary" data-cta="projects-band-guide">Read the user guide</Button>
+        <Button href={GUIDE} variant="secondary" data-cta="projects-band-guide">Guides and tutorials</Button>
       </div>
     </Container>
   </section>

@@ -476,6 +476,11 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             <NavLink to="/admin/overview" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> ERP console</NavLink>
           </>
         ) : null}
+        {/* The Knowledge Centre (owner, 20 Nov 2026): guides, tutorials and answers for every module, on the website. */}
+        <div className="nav-section">Help</div>
+        <a className="nav-item" href={PLATFORM_URLS.learn} rel="noopener" title="BIZOMAT ERP Knowledge Centre: guides, tutorials and answers for every module">
+          <Icon name="help" /> Knowledge Centre
+        </a>
         {/* Every tool is in the module rail (SuiteRail) and stays inside the ERP: no link out to CAD Automation's own
             application here (owner, 20 Nov 2026); CAD Automation is under Products and Engineering, or its own entry
             above where it works inside the ERP (flag cad_in_erp). */}

@@ -1,0 +1,227 @@
+import type { Guide } from '../types.ts';
+
+const guide: Guide = {
+  id: 'integrations',
+  section: 'ai',
+  title: 'Integrations and the API',
+  short: 'Integrations',
+  status: 'live',
+  what: "BIZOMAT's tools use one account and, inside a company, link to each other without copying records. A few outside connections are built too: personal API tokens, outgoing webhooks to Slack, Microsoft Teams or your own system, a calendar feed of your CRM activities, email from BIZOMAT's email service, Sign in with BIZOMAT for CAD Automation, and AI apps connected to CAD Automation.",
+  purpose: [
+    'Keep one customer record: a CRM company and the Finance customer it is billed as.',
+    'Turn a deal into a draft quote, a draft invoice or a project without typing it again.',
+    'Call the BIZOMAT API from a script with a token limited to one company.',
+    'Post board events to Slack, Microsoft Teams or your own HTTPS address.',
+    'See your CRM activities in Google Calendar, Outlook or Apple Calendar.',
+    'Use your BIZOMAT account in CAD Automation and connect AI apps to SOLIDWORKS.',
+  ],
+  who: [
+    'Company owners and administrators.',
+    'Workspace administrators in Projects and Tasks.',
+    'Sales people who live in their calendar.',
+    'Developers and analysts who write scripts or reports.',
+    'Engineers using CAD Automation.',
+  ],
+  access: {
+    path: ['BIZOMAT ERP', 'Projects and Tasks', 'Settings', 'Security'],
+    href: 'https://bizomat.ai/erp/tasks/',
+    label: 'Open Projects and Tasks',
+    note: 'Personal API tokens are under Settings, Security. Webhooks are under Integrations in Projects and Tasks. The calendar feed is under Settings, Calendar feed in Sales and CRM. Links between tools are on the CRM company and deal pages.',
+  },
+  tutorials: [
+    {
+      id: 'customer-record',
+      title: 'Link a CRM company to Finance as one customer',
+      outcome: 'The CRM company and its Finance customer are one linked record, and what the customer owes shows on the CRM company.',
+      needs: 'A registered company that runs both Sales and CRM and Finance, and a Finance role that may add customers.',
+      steps: [
+        { title: 'Open the company in the CRM', body: 'In BIZOMAT ERP, open Sales and CRM, choose Companies and open the company.' },
+        { title: 'Find In Finance', body: 'The company page has an In Finance section. If the company is a Finance customer already, it shows Customer and its name, with how many invoices are open and the amount owed.', where: 'In Finance' },
+        {
+          title: 'Add it as a customer',
+          body: "Choose Add as a customer in Finance. Finance gets the company's name, email, phone and address. Nothing is copied back and forth afterwards: each record stays in its own tool.",
+          where: 'Add as a customer in Finance',
+        },
+        { title: 'Open the customer', body: 'Choose the Customer link to open the record in Finance.' },
+      ],
+      after: "The CRM company shows the customer's open invoices and the amount owed, read from Finance each time you open it.",
+    },
+    {
+      id: 'deal-links',
+      title: 'Start a quote, an invoice or a project from a deal',
+      outcome: 'The deal is linked to a draft quote, a draft invoice or a project in the same company, and the link shows on the deal.',
+      needs: 'Access to the deal in the CRM, plus a Finance role that may create quotes or invoices, or the right to create projects in Projects and Tasks.',
+      steps: [
+        { title: 'Open the deal', body: 'In Sales and CRM, open Deals and then the deal.' },
+        { title: 'Find the links section', body: 'The deal page has a section named Across and your company name, with Finance and Project Management parts.', where: 'Across' },
+        { title: 'Start a quote', body: "Choose Start a quote. Finance gets a draft quote for the deal's company with the deal's value, to price in detail there.", where: 'Start a quote' },
+        {
+          title: 'Make a draft invoice when the deal is won',
+          body: "Once the deal is won, choose Make a draft invoice. It has one line with the deal's title and value. It is a draft: check the amount, GST and account in Finance before approving it.",
+          where: 'Make a draft invoice',
+        },
+        { title: 'Start a project', body: "Choose Start a project. A project board named after the deal is made in the company's Projects and Tasks.", where: 'Start a project' },
+      ],
+      after: 'The deal shows the quote, invoice or project with a link to open it. Both records must belong to tools of the same company.',
+    },
+    {
+      id: 'api-token',
+      title: 'Make a personal API token',
+      outcome: 'You have a token that a script can use to call the BIZOMAT API as you, in one company only.',
+      needs: 'Signed in to BIZOMAT ERP in a browser. Tokens can only be made from an interactive session.',
+      steps: [
+        { title: 'Open Security', body: 'In BIZOMAT ERP, open Projects and Tasks, then Settings and Security. Your user menu in Projects and Tasks also has Security.', where: 'Security' },
+        { title: 'Choose New token', body: 'Under Personal API tokens, choose New token.', where: 'New token' },
+        {
+          title: 'Fill in the token',
+          body: 'Give it a Name, for example "Reporting script". Choose the Company it works in. Under Applications, tick the ones it may use (Projects, CRM, Finance, ERP modules, Company administration); none ticked means all of them. Tick Read only if it only needs to read. Choose when it Expires: in 30 days, in 90 days or in 1 year.',
+          where: 'New API token',
+        },
+        { title: 'Create and copy it', body: 'Choose Create token. Copy the token now: it is not shown again.', where: 'Create token' },
+        {
+          title: 'Use it',
+          body: 'Send it in the header Authorization: Bearer <token>. It acts as you, with your permissions, in that company only, and can never do more than you can.',
+        },
+      ],
+      after: 'The token list shows when each token was made, last used and expires. Revoke stops a token at once. Changing your password ends every token you have.',
+    },
+    {
+      id: 'webhook',
+      title: 'Send board events to Slack, Teams or a webhook',
+      outcome: 'Board events, such as a task created or updated, are posted to your Slack or Teams channel or your own HTTPS address.',
+      needs: 'Workspace administrator in Projects and Tasks.',
+      steps: [
+        { title: 'Open Integrations', body: 'In Projects and Tasks, choose Integrations in the menu.', where: 'Integrations' },
+        {
+          title: 'Choose a connection',
+          body: 'Under Available connections, choose Connect next to Outgoing webhook, Slack (incoming webhook) or Microsoft Teams (workflow webhook).',
+          where: 'Connect',
+        },
+        {
+          title: 'Fill in the details',
+          body: 'Give it a Name, paste the https address (it is stored securely and never shown again), choose the Boards (or all boards in this workspace) and tick the Events: Item created, Item updated, Item moved, Update posted, and Automation action (send webhook). Choose Save.',
+        },
+        {
+          title: 'Copy the signing secret',
+          body: 'For an outgoing webhook, copy the signing secret shown after saving: it is shown only once. Your system uses it to check that each request came from BIZOMAT.',
+        },
+        {
+          title: 'Send a test',
+          body: 'Choose Send test. An integration shows Connected only after a real delivery succeeded. Deliveries lists each delivery and its result.',
+          where: 'Send test',
+        },
+      ],
+      after: 'Automations can also send to this integration with the action send a webhook (see /learn/automations/).',
+    },
+    {
+      id: 'calendar-feed',
+      title: 'See your CRM activities in your own calendar',
+      outcome: 'Your dated CRM activities appear in your calendar program and update as they change.',
+      steps: [
+        { title: 'Open Calendar feed', body: 'In Sales and CRM, open Settings and choose Calendar feed. The Calendar page also has a Calendar feed button.', where: 'Calendar feed' },
+        { title: 'Make the address', body: 'Choose Make my calendar address, then Copy.', where: 'Make my calendar address' },
+        {
+          title: 'Subscribe in your calendar',
+          body: 'In Google Calendar choose From URL, in Outlook Subscribe from web, or subscribe in Apple Calendar, and paste the address. It lists the activities assigned to you that have a date, from 30 days ago onwards.',
+        },
+        {
+          title: 'Keep it private',
+          body: 'Anyone with the address can read those activities\' titles and times. Make a new address stops the old one; Stop the address ends it.',
+          where: 'Stop the address',
+        },
+      ],
+      after: 'Calendar programs refresh a subscribed calendar every few hours, so a change can take that long to show.',
+    },
+  ],
+  buttons: [
+    { label: 'Add as a customer in Finance', does: 'Creates the Finance customer from a CRM company and links the two.', when: 'A CRM company becomes a customer you invoice.' },
+    { label: 'Start a quote', does: "Makes a draft quote in Finance for the deal's company with the deal's value.", after: "The quote's progress shows on the deal and its timeline." },
+    { label: 'Make a draft invoice', does: "Makes a draft Finance invoice from a won deal: one line with the deal's title and value.", after: 'Someone checks the amount, GST and account in Finance and approves it there.' },
+    { label: 'Start a project', does: "Makes a project board named after the deal in the company's Projects and Tasks.", after: 'The deal links to the project.' },
+    { label: 'New token', does: 'Opens the form for a personal API token.', when: 'A script or another system needs to call the BIZOMAT API.' },
+    { label: 'Create token', does: 'Makes the token and shows it once.', after: 'Copy it at once: it is never shown again.' },
+    { label: 'Revoke', does: 'Ends a token after you confirm.', after: 'Applications using it stop working immediately.' },
+    { label: 'Connect', does: 'Adds an outgoing webhook, Slack or Teams connection to the workspace.', when: 'You are a workspace administrator.' },
+    { label: 'Send test', does: 'Sends a test event to the integration.', after: 'It shows Connected once a delivery succeeds, or Delivery failing with the error.' },
+    { label: 'Deliveries', does: 'Lists each delivery of an integration and its result.', when: 'A connection stopped receiving events.' },
+    { label: 'Make my calendar address', does: 'Makes your private CRM calendar address.', after: 'Copy it into your calendar program.' },
+    { label: 'Stop the address', does: 'Ends your calendar address.', when: 'The address was shared by mistake or you no longer need it.' },
+  ],
+  faqs: [
+    {
+      q: 'Do linked tools copy my records?',
+      a: 'No. A link points from one record to the other; figures such as what a customer owes are read from Finance when you open the page. Both records must belong to tools of the same company, and each tool checks its own permissions for its own record.',
+    },
+    {
+      q: 'Why does a deal or CRM company show no Finance or Project Management section?',
+      a: "The links appear only when the CRM organisation belongs to a registered company that also runs Finance or Projects and Tasks. When it does not, the server answers, for example, \"This CRM organisation does not belong to a company that runs Finance\". If you have no access to the company's Finance, the section says so (see /learn/companies/).",
+    },
+    {
+      q: 'Why can I not make a draft invoice from a deal?',
+      a: 'Only a won deal becomes an invoice. The deal must have a company, because the invoice is made out to it. If the deal is in another currency than Finance keeps, make the invoice in Finance. Your Finance role must also allow invoices.',
+    },
+    {
+      q: 'My API token stopped working. Why?',
+      a: 'It may have expired (90 days unless you chose another period), been revoked, or ended when you changed your password: the API then answers "Authentication required". A token is limited to one company: calling another company answers "This API token is limited to one company, and this address is not in it." A read-only token answers "This API token can only read." when it tries to change something, and a token limited to some applications answers "This API token is not allowed to use this application."',
+    },
+    {
+      q: 'Is there a published API reference?',
+      a: 'Not yet: it is planned. Each system has its own API, used by the application itself with your session or with a personal API token.',
+    },
+    {
+      q: 'Which emails does BIZOMAT send?',
+      a: "Invitations, email address confirmations, notifications (by each person's own settings), quotes, invoices and credit notes you choose to email from Finance, an optional dispatch email to a customer from Supply chain, and Health and Safety alerts. They are sent only where the service's email provider is set up; otherwise invitations show a link to share and notifications stay in the app. The example company sends no email.",
+    },
+    {
+      q: 'Does the CRM read or send email from my mailbox?',
+      a: 'No. You write an email from a template, send it from your own mail program, and the email is logged on the customer\'s timeline. Synchronising Gmail, Google Workspace, Outlook or Microsoft 365 mailboxes is not available.',
+    },
+    {
+      q: 'Does BIZOMAT connect to my bank, payment provider or carrier?',
+      a: 'No. Finance does not connect to banks or process payments: you import bank statements yourself. Supply chain records carriers and tracking numbers but does not book with carrier systems.',
+    },
+    {
+      q: 'What are Google Drive, Google Calendar, Gmail and GitHub on the Integrations page?',
+      a: 'They are listed with Requires setup and "Not available on this deployment": they need accounts and credentials BIZOMAT has not set up, so they cannot be switched on. Only the outgoing webhook, Slack and Microsoft Teams work today.',
+    },
+    {
+      q: 'How do CAD Automation and AI apps use my BIZOMAT account?',
+      a: 'In CAD Automation, choose Continue with BIZOMAT and confirm on bizomat.ai: CAD Automation receives your BIZOMAT account ID, name, email address, whether it is confirmed, and your companies. AI apps such as Claude or ChatGPT connect to CAD Automation through its connector and work only in SOLIDWORKS, as you (see /learn/cad-ai-connection/).',
+    },
+  ],
+  related: ['crm', 'finance', 'projects', 'automations', 'cad-ai-connection', 'security', 'companies'],
+  workflows: ['deal-to-invoice', 'deal-to-project', 'lead-to-customer'],
+  notYet: [
+    { text: 'A published API reference.', status: 'planned' },
+    { text: 'Webhooks from the CRM, Finance and the ERP modules (today only Projects and Tasks sends them).', status: 'planned' },
+    { text: 'One place to monitor every connection (today Projects and Tasks records each webhook delivery).', status: 'planned' },
+    { text: 'Mailbox synchronisation in the CRM (Gmail and Google Workspace, Outlook and Microsoft 365).', status: 'planned' },
+    { text: 'Google Drive, Google Calendar, Gmail and GitHub connections in Projects and Tasks.', status: 'planned' },
+  ],
+  keywords: ['API', 'API key', 'token', 'webhook', 'Slack', 'Microsoft Teams', 'iCal', 'ics', 'calendar subscription', 'Google Calendar', 'Outlook', 'email', 'SSO', 'single sign-on', 'Sign in with BIZOMAT', 'MCP', 'connector', 'link records'],
+  sources: [
+    'apps/work/src/worker/company/links.ts',
+    'apps/work/src/client/crm/CompanyLinks.tsx',
+    'apps/work/src/worker/routes/me.ts',
+    'apps/work/src/worker/platform/context.ts',
+    'apps/work/src/client/pages/settings/Security.tsx',
+    'apps/work/src/client/pages/Settings.tsx',
+    'apps/work/src/client/components/layout/AppShell.tsx',
+    'apps/work/src/worker/services/integrations.ts',
+    'apps/work/src/client/pages/Integrations.tsx',
+    'apps/work/src/client/crm/Settings.tsx',
+    'apps/work/src/client/crm/Activities.tsx',
+    'apps/work/src/worker/crm/mailbox.ts',
+    'apps/work/src/worker/services/email/templates.ts',
+    'apps/work/src/worker/services/email/provider.ts',
+    'apps/work/src/worker/services/notify.ts',
+    'apps/work/src/worker/company/id-provider.ts',
+    'apps/work/src/client/company/CompanyApp.tsx',
+    'apps/cad/opensketch/auth.py',
+    'docs/platform/company-context.md',
+    'src/data/erp-capabilities.ts',
+  ],
+  updated: '2026-11-20',
+};
+
+export default guide;

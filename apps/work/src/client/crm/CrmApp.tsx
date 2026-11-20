@@ -157,7 +157,7 @@ function CrmShell({ children }: { children: ReactNode }) {
           <Icon name="grid" /> Project Management
         </a>
         <a className="nav-item" href={PLATFORM_URLS.crmGuide}>
-          <Icon name="help" /> CRM user guide
+          <Icon name="help" /> CRM guide and tutorials
         </a>
         <PlatformFooter />
       </nav>

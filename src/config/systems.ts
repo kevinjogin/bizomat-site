@@ -24,7 +24,8 @@ export interface SystemInfo {
   status: SystemStatus;
   /** What is working today, said plainly, for systems that are partly built or planned. */
   statusNote?: string;
-  /** The public information page and its user guide. */
+  /** The public information page, and its guide in the Knowledge Centre (/learn/; the old /systems/<x>/guide/ pages
+   * answer 301 there since 20 Nov 2026). */
   url: string;
   guide?: string;
   /** Where a signed-in person opens it, inside BIZOMAT ERP (or its own application). */
@@ -46,7 +47,7 @@ export const SYSTEMS: readonly SystemInfo[] = [
     status: 'partial',
     statusNote: 'Working today: the workspace, the dashboard by company, Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering (products, bills of materials, revisions, engineering changes, documents and CAD Automation), Procurement (suppliers, requisitions, quotations, purchase orders and goods receipts), Inventory (warehouses, stock, movements, counts and valuation), Manufacturing (work centres, routings, manufacturing orders, the shop floor, MRP, capacity and job costing), Quality (inspection plans, inspections, nonconformances and corrective actions), Supply Chain (sales orders, allocation, make to order, picking, packing, dispatch, deliveries, returns, carriers and the draft invoice in Finance), Maintenance (assets, requests, work orders, preventive maintenance, readings, inspections, prestart checks, parts from Inventory, sites and reliability reports), Reports and Administration. Planned: postings of stock, production and maintenance value to Finance’s ledger.',
     url: '/systems/erp/',
-    guide: '/systems/erp/guide/',
+    guide: '/learn/',
     access: { href: erp, label: 'Open BIZOMAT ERP', note: 'Sign in with your BIZOMAT account. Every module opens inside the ERP.' },
     module: 'Dashboard',
   },
@@ -59,7 +60,7 @@ export const SYSTEMS: readonly SystemInfo[] = [
     line: 'Customers, contacts, leads, deals and follow-ups, shared with your team.',
     status: 'available',
     url: '/systems/crm/',
-    guide: '/systems/crm/guide/',
+    guide: '/learn/crm/',
     access: { href: `${erp}crm/`, label: 'Open Sales and CRM', note: 'Opens inside BIZOMAT ERP, in the Sales and CRM module.' },
     module: 'Sales and CRM',
   },
@@ -71,7 +72,7 @@ export const SYSTEMS: readonly SystemInfo[] = [
     line: 'Accounts, transactions, quotes, invoices, bills, banking, GST and reports, on a double-entry ledger.',
     status: 'available',
     url: '/systems/finance/',
-    guide: '/systems/finance/guide/',
+    guide: '/learn/finance/',
     access: { href: `${erp}finance/`, label: 'Open Finance and Accounting', note: 'Opens inside BIZOMAT ERP, in the Finance and Accounting module.' },
     module: 'Finance and Accounting',
   },
@@ -84,7 +85,7 @@ export const SYSTEMS: readonly SystemInfo[] = [
     line: 'Projects, tasks, teams, timelines and documents in one shared workspace.',
     status: 'available',
     url: '/systems/projects/',
-    guide: '/systems/projects/guide/',
+    guide: '/learn/projects/',
     access: { href: `${erp}tasks/`, label: 'Open Projects and Tasks', note: 'Opens inside BIZOMAT ERP, in the Projects and Tasks module.' },
     module: 'Projects and Tasks',
   },
@@ -98,7 +99,7 @@ export const SYSTEMS: readonly SystemInfo[] = [
     status: 'available',
     statusNote: 'Needs SOLIDWORKS on your own Windows computer, the BIZOMAT add-in and Companion, and an AI assistant that supports MCP connectors. One BIZOMAT account and sign-in, as for every system.',
     url: '/systems/engineering/',
-    guide: '/systems/engineering/guide/',
+    guide: '/learn/cad-automation/',
     access: { href: `${erp}cad`, label: 'Open CAD Automation', note: 'Opens inside BIZOMAT ERP, under Products and Engineering. CAD Automation takes the same BIZOMAT account: choose Continue with BIZOMAT.' },
     module: 'Products and Engineering',
   },
@@ -111,7 +112,7 @@ export const SYSTEMS: readonly SystemInfo[] = [
     status: 'available',
     statusNote: 'Working today inside BIZOMAT ERP: Procurement (suppliers, requisitions, quotations, purchase orders, goods receipts and the draft bill in Finance), Inventory (warehouses, stock by lot and serial, movements, counts and valuation), Manufacturing (work centres, routings, manufacturing orders, the shop floor, MRP, capacity, job costing and job profitability), Quality (inspection plans, inspections, nonconformances and corrective actions), Maintenance (assets, work orders, preventive maintenance, inspections, prestart checks, parts and reliability reports) and Supply Chain (sales orders, allocation, make to order, picking, packing, dispatch, delivery confirmation, returns, carriers and the draft invoice and credit note in Finance). Planned: posting stock, production and maintenance value to Finance’s ledger (recorded as planned, nothing is posted); the AI scheduling assistant and offline field work in Maintenance; statistical process control, calibration and quality audits; and in Supply Chain, connections to carriers’ own systems, landed costs and demand forecasting.',
     url: '/systems/manufacturing/',
-    guide: '/systems/manufacturing/guide/',
+    guide: '/learn/manufacturing/',
     access: { href: `${erp}operations`, label: 'Open Operations', note: 'Opens inside BIZOMAT ERP, in the Operations module: Procurement, Inventory, Manufacturing, Quality, Supply Chain and Maintenance.' },
     module: 'Operations',
   },
@@ -127,7 +128,7 @@ export const SYSTEMS: readonly SystemInfo[] = [
     status: 'partial',
     statusNote: 'Working today inside BIZOMAT ERP (Release 1): hazard reporting from a phone and the hazard register; risk assessments (JSA, JHA, SWMS and nine more kinds) on the company’s own risk matrix with the hierarchy of controls; incidents and near misses with investigations by five whys and fishbone; the regulator notification record (the decision is made by an authorised person, and the submission is recorded as it was made: BIZOMAT does not submit to regulators); the actions register with evidence; confidential health records seen only by health officers; and jurisdiction packs for Australia’s Commonwealth, states and territories (Victoria under its own OHS laws) with skeleton packs for New Zealand, the United Kingdom, Canada, Singapore and South Africa. Every legal instrument and rule is Not verified until a competent person verifies it against the official source. Planned: inspections and audits, documents and SWMS acknowledgement, permits to work, contractors and visitors, training, chemicals, plant safety, PPE, emergency management, consultation, health surveillance and the compliance register.',
     url: '/systems/whs/',
-    guide: '/systems/whs/guide/',
+    guide: '/learn/whs/',
     access: { href: `${erp}whs`, label: 'Open Health and Safety', note: 'Opens inside BIZOMAT ERP, in the Health and Safety module.' },
     module: 'Health and Safety',
   },

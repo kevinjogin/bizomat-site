@@ -1,0 +1,39 @@
+---
+// E. A step-by-step tutorial. Without JavaScript every step is listed in order. With it, one step shows at a time with
+// Previous, Next, the progress and Finish, which leads back to the module. A tutorial only explains: it never acts on
+// anyone's records.
+import Answer from './Answer.astro';
+import type { Tutorial } from '../../data/learn/types.ts';
+interface Props { tutorial: Tutorial; finishHref?: string; finishLabel?: string; open?: boolean }
+const { tutorial: t, finishHref, finishLabel, open } = Astro.props;
+const n = t.steps.length;
+---
+<section class="lv-tut" id={`tutorial-${t.id}`} data-tutorial aria-labelledby={`tutorial-${t.id}-title`}>
+  <details class="lv-tut__box" open={open}>
+    <summary class="lv-tut__head">
+      <span class="lv-tut__kicker">Tutorial · {n} steps</span>
+      <h3 id={`tutorial-${t.id}-title`}>{t.title}</h3>
+      <span class="lv-tut__outcome">{t.outcome}</span>
+    </summary>
+    <div class="lv-tut__body">
+      {t.needs && <p class="lv-tut__needs"><strong>You need:</strong> {t.needs}</p>}
+      <p class="lv-tut__progress" aria-live="polite" data-progress hidden><span data-progress-text>Step 1 of {n}</span><span class="lv-tut__bar"><span data-progress-bar></span></span></p>
+      <ol class="lv-steps">
+        {t.steps.map((s, i) => (
+          <li class="lv-step" data-step={i}>
+            <h4><span class="lv-step__n">Step {i + 1}</span> {s.title}</h4>
+            <p><Answer text={s.body} /></p>
+            {s.where && <p class="lv-step__where">On screen: <span class="lv-ui">{s.where}</span></p>}
+          </li>
+        ))}
+      </ol>
+      {t.after && <p class="lv-tut__after" data-after><strong>What happens next:</strong> <Answer text={t.after} /></p>}
+      <div class="lv-tut__nav" data-nav hidden>
+        <button type="button" class="bz-btn bz-btn--secondary" data-prev>Previous</button>
+        <button type="button" class="bz-btn" data-next>Next</button>
+        {finishHref ? <a class="bz-btn bz-btn--accent" href={finishHref} rel="noopener" data-finish hidden>{finishLabel ?? 'Finish'} <span aria-hidden="true">↗</span></a> : <button type="button" class="bz-btn bz-btn--accent" data-finish hidden>Finish</button>}
+        <button type="button" class="lv-tut__all" data-all>Show all steps</button>
+      </div>
+    </div>
+  </details>
+</section>

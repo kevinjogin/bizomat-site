@@ -1,0 +1,7 @@
+---
+// An answer's text with its links: a path written in brackets, e.g. (/learn/crm/), becomes a link named after the guide.
+import { answerParts } from '../../data/learn/index.ts';
+interface Props { text: string }
+const { text } = Astro.props;
+---
+{answerParts(text).map((p) => ('href' in p ? <>(see <a href={p.href}>{p.label}</a>)</> : p.text))}

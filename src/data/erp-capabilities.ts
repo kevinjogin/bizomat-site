@@ -22,9 +22,10 @@
 //   CRM: apps/work/src/worker/crm/, apps/work/src/shared/crm/, migration 0010, docs/crm/README.md.
 //   Projects: apps/work/README.md (feature table), apps/work/src/worker/routes/, apps/work/src/worker/services/schedule/,
 //     migrations 0001 and 0008.
-//   CAD Automation: apps/cad/CLAUDE.md, src/data/platform-catalog.ts (CAD). Its ERP status feed
-//     (/company/api/id/cad-status) is built but CAD Automation's reporter is not merged, and Sign in with BIZOMAT for
-//     CAD Automation is built but not merged (docs/BIZOMAT-PROJECT-STATUS.md, 14 Nov 2026): both in-development.
+//   CAD Automation: apps/cad/CLAUDE.md, src/data/platform-catalog.ts (CAD). Sign in with BIZOMAT (Continue with BIZOMAT)
+//     is live; CAD Automation inside the ERP is released behind flags that ship off (docs/cad/README.md).
+//   Checked against the code again for the Knowledge Centre (20 Nov 2026, docs/learn/AUDIT.md): company roles, segregation
+//     of duties, approval limits, scoped API tokens and the access review.
 //   Asset management and maintenance (CMMS): owner's brief of 14 Nov 2026 (MEX used as a functional reference only).
 //     Its Stage 1 is live (apps/work/src/worker/maintenance, migration 0018_maintenance.sql; acceptance tests A to D and J
 //     in apps/work/test/maintenance.test.ts and test-node/maintenance.test.ts). Stages M2 and M3 (ERP Release 4, part B;
@@ -124,7 +125,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Multi-currency', 'planned', 'Each Finance workspace and CRM organisation uses one currency. Project budgets in Projects support 11 currencies.'),
       cap('Localisation', 'live', 'Australia only: ABN and ACN checks, GST tax codes with BAS labels, Australian phone and postcode rules. Other countries are planned.'),
       cap('Business policies', 'planned', 'Finance has its own approval settings and period lock. Company-wide policies are planned.'),
-      cap('User and role management', 'live', 'Company roles (owner, administrator, member) and a role in each tool. Each tool keeps its own roles and checks them.'),
+      cap('User and role management', 'live', 'Company roles (owner, admin, manager, employee and read only) and a role in each tool. Each tool keeps its own roles and checks them.'),
       cap('Invitations with tool roles and departments', 'live'),
       cap('Tools grouped by company', 'live', 'A tool shared with someone outside its company shows under that company as Shared with you.'),
       cap('Platform console', 'live', 'For platform administrators only: accounts, companies and activity across the tools.'),
@@ -220,7 +221,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Parts and assemblies in SOLIDWORKS', 'live', 'CAD Automation builds native features on the engineer\'s own computer from an AI assistant. Tested through a simulated SOLIDWORKS; field testing on Windows with SOLIDWORKS 2022 is the next milestone.'),
       cap('Engineering drawings', 'live', 'Native SOLIDWORKS drawings through CAD Automation, exported as PDF, DWG or DXF. Released drawings are not kept as ERP records yet.'),
       cap('CAD integration', 'live', 'CAD Automation\'s connector, add-in and Companion. Its setup is in the ERP under Products and Engineering.'),
-      cap('CAD computers and jobs in the ERP', 'in-development', 'The ERP side is built. CAD Automation does not report yet, and the ERP page says so.'),
+      cap('CAD computers and jobs in the ERP', 'in-development', 'The ERP side and CAD Automation\'s report are built. Computers show in the ERP only once CAD Automation reports them; until then the ERP page says so.'),
       cap('Design checks', 'live', 'Measuring, inspection and interference checks through CAD Automation.'),
       cap('Model import and export', 'live', 'STEP, IGES and Parasolid in; STEP, STL, Parasolid and IGES out.'),
       cap('Bill of materials (BOM) management', 'live', 'Lines with quantity, unit, scrap allowance, reference designators, position, effective dates, optional lines and alternatives. A bill of materials belongs to a revision and locks when it is released.'),
@@ -232,7 +233,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Product costing', 'planned'),
       cap('Lifecycle status', 'planned'),
       cap('Compliance', 'planned'),
-      cap('Drawing generated from an ERP product', 'planned', 'Needs Sign in with BIZOMAT in CAD Automation. Engineering documents can reference a CAD file today.'),
+      cap('Drawing generated from an ERP product', 'planned', 'Engineering documents can reference a CAD file today.'),
     ],
   },
   {
@@ -481,15 +482,15 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     servedBy: 'BIZOMAT ERP Administration, with each system\'s own controls',
     features: [
       cap('Internal controls', 'live', 'In Finance: approvals, the period lock and ledger integrity enforced by the database. Company-wide controls are planned.'),
-      cap('Segregation of duties', 'planned', 'Finance roles already separate people who submit from people who approve. Company-wide rules are planned.'),
-      cap('Approval limits', 'planned', 'Finance approval is by record type and role, not by amount.'),
+      cap('Segregation of duties', 'live', 'In the ERP modules the person who drafts a revision, change order, routing or corrective action cannot approve or release it, and Finance roles separate people who submit from people who approve. Company-wide rules are planned.'),
+      cap('Approval limits', 'live', 'A purchase order within the company\'s approval limit is approved on submit; above it, a procurement manager approves. Finance approval is by record type and role, not by amount.'),
       cap('Audit trails', 'live', 'Each system keeps its own audit log, and the platform console shows activity across them. One audit view for a company is planned.'),
       cap('Risk management', 'planned'),
       cap('Policy management', 'planned'),
       cap('Regulatory records', 'planned'),
       cap('Document retention', 'planned', 'Deleted Finance documents are kept for the audit trail. Retention rules are planned.'),
       cap('Data security', 'live', 'Every query is limited to the person\'s company or organisation, records of others answer as not found, unsafe requests need a CSRF token, and downloads are sandboxed.'),
-      cap('Access reviews', 'planned', 'People and roles are listed per company and in the platform console. Scheduled reviews are planned.'),
+      cap('Access reviews', 'in-development', 'The access review of the Company Admin console (on screen and as CSV) is built behind a flag that ships off. People and roles are listed per company and in the platform console. Scheduled reviews are planned.'),
     ],
   },
   {
@@ -519,14 +520,14 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
     summary: 'How the systems connect to each other and to the outside: APIs, events, identity, documents and extensions.',
     servedBy: 'BIZOMAT ERP platform: the shared API and the BIZOMAT sign-in',
     features: [
-      cap('APIs', 'live', 'Each system\'s API, used with the session or a personal API token. A published API reference and scoped tokens are planned.'),
+      cap('APIs', 'live', 'Each system\'s API, used with the session or a personal API token limited to one company (optionally some applications, or reading only) that expires. A published API reference is planned.'),
       cap('Webhooks', 'live', 'Signed outgoing webhooks from Projects, and messages to Slack and Microsoft Teams. Not yet from the CRM, Finance or the ERP.'),
       cap('Event processing', 'planned', 'An event outbox for reactions between modules.'),
       cap('Document exchange', 'live', 'Secure online links for quotes, invoices and credit notes; customers accept quotes online. E-invoicing is planned.'),
       cap('Electronic data interchange (EDI)', 'planned'),
       cap('External connections', 'live', 'Email through the platform\'s email provider, Slack and Microsoft Teams, and AI apps through CAD Automation. No bank, payment, carrier or mailbox connections.'),
       cap('Identity and access management', 'live', 'One BIZOMAT account and session for every system in the ERP, with email confirmation and personal API tokens.'),
-      cap('Sign in with BIZOMAT for CAD Automation', 'in-development', 'The BIZOMAT side is built. CAD Automation\'s side is built and not yet released.'),
+      cap('Sign in with BIZOMAT for CAD Automation', 'live', 'CAD Automation takes the same BIZOMAT account: Continue with BIZOMAT.'),
       cap('Extensible workflows', 'planned', 'Automations inside Projects and the CRM are live. Workflows that span systems are planned.'),
       cap('Custom fields', 'live', 'In Projects (25 column types) and the CRM (11 field types). Not yet in Finance or ERP records.'),
       cap('Custom reports', 'live', 'Projects dashboards built from board data, and saved views in Projects and the CRM. A report designer across systems is planned.'),

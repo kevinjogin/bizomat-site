@@ -6,7 +6,7 @@
 // application itself: requirements and versions (apps/cad/opensketch/site.py docs page, apps/cad/docs/KEVOS-INSTALL.md,
 // KEVOS-VERSIONS.md), its pages (apps/cad/opensketch/app_pages.py), and BIZOMAT ERP's Products and Engineering page
 // (apps/work/src/client/system/SystemApp.tsx, docs/system/README.md). Every feature carries its status (StatusLabel:
-// Live, Connected, In development, Planned). The user guide is /systems/engineering/guide/.
+// Live, Connected, In development, Planned). The guide is in the Knowledge Centre (/learn/cad-automation/).
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Container from '../../../components/Container.astro';
 import Button from '../../../components/Button.astro';
@@ -157,7 +157,7 @@ const schema = [
         <p class="pp-hero__lead">{sys.name} brings AI automation to SOLIDWORKS: an AI CAD assistant that works in your own files. It connects Claude, ChatGPT or another assistant that supports MCP connectors to SOLIDWORKS on your PC. You describe the part, the change or the check; it builds native, editable features in your own files.</p>
         <div class="pp-hero__actions">
           <Button href={access.href} variant="accent" rel="noopener" data-cta="eng-access">{access.label}</Button>
-          <Button href={GUIDE} variant="secondary" data-cta="eng-guide">Read the user guide</Button>
+          <Button href={GUIDE} variant="secondary" data-cta="eng-guide">Guides and tutorials</Button>
         </div>
         <p class="pp-hero__note">Its application is called CAD Automation. {sys.statusNote}</p>
       </div>
@@ -314,7 +314,7 @@ const schema = [
       <div class="pp-head">
         <p class="bz-eyebrow">Screen by screen</p>
         <h2 id="walk-title">A walk through CAD Automation</h2>
-        <p>The application's pages, then what you see on your own computer. The <a href={GUIDE}>user guide</a> explains each step.</p>
+        <p>The application's pages, then what you see on your own computer. The <a href={GUIDE}>Knowledge Centre guide</a> explains each step.</p>
         <p class="pp-status-line"><StatusLabel status="live" /><span>Every screen below is in CAD Automation and its installer today.</span></p>
       </div>
       <ol class="pp-steps pp-steps--2">
@@ -339,7 +339,7 @@ const schema = [
           <Button href={APP_LINKS.cad.download} variant="accent" rel="noopener" data-cta="eng-download">Download for SOLIDWORKS</Button>
           <Button href={APP_LINKS.cad.docs} variant="secondary" rel="noopener" data-cta="eng-docs">Set-up and troubleshooting</Button>
         </div>
-        <p class="pp-hero__note">The download needs a CAD Automation account. The <a href={GUIDE}>user guide</a> walks through every step.</p>
+        <p class="pp-hero__note">The download needs a CAD Automation account. The <a href={GUIDE}>Knowledge Centre guide</a> walks through every step.</p>
       </div>
       <div class="bz-stack">
         <h3>What you need</h3>
@@ -401,7 +401,7 @@ const schema = [
       <dl class="pp-faq">
         {faq.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
       </dl>
-      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>user guide</a>, the application's <a href={APP_LINKS.cad.docs} rel="noopener">set-up and troubleshooting guide</a>, or <a href="/contact/">contact BIZOMAT</a>.</p>
+      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>Knowledge Centre guide</a>, the application's <a href={APP_LINKS.cad.docs} rel="noopener">set-up and troubleshooting guide</a>, or <a href="/contact/">contact BIZOMAT</a>.</p>
     </Container>
   </section>
 
@@ -413,7 +413,7 @@ const schema = [
       </div>
       <div class="pp-band__actions">
         <Button href={access.href} variant="accent" rel="noopener" data-cta="eng-band-access">{access.label}</Button>
-        <Button href={GUIDE} variant="secondary" data-cta="eng-band-guide">Read the user guide</Button>
+        <Button href={GUIDE} variant="secondary" data-cta="eng-band-guide">Guides and tutorials</Button>
       </div>
     </Container>
   </section>

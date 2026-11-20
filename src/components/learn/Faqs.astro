@@ -1,0 +1,16 @@
+---
+// G. Common questions, as accordions: each question opens on its own (a <details> element works without JavaScript),
+// and a link in an answer, written as a path in brackets, becomes a real link named after its page.
+import type { Faq } from '../../data/learn/types.ts';
+import Answer from './Answer.astro';
+interface Props { faqs: Faq[]; idPrefix: string }
+const { faqs, idPrefix } = Astro.props;
+---
+<div class="lv-faqs">
+  {faqs.map((f, i) => (
+    <details class="lv-faq" id={`${idPrefix}-q${i + 1}`}>
+      <summary><span>{f.q}</span></summary>
+      <div class="lv-faq__a"><p><Answer text={f.a} /></p></div>
+    </details>
+  ))}
+</div>

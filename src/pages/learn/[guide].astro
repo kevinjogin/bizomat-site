@@ -1,0 +1,181 @@
+---
+// /learn/<guide>/: one Knowledge Centre guide, in the documentation structure the owner asked for (A to J): what it is,
+// what it is for, who uses it, how to open it, step-by-step tutorials, the important buttons, common questions, how it
+// connects to other modules, related workflows, and the button that opens it. Data: src/data/learn/guides/<id>.ts.
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Container from '../../components/Container.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import StatusLabel from '../../components/StatusLabel.astro';
+import AccessPath from '../../components/learn/AccessPath.astro';
+import ErpScreen, { RAIL } from '../../components/learn/ErpScreen.astro';
+import TutorialStepper from '../../components/learn/TutorialStepper.astro';
+import Faqs from '../../components/learn/Faqs.astro';
+import Answer from '../../components/learn/Answer.astro';
+import FlowChain from '../../components/learn/FlowChain.astro';
+import Diagram, { type DiagramName } from '../../components/learn/Diagram.astro';
+import LearnSearch from '../../components/learn/LearnSearch.astro';
+import '../../styles/learn.css';
+import { SITE } from '../../config/site.ts';
+import { FEATURE_STATUS } from '../../config/systems.ts';
+import { GUIDES, LEARN_HOME, SECTIONS, guideById, guideUrl, sectionUrl, workflowById, workflowUrl, workflowsThrough } from '../../data/learn/index.ts';
+import type { Guide } from '../../data/learn/types.ts';
+
+export function getStaticPaths() {
+  return GUIDES.map((g) => ({ params: { guide: g.id }, props: { g } }));
+}
+interface Props { g: Guide }
+const { g } = Astro.props;
+const section = SECTIONS.find((s) => s.id === g.section)!;
+const crumbs = [{ label: 'Home', href: '/' }, { label: 'Knowledge Centre', href: LEARN_HOME }, { label: section.title, href: sectionUrl(section.id) }, { label: g.title, href: guideUrl(g.id) }];
+const clip = (s: string) => (s.length <= 196 ? s : `${s.slice(0, 193).replace(/\s+\S*$/, '')}…`);
+const description = clip(`${g.title}: ${g.what}`.length >= 50 ? `${g.title}: ${g.what}` : `${g.title} in BIZOMAT ERP: ${g.what} Tutorials and answers.`);
+const DIAGRAM: Partial<Record<string, { name: DiagramName; caption: string }>> = {
+  'what-is-bizomat': { name: 'erp-map', caption: 'BIZOMAT ERP around your company. Each group is a set of modules in the module rail.' },
+  'account-and-sign-in': { name: 'one-account', caption: 'One account and one sign-in for BIZOMAT ERP, CAD Automation and the AI apps you connect.' },
+  companies: { name: 'company-structure', caption: 'A company, its people, its tools and its departments.' },
+  'roles-and-permissions': { name: 'company-structure', caption: 'Company roles set each person\'s role in each tool; departments appear in every tool.' },
+  'company-administration': { name: 'company-structure', caption: 'What a company administrator looks after: people, tools and departments.' },
+  products: { name: 'approval-path', caption: 'Change requests, change orders and revisions are approved by someone other than the person who drafted them.' },
+  procurement: { name: 'approval-path', caption: 'Purchase orders above your approval limit wait for an approver; nobody approves what they drafted.' },
+  manufacturing: { name: 'approval-path', caption: 'Routings are released by an engineering approver who did not draft them.' },
+  quality: { name: 'approval-path', caption: 'Corrective actions and dispositions are decided by someone other than the person who raised them.' },
+  'cad-automation': { name: 'cad-connection', caption: 'From your request in the AI app to native features in SOLIDWORKS on your own computer.' },
+  'cad-ai-connection': { name: 'cad-connection', caption: 'The connector your AI app signs in to, and the computer that does the work.' },
+  'trouble-connections': { name: 'cad-connection', caption: 'Each link in the chain can be checked on its own: the AI app, CAD Automation, the Companion and SOLIDWORKS.' },
+};
+const diagram = DIAGRAM[g.id];
+const railItem = g.access?.path.find((p) => RAIL.includes(p));
+const screenTab = g.access && g.access.path.length > 2 && !RAIL.includes(g.access.path[g.access.path.length - 1]) ? g.access.path[g.access.path.length - 1] : undefined;
+const flows = [...new Set([...(g.workflows ?? []), ...workflowsThrough(g.id).map((w) => w.id)])].map(workflowById);
+const related = g.related.map(guideById);
+const chain = g.chain?.map((id) => {
+  const r = guideById(id);
+  return { href: guideUrl(r.id), title: r.short ?? r.title };
+});
+const toc = [
+  ['what', 'What it is'],
+  ...(g.access ? [['access', 'How to open it']] : []),
+  ...(g.tutorials.length ? [['tutorials', 'Tutorials']] : []),
+  ...(g.buttons?.length ? [['buttons', 'Buttons']] : []),
+  ['questions', 'Questions'],
+  ...(related.length || chain ? [['connections', 'How it connects']] : []),
+  ...(g.notYet?.length ? [['not-yet', 'Not available yet']] : []),
+];
+const updated = new Date(`${g.updated}T00:00:00Z`).toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const schema = [{
+  '@type': 'TechArticle', '@id': `${SITE.url}${guideUrl(g.id)}#article`, headline: g.title, description, url: `${SITE.url}${guideUrl(g.id)}`, inLanguage: SITE.locale,
+  dateModified: g.updated, isPartOf: { '@id': `${SITE.url}/#website` }, about: { '@type': 'SoftwareApplication', name: 'BIZOMAT ERP', applicationCategory: 'BusinessApplication' },
+}, ...(g.faqs.length ? [{
+  '@type': 'FAQPage', '@id': `${SITE.url}${guideUrl(g.id)}#faq`, mainEntity: g.faqs.map((f) => ({ '@type': 'Question', name: f.q, acceptedAnswer: { '@type': 'Answer', text: f.a } })),
+}] : [])];
+---
+<BaseLayout title={`${g.title} | Knowledge Centre`} description={description} breadcrumbs={crumbs} schema={schema} type="article" modifiedTime={new Date(`${g.updated}T00:00:00Z`)}>
+  <section class="lv-hero lv-hero--guide" aria-labelledby="guide-title">
+    <Container>
+      <Breadcrumb items={crumbs} />
+      <p class="bz-eyebrow">{section.title}</p>
+      <h1 id="guide-title">{g.title}</h1>
+      <p class="lv-hero__status"><StatusLabel status={g.status} /> <span>{FEATURE_STATUS[g.status].meaning}</span></p>
+      <p class="lv-hero__lead" id="what">{g.what}</p>
+      <LearnSearch compact />
+    </Container>
+  </section>
+
+  <Container class="lv-layout">
+    <nav class="lv-toc" aria-label="On this page">
+      <p class="lv-toc__title">On this page</p>
+      <ol>{toc.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}</ol>
+    </nav>
+
+    <div class="lv-main">
+      <section class="lv-sec" aria-labelledby="purpose">
+        <div class="lv-two">
+          <div>
+            <h2 id="purpose">What it is for</h2>
+            <ul class="lv-list">{g.purpose.map((p) => <li>{p}</li>)}</ul>
+          </div>
+          <div>
+            <h2 id="who">Who uses it</h2>
+            <ul class="lv-list">{g.who.map((p) => <li>{p}</li>)}</ul>
+          </div>
+        </div>
+        {diagram && <Diagram name={diagram.name} caption={diagram.caption} />}
+      </section>
+
+      {g.access && (
+        <section class="lv-sec" aria-labelledby="access">
+          <h2 id="access">How to open it</h2>
+          <AccessPath {...g.access} />
+          {railItem && <ErpScreen id={`screen-${g.id}`} rail={railItem} page={g.access.path[g.access.path.length - 1]} tabs={screenTab ? [screenTab] : []} tab={screenTab} />}
+        </section>
+      )}
+
+      {g.tutorials.length > 0 && (
+        <section class="lv-sec" aria-labelledby="tutorials">
+          <h2 id="tutorials">Step-by-step tutorials</h2>
+          <p class="lv-sec__lead">Open a tutorial and go through it one step at a time. Tutorials only explain: they never change your records.</p>
+          {g.tutorials.map((t, i) => <TutorialStepper tutorial={t} open={i === 0} finishHref={g.access?.href} finishLabel={g.access?.label} />)}
+        </section>
+      )}
+
+      {g.buttons && g.buttons.length > 0 && (
+        <section class="lv-sec" aria-labelledby="buttons">
+          <h2 id="buttons">The important buttons</h2>
+          <dl class="lv-buttons">
+            {g.buttons.map((b) => (
+              <div class="lv-buttons__row">
+                <dt><span class="lv-ui">{b.label}</span></dt>
+                <dd>
+                  <p><Answer text={b.does} /></p>
+                  {b.when && <p class="lv-muted"><strong>When:</strong> <Answer text={b.when} /></p>}
+                  {b.after && <p class="lv-muted"><strong>Afterwards:</strong> <Answer text={b.after} /></p>}
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </section>
+      )}
+
+      <section class="lv-sec" aria-labelledby="questions">
+        <h2 id="questions">Common questions</h2>
+        <Faqs faqs={g.faqs} idPrefix={g.id} />
+      </section>
+
+      {(related.length > 0 || chain) && (
+        <section class="lv-sec" aria-labelledby="connections">
+          <h2 id="connections">How it connects</h2>
+          {chain && <FlowChain items={chain} label={`How a record moves from ${chain[0].title} to ${chain[chain.length - 1].title}`} />}
+          {flows.length > 0 && (
+            <>
+              <h3>Workflows through {g.short ?? g.title}</h3>
+              <ul class="lv-links">{flows.map((w) => <li><a href={workflowUrl(w.id)}>{w.title}</a> <span class="lv-muted">{w.stages.map((s) => s.label).join(' → ')}</span></li>)}</ul>
+            </>
+          )}
+          {related.length > 0 && (
+            <>
+              <h3>Related guides</h3>
+              <ul class="lv-links lv-links--inline">{related.map((r) => <li><a href={guideUrl(r.id)}>{r.title}</a></li>)}</ul>
+            </>
+          )}
+        </section>
+      )}
+
+      {g.notYet && g.notYet.length > 0 && (
+        <section class="lv-sec" aria-labelledby="not-yet">
+          <h2 id="not-yet">Not available yet</h2>
+          <p class="lv-sec__lead">These are not part of {g.short ?? g.title} today. They are listed so nobody looks for them.</p>
+          <ul class="lv-notyet">{g.notYet.map((n) => <li><StatusLabel status={n.status} /> <Answer text={n.text} /></li>)}</ul>
+        </section>
+      )}
+
+      <aside class="lv-foot">
+        {g.access && <p><a class="bz-btn bz-btn--accent" href={g.access.href} rel="noopener">{g.access.label} <span aria-hidden="true">↗</span></a></p>}
+        <p class="lv-muted">Checked against BIZOMAT ERP on {updated}. Something wrong or missing? Use <strong>Report a fault</strong> in the ERP's module rail, or <a href="/contact/">contact us</a>.</p>
+      </aside>
+    </div>
+  </Container>
+</BaseLayout>
+
+<script>
+  import '../../scripts/learn.ts';
+</script>

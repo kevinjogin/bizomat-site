@@ -1,0 +1,15 @@
+---
+// H. How a record moves through the modules: boxes and arrows in HTML (they wrap on a phone and read as a list to a
+// screen reader). Each stage links to its guide.
+interface Item { href?: string; title: string; detail?: string }
+interface Props { items: Item[]; label: string }
+const { items, label } = Astro.props;
+---
+<ol class="lv-chain" aria-label={label}>
+  {items.map((it) => (
+    <li class="lv-chain__item">
+      {it.href ? <a href={it.href} class="lv-chain__title">{it.title}</a> : <span class="lv-chain__title">{it.title}</span>}
+      {it.detail && <span class="lv-chain__detail">{it.detail}</span>}
+    </li>
+  ))}
+</ol>

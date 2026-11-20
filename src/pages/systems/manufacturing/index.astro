@@ -174,7 +174,7 @@ const schema = [
       <p class="pp-hero__lead">A family of BIZOMAT ERP modules for making, buying, storing, checking, maintaining and shipping goods. Procurement (requisitions, quotations, purchase orders and goods receipts), Inventory (warehouses, stock, counts and valuation), Manufacturing (orders, routings, the shop floor, MRP, job costing and job profitability), Quality (inspections, nonconformances and corrective actions), Supply Chain (sales orders, picking, packing, dispatch, deliveries and returns) and Maintenance, a maintenance management system (CMMS), work today inside BIZOMAT ERP.</p>
       <div class="pp-hero__actions">
         <Button href={sys.access?.href ?? APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="mfg-use-erp">{sys.access?.label ?? 'Use BIZOMAT ERP today'}</Button>
-        <Button href={sys.guide} variant="secondary" data-cta="mfg-guide">Read the user guide</Button>
+        <Button href={sys.guide} variant="secondary" data-cta="mfg-guide">Guides and tutorials</Button>
       </div>
       <p class="pp-hero__note">{sys.statusNote}</p>
     </Container>
@@ -286,7 +286,7 @@ const schema = [
       <dl class="sys-faq sys-faq--wide">
         {faqs.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
       </dl>
-      <p class="pp-table-note">Step by step: the <a href={sys.guide}>Manufacturing and Operations user guide</a>. Missing something? <a href="/contact/?service=feedback#enquiry">Tell us what you need it for</a>.</p>
+      <p class="pp-table-note">Step by step: the <a href={sys.guide}>Manufacturing guide in the Knowledge Centre</a>. Missing something? <a href="/contact/?service=feedback#enquiry">Tell us what you need it for</a>.</p>
     </Container>
   </section>
 
@@ -298,7 +298,7 @@ const schema = [
       </div>
       <div class="pp-band__actions">
         <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="mfg-band-erp">Use BIZOMAT ERP today</Button>
-        <Button href={sys.guide} variant="secondary" data-cta="mfg-band-guide">User guide</Button>
+        <Button href={sys.guide} variant="secondary" data-cta="mfg-band-guide">Guides and tutorials</Button>
         <Button href={erp.url} variant="secondary" data-cta="mfg-band-about">About {erp.name}</Button>
         <Button href={SYSTEMS_HOME} variant="secondary" data-cta="mfg-band-all">All systems</Button>
       </div>

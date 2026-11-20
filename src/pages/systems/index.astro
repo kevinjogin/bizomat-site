@@ -531,7 +531,7 @@ const schema = [
         <div class="sys-actions">
           {s.access && <Button href={s.access.href} variant="accent" rel="noopener" data-cta={`systems-${s.id}-access`}>{s.access.label}</Button>}
           <Button href={s.url} variant="secondary" data-cta={`systems-${s.id}-about`}>About {s.name}</Button>
-          {guide && <Button href={guide} variant="text" data-cta={`systems-${s.id}-guide`}>User guide</Button>}
+          {guide && <Button href={guide} variant="text" data-cta={`systems-${s.id}-guide`}>Guides and tutorials</Button>}
           {s.access ? <p class="sys-actions__note">{s.access.note}</p> : <p class="sys-actions__note">Not available yet: there is no application to open.</p>}
         </div>
       </Container>
@@ -572,7 +572,7 @@ const schema = [
       <div>
         <p class="bz-eyebrow">Getting started</p>
         <h2 id="start-title">Start in four steps</h2>
-        <p class="sys-lead">The <a href="/systems/erp/guide/">BIZOMAT ERP user guide</a> walks through each step, screen by screen.</p>
+        <p class="sys-lead">The <a href="/learn/">Knowledge Centre</a> walks through each module and workflow, step by step.</p>
         <div class="sys-actions">
           <Button href={APP_LINKS.erp.home} variant="accent" rel="noopener" data-cta="systems-start-erp">Open BIZOMAT ERP</Button>
         </div>

@@ -54,7 +54,9 @@ test('no WHS page, catalogue entry or screen claims compliance, certification or
   const sys = systemById('whs');
   const sources: [string, string][] = [
     ['src/pages/systems/whs/index.astro', read('src/pages/systems/whs/index.astro')],
-    ['src/pages/systems/whs/guide.astro', read('src/pages/systems/whs/guide.astro')],
+    // The guide moved into the Knowledge Centre (owner, 20 Nov 2026), with the workflow from an incident to its actions.
+    ['src/data/learn/guides/whs.ts', read('src/data/learn/guides/whs.ts')],
+    ['src/data/learn/workflows/incident-to-action.ts', read('src/data/learn/workflows/incident-to-action.ts')],
     ['src/config/systems.ts (whs)', JSON.stringify(sys)],
     ['src/pages/systems/index.astro (whs)', detailsBlock()],
     ['src/data/screenshots.ts (WHS screens)', JSON.stringify(screenshots('erp').filter((s) => s.src.includes('/erp-whs')))],
@@ -87,8 +89,10 @@ test('the WHS pages say what the product does not do, and label what is planned'
   }
   assert.doesNotMatch(planned, /st: '(live|connected|in-development)'/, 'every later part is labelled Planned');
   // Every product screen is a real screen of the example company, labelled as one.
-  for (const p of ['index.astro', 'guide.astro']) assert.match(read(`src/pages/systems/whs/${p}`), /viz__tag viz__tag--real">Product screen/);
-  const guide = read('src/pages/systems/whs/guide.astro');
+  assert.match(read('src/pages/systems/whs/index.astro'), /viz__tag viz__tag--real">Product screen/);
+  // The Knowledge Centre's guide says the same: BIZOMAT never works out a deadline from an unverified rule, and sending a
+  // notification to a regulator is not built (labelled Planned).
+  const guide = read('src/data/learn/guides/whs.ts');
   assert.match(guide, /Deadline not verified: check with the regulator/);
-  assert.match(guide, /Sending a notification to a regulator from BIZOMAT is not built/);
+  assert.match(guide, /text: 'Sending a notification to a regulator from BIZOMAT[^']*', status: 'planned'/);
 });

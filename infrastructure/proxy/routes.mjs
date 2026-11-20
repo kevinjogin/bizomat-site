@@ -96,6 +96,10 @@ export const SIGN_IN_PATH = '/sign-in/';
 // Sign-in addresses people type on bizomat.ai (/login, /Log-In, /signin): the platform's sign-in page. Each application
 // signs in under its own path (/tasks/login, /cad/login).
 const SIGN_IN_ALIASES = /^\/(?:login|log-in|signin|logon)\/?$/i;
+/** The ERP Knowledge Centre is a public page of the website (/learn/); the ERP's own address for it (owner, 20 Nov 2026)
+ * answers 301 there before the ERP's prefix would send it to the work app. */
+export const LEARN_PATH = '/learn/';
+const LEARN_ALIASES = /^\/erp\/(?:learn|help)(?:\/[a-z0-9-]*)?\/?$/i;
 
 /**
  * Exact production host names. `production: true` hosts get HSTS when the backend does not send it.
@@ -216,6 +220,10 @@ export function tasksRedirect(origin, path, query, method) {
 function byPath(base, path, query, method, preview, tasksOrigin) {
   if ((method === 'GET' || method === 'HEAD') && SIGN_IN_ALIASES.test(routingPath(path))) {
     return { ...base, action: 'redirect', status: 301, location: SIGN_IN_PATH + (query ? `?${query}` : '') };
+  }
+  if ((method === 'GET' || method === 'HEAD') && LEARN_ALIASES.test(routingPath(path))) {
+    const rest = routingPath(path).replace(/^\/erp\/(?:learn|help)\/?/i, '').replace(/\/$/, '').toLowerCase();
+    return { ...base, action: 'redirect', status: 301, location: `${LEARN_PATH}${rest ? `${rest}/` : ''}${query ? `?${query}` : ''}` };
   }
   const lower = lowercaseLocation(path, query, method);
   if (lower) return { ...base, action: 'redirect', status: 301, location: lower };

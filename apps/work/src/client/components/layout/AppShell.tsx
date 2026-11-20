@@ -511,6 +511,9 @@ function HelpDialog({ onClose }: { onClose: () => void }) {
         they all use the same data. Right-click an item for more actions.
       </p>
       <p className="muted small">
+        Step-by-step tutorials and answers: <a {...platformLinkProps(PLATFORM_URLS.guide)}>the guide in the Knowledge Centre</a>.
+      </p>
+      <p className="muted small">
         {BRAND.full} is part of the {BRAND.platform} platform. <a {...platformLinkProps(PLATFORM_URLS.productPage)}>About {BRAND.product}</a>
       </p>
     </Modal>

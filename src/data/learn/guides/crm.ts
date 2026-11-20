@@ -1,0 +1,408 @@
+import type { Guide } from '../types.ts';
+
+const guide: Guide = {
+  id: "crm",
+  section: "modules",
+  title: "Sales and CRM",
+  short: "CRM",
+  status: "live",
+  what:
+    "Sales and CRM is BIZOMAT's Customer Relationship Management module: one place for leads, contacts, companies, deals, activities and follow-ups, shared with your team. Each CRM organisation keeps its own customers, pipelines, people and settings.",
+  purpose: [
+    "Capture and score leads, then convert them into a contact, a company and a deal in one step",
+    "Move deals through your own pipelines and stages on a drag-and-drop board, to Won or Lost",
+    "Plan calls, meetings and follow-ups and see what is due today or overdue",
+    "Keep notes, documents and the full history of each customer on one timeline",
+    "Read the pipeline, forecast and team performance on the Overview and in 11 reports",
+    "Start a Finance quote, a draft invoice or a project from a deal when your company runs those tools",
+  ],
+  who: [
+    "Salespeople and account managers",
+    "Sales managers and team leads",
+    "Business owners who follow up enquiries themselves",
+    "Administrators who set up pipelines, fields, automations and permissions",
+    "People who only need to read customer history (the Viewer role)",
+  ],
+  access: {
+    path: ["BIZOMAT ERP", "Sales and CRM"],
+    href: "https://bizomat.ai/erp/crm/",
+    label: "Open Sales and CRM",
+    note:
+      "The rail opens the CRM organisation of the company you last opened on this computer. The first time, the CRM asks you to create an organisation or accept an invitation. Links to bizomat.ai/crm open the same page inside the ERP.",
+  },
+  tutorials: [
+    {
+      id: "add-customers",
+      title: "Add companies and contacts",
+      outcome: "Your customers are in the CRM as companies with their contacts linked to them.",
+      needs: "A CRM role that can create companies and contacts (Owner, Administrator, Manager, Sales Executive or Member by default).",
+      steps: [
+        {
+          title: "Open Companies",
+          body: "In Sales and CRM, choose Companies in the menu on the left. The tabs above the list are ready-made views such as All companies, My companies and Customers.",
+          where: "Companies",
+        },
+        {
+          title: "Create a company",
+          body: "Choose New company. Enter the Company name and anything else you know, such as Website, Industry, Phone and Relationship (Prospect, Customer, Partner, Supplier or Former customer). Choose Create.",
+          where: "New company",
+        },
+        {
+          title: "Watch for duplicates",
+          body: "While you type, the CRM checks names, websites, emails and phone numbers. If it shows Possible duplicate, open the existing record instead of making a second one.",
+          where: "Possible duplicate.",
+        },
+        {
+          title: "Open Contacts",
+          body: "Choose Contacts in the menu, then New contact. Type part of the company's name in Company and pick it from the list to link the person to it. A contact can have more than one email address and phone number.",
+          where: "New contact",
+        },
+        {
+          title: "Import a list instead",
+          body: "To bring in many records at once, choose Import on Contacts, Companies or Leads and pick a CSV file (up to 5 MB, with a header row). Match each column to a CRM field or choose Leave out, then choose what happens to duplicates: Skip the row, Update the existing record or Create another record.",
+          where: "Import",
+        },
+        {
+          title: "Check the result",
+          body: "The import reports how many records were created, updated, skipped as duplicates or had errors, row by row. Choose Done. Companies named in the file that did not exist are created for you.",
+          where: "Done",
+        },
+      ],
+      after: "Open a company to see its contacts, deals and timeline, and plan the first activity with Plan an activity.",
+    },
+    {
+      id: "convert-a-lead",
+      title: "Capture, score and convert a lead",
+      outcome: "A qualified lead becomes a contact, a company and a deal, with its activities carried over.",
+      needs: "Permission to edit the lead and to create contacts (and companies and deals, if you create them). Owners, Administrators, Managers, Sales Executives and Members have this by default for leads they may edit.",
+      steps: [
+        {
+          title: "Create the lead",
+          body: "Open Leads and choose New lead. Enter the person's Name, Company, Email or Phone, the Source (for example Website or Referral) and an Estimated value. Choose Create.",
+          where: "New lead",
+        },
+        {
+          title: "Work it through its statuses",
+          body: "As you work the lead, change its Status with Edit: New, Contacted and Engaged while it is open, then Qualified or Unqualified. Converted is set for you when you convert it.",
+          where: "Edit",
+        },
+        {
+          title: "Read the lead score",
+          body: "The Lead score panel shows a figure from 0 to 100 and the points behind it. It is recalculated with every change. If you set the score by hand in Edit, it stays until you clear it.",
+          where: "Lead score",
+        },
+        {
+          title: "Plan the follow-up",
+          body: "On the lead, choose Plan an activity, pick the type (Call, Meeting, Follow-up and so on), the due date and who it is assigned to.",
+          where: "Plan an activity",
+        },
+        {
+          title: "Convert",
+          body: "When the lead is ready, choose Convert. Under Contact, choose Create a new contact from the lead or use a matching contact the CRM suggests. Under Company, choose Create a company, an existing company or No company.",
+          where: "Convert",
+        },
+        {
+          title: "Add the deal",
+          body: "Leave Create a deal ticked to open a deal at the same time: check its Title, Value, Expected close, Pipeline and Stage. Choose Convert.",
+          where: "Create a deal",
+        },
+        {
+          title: "Follow the links",
+          body: "The CRM opens the new deal (or the contact, without a deal). The lead now shows Converted with links to the contact, company and deal. A lead converts once.",
+        },
+      ],
+      after: "Work the deal on the pipeline board (see the next tutorial).",
+    },
+    {
+      id: "work-a-deal",
+      title: "Move a deal through the pipeline to Won or Lost",
+      outcome: "The deal sits in the right stage, carries its products and contacts, and is closed as Won or Lost with a reason.",
+      needs: "Permission to edit the deal (all deals for Owners, Administrators and Managers; their own deals for Sales Executives and Members).",
+      steps: [
+        {
+          title: "Open Deals",
+          body: "Choose Deals. Board shows each stage with its probability, number of deals and their value; List shows the same deals as a table. With more than one pipeline, choose it at the top.",
+          where: "Board",
+        },
+        {
+          title: "Create a deal",
+          body: "Choose New deal, or the + at the top of a stage. Enter the deal's title, Value, Company and Expected close. Choose Create.",
+          where: "New deal",
+        },
+        {
+          title: "Move it between stages",
+          body: "Drag the card to another stage. Without a mouse, open the card's menu and choose Move to and the stage. On the deal itself, the stage bar at the top does the same.",
+          where: "Move to",
+        },
+        {
+          title: "Add products and services",
+          body: "On the deal, choose Add products or services (or Edit under Products and services once it has lines). Pick an item from Add from the catalogue, or choose Add a line, set Quantity, Unit price and Discount, then Save. The deal's value becomes the total of its lines.",
+          where: "Add products or services",
+        },
+        {
+          title: "Name the people involved",
+          body: "Contacts on the deal lists who is involved and their role. Stage history shows when the deal moved and how long it spent in each stage.",
+          where: "Contacts on the deal",
+        },
+        {
+          title: "Win or lose it",
+          body: "Choose Won on the deal (or drop the card on Won, which appears while you drag). For a lost deal choose Lost, pick the Reason and choose Mark as lost.",
+          where: "Won",
+        },
+        {
+          title: "Reopen if needed",
+          body: "A won or lost deal shows Reopen. Choose it to put the deal back in the pipeline.",
+          where: "Reopen",
+        },
+      ],
+      after: "In a registered company that runs Finance or Projects and Tasks, the deal's Across panel can start a quote, a draft invoice or a project (see the workflows below).",
+    },
+    {
+      id: "activities",
+      title: "Plan activities, follow-ups and emails",
+      outcome: "Every call, meeting and follow-up is assigned, dated and visible to the team, and emails you send are logged on the timeline.",
+      needs: "A role that can create activities (every role except Viewer by default).",
+      steps: [
+        {
+          title: "Create an activity",
+          body: "Open Activities and choose New activity, or choose Plan an activity on a contact, company, lead or deal. Choose the type, a title, the due date and time, a priority and who it is assigned to.",
+          where: "New activity",
+        },
+        {
+          title: "Use the lists",
+          body: "The tabs show My activities, Today's follow-ups, Overdue, Upcoming, Team activities and Completed. Tasks, in the menu, lists only tasks and follow-ups; Calendar shows activities by month.",
+          where: "Today's follow-ups",
+        },
+        {
+          title: "Complete it",
+          body: "Tick the box beside an activity to complete it. To record what happened, open it, write the Outcome and choose Mark as done.",
+          where: "Mark as done",
+        },
+        {
+          title: "Log an email",
+          body: "Choose Log an email (or Email on a record). Pick the contact, a template if you like, and write the Subject and Message. Open in my email and log opens your own mail program with the email filled in; Log only records an email you already sent.",
+          where: "Open in my email and log",
+        },
+        {
+          title: "Send it elsewhere",
+          body: "An activity's menu has Add to my calendar (.ics), and Create a project task, which puts it in a Projects and Tasks project you choose, with a link back to the CRM.",
+          where: "Create a project task",
+        },
+      ],
+      after: "Overdue activities and follow-ups show on the Overview and, with the ready-made automation switched on, remind the person they are assigned to.",
+    },
+    {
+      id: "set-up-and-invite",
+      title: "Set up the organisation and invite your team",
+      outcome: "Your organisation has its own pipeline, fields and people, each with the right role.",
+      needs: "Owner or Administrator for Organisation and Permissions; Owner, Administrator or Manager for pipelines, fields, lists, tags, products and invitations.",
+      steps: [
+        {
+          title: "Create the organisation (if you have none)",
+          body: "If the CRM shows Create your organisation, enter the Organisation name, and if you like the Industry, Website and Country, choose the Currency and choose Create organisation. You become its owner. It starts with a five-stage Sales pipeline and seven automations, and no sample records. A registered company gets its organisation when it registers.",
+          where: "Create organisation",
+        },
+        {
+          title: "Organisation details",
+          body: "Settings, Organisation holds the logo, address, Currency (fixed once there are deals), Time zone and the High-value deal from amount used by automations.",
+          where: "Organisation",
+        },
+        {
+          title: "Pipelines and stages",
+          body: "Settings, Pipelines and stages: rename stages, set each stage's Probability (%), or choose New pipeline for another sales process, such as renewals.",
+          where: "Pipelines and stages",
+        },
+        {
+          title: "Fields, lists and tags",
+          body: "Custom fields adds your own fields (Add field); Statuses and lists changes lead statuses, sources, activity types and lost reasons; Tags adds coloured labels to filter by; Products and services is the catalogue deals use.",
+          where: "Custom fields",
+        },
+        {
+          title: "Invite people",
+          body: "Open Team, then Invitations. Enter the Email address, choose the Role, add a Message (optional) and choose Send invitation. If BIZOMAT's email is not connected, copy the link it shows and send it yourself. The link works for 14 days, once, and only for that address.",
+          where: "Send invitation",
+        },
+        {
+          title: "Manage members and teams",
+          body: "Under Members, change a person's role or choose Remove (you can hand their records and open activities to someone else). Under Teams, group people and name a Team lead, so the Overview and reports can be filtered by team.",
+          where: "Members",
+        },
+        {
+          title: "Adjust permissions",
+          body: "Settings, Permissions: choose a Role (Manager, Sales Executive, Member or Viewer) and set View, Edit and Delete to All, Own or None per area, and Create, Export and Import on or off. Restore the defaults undoes your changes.",
+          where: "Permissions",
+        },
+      ],
+      after: "Settings, Audit trail lists who changed what, including imports and exports.",
+    },
+  ],
+  buttons: [
+    {
+      label: "New lead / New contact / New company / New deal / New activity",
+      does: "Opens the form for a new record of that kind.",
+      when: "When a new enquiry, person, business, opportunity or follow-up comes in.",
+      after: "The record opens with its timeline. Owners and automations may be notified.",
+    },
+    {
+      label: "Convert",
+      does: "Turns a lead into a contact, an optional company and an optional deal in one step.",
+      when: "When the lead is qualified and worth pursuing.",
+      after: "The lead shows Converted with links; its activities move to the new records. It cannot be converted again.",
+    },
+    {
+      label: "Won / Lost / Reopen",
+      does: "Closes a deal as won, or as lost with a reason; Reopen puts it back in the pipeline.",
+      when: "When the customer decides.",
+      after: "Reports and the Overview count it; automations for won or lost deals run.",
+    },
+    {
+      label: "Import",
+      does: "Brings contacts, companies or leads in from a CSV file with column matching and duplicate handling.",
+      when: "When you move from another system or spreadsheet.",
+      after: "A summary lists created, updated, skipped and failed rows. Imports appear in the Audit trail.",
+    },
+    {
+      label: "Export",
+      does: "Downloads the list as you see it (search, filters and columns) as a CSV file.",
+      when: "For a mailing list, a backup or analysis in a spreadsheet.",
+      after: "Only roles with export permission see it. Exports appear in the Audit trail.",
+    },
+    {
+      label: "Filters and Save view",
+      does: "Filters narrows a list by any field, tag or custom field, matching all or any conditions; Save view keeps the search, filters, sort and columns under a name.",
+      when: "When you look at the same set of records often.",
+      after: "The view appears as a tab. Managers and administrators can share it with everyone.",
+    },
+    {
+      label: "Bulk bar: Assign, Status, Priority, Tag, Archive, Delete",
+      does: "Changes every ticked record at once. Activities also have Complete; the Deleted view has Restore.",
+      when: "When a group of records needs the same change, such as a new owner.",
+      after: "Delete moves records to Deleted, where they can be restored.",
+    },
+    {
+      label: "Plan an activity, Email and Upload a document",
+      does: "On any record: plan a follow-up, write or log an email, or attach a proposal, quote, contract or other file (up to 25 MB).",
+      when: "Whenever you talk to the customer or receive a document.",
+      after: "Everything appears on the record's Timeline. Upload a new version later and the earlier ones are kept.",
+    },
+    {
+      label: "Start a quote / Make a draft invoice / Start a project",
+      does: "On a deal, in the Across panel named after your company: a draft quote in Finance, a draft invoice once the deal is won, or a project board in Projects and Tasks.",
+      when: "When the CRM organisation belongs to a registered company that also runs Finance or Projects and Tasks.",
+      after: "The new record opens in its tool and its link stays on the deal.",
+    },
+    {
+      label: "Add as a customer in Finance",
+      does: "On a CRM company, creates the Finance customer it is billed as, from its name, email, phone and address, and links the two.",
+      when: "Before you quote or invoice the company in Finance.",
+      after: "The In Finance panel shows the customer, its open invoices and the amount owed, to people whose Finance role can see sales.",
+    },
+    {
+      label: "Export CSV (reports)",
+      does: "Downloads the report you are reading, with its figures, as a CSV file.",
+      when: "To share or analyse a report outside BIZOMAT.",
+      after: "Only roles with report export see it (Owner, Administrator and Manager by default).",
+    },
+  ],
+  faqs: [
+    {
+      q: "Why can't I see Leads, Deals, Reports or Automations in the menu?",
+      a: "The menu shows only what your CRM role may view. By default Members and Viewers do not see Automations, and an owner or administrator can narrow or widen what each role sees in Settings, Permissions. A platform administrator can also switch Sales and CRM off for a company. (see /learn/roles-and-permissions/)",
+    },
+    {
+      q: "Why is there no Import or Export button?",
+      a: "Only roles with import or export permission see them: Owner, Administrator and Manager by default. Import is offered on Leads, Contacts and Companies only; deals and activities are added in the CRM itself.",
+    },
+    {
+      q: "Why can't I edit or delete a record?",
+      a: "Sales Executives and Members edit only records they own; Members never delete leads, contacts, companies or deals; Viewers change nothing. Ask an owner or administrator to change the record's Owner or your role. The server checks every action, so a hidden button is not the only control.",
+    },
+    {
+      q: "Where did a deleted record go?",
+      a: "Deleted records move to the Deleted view, under More above the list, where people who may delete can choose Restore. Archived records are under More, Archived. A record's history stays either way.",
+    },
+    {
+      q: "Why don't I see Start a quote, Make a draft invoice or Start a project on a deal?",
+      a: "The Across panel appears only when the CRM organisation belongs to a registered company that also runs Finance or Projects and Tasks. A quote or invoice also needs a company on the deal, the same currency as Finance and a Finance role that may create sales records; an invoice needs the deal to be won and is made once per deal; a project needs a Projects and Tasks role of Member or above and is made once per deal. (see /learn/companies/)",
+    },
+    {
+      q: "Does the CRM send emails to my customers?",
+      a: "No. Open in my email and log opens your own mail program to send the email, and the CRM logs it on the timeline. Gmail and Microsoft 365 synchronisation is not connected, so received emails are logged by hand. BIZOMAT only emails its own invitations and notifications.",
+    },
+    {
+      q: "The lead will not convert. Why?",
+      a: "A lead converts once. If a contact with the same email already exists, the CRM offers to use it; to create a second contact anyway, tick the box that says so. You also need permission to create contacts, and companies or deals if you create them.",
+    },
+    {
+      q: "Can I change the organisation's currency or use two currencies?",
+      a: "You can change the currency in Settings, Organisation until the first deal is created. After that it is fixed, and every amount in the organisation uses that one currency.",
+    },
+    {
+      q: "When do automations run?",
+      a: "Most run straight after the change that triggers them. Deals close to their expected close date and overdue activities are checked every 15 minutes, and each record fires an automation once. Execution history, on the Automations page, lists every run. (see /learn/automations/)",
+    },
+    {
+      q: "Can I move a contact, lead or company to another company?",
+      a: "Not yet for customers. Moving CRM records to another company's CRM is in development and stays switched off until BIZOMAT turns it on. Until then, create the record in the right company and delete the wrong one.",
+    },
+  ],
+  related: ["finance", "projects", "supply-chain", "reports", "automations", "companies", "roles-and-permissions", "dashboard"],
+  chain: ["crm", "finance"],
+  workflows: ["lead-to-customer", "deal-to-invoice", "deal-to-project", "sales-order-to-delivery"],
+  notYet: [
+    { text: "Moving contacts, leads and companies to another company's CRM (built, switched off until BIZOMAT turns it on).", status: "in-development" },
+    { text: "Gmail and Microsoft 365 mailbox synchronisation, and sending customer email from BIZOMAT.", status: "planned" },
+    { text: "Merging two duplicate records (duplicates are detected and warned about; merging is by hand).", status: "planned" },
+    { text: "More than one currency within one CRM organisation.", status: "planned" },
+    { text: "Customer service cases and service levels (activities and timelines record contact with customers today).", status: "planned" },
+  ],
+  keywords: [
+    "CRM",
+    "customer relationship management",
+    "sales pipeline",
+    "opportunity",
+    "prospect",
+    "enquiry",
+    "client",
+    "account",
+    "lead scoring",
+    "sales funnel",
+    "kanban",
+    "follow-up",
+    "contact list",
+    "forecast",
+    "win rate",
+    "won deal",
+    "lost reason",
+    "CSV import",
+  ],
+  sources: [
+    "apps/work/src/client/crm/CrmApp.tsx",
+    "apps/work/src/client/crm/RecordList.tsx",
+    "apps/work/src/client/crm/RecordPage.tsx",
+    "apps/work/src/client/crm/RecordForm.tsx",
+    "apps/work/src/client/crm/Deals.tsx",
+    "apps/work/src/client/crm/Activities.tsx",
+    "apps/work/src/client/crm/Automations.tsx",
+    "apps/work/src/client/crm/Insights.tsx",
+    "apps/work/src/client/crm/Team.tsx",
+    "apps/work/src/client/crm/Settings.tsx",
+    "apps/work/src/client/crm/CompanyLinks.tsx",
+    "apps/work/src/client/crm/MoveRecords.tsx",
+    "apps/work/src/shared/crm/roles.ts",
+    "apps/work/src/shared/crm/fields.ts",
+    "apps/work/src/shared/crm/defaults.ts",
+    "apps/work/src/shared/crm/automations.ts",
+    "apps/work/src/worker/crm/routes-records.ts",
+    "apps/work/src/worker/crm/routes-orgs.ts",
+    "apps/work/src/worker/company/links.ts",
+    "apps/work/src/worker/platform/flags.ts",
+    "apps/work/src/client/components/layout/SuiteRail.tsx",
+    "docs/crm/README.md",
+    "src/data/platform-catalog.ts",
+    "src/data/erp-capabilities.ts",
+  ],
+  updated: "2026-11-20",
+};
+
+export default guide;
