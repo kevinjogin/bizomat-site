@@ -34,7 +34,7 @@ Machine, database, login or dependency.
 | Server | `apps/work/src/worker/whs/` (access, util, seed, legal, hazards, risk, incidents, actions, dashboard, index) |
 | Screens | `apps/work/src/client/system/whs/`, styles `apps/work/src/client/styles/whs.css` (tokens only) |
 | Migration | `apps/work/migrations/0026_whs_core.sql` (additive: CREATE TABLE, CREATE INDEX and triggers on its own tables) |
-| Public pages | `/systems/whs/` and `/systems/whs/guide/` |
+| Public pages | `/systems/whs/` and its guide in the Knowledge Centre, `/learn/whs/` (since 20 Nov 2026; `/systems/whs/guide/` answers 301 there) |
 
 ## Roles and access
 
