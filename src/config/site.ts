@@ -113,12 +113,10 @@ export const NAV: readonly NavItem[] = [
   { label: 'Contact', href: '/contact/' },
 ] as const;
 
-/** The header's sign-in menu: BIZOMAT ERP is the one sign-in for the CRM, Finance, Projects and company accounts.
- * Engineering Automation (CAD Automation) keeps its own sign-in for now. */
-export const SIGN_IN = [
-  { label: 'BIZOMAT ERP', href: APP_LINKS.erp.signIn, description: 'One sign-in for the CRM, Finance, Projects and your company.' },
-  { label: 'Engineering Automation', href: APP_LINKS.cad.signIn, description: 'CAD Automation: your AI assistant and SOLIDWORKS. Its own sign-in for now.' },
-] as const;
+/** The header's Sign in (owner, 20 Nov 2026: "as now everything is set under one sign in, remove double account sign in"):
+ * one BIZOMAT account and one sign-in, at BIZOMAT ERP, where every system opens. CAD Automation is under Products and
+ * Engineering there, and its own page takes the same account (Continue with BIZOMAT). */
+export const SIGN_IN = { label: 'Sign in', href: APP_LINKS.erp.signIn } as const;
 /** Breadcrumb labels for the two libraries. */
 export const CRUMB = { tools: 'Tools', library: 'Library' } as const;
 
@@ -154,7 +152,6 @@ export const FOOTER_NAV = {
   ],
   apps: [
     { href: APP_LINKS.erp.signIn, label: 'Sign in to BIZOMAT ERP' },
-    { href: APP_LINKS.cad.signIn, label: 'Sign in to Engineering Automation' },
   ],
   legal: [
     { href: '/privacy/', label: 'Privacy Policy' },

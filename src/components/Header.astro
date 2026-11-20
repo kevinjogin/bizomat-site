@@ -1,7 +1,6 @@
 ---
-// Global header: BIZOMAT wordmark (home), a menu for each product (CAD Automation, Project Management, Customer
-// Relationship Management, Finance), Resources and Engine Room, AI Search, a Sign in menu with one entry per
-// application, and the theme switch.
+// Global header: BIZOMAT wordmark (home), Home, Systems, Resources, About and Contact, AI Search, the theme switch and
+// one Sign in (BIZOMAT ERP, where every system opens; owner, 20 Nov 2026).
 // Menus are <details> elements, so they open without JavaScript; the script below adds one-at-a-time behaviour,
 // Escape and outside-click closing, and the phone/tablet menu button. Without JavaScript the phone layout shows the
 // links as a wrapped row instead of a collapsed menu.
@@ -60,10 +59,7 @@ const inSection = (item: (typeof NAV)[number]) =>
       </ul>
       <div class="site-nav__mobile-action">
         <a class="site-nav__cta" href={AI_SEARCH.href} data-cta="header-ai-search-mobile">{AI_SEARCH.label}</a>
-        <p class="site-nav__signin-label">Sign in</p>
-        <ul class="site-nav__signin">
-          {SIGN_IN.map((s) => <li><a href={s.href} rel="noopener" data-cta={`header-sign-in-mobile-${s.label.toLowerCase().replace(/\s+/g, '-')}`}>{s.label}</a></li>)}
-        </ul>
+        <a class="site-nav__signin" href={SIGN_IN.href} rel="noopener" data-cta="header-sign-in-mobile">{SIGN_IN.label}</a>
       </div>
     </nav>
 
@@ -73,21 +69,7 @@ const inSection = (item: (typeof NAV)[number]) =>
         <span>{AI_SEARCH.label}</span>
       </a>
       <ThemeToggle />
-      <details class="nav-menu signin-menu" data-nav-menu>
-        <summary class="site-header__cta" data-cta="header-sign-in">Sign in</summary>
-        <div class="nav-menu__panel nav-menu__panel--right">
-          <ul class="nav-menu__list">
-            {SIGN_IN.map((s) => (
-              <li>
-                <a class="nav-menu__link" href={s.href} rel="noopener">
-                  <span class="nav-menu__title">{s.label}<span class="nav-menu__ext" aria-hidden="true">↗</span></span>
-                  <span class="nav-menu__description">{s.description}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </details>
+      <a class="site-header__cta site-header__signin" href={SIGN_IN.href} rel="noopener" data-cta="header-sign-in">{SIGN_IN.label}</a>
       <button class="site-header__toggle" type="button" aria-controls="site-nav" aria-expanded="false" data-nav-toggle hidden>
         <span class="visually-hidden">Menu</span>
         <svg viewBox="0 0 24 24" aria-hidden="true"><path class="i-open" d="M4 7h16M4 12h16M4 17h16" /><path class="i-close" d="M6 6l12 12M18 6 6 18" /></svg>
@@ -187,13 +169,7 @@ const inSection = (item: (typeof NAV)[number]) =>
   .site-header__search:hover { color: var(--ink); background: var(--paper-2); }
   .site-header__search svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
   .site-header__search .spark { stroke: var(--brand-mark); }
-  .signin-menu { position: relative; }
-  .signin-menu > summary { list-style: none; cursor: pointer; }
-  .signin-menu > summary::-webkit-details-marker { display: none; }
-  .nav-menu__panel--right { left: auto; right: 0; }
-  .site-nav__signin-label { margin: 1.25rem 0 .25rem; color: var(--muted); font-size: .78rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
-  .site-nav__signin { display: grid; gap: .1rem; margin: 0; padding: 0; list-style: none; }
-  .site-nav__signin a { display: block; padding: .6rem .25rem; color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--line); }
+  .site-nav__signin { display: block; margin-top: 1rem; padding: .6rem .25rem; color: var(--ink); font-weight: 600; text-decoration: none; border-bottom: 1px solid var(--line); }
   .site-header__toggle { display: none; place-items: center; width: 40px; height: 40px; padding: 0; background: transparent; color: var(--ink); border: 1px solid var(--line); border-radius: 8px; }
   .site-header__toggle svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; }
   .site-header__toggle .i-close { display: none; }
@@ -244,7 +220,7 @@ const inSection = (item: (typeof NAV)[number]) =>
     :global(.js) .site-header .site-header__search { display: none; }
   }
   @media (max-width: 560px) {
-    :global(.js) .site-header .signin-menu { display: none; }
+    :global(.js) .site-header .site-header__signin { display: none; }
   }
   /* Without JavaScript on small screens: keep every link reachable as a wrapped row. */
   @media (max-width: 1140px) {
@@ -272,8 +248,7 @@ const inSection = (item: (typeof NAV)[number]) =>
   :global(html[data-ui="new"]) .site-header__tools { gap: var(--bz-space-2); }
   :global(html[data-ui="new"]) .site-header__cta, :global(html[data-ui="new"]) .site-nav__cta { padding: 0 var(--bz-space-4); border-radius: var(--bz-radius-md); font-size: var(--bz-text-base); }
   :global(html[data-ui="new"]) .site-header__search { gap: var(--bz-space-2); padding: 0 var(--bz-space-3); border-radius: var(--bz-radius-md); font-size: var(--bz-text-base); }
-  :global(html[data-ui="new"]) .site-nav__signin-label { margin: var(--bz-space-5) 0 var(--bz-space-1); font-size: var(--bz-text-xs); }
-  :global(html[data-ui="new"]) .site-nav__signin a { padding: var(--bz-space-2) var(--bz-space-1); }
+  :global(html[data-ui="new"]) .site-nav__signin { margin-top: var(--bz-space-4); padding: var(--bz-space-2) var(--bz-space-1); }
   :global(html[data-ui="new"]) .site-header__toggle { border-radius: var(--bz-radius-md); }
   @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .site-nav__link { padding: 0 var(--bz-space-1); font-size: var(--bz-text-md); } }
   @media (max-width: 1140px) { :global(html[data-ui="new"]) :global(.js) .site-header .nav-menu__panel { padding: 0 0 var(--bz-space-2); } }

@@ -16,6 +16,7 @@ import { adminSignupRoutes } from './routes/admin-signup';
 import { scheduleRoutes } from './routes/schedule';
 import { boardRoutes } from './routes/boards';
 import { itemRoutes } from './routes/items';
+import { transferRoutes } from './routes/transfer';
 import { fileRoutes } from './routes/files';
 import { meRoutes } from './routes/me';
 import { notificationRoutes } from './routes/notifications';
@@ -237,6 +238,7 @@ export function createApp() {
   api.route('/', scheduleRoutes);
   api.route('/', boardRoutes);
   api.route('/', itemRoutes);
+  api.route('/', transferRoutes);
   api.route('/', fileRoutes);
   api.route('/', meRoutes);
   api.route('/', notificationRoutes);

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { labelsOf } from '../../../shared/columns';
 import type { ColumnDTO, ItemDTO } from '../../../shared/types';
 import type { BoardViewProps } from '../types';
+import { useMoveEnabled } from '../MoveDialog';
 import { itemKey } from '../useBoard';
 import { Avatar, EmptyState } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
@@ -25,6 +26,7 @@ function laneValue(item: ItemDTO, col: ColumnDTO): string {
 
 export function KanbanView(props: BoardViewProps) {
   const { bundle, view, items, canEdit, actions, openItem, updateViewSettings, members } = props;
+  const canMove = useMoveEnabled(bundle.board.id, canEdit && !!props.moveItems) && !!bundle.board.caps?.deleteTasks;
   const candidates = laneColumns(bundle.columns);
   const col = candidates.find((c) => c.id === view.settings.kanbanColumnId) ?? candidates.find((c) => c.type === 'status') ?? candidates[0];
   const [dragId, setDragId] = useState<string | null>(null);
@@ -188,6 +190,7 @@ export function KanbanView(props: BoardViewProps) {
           ))}
           <MenuSep />
           <MenuItem icon="copy" onClick={() => { ctxMenu.close(); void actions.duplicateItem(ctxItem.id); }}>Duplicate</MenuItem>
+          {canMove && !ctxItem.parentItemId ? <MenuItem icon="folder" onClick={() => { ctxMenu.close(); props.moveItems?.([ctxItem.id], ctxItem.name); }}>Move to another project...</MenuItem> : null}
           <MenuItem icon="archive" onClick={() => { ctxMenu.close(); void actions.archiveItem(ctxItem.id); }}>Archive</MenuItem>
         </Popover>
       ) : null}

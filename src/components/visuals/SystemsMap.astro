@@ -3,7 +3,7 @@
 // company switcher and the module rail. The CRM, Finance and Projects open inside it, joined by the links that work
 // today (a CRM deal starts a draft quote in Finance, becomes a draft invoice once won and starts a project; a project's
 // costs and budget are tracked in Finance: apps/work/src/worker/company/links.ts). Products and Engineering shows CAD
-// Automation's set-up and computers; CAD Automation itself is its own application with its own sign-in, reaching
+// Automation's set-up and computers; CAD Automation itself is its own application, with the same BIZOMAT account, reaching
 // SOLIDWORKS through the Companion on the person's Windows computer. Operations: Procurement, Inventory, Manufacturing,
 // Quality and Supply Chain work today (ERP Release 5 part A), so Operations is drawn as live.
 // A conceptual illustration, labelled as one. Static apart from the pulses along the links, which reduced motion
@@ -32,14 +32,14 @@ const links = [
   { d: 'M332 176 L 422 114', label: 'costs', x: 377, y: 145, w: 42 },
 ];
 const cad = [
-  { y: 50, t: 'CAD Automation', s: 'Own sign-in' },
+  { y: 50, t: 'CAD Automation', s: 'Same account' },
   { y: 176, t: 'Companion', s: 'Your Windows PC' },
   { y: 302, t: 'SOLIDWORKS', s: 'Your licence' },
 ];
 ---
 <figure class:list={['viz', 'smap']} aria-labelledby={`${id}-cap`}>
   <svg viewBox="0 0 788 452" role="img" aria-labelledby={`${id}-title`}>
-    <title id={`${id}-title`}>BIZOMAT ERP is one workspace with one sign-in, a company switcher and a module rail: Dashboard, My Work, Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering, Maintenance, Operations, Reports and Administration. Inside it, a CRM deal can start a quote in Finance, become a draft invoice once it is won, and start a project; a project's costs and budget are tracked in Finance. Administration holds the company, its people, departments and tool roles. Maintenance and, under Operations, Procurement, Inventory, Manufacturing, Quality and Supply Chain work today. CAD Automation is its own application with its own sign-in; it reaches SOLIDWORKS through the Companion on your Windows computer, and the ERP shows its set-up and computers.</title>
+    <title id={`${id}-title`}>BIZOMAT ERP is one workspace with one sign-in, a company switcher and a module rail: Dashboard, My Work, Sales and CRM, Finance and Accounting, Projects and Tasks, Products and Engineering, Maintenance, Operations, Reports and Administration. Inside it, a CRM deal can start a quote in Finance, become a draft invoice once it is won, and start a project; a project's costs and budget are tracked in Finance. Administration holds the company, its people, departments and tool roles. Maintenance and, under Operations, Procurement, Inventory, Manufacturing, Quality and Supply Chain work today. CAD Automation is its own application, signed in to with the same BIZOMAT account; it reaches SOLIDWORKS through the Companion on your Windows computer, and the ERP shows its set-up and computers.</title>
     <text class="v-sub" x="16" y="24">BIZOMAT ERP · one sign-in · company switcher</text>
     <text class="v-sub" x="628" y="24">Own application</text>
 

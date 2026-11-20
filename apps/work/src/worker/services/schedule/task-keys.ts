@@ -54,6 +54,14 @@ async function reserve(db: D1Database, boardId: string, n: number): Promise<numb
   return r.task_seq - n + 1;
 }
 
+/** Keys for tasks arriving in a project from another one (services/item-transfer.ts), in order. */
+export async function allocateTaskKeys(db: D1Database, board: { id: string; workspace_id: string; name: string }, n: number): Promise<{ number: number; key: string }[]> {
+  if (n <= 0) return [];
+  const prefix = await ensurePrefix(db, board);
+  const first = await reserve(db, board.id, n);
+  return Array.from({ length: n }, (_, i) => ({ number: first + i, key: formatTaskKey(prefix, first + i) }));
+}
+
 /** A key for a task about to be created. */
 export async function allocateTaskKey(db: D1Database, board: { id: string; workspace_id: string; name: string }): Promise<{ number: number; key: string }> {
   const prefix = await ensurePrefix(db, board);

@@ -875,8 +875,8 @@ function CadPage({ view, embedded }: { view: CompanyView; embedded?: boolean }) 
       <section className="card card-pad stack">
         <h2 className="crm-subhead">Set it up in four steps</h2>
         <ol className="sys-steps">
-          <li><strong>Sign in to CAD Automation.</strong> <span className="muted">Open <a href={CAD.app}>bizomat.ai/cad</a> and sign in or create your CAD Automation account.</span></li>
-          <li><strong>Install it on your Windows computer.</strong> <span className="muted">Download <a href={CAD.download}>BIZOMAT CAD Automation for SOLIDWORKS</a> (one installer: the SOLIDWORKS add-in and the Companion). The download needs your CAD Automation sign-in.</span></li>
+          <li><strong>Open CAD Automation.</strong> <span className="muted">Open <a href={CAD.app}>bizomat.ai/cad</a> and choose Continue with BIZOMAT: the same BIZOMAT account, no second one.</span></li>
+          <li><strong>Install it on your Windows computer.</strong> <span className="muted">Download <a href={CAD.download}>BIZOMAT CAD Automation for SOLIDWORKS</a> (one installer: the SOLIDWORKS add-in and the Companion). The download needs you signed in to CAD Automation.</span></li>
           <li><strong>Pair the computer.</strong> <span className="muted">At the end of the install the Companion opens the browser to pair this computer with your account. It then appears under <a href={CAD.computers}>SOLIDWORKS</a>.</span></li>
           <li><strong>Connect your AI assistant.</strong> <span className="muted">Copy your connector address from <a href={CAD.assistant}>CAD Assistant</a> and add it as a custom connector in Claude, ChatGPT or another app that supports remote MCP servers.</span></li>
         </ol>

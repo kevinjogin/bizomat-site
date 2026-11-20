@@ -19,4 +19,6 @@ export interface BoardViewProps {
   openItem: (itemId: string) => void;
   updateViewSettings: (patch: Partial<ViewSettings>) => void;
   memberName: (id: string) => string | undefined;
+  /** Opens the popup that moves tasks to another project or company (when moving is switched on). */
+  moveItems?: (itemIds: string[], name?: string) => void;
 }

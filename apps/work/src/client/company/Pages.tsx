@@ -704,7 +704,7 @@ export function Tools() {
         })}
         <section className="card card-pad stack co-tool-card">
           <h2 className="crm-subhead">CAD Automation</h2>
-          <p className="muted small">Your AI assistant builds and checks SOLIDWORKS models on your own computer. It has its own sign-in for now.</p>
+          <p className="muted small">Your AI assistant builds and checks SOLIDWORKS models on your own computer. It takes the same BIZOMAT account: choose Continue with BIZOMAT.</p>
           <div><a className="btn sm" href="/cad/">Open</a></div>
         </section>
       </div>

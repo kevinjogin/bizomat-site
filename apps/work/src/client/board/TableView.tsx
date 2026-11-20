@@ -13,6 +13,7 @@ import { ColumnDialog } from './ColumnDialog';
 import { BASE } from '../lib/base';
 import { GroupDescriptionPreview, GroupInfoPanel, groupFigures } from './GroupDescription';
 import { CriticalBadge, TaskKey, useScheduleIndex } from './controls/schedule';
+import { MoveDialog, useMoveEnabled } from './MoveDialog';
 
 interface Section {
   key: string;
@@ -620,6 +621,7 @@ export function ItemMenu({ item, props, close, onAddSubitem }: { item: ItemDTO; 
   const confirm = useConfirm();
   const toast = useToast();
   const { actions, canEdit, bundle } = props;
+  const canMove = useMoveEnabled(bundle.board.id, canEdit && !item.parentItemId) && !!bundle.board.caps?.deleteTasks;
   return (
     <>
       <MenuItem icon="chevronRight" onClick={() => { close(); props.openItem(item.id); }}>Open item</MenuItem>
@@ -636,6 +638,7 @@ export function ItemMenu({ item, props, close, onAddSubitem }: { item: ItemDTO; 
                   <span className="row"><span className="icon-dot" style={{ background: g.color }} />{g.name}</span>
                 </MenuItem>
               ))}
+              {canMove ? <MenuItem icon="folder" onClick={() => { close(); props.moveItems?.([item.id], item.name); }}>Move to another project...</MenuItem> : null}
             </>
           ) : null}
           <MenuSep />
@@ -651,6 +654,8 @@ function BulkBar({ props, selected, clear }: { props: BoardViewProps; selected: 
   const { actions, bundle, canEdit } = props;
   const confirm = useConfirm();
   const [menu, setMenu] = useState<null | 'move' | 'set'>(null);
+  const [moving, setMoving] = useState(false);
+  const canMove = useMoveEnabled(bundle.board.id, canEdit) && !!bundle.board.caps?.deleteTasks;
   const moveRef = useRef<HTMLButtonElement>(null);
   const setRef = useRef<HTMLButtonElement>(null);
   const ids = Array.from(selected);
@@ -664,10 +669,19 @@ function BulkBar({ props, selected, clear }: { props: BoardViewProps; selected: 
       <strong>{ids.length} selected</strong>
       <button ref={setRef} className="btn sm" onClick={() => setMenu('set')}>Set value</button>
       <button ref={moveRef} className="btn sm" onClick={() => setMenu('move')}>Move to</button>
+      {canMove ? <button className="btn sm" onClick={() => setMoving(true)}>Move to another project</button> : null}
       <button className="btn sm" onClick={async () => { await actions.bulk(ids, 'duplicate'); clear(); }}><Icon name="copy" /> Duplicate</button>
       <button className="btn sm" onClick={async () => { await actions.bulk(ids, 'archive'); clear(); }}><Icon name="archive" /> Archive</button>
       <button className="btn sm danger" onClick={async () => { if (await confirm({ title: `Delete ${ids.length} items?`, message: 'This cannot be undone.', danger: true, confirmLabel: 'Delete' })) { await actions.bulk(ids, 'delete'); clear(); } }}><Icon name="trash" /> Delete</button>
       <button className="btn ghost icon sm" aria-label="Clear selection" onClick={clear}><Icon name="x" /></button>
+      {moving ? (
+        <MoveDialog
+          boardId={bundle.board.id}
+          itemIds={ids.filter((id) => !props.allItems.find((i) => i.id === id)?.parentItemId)}
+          onClose={() => setMoving(false)}
+          onMoved={() => { clear(); void actions.refresh(); }}
+        />
+      ) : null}
       {menu === 'move' ? (
         <Popover anchor={moveRef} onClose={() => setMenu(null)}>
           {bundle.groups.map((g) => <MenuItem key={g.id} onClick={async () => { setMenu(null); await actions.bulk(ids, 'move', { groupId: g.id }); clear(); }}>{g.name}</MenuItem>)}
