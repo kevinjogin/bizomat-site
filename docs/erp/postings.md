@@ -56,10 +56,11 @@ in advance", a current liability) and chooses it.
   moment or later, fails on that key and posts nothing.
 - **Locked periods:** months on or before the workspace's lock date are posted together in one journal on the first open
   day, and the memo says so. A pay run in a locked period is posted on the first open day the same way.
-- **Currency:** a record in another currency than the workspace's is converted at the company's own exchange rate (Organisation structure, Exchange rates) on each journal's date, and the memo names the rate; with no rate it is refused (`docs/erp/consolidation.md`).
-- **Reversing:** Reverse Finance postings reverses each journal through Finance's `reversalStmts` (dated today where the
-  original is in a locked period) and frees the record's keys, so it can be posted again. A journal reversed in Finance
-  itself is noticed the next time the record posts: its month is posted again.
+- **Currency:** a record in another currency than the workspace's is converted at the company's own exchange rate (Organisation structure, Exchange rates) on the record's own date (the asset's acquisition, the revenue's start, the pay date), the same rate for every journal of it, so the accounts it posts to net to nothing; the memo names the rate; with no rate it is refused (`docs/erp/consolidation.md`).
+- **Reversing:** Reverse Finance postings reverses each journal once (a second request at the same moment is refused)
+  through Finance's `reversalStmts`, dated today, or the first open day, where the original is in a locked period, and
+  frees the record's keys, so it can be posted again. A journal reversed in Finance itself no longer counts for the
+  guards at once, and its month is posted again by the next posting, however many times that happens.
 - **Guards:** a fixed asset with posted depreciation cannot change its cost, residual value, life, method, rate or dates,
   and cannot be disposed of in or before a posted month, until the postings are reversed. A posted pay run cannot go back
   to worked out, and a revenue schedule with journals cannot be cancelled, until reversed.

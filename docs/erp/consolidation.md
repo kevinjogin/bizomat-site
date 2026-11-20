@@ -8,11 +8,13 @@ tests `apps/work/test/erp-consolidation.test.ts`.
 
 ## The group
 
-The group is the company's legal entities (Organisation structure, Legal entities) that name a **Finance workspace**.
-A workspace can belong to another registered company (a subsidiary that runs its own BIZOMAT company): the person who
-names it must be able to read its books in Finance, and every figure later comes from workspaces the person reading the
-report may read in Finance itself. An entity whose workspace they may not read is left out of their report, with the
-reason; nothing is added silently.
+The group is the company's legal entities (Organisation structure, Legal entities) that name a **Finance workspace**:
+the company's own, one of another registered company where the person is the owner or an administrator (a subsidiary
+that runs its own BIZOMAT company), or one the person owns in their own company. The example company names only its
+own, and no real company names the example's. Another company's books are read only in a browser session (an API
+token reaches this company's own books only), by its owner or an administrator, and only what they may read in Finance
+itself. An entity whose workspace may not be read is left out of the report, with the reason; nothing is added
+silently.
 
 ## Exchange rates
 
@@ -43,8 +45,9 @@ duties), then **Make the invoice and the bill**:
   earnings not yet closed to retained earnings are shown in equity, so each balance sheet balances;
 - every amount translated at the **closing rate** (the rate on or before the period's end);
 - **eliminations**: the balances posted against a contact that stands for another entity of the group, on every
-  account except bank, cash, card, loan and tax accounts (a payment between entities is still cash, and GST is still
-  owed to the tax office). The difference between the two sides, if any, is shown;
+  account except bank, cash, card and tax accounts (a payment between entities is still cash, and GST is still owed to
+  the tax office; an intercompany loan is eliminated on both sides). The difference between the two sides, if any, is
+  shown;
 - the consolidated column is the entities' amounts plus the eliminations.
 
 ## Not done
