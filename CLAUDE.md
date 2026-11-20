@@ -199,7 +199,9 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Automation panel (`/erp/admin/cad`); exports saved to product revisions, bill of materials proposals from an open
   assembly (draft revisions only), drawings on orders, NCRs and plans, review tasks in Projects. Configure-to-order is
   deferred. CAD Automation is free. Never switch `cad_in_erp` or `cad_redirect` on without the owner's approval; the
-  rollback is switching them off.
+  rollback is switching them off. Released 20 Nov 2026 with every flag off (kevinjogin/bizomat-site#94, deploy run 43;
+  the engine kevinjogin/bizomat-cad#19, `cados` 13db582, its deploy run 10; `apps/cad` synced in #95), after the staging
+  verification with `cad_in_erp` on in staging only; the engine's sync to the ERP answers 200 every minute.
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is
