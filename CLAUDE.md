@@ -272,7 +272,12 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   (`src/config/systems.ts`, one source), **every system on one page** (owner, 20 Nov 2026: "keep all modules in one page under
   Systems"): a section per system with its summary, and its full content (the former system page, now
   `src/components/systems/full/<System>.astro`, every id prefixed with the system's id) in a toggle; `/systems/<id>/`
-  answers 301 to `/systems/#<id>`, `#<id>-full` opens the toggle. Each system's guide is in the Knowledge Centre: BIZOMAT
+  answers 301 to `/systems/#<id>`, `#<id>-full` opens the toggle. **Learn is under Systems** (owner, 20 Nov 2026: "SYSTEMS
+  as a single menu item, with LEARN as a submenu under SYSTEMS"; the front end simple, everything about the ERP reached
+  from one place): the navigation's Systems menu holds two groups, the systems and Learn (`LEARN_LINKS` in
+  `src/config/site.ts`: the Knowledge Centre and each of its sections), with Open BIZOMAT ERP across its foot; `/systems/`
+  has a Learn section from the same list, and `/learn/`'s trail is Home, Systems, Knowledge Centre. Both stay one page
+  each (`tests/navigation.test.ts`). Each system's guide is in the Knowledge Centre: BIZOMAT
   ERP (Business Management System, `#erp`), BIZOMAT CRM (Customer Management System, `#crm`), BIZOMAT Finance (Finance
   Management System, `#finance`), BIZOMAT Projects (Project Management System, `#projects`), BIZOMAT Engineering
   Automation (Engineering Automation System, `#engineering`; the application is CAD Automation, with the same
@@ -285,7 +290,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
   **Knowledge Centre** (owner's brief of 20 Nov 2026; `docs/learn/README.md`, audit `docs/learn/AUDIT.md`, coverage
   `docs/learn/COVERAGE.md`): the one place to learn BIZOMAT ERP, **one public page** at `bizomat.ai/learn/` (owner,
-  20 Nov 2026: "tutorials for all modules under one page with toggle"; navigation **Learn**; `/erp/learn/<guide>` answers
+  20 Nov 2026: "tutorials for all modules under one page with toggle"; in the navigation, the Learn group of the Systems
+  menu, owner 20 Nov 2026; `/erp/learn/<guide>` answers
   301 to `/learn/#<guide>` from the router). Every guide (`/learn/#<id>`) and workflow (`/learn/#workflow-<id>`) is a
   toggle with the brief's structure A to J (what, purpose, who, access path with a screen outline, tutorials whose SVG
   screen outline highlights each step's control, buttons, questions, related modules and workflows, the link into the
@@ -455,8 +461,8 @@ without signing in),
 that `/system-preview/` (the retired design preview) answers 301 to `/systems/erp/`, `/robots.txt` and `/llms.txt`
 (`docs/seo/README.md`), `/erp/` (BIZOMAT ERP, signed in, answering X-Robots-Tag noindex; the tools inside it at
 `/erp/tasks/`, `/erp/crm/`, `/erp/finance/`, `/erp/company/`; `/system/` answers 302 there), and every new chapter URL.
-Confirm the BIZOMAT wordmark and favicon, the navigation **Home, Systems, Learn, Resources, About, Contact** (owner,
-14 Nov 2026; Learn 20 Nov 2026) with **AI Search** and one **Sign in** (BIZOMAT ERP only, owner 20 Nov 2026: one account, one sign-in;
+Confirm the BIZOMAT wordmark and favicon, the navigation **Home, Systems, Resources, About, Contact** (owner,
+14 Nov 2026; 20 Nov 2026: Learn is a group of the Systems menu, beside the systems) with **AI Search** and one **Sign in** (BIZOMAT ERP only, owner 20 Nov 2026: one account, one sign-in;
 never a second sign-in on the website), that a new visit opens in the
 computer's system theme, and that AI
 search answers. For the apps (`/cad/`, `/erp/`, and `/tasks/`, `/crm/`, `/finance/`, `/company/`, `/system/` on bizomat.ai, and their old hosts),
