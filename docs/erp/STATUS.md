@@ -80,6 +80,15 @@ Built, tested and live at `bizomat.ai/erp`.
 | **Release 5 Supply chain**: traceability and reports | A lot's trace to the shipment and customer; open orders, delivery to customers, shipments by carrier, freight, returns, sales by product and customer, job profitability; drill-down and CSV; Supply Chain overview and Operations counts | Reports with exact numbers and CSV |
 | **Release 5 Supply chain**: example company | A carrier, a sales order with a made-to-order line, a delivered shipment with its draft invoice, a return with its draft credit note; no email | Example company tests (workerd and Node) |
 
+## Product Management: sales and margin analysis (20 Nov 2026)
+
+Built 20 Nov 2026 (owner's request: Product Management in the style of Phocas, a functional reference only;
+`docs/erp/analysis.md`, migration 0039). Sales and margin analysis (sales, cost, margin and margin % of goods dispatched
+by product, category, family, customer, salesperson, warehouse and month, against last year or the period before, with
+drill-down, saved views and CSV) and stock against sales (days of cover, reorder, slow, not moving), read only, behind
+the module switch `module_analysis_enabled` (on). Tests: `apps/work/test/erp-analysis.test.ts`. Planned: budgets and
+forecasts beside it, scheduled subscriptions and alerts.
+
 ## The modules framework and the 97-module catalogue (20 Nov 2026)
 
 Live since 20 Nov 2026 (kevinjogin/bizomat-site#111, deploy run 51, image d62af2b-run51, migration 0038), after staging

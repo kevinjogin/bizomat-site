@@ -3,7 +3,7 @@
 Generated from `src/data/learn/` by `node scripts/learn/coverage.ts`; do not edit by hand (`tests/learn.test.ts`
 fails when this file is out of step). The Knowledge Centre is at https://bizomat.ai/learn/.
 
-Totals: 33 guides, 15 workflows, 150 tutorials (829 steps), 389 questions, 272 buttons explained.
+Totals: 33 guides, 15 workflows, 152 tutorials (839 steps), 392 questions, 275 buttons explained.
 
 Columns: A what, B purpose, C who, D access path, E tutorials (steps), F buttons, G questions, H related guides,
 I workflows, J link into the ERP. "Not yet" counts the parts listed as planned or in development.
@@ -26,7 +26,7 @@ I workflows, J link into the ERP. "Not yet" counts the parts listed as planned o
 | [Sales and CRM](/learn/#crm) | Live | yes | 5 (32) | 11 | 10 | 8 | 5 | 5 | 2026-11-20 |
 | [Finance and Accounting](/learn/#finance) | Live | yes | 5 (34) | 11 | 10 | 8 | 8 | 6 | 2026-11-20 |
 | [Project Management](/learn/#projects) | Live | yes | 5 (29) | 10 | 8 | 8 | 3 | 4 | 2026-11-20 |
-| [Product Management](/learn/#products) | Live | yes | 5 (24) | 12 | 8 | 7 | 4 | 5 | 2026-11-20 |
+| [Product Management](/learn/#products) | Live | yes | 7 (34) | 15 | 11 | 7 | 4 | 7 | 2026-11-20 |
 | [Procurement](/learn/#procurement) | Live | yes | 5 (28) | 12 | 9 | 7 | 2 | 4 | 2026-11-20 |
 | [Warehouse: Stock](/learn/#inventory) | Live | yes | 5 (25) | 11 | 8 | 7 | 7 | 4 | 2026-11-20 |
 | [Manufacturing](/learn/#manufacturing) | Live | yes | 5 (25) | 12 | 10 | 7 | 5 | 6 | 2026-11-20 |
