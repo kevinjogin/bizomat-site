@@ -44,8 +44,9 @@ test('the homepage leads with the BIZOMAT message, then learning, the ERP module
   assert.match(home, /<Button href="\/reados\/" arrow data-cta="home-library">Explore Library<\/Button>/);
   assert.match(home, /<form class="home-search" role="search" action="\/tools\/" method="get">/, 'tool search works without JavaScript');
   assert.equal(SITE.title, 'BIZOMAT | Business Intelligence & Automation');
-  assert.deepEqual(NAV.map((n) => n.label), ['Home', 'Systems', 'Learn', 'Resources', 'About', 'Contact']);
-  assert.deepEqual(NAV.map((n) => n.href), ['/', '/systems/', '/learn/', '/resources/', '/engine-room/', '/contact/']);
+  // Learn is inside the Systems menu (owner, 20 Nov 2026; tests/navigation.test.ts).
+  assert.deepEqual(NAV.map((n) => n.label), ['Home', 'Systems', 'Resources', 'About', 'Contact']);
+  assert.deepEqual(NAV.map((n) => n.href), ['/', '/systems/', '/resources/', '/engine-room/', '/contact/']);
 });
 
 test('the ERP modules on the homepage are the module rail\'s own, each with its guide and honest status', () => {

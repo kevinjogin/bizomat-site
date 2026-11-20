@@ -2,23 +2,40 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
-import { AI_SEARCH, CRUMB, FOOTER_NAV, NAV, QUOTE_CTA, SIGN_IN } from '../src/config/site.ts';
+import { AI_SEARCH, CRUMB, FOOTER_NAV, LEARN_LINKS, NAV, QUOTE_CTA, SIGN_IN, menuLinks } from '../src/config/site.ts';
+import { SECTIONS } from '../src/data/learn/types.ts';
 
 const read = (path: string) => readFileSync(join(process.cwd(), path), 'utf8');
 const walk = (dir: string): string[] => readdirSync(dir).flatMap((f) => { const p = join(dir, f); return statSync(p).isDirectory() ? walk(p) : /\.(astro|ts|md|mdx)$/.test(f) ? [p] : []; });
 
-// BIZOMAT navigation (owner, 14 Nov 2026; Learn added 20 Nov 2026): Home | Systems | Learn | Resources | About | Contact,
-// with AI Search and Sign in on the right (one sign-in, BIZOMAT ERP, owner 20 Nov 2026). Learn is the ERP Knowledge Centre
-// (/learn/, src/data/learn/), where every system's user guide now lives. Systems is BIZOMAT's business software as one catalogue (src/config/systems.ts); the applications
-// open inside BIZOMAT ERP. Resources stay free and public. (Before: one menu per product, 13 Nov 2026.)
-test('the main navigation reads Home, Systems, Learn, Resources, About, Contact', () => {
-  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['Home', '/'], ['Systems', '/systems/'], ['Learn', '/learn/'], ['Resources', '/resources/'], ['About', '/engine-room/'], ['Contact', '/contact/']]);
+// BIZOMAT navigation (owner, 14 Nov 2026; 20 Nov 2026: "SYSTEMS as a single menu item, with LEARN as a submenu under
+// SYSTEMS"): Home | Systems | Resources | About | Contact, with AI Search and Sign in on the right (one sign-in, BIZOMAT
+// ERP, owner 20 Nov 2026). Systems is BIZOMAT's business software on one page (src/config/systems.ts); its menu holds
+// two groups, the systems and Learn (the ERP Knowledge Centre, one page at /learn/, src/data/learn/), with Open BIZOMAT
+// ERP across its foot. The applications open inside BIZOMAT ERP. Resources stay free and public. (Before: Learn was a
+// top-level menu of its own, 20 Nov 2026; one menu per product, 13 Nov 2026.)
+test('the main navigation reads Home, Systems, Resources, About, Contact, with Learn inside the Systems menu', () => {
+  assert.deepEqual(NAV.map((n) => [n.label, n.href]), [['Home', '/'], ['Systems', '/systems/'], ['Resources', '/resources/'], ['About', '/engine-room/'], ['Contact', '/contact/']]);
   const menu = (label: string) => (NAV.find((n) => n.label === label)?.children ?? []).map((c) => [c.label, c.href]);
-  assert.deepEqual(menu('Systems'), [['All systems', '/systems/'], ['BIZOMAT ERP', '/systems/#erp'], ['BIZOMAT CRM', '/systems/#crm'], ['BIZOMAT Finance', '/systems/#finance'], ['BIZOMAT Projects', '/systems/#projects'], ['BIZOMAT Engineering Automation', '/systems/#engineering'], ['BIZOMAT Manufacturing and Operations', '/systems/#manufacturing'], ['BIZOMAT WHS', '/systems/#whs'], ['Open BIZOMAT ERP', 'https://bizomat.ai/erp/']]);
+  const systems = NAV.find((n) => n.label === 'Systems')!;
+  const group = (label: string) => (systems.groups?.find((g) => g.label === label)?.children ?? []);
+  const pairs = (label: string) => group(label).map((c) => [c.label, c.href]);
+  assert.deepEqual(systems.groups!.map((g) => g.label), ['Systems', 'Learn']);
+  assert.equal(systems.children, undefined, 'the Systems menu is its two groups');
+  assert.deepEqual(pairs('Systems'), [['All systems', '/systems/'], ['BIZOMAT ERP', '/systems/#erp'], ['BIZOMAT CRM', '/systems/#crm'], ['BIZOMAT Finance', '/systems/#finance'], ['BIZOMAT Projects', '/systems/#projects'], ['BIZOMAT Engineering Automation', '/systems/#engineering'], ['BIZOMAT Manufacturing and Operations', '/systems/#manufacturing'], ['BIZOMAT WHS', '/systems/#whs']]);
+  assert.deepEqual([systems.action!.label, systems.action!.href, systems.action!.external], ['Open BIZOMAT ERP', 'https://bizomat.ai/erp/', true]);
   // A planned system says so in its menu entry. Manufacturing and Operations became Available with ERP Release 5 part A
   // (supply chain), the last of its modules: no system is labelled Planned now.
-  assert.equal(NAV.find((n) => n.label === 'Systems')!.children!.find((c) => c.href === '/systems/#manufacturing')!.status, undefined);
-  assert.deepEqual(menu('Learn'), [['Knowledge Centre', '/learn/'], ['Getting started', '/learn/#what-is-bizomat'], ['ERP modules', '/learn/#modules'], ['Workflows', '/learn/#workflows'], ['CAD and engineering', '/learn/#cad-automation'], ['Troubleshooting', '/learn/#troubleshooting']]);
+  assert.equal(group('Systems').find((c) => c.href === '/systems/#manufacturing')!.status, undefined);
+  // Learn: the Knowledge Centre, then each section of /learn/ in its order, so every anchor is real and none is missed.
+  assert.deepEqual(pairs('Learn'), [['Knowledge Centre', '/learn/'], ['Getting started', '/learn/#getting-started'], ['ERP modules', '/learn/#modules'], ['Workflows', '/learn/#workflows'], ['AI and integrations', '/learn/#ai'], ['CAD and engineering', '/learn/#cad'], ['Administrator guide', '/learn/#admin'], ['Troubleshooting', '/learn/#troubleshooting']]);
+  assert.equal(group('Learn'), LEARN_LINKS, 'one list for the menu and the Learn section of /systems/');
+  assert.deepEqual(LEARN_LINKS.slice(1).map((l) => l.href!.split('#')[1]), SECTIONS.map((x) => x.id));
+  // Every entry of the Systems menu has a short description, so the menu stays compact.
+  for (const c of menuLinks(systems)) assert.ok(c.description && c.description.length <= 50, `${c.label}: a description of at most 50 characters`);
+  // No top-level Learn; /learn/ marks Systems as the current section (the header reads menuLinks).
+  assert.ok(!NAV.some((n) => n.label === 'Learn' || n.href === '/learn/'), 'Learn is inside the Systems menu, not beside it');
+  assert.ok(menuLinks(systems).some((c) => c.href === '/learn/'));
   assert.deepEqual(menu('Resources'), [['Tools', '/tools/'], ['Library', '/reados/'], ['Guides and articles', '/library/'], ['Learning paths', '/resources/#pathways'], ['All resources', '/resources/']]);
   assert.deepEqual(menu('About'), [['The Engine Room', '/engine-room/'], ['From the founder', '/engine-room/#founder'], ['Test record', '/engine-room/#tests']]);
   assert.deepEqual(AI_SEARCH, { href: '/#ai-search', label: 'AI Search' });
@@ -34,9 +51,23 @@ test('the main navigation reads Home, Systems, Learn, Resources, About, Contact'
   const header = read('src/components/Header.astro');
   assert.match(header, /NAV\.map/);
   assert.match(header, /<details class="nav-menu"/);
+  // A menu with groups shows each under its heading, with its action across the foot.
+  assert.match(header, /'nav-menu__panel--groups': item\.groups/);
+  assert.match(header, /<p class="nav-menu__group-title"/);
+  assert.match(header, /<a class="nav-menu__action" href=\{item\.action\.href\}/);
+  assert.match(header, /menuLinks\(item\)\.some/);
   assert.match(header, /<a class="site-header__cta site-header__signin" href=\{SIGN_IN\.href\}/);
   assert.match(header, /AI_SEARCH\.label/);
   assert.match(header, /aria-expanded="false" data-nav-toggle/);
+  // Learn is under Systems on the pages too: /learn/'s trail goes through Systems, and /systems/ has a Learn section built
+  // from the menu's own list. Both stay one page each.
+  const learnPage = read('src/pages/learn/index.astro');
+  assert.match(learnPage, /const crumbs = \[\{ label: 'Home', href: '\/' \}, \{ label: 'Systems', href: '\/systems\/' \}, \{ label: 'Knowledge Centre', href: LEARN_HOME \}\]/);
+  const systemsPage = read('src/pages/systems/index.astro');
+  assert.match(systemsPage, /<section class="pp-section" id="learn" aria-labelledby="learn-title">/);
+  assert.match(systemsPage, /LEARN_LINKS\.map/);
+  assert.match(systemsPage, /<Button href="#learn" variant="text" data-cta="systems-learn">Guides and tutorials<\/Button>/);
+  for (const dir of ['systems', 'learn']) assert.deepEqual(readdirSync(join(process.cwd(), 'src/pages', dir)).filter((f) => f.endsWith('.astro')), ['index.astro'], `/${dir}/ is one page`);
   for (const page of ['systems/index.astro', 'learn/index.astro', 'engine-room.astro', 'sign-in.astro', 'solutions.astro', 'resources/index.astro', 'contact/index.astro', 'library/index.astro', 'reados/index.astro', 'tools/index.astro']) assert.ok(read(`src/pages/${page}`).length > 0, `${page} exists`);
   // Every system is on one page (owner, 20 Nov 2026): each system page's content is a component shown in a toggle on
   // /systems/, and the old pages answer 301 to their section.
@@ -58,7 +89,7 @@ test('the footer covers products, resources, company and the applications, with 
   for (const pair of [['All systems', '/systems/'], ['Knowledge Centre', '/learn/'], ['BIZOMAT ERP', '/systems/#erp'], ['BIZOMAT CRM', '/systems/#crm'], ['BIZOMAT Finance', '/systems/#finance'], ['BIZOMAT Projects', '/systems/#projects'], ['BIZOMAT Engineering Automation', '/systems/#engineering'], ['Sign in to BIZOMAT ERP', 'https://bizomat.ai/erp/login'], ['Resources (free)', '/resources/'], ['Tools', '/tools/'], ['Library', '/reados/'], ['Home', '/'], ['About', '/engine-room/'], ['Contact', '/contact/'], ['Solutions', '/solutions/'], ['Privacy Policy', '/privacy/'], ['Terms of Use', '/terms/'], ['Disclaimer', '/disclaimer/']]) {
     assert.ok(pairs.some(([l, h]) => l === pair[0] && h === pair[1]), `footer has ${pair[0]}`);
   }
-  const labels = [...NAV, ...NAV.flatMap((n) => n.children ?? []), ...pairs.map(([label]) => ({ label }))].map((n) => n.label);
+  const labels = [...NAV, ...NAV.flatMap((n) => menuLinks(n)), ...pairs.map(([label]) => ({ label }))].map((n) => n.label);
   for (const old of ['WORKOS', 'READOS', 'REACHOS', 'Guides', 'CADOS', 'Work']) assert.ok(!labels.includes(old as never), `no "${old}" navigation label`);
   const footer = read('src/components/Footer.astro');
   for (const h of ['Products', 'Resources', 'Company', 'Applications']) assert.match(footer, new RegExp(`<h2 class="site-footer__heading">${h}</h2>`));
