@@ -237,11 +237,14 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   the image, and `/system-preview/` and `/erp-design-preview/` answer 301 to `/systems/erp/`. The platform
   console is `/erp/admin` (platform admins only).
   **Systems** (owner, 14 Nov 2026): the public catalogue of the software at `bizomat.ai/systems/`
-  (`src/config/systems.ts`, one source), a page per system, with its guide in the Knowledge Centre: BIZOMAT ERP (Business Management System,
-  `/systems/erp/`), BIZOMAT CRM (Customer Management System, `/systems/crm/`), BIZOMAT Finance (Finance Management
-  System, `/systems/finance/`), BIZOMAT Projects (Project Management System, `/systems/projects/`), BIZOMAT Engineering
-  Automation (Engineering Automation System, `/systems/engineering/`; the application is CAD Automation, with the same
-  BIZOMAT account: Continue with BIZOMAT) and BIZOMAT Manufacturing and Operations (`/systems/manufacturing/`, guide `/learn/manufacturing/`:
+  (`src/config/systems.ts`, one source), **every system on one page** (owner, 20 Nov 2026: "keep all modules in one page under
+  Systems"): a section per system with its summary, and its full content (the former system page, now
+  `src/components/systems/full/<System>.astro`, every id prefixed with the system's id) in a toggle; `/systems/<id>/`
+  answers 301 to `/systems/#<id>`, `#<id>-full` opens the toggle. Each system's guide is in the Knowledge Centre: BIZOMAT
+  ERP (Business Management System, `#erp`), BIZOMAT CRM (Customer Management System, `#crm`), BIZOMAT Finance (Finance
+  Management System, `#finance`), BIZOMAT Projects (Project Management System, `#projects`), BIZOMAT Engineering
+  Automation (Engineering Automation System, `#engineering`; the application is CAD Automation, with the same
+  BIZOMAT account: Continue with BIZOMAT) and BIZOMAT Manufacturing and Operations (`#manufacturing`, guide `/learn/#manufacturing`:
   Maintenance, Procurement and Inventory work in the ERP today, Manufacturing since Release 3, Quality and Maintenance
   M2 and M3 since Release 4, and Supply Chain with Release 5 part A; the owner asked for it to turn green once every
   tool works, so it is Available since Release 5 part A was deployed (15 Nov 2026), with what is not built inside it labelled Planned). The old product pages
@@ -249,14 +252,17 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   (`public/_redirects`). Systems are the software; **Resources stay free and public**, never behind a sign-in.
   Every site's footer carries the slogan, the short description and "© <year> BIZOMAT. All rights reserved."
   **Knowledge Centre** (owner's brief of 20 Nov 2026; `docs/learn/README.md`, audit `docs/learn/AUDIT.md`, coverage
-  `docs/learn/COVERAGE.md`): the one place to learn BIZOMAT ERP, public at `bizomat.ai/learn/` (navigation **Learn**;
-  `/erp/learn` answers 301 there from the router). A guide per module and topic with the brief's structure A to J
-  (what, purpose, who, access path, tutorials, buttons, questions, related modules and workflows, the link into the
-  ERP), workflows across modules at `/learn/workflows/`, SVG diagrams, and its own search (`/learn/search.json`). The
-  content is typed data in `src/data/learn/`, written from the code; `tests/learn.test.ts` checks it (complete, every
-  link real, statuses honest, no prices or compliance claims, coverage in step: `node scripts/learn/coverage.ts`). The
-  seven `/systems/*/guide/` pages were retired into it and answer 301 to their guide. Tutorials only explain: nothing
-  there acts on anyone's records. Never write up a flagged-off or planned feature as working there.
+  `docs/learn/COVERAGE.md`): the one place to learn BIZOMAT ERP, **one public page** at `bizomat.ai/learn/` (owner,
+  20 Nov 2026: "tutorials for all modules under one page with toggle"; navigation **Learn**; `/erp/learn/<guide>` answers
+  301 to `/learn/#<guide>` from the router). Every guide (`/learn/#<id>`) and workflow (`/learn/#workflow-<id>`) is a
+  toggle with the brief's structure A to J (what, purpose, who, access path with a screen outline, tutorials whose SVG
+  screen outline highlights each step's control, buttons, questions, related modules and workflows, the link into the
+  ERP), SVG diagrams, and its own search (`/learn/search.json`) whose results open their toggle. The earlier
+  `/learn/<id>/` and `/learn/workflows/<id>/` pages and the seven `/systems/*/guide/` pages answer 301 to their toggle.
+  The content is typed data in `src/data/learn/`, written from the code; `tests/learn.test.ts` checks it (complete,
+  every link real, statuses honest, no prices or compliance claims, coverage in step: `node scripts/learn/coverage.ts`).
+  Tutorials only explain: nothing there acts on anyone's records. Never write up a flagged-off or planned feature as
+  working there.
 - **KEVOS is the former name.** KEVOS® is a registered Australian trade mark (No. 2469816); BIZOMAT is **not**
   registered. Never write "®" or "TM" after BIZOMAT and never call it registered. KEVOS appears only as the former
   name (footer, trade mark notice, "Formerly" labels) and in historical docs.
@@ -410,10 +416,10 @@ Platform: `docker compose -f infrastructure/local/compose.yml up --build`, then 
 
 ## After any production change
 
-Check the public site, not just the build: `/`, `/systems/` and every system's page (`/systems/erp/`,
-`/systems/crm/`, `/systems/finance/`, `/systems/projects/`, `/systems/engineering/`, `/systems/manufacturing/`,
-`/systems/whs/`; each `guide/` answers 301 to its guide in the Knowledge Centre), that the old product pages answer 301
-there, the Knowledge Centre (`/learn/`, its search, a guide such as `/learn/procurement/` and `/learn/workflows/`; open
+Check the public site, not just the build: `/`, `/systems/` (every system's toggle opens, for example
+`/systems/#engineering-full`; `/systems/erp/`, `/systems/crm/` and the other system pages answer 301 to their section,
+and each `guide/` to its guide's toggle), that the old product pages answer 301 there, the Knowledge Centre (`/learn/`,
+its search, a guide's toggle such as `/learn/#procurement`, and `/learn/procurement/` answering 301 to it; open
 without signing in), `/resources/`, `/tools/`, `/reados/` (open
 without signing in),
 `/engine-room/` (and that `/about/` and `/proof-of-work/` redirect to it), `/privacy/`, `/terms/`, `/disclaimer/`,
