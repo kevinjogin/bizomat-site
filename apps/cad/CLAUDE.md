@@ -181,9 +181,16 @@ byte for byte the CI build's apart from the signatures, and its text files apart
   company: computers, pairings, commands (column `company` in bridge.sqlite), AI connections (`company` in
   mcp_oauth.json), upload links and exports belong to one company, with its fair-use limits (concurrent commands,
   command time, upload size, export storage). An AI connection works in one company, chosen on the consent page; older
-  ones are bound to the person's only company on next use, else refused (`COMPANY_REQUIRED`). The old pages and
-  `/devices/pair` send people to the ERP and `/login` to Sign in with BIZOMAT only while the ERP's `cad_redirect` is on
-  (`/login?password=1` stays; Admin stays). Others never see the open file's name, installation folders or Windows paths
+  ones are bound to the person's only company on next use, else refused (`COMPANY_REQUIRED`). Every page's content is
+  in the ERP (owner, 20 Nov 2026: "all CAD Automation data and details in ERP, not at bizomat.ai/cad"), including
+  Settings' private address and add-in key (`POST /api/erp/v1/access`, `access/private/new`, `access/addin-key/new`:
+  the person's own only), the add-in package (`GET addin/package`) and the example requests, service address and
+  package flag in the state. While the ERP's `cad_redirect` is on, the old pages answer 302 into the ERP
+  (`docs/ERP-MODULE.md`, "The old pages"): visitors on `/`, `/overview`, `/docs` (the page) and on `/dashboard`,
+  `/assistant`, `/solidworks`, `/tools`, `/history`, `/settings` (the sign-in gate, `auth.ERP_PAGES`, never through this
+  server's sign-in), and signed-in people who work in the ERP on every page, Admin to the console's CAD panel for the
+  owner; `/login` goes to Sign in with BIZOMAT (`/login?password=1` stays), `?here=1` keeps a page, `/privacy` and the
+  program addresses stay. Others never see the open file's name, installation folders or Windows paths
   in errors (`erplink._scrub`). The ERP hands out the installer itself (`GET /api/erp/v1/installer/file`, the file in
   the data folder; `installer_info` in the state), so nobody signs in to CAD Automation separately to download it.
   Tests: `tests/test_erplink.py`. Deployed 20 Nov 2026 (#19, version 13db582, deploy run

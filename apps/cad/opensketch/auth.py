@@ -388,6 +388,9 @@ history. Inside the ERP each computer, AI connection, command and export belongs
 who in that company sees it: by default the owner, administrators and managers see everyone's, employees their own. Nobody
 but you sees the name of the file open in SOLIDWORKS on your computer. An export you save to a product is copied into
 BIZOMAT ERP as an engineering document; other exports stay here for one hour.</p>
+<p>In BIZOMAT ERP you can also see and renew your own private connector address and add-in key, and download the add-in
+package. BIZOMAT ERP passes them to your browser and keeps neither; nobody else sees your keys. While CAD Automation is
+used inside BIZOMAT ERP, this service's own pages open there instead; this notice stays here.</p>
 <p>This server, in Amsterdam, the Netherlands, also scans company registration documents that BIZOMAT ERP's companies
 upload for verification: it fetches one document at a time from BIZOMAT ERP over an encrypted connection, scans it for
 malware with ClamAV in a private temporary folder, tells BIZOMAT ERP the result and deletes the document straight away.
@@ -783,6 +786,22 @@ def _same_origin(scope) -> bool:
     return origin != "null"
 
 
+# The signed-in pages a visitor may arrive at from an old link or a search result, and their section in BIZOMAT ERP
+# (owner, 20 Nov 2026: every page of CAD Automation inside the ERP). Only while the ERP says the pages open there
+# (cad_redirect); ?here=1 keeps the sign-in here. Admin is the server owner's and keeps its own way in.
+ERP_PAGES = {"/dashboard": "", "/assistant": "/assistants", "/solidworks": "/computers", "/tools": "/tools",
+             "/history": "/history", "/settings": "/access"}
+
+
+def _erp_page(path: str, scope) -> str | None:
+    if path not in ERP_PAGES or b"here=1" in (scope.get("query_string") or b""):
+        return None
+    from . import erplink
+    if not erplink.redirect_on():
+        return None
+    return erplink.erp_url("/erp/cad" + ERP_PAGES[path])
+
+
 class PasswordGate:
     """ASGI middleware: sign-in pages, the session check, sign-out. MCP paths (and the add-in's link) are
     checked by their own tokens instead. Puts the signed-in person in scope["state"]["user"]."""
@@ -833,6 +852,9 @@ class PasswordGate:
         if scope.get("method") in ("GET", "HEAD") and (path == "/" or path in PUBLIC_PAGES):
             return await self.app(scope, receive, send)
         if scope.get("method") == "GET" and not path.startswith("/api/"):
+            moved = _erp_page(path, scope)
+            if moved:  # an old link or a search result: straight to the same section in BIZOMAT ERP, which signs in
+                return await _send(send, 302, b"", [(b"location", moved.encode()), (b"cache-control", b"no-store")])
             nxt = path + ("?" + scope["query_string"].decode() if scope.get("query_string") else "")
             return await _send(send, 303, b"", [(b"location", f"/login?next={quote(nxt)}".encode())])
         return await _send(send, 401, b'{"error":"Sign in to CAD Automation first."}', [(b"content-type", b"application/json")])

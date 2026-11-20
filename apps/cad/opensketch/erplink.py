@@ -397,7 +397,23 @@ def state_for(ctx: Ctx, request: Request) -> dict:
         "usage": {"running": int((busy or {}).get("n") or 0), "storageBytes": sum(e["size"] or 0 for e in exports)},
         "unassigned": {"computers": int((mine_unassigned or {}).get("n") or 0), "assistants": sum(1 for a in assistants if a["needsCompany"])},
         "tools": [{"group": g, "tools": [{"name": n, "title": t, "summary": s} for n, t, s in items]} for g, items in catalog.GROUPS],
+        # What the CAD Assistant page offered (owner, 20 Nov 2026: every page of CAD Automation inside the ERP): requests
+        # to copy, and the service address the direct link needs (the person's add-in key is asked for on its own).
+        "examples": [{"group": g, "items": list(items)} for g, items in catalog.EXAMPLES],
+        "service": _service_url(),
+        "package": _has_package(),
     }
+
+
+def _has_package() -> bool:
+    """Whether this server holds the add-in package for a manual installation (the image builds it)."""
+    from . import server
+    return server.SW_DOWNLOAD.is_file()
+
+
+def _service_url() -> str:
+    from . import auth
+    return auth.public_url()
 
 
 def installer_info() -> dict:
@@ -600,6 +616,64 @@ async def api_installer_file(request: Request):
         sha = await asyncio.to_thread(server._installer_sha256, p)
         return FileResponse(p, media_type="application/x-msi", filename=p.name,
                             headers={"X-Sha256": sha, "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
+    except ErpError as e:
+        return _error(e)
+
+
+# ----------------------------------------------------------------------------- the person's own keys (Settings)
+# The Settings page's private connector address and add-in key, and the SOLIDWORKS page's add-in package, inside the ERP
+# (owner, 20 Nov 2026). Each is the asserted person's own: nobody sees or changes another person's keys. The ERP passes
+# them through to that person's browser and keeps nothing.
+
+def _own(ctx: Ctx) -> dict:
+    _need(ctx.operate, "FORBIDDEN", "Your role cannot use CAD Automation in this company.")
+    _need(not ctx.user.get("legacy"), "FORBIDDEN", "This account has no keys of its own.")
+    return ctx.user
+
+
+def _private_url(user: dict) -> str:
+    from . import auth
+    return f"{connector_url()}/{auth.mcp_token_for(user)}"
+
+
+@router.post("/access")
+@_handler
+async def api_access(request: Request, ctx: Ctx, data: dict):
+    from . import swbridge
+    u = _own(ctx)
+    return {"privateUrl": _private_url(u), "addinKey": swbridge.key_for(u), "service": _service_url(),
+            "package": _has_package()}
+
+
+@router.post("/access/private/new")
+@_handler
+async def api_access_private_new(request: Request, ctx: Ctx, data: dict):
+    """A new private connector address: the old one stops working at once (server.api_connect_new_address)."""
+    from . import accounts
+    u = _own(ctx)
+    accounts.new_mcp_address(u["id"])
+    fresh_user = accounts.get(u["id"]) or u
+    return {"privateUrl": _private_url(fresh_user)}
+
+
+@router.post("/access/addin-key/new")
+@_handler
+async def api_access_key_new(request: Request, ctx: Ctx, data: dict):
+    """A new add-in key: the direct link stops until the new key is pasted into the add-in (server.api_sw_key)."""
+    from . import swbridge
+    return {"addinKey": swbridge.new_key(_own(ctx))}
+
+
+@router.get("/addin/package")
+async def api_addin_package(request: Request):
+    """The add-in package for a manual installation (the SOLIDWORKS page's download), handed out by the ERP."""
+    from . import server
+    try:
+        ctx, _ = await _ctx(request)
+        _own(ctx)
+        _need(server.SW_DOWNLOAD.is_file(), "NOT_FOUND", "The add-in package is not on this server.", 404)
+        return FileResponse(server.SW_DOWNLOAD, filename="BIZOMAT-CAD-Automation-SOLIDWORKS-addin.zip", media_type="application/zip",
+                            headers={"Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
     except ErpError as e:
         return _error(e)
 

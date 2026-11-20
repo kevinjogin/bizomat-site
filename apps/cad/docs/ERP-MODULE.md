@@ -51,13 +51,16 @@ refused with `COMPANY_ACCESS`.
 
 | Path | What |
 | --- | --- |
-| `POST state` | The company's computers, AI connections, last 100 commands, live exports, usage, the connector and installer addresses, the tools |
+| `POST state` | The company's computers, AI connections, last 100 commands, live exports, usage, the connector and installer addresses, the tools, the example requests (`catalog.EXAMPLES`), the service address and whether there is an add-in package |
 | `POST computers/default`, `computers/remove` | Default among one's own computers; remove (one's own, or others' with `delete`) |
 | `POST pair/lookup`, `pair/approve` | The Companion's code, approved into the company |
 | `POST assistants/remove`, `assistants/assign` | Disconnect; bind one's unbound connection to this company |
 | `POST commands/get`, `commands/cancel` | One command with its history and result; cancel |
 | `GET exports/{id}/file` | The export's bytes with `X-Sha256` (needs `export`) |
 | `GET installer/file` | The installer in this server's data folder, with `X-Sha256`, for the ERP to hand out (its size, SHA-256 and, from the release record, version are in `state`) |
+| `POST access` | The person's own private connector address and add-in key (Settings), the service address and whether there is an add-in package; never another person's (needs `operate`) |
+| `POST access/private/new`, `access/addin-key/new` | A new private address or add-in key for the person; the old one stops at once |
+| `GET addin/package` | The add-in package for a manual installation (`server.SW_DOWNLOAD`), for the ERP to hand out |
 | `POST assembly/read` | Reads the open assembly on the person's computer in the background; answers at once with the command id |
 
 What a person sees follows `perm.scope` (`Ctx.owners`): everyone's, their team's or their own. Someone else's computer
@@ -75,10 +78,28 @@ commands and AI connections with no company into its default company. An answer 
 
 ## The old pages
 
-While the ERP says `cad_redirect` is on, a signed-in person who works with CAD Automation inside the ERP is sent from
-`/dashboard`, `/assistant`, `/solidworks`, `/tools`, `/history` (with `?command=`), `/settings`, `/` and
-`/devices/pair?code=` to the same page in the ERP, and `/login` goes to Sign in with BIZOMAT (`/login?password=1` keeps
-the password page). Admin stays here. With the flag off, every page is served here again.
+Owner, 20 Nov 2026: "all CAD Automation data and details in ERP, not at bizomat.ai/cad". Every page's content is in the
+ERP's CAD Automation module (`/erp/c/<company>/cad`): Home is Overview (the task box with the example requests, the
+connection, the set-up steps, recent activity), CAD Assistant is AI assistants, SOLIDWORKS is Computers (with how it
+connects, the service address and the add-in package), Tools and History, Settings is Access (the person's own private
+address and add-in key, through `access`), Admin is People in the ERP and the console's CAD Automation panel, and the
+documentation is Setup and the Knowledge Centre.
+
+While the ERP says `cad_redirect` is on (answers 302, `Cache-Control: no-store`):
+
+| From | To |
+| --- | --- |
+| `/`, `/overview` | `/erp/cad` (a visitor, or a person who works in the ERP) |
+| `/docs` | `/erp/cad/setup` (the same) |
+| `/dashboard`, `/assistant`, `/solidworks`, `/tools`, `/history` (with `?command=`), `/settings` | `/erp/cad`, `/assistants`, `/computers`, `/tools`, `/history`, `/access`: a visitor straight from the sign-in gate (`auth.ERP_PAGES`), never through this server's own sign-in; a signed-in person who works in the ERP from the page (`server.ERP_SECTIONS`) |
+| `/admin` | `/erp/admin/cad`, for the server's owner |
+| `/devices/pair?code=` | `/erp/cad/pair?code=` |
+| `/login` | Sign in with BIZOMAT (`/login?password=1` keeps the password page) |
+
+`?here=1` keeps a page here, for support. `/privacy` stays (its notice says what CAD Automation itself keeps). The
+programs keep their addresses: the AI connector (`/mcp`), its sign-in and consent, the computers' link (`/v2/`), the
+installer (`/download/solidworks`) and `/healthz`. A signed-in person whose companies do not have the module keeps the
+pages here. With the flag off, every page is served here again.
 
 ## Not in this change
 
