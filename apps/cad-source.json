@@ -1,7 +1,7 @@
 {
   "repository": "kevinjogin/bizomat-cad",
-  "commit": "13db582a6a921e3a94dd1564a8e62233a23dd8d4",
-  "tree": "82ab2da0bc740fbca092ea0ee64eb4bc43b528e3",
-  "subject": "Merge pull request #19 from kevinjogin/claude/jolly-cray-b85yew",
+  "commit": "5fcbbb64fd20eea91634698b49b99e4bd718d3ac",
+  "tree": "68abe29a3a915dda1de804c3c4c5d26810628f32",
+  "subject": "Merge pull request #21 from kevinjogin/claude/jolly-cray-b85yew",
   "note": "apps/cad is this CADOS commit byte for byte (scripts/sync-cad.mjs). Change CAD Automation in CADOS, then sync."
 }

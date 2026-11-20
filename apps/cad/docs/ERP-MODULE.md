@@ -57,6 +57,7 @@ refused with `COMPANY_ACCESS`.
 | `POST assistants/remove`, `assistants/assign` | Disconnect; bind one's unbound connection to this company |
 | `POST commands/get`, `commands/cancel` | One command with its history and result; cancel |
 | `GET exports/{id}/file` | The export's bytes with `X-Sha256` (needs `export`) |
+| `GET installer/file` | The installer in this server's data folder, with `X-Sha256`, for the ERP to hand out (its size, SHA-256 and, from the release record, version are in `state`) |
 | `POST assembly/read` | Reads the open assembly on the person's computer in the background; answers at once with the command id |
 
 What a person sees follows `perm.scope` (`Ctx.owners`): everyone's, their team's or their own. Someone else's computer

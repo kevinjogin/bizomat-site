@@ -357,7 +357,7 @@ def _commands(ctx: Ctx, limit: int = 100, command_id: str | None = None) -> list
 
 
 def state_for(ctx: Ctx, request: Request) -> dict:
-    from . import artifacts, auth, catalog, devicebridge, mcpauth
+    from . import artifacts, catalog, devicebridge, mcpauth
     owners = ctx.owners()
     people = {u["id"]: u for u in _accounts_raw()}
     rows = devicebridge._q("SELECT * FROM devices WHERE company = ? AND revoked IS NULL ORDER BY created", (ctx.company,))
@@ -386,11 +386,10 @@ def state_for(ctx: Ctx, request: Request) -> dict:
                            % ",".join("?" * len(devicebridge.TERMINAL)), (ctx.company, *devicebridge.TERMINAL, time.time()), one=True)
     mine_unassigned = devicebridge._q("SELECT COUNT(*) AS n FROM devices WHERE owner = ? AND company IS NULL AND revoked IS NULL",
                                       (ctx.user["id"],), one=True)
-    base = auth.public_url()
     return {
         "account": {"id": ctx.user["id"]},
         "connector": {"url": connector_url()},
-        "installer": {"url": base + "/download/solidworks", "checksum": base + "/download/solidworks.sha256"},
+        "installer": installer_info(),
         "computers": computers,
         "assistants": assistants,
         "commands": _commands(ctx),
@@ -399,6 +398,25 @@ def state_for(ctx: Ctx, request: Request) -> dict:
         "unassigned": {"computers": int((mine_unassigned or {}).get("n") or 0), "assistants": sum(1 for a in assistants if a["needsCompany"])},
         "tools": [{"group": g, "tools": [{"name": n, "title": t, "summary": s} for n, t, s in items]} for g, items in catalog.GROUPS],
     }
+
+
+def installer_info() -> dict:
+    """The installer this server holds (server.local_installer), which the ERP hands out itself: nobody signs in to
+    CAD Automation separately to download it. Its version only when the published release record names this file."""
+    from . import server
+    p = server.local_installer()
+    if p is None:
+        return {"available": False}
+    sha = server._installer_sha256(p)
+    out = {"available": True, "name": p.name, "size": p.stat().st_size, "sha256": sha}
+    try:
+        from . import devicebridge
+        rel = devicebridge.release_manifest() or {}
+        if str(rel.get("sha256", "")).lower().removeprefix("sha256:") == sha and rel.get("version"):
+            out["version"] = str(rel["version"])[:20]
+    except Exception:  # noqa: BLE001 - the record is optional
+        pass
+    return out
 
 
 def connector_url() -> str:
@@ -567,6 +585,21 @@ async def api_export_file(export_id: str, request: Request):
         path, info = hit
         return FileResponse(path, media_type=info.get("media_type") or "application/octet-stream", filename=info.get("filename") or "export",
                             headers={"X-Sha256": str(info.get("sha256") or ""), "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
+    except ErpError as e:
+        return _error(e)
+
+
+@router.get("/installer/file")
+async def api_installer_file(request: Request):
+    """The installer, for BIZOMAT ERP to hand to a person of the company (step 1 of the setup in the ERP)."""
+    from . import server
+    try:
+        await _ctx(request)
+        p = server.local_installer()
+        _need(p is not None, "NOT_FOUND", "The installer is not on this server yet. Ask BIZOMAT support.", 404)
+        sha = await asyncio.to_thread(server._installer_sha256, p)
+        return FileResponse(p, media_type="application/x-msi", filename=p.name,
+                            headers={"X-Sha256": sha, "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff"})
     except ErpError as e:
         return _error(e)
 

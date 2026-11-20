@@ -447,3 +447,22 @@ def test_others_never_see_a_persons_folders_or_file_names():
         assert "Ann" not in out and "Bracket" not in out and "share" not in out and "q.sldasm" not in out, out
         assert "a file" in out
     assert erplink._scrub("Timed out at 10:30") == "Timed out at 10:30"
+
+
+def test_the_erp_hands_out_the_installer_this_server_holds(erp, client, data):
+    from opensketch import brand, store
+    st = call(client, erp, "state", {}, "alice", "co_a").json()
+    assert st["installer"] == {"available": False}
+    path = "/api/erp/v1/installer/file"
+    r = client.get(path, headers={"Authorization": erp.assertion("GET", path, b"", "alice", "co_a")})
+    assert r.status_code == 404
+    folder = store.data_dir() / "downloads"
+    folder.mkdir(parents=True, exist_ok=True)
+    msi = b"MSI-bytes-for-a-test" * 100
+    (folder / brand.INSTALLER_NAME).write_bytes(msi)
+    st = call(client, erp, "state", {}, "alice", "co_a").json()
+    assert st["installer"]["available"] and st["installer"]["size"] == len(msi)
+    assert st["installer"]["sha256"] == hashlib.sha256(msi).hexdigest()
+    r = client.get(path, headers={"Authorization": erp.assertion("GET", path, b"", "alice", "co_a")})
+    assert r.status_code == 200 and r.content == msi and r.headers["x-sha256"] == hashlib.sha256(msi).hexdigest()
+    assert client.get(path).status_code == 401  # never without the ERP's assertion
