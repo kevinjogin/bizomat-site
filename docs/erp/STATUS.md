@@ -82,6 +82,9 @@ Built, tested and live at `bizomat.ai/erp`.
 
 ## The modules framework and the 97-module catalogue (20 Nov 2026)
 
+Live since 20 Nov 2026 (kevinjogin/bizomat-site#111, deploy run 51, image d62af2b-run51, migration 0038), after staging
+(deploy run 27 and the verify walk, run 28, every check passed).
+
 Owner's brief "BIZOMAT ERP, 97-module enterprise expansion and production deployment" (20 Nov 2026). The master catalogue
 of 97 modules, with each module's status, what exists, what does not, where it opens, what it builds on and its tests, is
 `docs/erp/MODULES.md` (generated from `apps/work/src/shared/erp-catalogue.ts`; the ERP's All modules page shows the
