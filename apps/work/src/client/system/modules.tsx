@@ -79,8 +79,14 @@ function menu(module: ErpModule, o: { cad: boolean; admin: boolean; mtReports: b
       return [
         {
           items: [
-            { to: 'products', label: 'Products', icon: 'diamond', match: /^products(\/(?!changes|documents|cad)[^/]+)?$/ },
-            { to: '', label: 'Sales and margin analysis', icon: 'chart', planned: true },
+            { to: 'products', label: 'Products', icon: 'diamond', match: /^products(\/(?!changes|documents|cad|analysis)[^/]+)?$/ },
+          ],
+        },
+        {
+          heading: 'Analysis',
+          items: [
+            { to: 'products/analysis', label: 'Sales and margin analysis', icon: 'chart', match: exact('products/analysis') },
+            { to: 'products/analysis/stock', label: 'Stock against sales', icon: 'archive', match: exact('products/analysis/stock') },
           ],
         },
       ];

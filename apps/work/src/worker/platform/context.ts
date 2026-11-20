@@ -57,6 +57,7 @@ erpModule('inventory', ['warehouses', 'locations', 'stock', 'movements', 'reserv
 erpModule('manufacturing', ['work-centres', 'machines', 'mfg-assets', 'mfg-settings', 'routings', 'mos', 'mo-options', 'shop-floor', 'mps', 'mrp', 'capacity']);
 erpModule('quality', ['qc-plans', 'inspections', 'quality', 'quality-options', 'ncrs', 'capas']);
 erpModule('cad', ['cad']);
+erpModule('analysis', ['analysis']);
 erpModule('supply_chain', ['sales-orders', 'sales-order-options', 'shipments', 'carriers', 'rmas', 'delivery-schedule', 'supply-chain']);
 
 // The modules framework's addresses (/erp/c/<company>/x/o/<object>, /x/m/<module>): the switch of the record's module.
