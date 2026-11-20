@@ -267,7 +267,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   and month, against last year or the period before, drill-down, saved views, CSV) and Stock against sales
   (`/products/analysis/stock`), under Analysis in Product Management's side menu, read only, from dispatched shipment
   lines and the stock ledger (`apps/work/src/worker/erp/analysis.ts`). Returns are not deducted; budgets, forecasts,
-  scheduled subscriptions and alerts are planned: never present them as working.
+  scheduled subscriptions and alerts are planned: never present them as working. Released 20 Nov 2026
+  (kevinjogin/bizomat-site#115, deploy run 54).
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is

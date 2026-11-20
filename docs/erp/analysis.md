@@ -2,8 +2,10 @@
 
 Owner's request of 20 Nov 2026: Product Management "just like Phocas software in all features" (Phocas a functional
 reference only: no Phocas name, screen, text or data is used), with the owner's choice "Product list + Phocas-style
-analysis". Built 20 Nov 2026; released on for everyone, as the owner asked for the ERP redesign ("Straight on for
-everyone"), behind its own module switch.
+analysis". Released 20 Nov 2026 (kevinjogin/bizomat-site#115, merge 58d0119, deploy run 54, migration 0039 applied at
+start-up), on for everyone as the owner asked for the ERP redesign ("Straight on for everyone"), behind its own module
+switch. Checked live the same day: the analysis API answers 401 to a visitor, the side menu and both pages are in the
+served bundle, the Knowledge Centre carries both tutorials, and every live site check passed.
 
 ## What it is
 

@@ -82,8 +82,8 @@ Built, tested and live at `bizomat.ai/erp`.
 
 ## Product Management: sales and margin analysis (20 Nov 2026)
 
-Built 20 Nov 2026 (owner's request: Product Management in the style of Phocas, a functional reference only;
-`docs/erp/analysis.md`, migration 0039). Sales and margin analysis (sales, cost, margin and margin % of goods dispatched
+Live since 20 Nov 2026 (kevinjogin/bizomat-site#115, deploy run 54, migration 0039; owner's request: Product Management
+in the style of Phocas, a functional reference only; `docs/erp/analysis.md`). Sales and margin analysis (sales, cost, margin and margin % of goods dispatched
 by product, category, family, customer, salesperson, warehouse and month, against last year or the period before, with
 drill-down, saved views and CSV) and stock against sales (days of cover, reorder, slow, not moving), read only, behind
 the module switch `module_analysis_enabled` (on). Tests: `apps/work/test/erp-analysis.test.ts`. Planned: budgets and
