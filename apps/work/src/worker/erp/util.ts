@@ -125,7 +125,16 @@ export interface ErpEvent {
     | 'sales_order'
     | 'shipment'
     | 'rma'
-    | 'carrier';
+    | 'carrier'
+    | 'cad_run'
+    | 'cad_computer'
+    | 'cad_assistant'
+    | 'cad_export'
+    | 'cad_command'
+    | 'cad_pairing'
+    | 'cad_bom_proposal'
+    | 'cad_review'
+    | 'cad_settings';
   entityId?: string | null;
   productId?: string | null;
   summary: string;

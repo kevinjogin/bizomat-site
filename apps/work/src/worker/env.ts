@@ -48,6 +48,8 @@ export interface Env {
    * (src/worker/company/verify.ts).
    */
   ABR_GUID?: string;
+  /** CAD Automation's engine for the ERP's CAD module (docs/cad/README.md); on Fly http://cados.internal:8080. */
+  CAD_URL?: string;
   /**
    * Secret, optional: a Companies House API key (free from developer.company-information.service.gov.uk). With it, and
    * the registry checks switched on, United Kingdom company numbers are looked up (src/worker/company/verification.ts).

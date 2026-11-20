@@ -5,7 +5,7 @@
 
 import { ConfigError, configFromEnv } from './config.ts';
 import { errorSummary, jsonLogger as log } from './log.ts';
-import { installOutboundGuard } from './outbound.ts';
+import { installOutboundGuard, serviceOrigin } from './outbound.ts';
 import { startServer, type RunningServer } from './runtime.ts';
 
 // workerd logs a rejected promise nobody handled and carries on; Node would
@@ -39,7 +39,8 @@ for (const signal of ['SIGTERM', 'SIGINT'] as const) process.on(signal, () => vo
 
 try {
   const config = configFromEnv();
-  installOutboundGuard();
+  // CAD Automation's engine is on the operator's private network (docs/cad/README.md): its one configured address.
+  installOutboundGuard(serviceOrigin(config.vars.CAD_URL));
   running = await startServer(config, { log });
   const r = running.runtime;
   log({

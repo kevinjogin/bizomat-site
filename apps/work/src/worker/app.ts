@@ -48,6 +48,9 @@ import { idPublicRoutes } from './company/id-provider';
 import { scanRoutes } from './company/scan';
 import { maintenanceRoutes } from './maintenance';
 import { erpRoutes } from './erp';
+import { cadRoutes } from './cad/routes';
+import { cadAdminRoutes } from './cad/admin';
+import { drawingRoutes } from './cad/drawings';
 import { whsRoutes } from './whs';
 import { legalAdminRoutes as whsAdminRoutes } from './whs/legal';
 import { billingRoutes } from './billing/routes';
@@ -263,6 +266,9 @@ export function createApp() {
   // BIZOMAT ERP, Release 1 (src/worker/erp): products, variants, revisions and change control, bills of materials,
   // engineering documents and the supplier master.
   api.route('/erp', erpRoutes);
+  // CAD Automation inside the ERP (flag cad_in_erp, off): src/worker/cad, docs/cad/README.md.
+  api.route('/erp', cadRoutes);
+  api.route('/erp', drawingRoutes);
   // BIZOMAT WHS, Release 1 (src/worker/whs): hazards, risk assessments, incidents, investigations, regulatory
   // notification records and actions, with the jurisdiction packs.
   api.use('/whs/c/:company/*', moduleGate('whs'));
@@ -287,6 +293,7 @@ export function createApp() {
   // The Admin Control Centre: feature flags, the kill switch, rollout stages and two-factor sign-in (Stage 1, R2).
   // A platform admin's recovery transfer of a company's ownership (two-factor sign-in and a fresh password and code).
   admin.route('/platform/members', platformMembersRoutes);
+  admin.route('/platform/cad', cadAdminRoutes);
   admin.route('/platform', platformRoutes);
   api.route('/admin', admin);
   app.route('/api/live', realtimeRoutes);

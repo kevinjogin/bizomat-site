@@ -26,6 +26,8 @@ const CAD_TYPES: Record<string, { mime: string; check: (head: string) => boolean
   dxf: { mime: 'application/dxf', label: 'DXF', check: (h) => h.startsWith('AutoCAD Binary DXF') || /^\s*0\s*\r?\n\s*SECTION\b/.test(h) || /^\s*999\s*\r?\n/.test(h) },
   step: { mime: 'model/step', label: 'STEP', check: (h) => /^\s*ISO-10303-21\s*;/.test(h) },
   stp: { mime: 'model/step', label: 'STEP', check: (h) => /^\s*ISO-10303-21\s*;/.test(h) },
+  // AutoCAD drawings (CAD Automation exports them from SOLIDWORKS drawings): the version string every DWG starts with.
+  dwg: { mime: 'image/vnd.dwg', label: 'DWG', check: (h) => /^AC10\d\d/.test(h) },
 };
 
 /** validateUpload, plus DXF and STEP after a content check. */
@@ -44,7 +46,7 @@ export async function validateEngineeringUpload(file: File) {
   return { name, type: cad.mime, bytes };
 }
 
-function docDTO(d: any) {
+export function docDTO(d: any) {
   return {
     id: d.id,
     number: d.number,
@@ -95,7 +97,7 @@ const DOC_SELECT = `SELECT d.*, p.number AS product_number, p.name AS product_na
   LEFT JOIN users au ON au.id = d.approved_by LEFT JOIN users cu ON cu.id = d.created_by
   LEFT JOIN erp_document_versions v ON v.company_id = d.company_id AND v.document_id = d.id AND v.version = (SELECT MAX(x.version) FROM erp_document_versions x WHERE x.company_id = d.company_id AND x.document_id = d.id)`;
 
-async function loadDoc(db: D1Database, companyId: string, id: string) {
+export async function loadDoc(db: D1Database, companyId: string, id: string) {
   const d = await db.prepare(`${DOC_SELECT} WHERE d.company_id = ? AND d.id = ?`).bind(companyId, String(id).slice(0, 64)).first<any>();
   if (!d) throw notFound('Document');
   return d;
@@ -151,7 +153,7 @@ function parse<T>(schema: z.ZodType<T>, v: unknown): T {
   return r.data;
 }
 
-async function versionStatements(c: any, a: ErpAccess, docId: string, version: number, v: Awaited<ReturnType<typeof readVersion>>, docRevision: string, note: string, t: number) {
+export async function versionStatements(c: any, a: ErpAccess, docId: string, version: number, v: Awaited<ReturnType<typeof readVersion>>, docRevision: string, note: string, t: number) {
   const db = c.env.DB as D1Database;
   const id = newId();
   if (v.file) {

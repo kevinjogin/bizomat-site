@@ -50,6 +50,7 @@ import {
 } from './api';
 import { CsvLink, FilterPanel, History, Pager, Props, RecordUpload, Section, options, requestKey, useAct } from './common';
 import { NoteDialog } from './Changes';
+import { RecordDrawings } from '../cad/Cad';
 import { useListParams } from './Purchasing';
 
 const tone = (map: Record<string, string>, v: string | null | undefined) => (v ? (map[v] ?? '') : '');
@@ -829,6 +830,7 @@ function NcrDetail({ companyId }: { companyId: string }) {
         />
         {v.inspections.length ? <p className="small">From {v.inspections.map((i) => <Link key={i.id} to={qualityPage(companyId, `/inspections/${i.id}`)} className="qc-inline"><span className="mt-num">{i.number}</span> <ResultBadge value={i.result} /></Link>)}</p> : null}
       </Section>
+      <RecordDrawings companyId={companyId} kind="ncrs" id={n.id} />
       <Section title="Containment" actions={v.can.contain ? <button className="btn sm" onClick={() => setDialog('contain')}>{n.containment ? 'Update' : 'Record containment'}</button> : null}>
         {n.containment ? <p className="small">{n.containment} <span className="muted">{n.containedByName ? `(${n.containedByName})` : ''}</span></p> : <p className="muted small">Not recorded yet. Say what was done to stop the problem spreading, and put stock into quarantine if needed.</p>}
       </Section>
@@ -1386,6 +1388,7 @@ function PlanDetail({ companyId }: { companyId: string }) {
         />
         {p.status === 'draft' && !v.can.release && !v.characteristics.length ? <p className="muted small">Add at least one characteristic; a quality manager then releases it.</p> : null}
       </Section>
+      <RecordDrawings companyId={companyId} kind="qc-plans" id={p.id} />
       <Section title="Characteristics" actions={v.can.edit ? <button className="btn sm" onClick={() => setDialog('add')}><Icon name="plus" size={14} /> Add</button> : null}>
         {!v.characteristics.length ? <p className="muted small">None yet.</p> : (
           <div className="crm-table-scroll">

@@ -13,6 +13,7 @@ import { ErrorBox, Loading } from '../../components/ui/ui';
 import { Modal } from '../../components/ui/overlays';
 import { dateText, erpPath, manufacturingPage, qty, type ErpMe } from './api';
 import { requestKey, useAct } from './common';
+import { RecordDrawings, useCadFlags } from '../cad/Cad';
 
 interface Job {
   moId: string;
@@ -77,6 +78,8 @@ export function ShopFloor({ companyId, me }: { companyId: string; me: ErpMe }) {
   const q = useQuery({ queryKey: ['erp', companyId, 'shop-floor'], queryFn: () => get<FloorView>(erpPath(companyId, '/shop-floor')), refetchInterval: 30_000 });
   const act = useAct(companyId);
   const [ask, setAsk] = useState<Ask>(null);
+  const [drawingsOf, setDrawingsOf] = useState<string | null>(null);
+  const drawings = !!useCadFlags(companyId).data?.flags.manufacturing;
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
   if (!q.data) return <Loading label="Opening the shop floor…" />;
   const v = q.data;
@@ -96,6 +99,8 @@ export function ShopFloor({ companyId, me }: { companyId: string; me: ErpMe }) {
         <progress className="erp-progress" max={100} value={j.progressPct} aria-label={`${j.goodQty} of ${j.planned} good`} />
         <span className="small"><strong>{qty(j.goodQty)}</strong> of {qty(j.planned)} {j.uom} good{j.scrapQty ? `, ${qty(j.scrapQty)} scrapped` : ''}</span>
       </div>
+      {drawings ? <div className="row"><button className="btn ghost sm" aria-expanded={drawingsOf === j.operationId} onClick={() => setDrawingsOf(drawingsOf === j.operationId ? null : j.operationId)}><Icon name="file" size={14} /> Drawings</button></div> : null}
+      {drawings && drawingsOf === j.operationId ? <RecordDrawings companyId={companyId} kind="mos" id={j.moId} /> : null}
       {j.shortages.length ? <p className="warn-box small"><Icon name="alert" size={14} /> Short: {j.shortages.map((s) => `${qty(s.short)} ${s.product}`).join(', ')}</p> : null}
       {j.inspection && !j.inspectionResult && current ? <p className="small"><span className="badge warning">Inspection outstanding</span></p> : null}
       {can ? (

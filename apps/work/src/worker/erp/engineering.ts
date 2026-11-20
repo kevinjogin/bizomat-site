@@ -88,7 +88,7 @@ export function editable(r: { status: string; eco_status?: string | null; eco_id
   return (r.status === 'draft' || r.status === 'in_change') && (!r.eco_id || r.eco_status === 'draft');
 }
 
-function assertEditable(r: any) {
+export function assertEditable(r: any) {
   if (r.status === 'released') badState(`Revision ${r.label} of ${r.product_number} is released and locked. Start a new revision to change it.`);
   if (r.status === 'superseded') badState(`Revision ${r.label} of ${r.product_number} is superseded and locked.`);
   if (!editable(r)) badState(`Revision ${r.label} of ${r.product_number} is under change order ${r.eco_number} (${r.eco_status}). It can change again only if the change order goes back to draft.`);
@@ -249,7 +249,7 @@ const lineFields = {
 };
 
 /** Refuses a component that would put `productId` inside itself, at any depth, through released or open revisions. */
-async function assertNoCycle(db: D1Database, companyId: string, productId: string, componentId: string) {
+export async function assertNoCycle(db: D1Database, companyId: string, productId: string, componentId: string) {
   if (productId === componentId) throw new HttpError(400, 'A product cannot contain itself');
   const seen = new Set<string>([componentId]);
   let frontier = [componentId];

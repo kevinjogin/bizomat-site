@@ -43,6 +43,8 @@ const SupplyChainArea = lazy(() => import('./erp/SupplyChain').then((m) => ({ de
 // BIZOMAT WHS, Release 1: /c/<company>/whs (hazards, risk assessments, incidents, notification records, actions), and the
 // jurisdiction packs for platform administrators in the console.
 const WhsArea = lazy(() => import('./whs/Whs').then((m) => ({ default: m.WhsArea })));
+// CAD Automation inside the ERP (flag cad_in_erp): /c/<company>/cad and /cad/pair?code=... (src/client/system/cad).
+const CadArea = lazy(() => import('./cad/Cad').then((m) => ({ default: m.CadArea })));
 const WhsLegalAdmin = lazy(() => import('./whs/LegalAdmin').then((m) => ({ default: m.LegalAdmin })));
 const BillingPage = lazy(() => import('./billing/Billing').then((m) => ({ default: m.BillingPage })));
 const BillingAdmin = lazy(() => import('./billing/BillingAdmin').then((m) => ({ default: m.BillingAdmin })));
@@ -50,6 +52,7 @@ const BillingAdmin = lazy(() => import('./billing/BillingAdmin').then((m) => ({ 
 const ControlCentre = lazy(() => import('../admin/pages/Controls'));
 const SecurityPage = lazy(() => import('../admin/pages/Security'));
 const UiKit = lazy(() => import('../admin/pages/UiKit'));
+const CadAdmin = lazy(() => import('../admin/pages/CadAdmin'));
 const MfaGate = lazy(() => import('../admin/pages/Security').then((m) => ({ default: m.MfaGate })));
 const ReauthHost = lazy(() => import('../admin/reauth').then((m) => ({ default: m.ReauthHost })));
 
@@ -232,8 +235,8 @@ export function SystemRoutes() {
       <Route path="/" element={<SystemHome />} />
       <Route path="/c/:companyId/*" element={<CompanyArea />} />
       <Route path="/admin/*" element={<Shell><AdminArea /></Shell>} />
-      {/* The module rail's Products and Engineering: the CAD page of the company used last. */}
-      <Route path="/cad" element={<SystemHome page="cad" />} />
+      {/* CAD Automation: in the company used last where it works in the ERP (the Companion's pairing page included). */}
+      <Route path="/cad/*" element={<CadRedirect />} />
       <Route path="/my-work" element={<MyWorkRedirect />} />
       {/* The module rail's Maintenance: the maintenance of the company used last. */}
       <Route path="/maintenance/*" element={<MaintenanceRedirect />} />
@@ -302,6 +305,42 @@ function CompanyRedirect({ section }: { section: 'products' | 'procurement' | 'i
   return <Navigate to={`/c/${pick.id}/${section}${location.pathname.replace(new RegExp(`^/${section}`), '')}${location.search}`} replace />;
 }
 
+/** The companies where CAD Automation works inside the ERP for this person (flag cad_in_erp; empty while it is off). */
+const useCadCompanies = () =>
+  useQuery({ queryKey: ['cad', 'companies'], queryFn: () => get<{ companies: { id: string; name: string; kind: string; operate: boolean }[] }>('/erp/cad/companies'), staleTime: 60_000, retry: false });
+
+/** /cad/...: the same CAD Automation page in the company used last where it works in the ERP, else the only one; the
+ * Companion's pairing page asks which company when there are several. Where it is not on, CAD Automation's setup page. */
+function CadRedirect() {
+  const location = useLocation();
+  const cos = useCadCompanies();
+  const me = useMe();
+  if (cos.isLoading || !me.data) return <Loading label="Opening CAD Automation…" />;
+  const rest = location.pathname.replace(/^\/cad/, '');
+  const list = cos.data?.companies ?? [];
+  const pairing = rest.startsWith('/pair');
+  const pick = list.find((c) => c.id === lastCompany()) ?? (list.length === 1 ? list[0] : null);
+  if (list.length && (!pick || (pairing && list.length > 1))) {
+    return (
+      <Shell>
+        <div className="page crm-page">
+          <PageHeader title={pairing ? 'Add a computer' : 'CAD Automation'} subtitle={pairing ? 'Choose the company this computer works in. Its work, AI assistants and history stay in that company.' : 'Choose a company.'} />
+          <ul className="erp-list">
+            {(pairing ? list.filter((c) => c.operate) : list).map((c) => (
+              <li key={c.id}><Link to={`/c/${c.id}/cad${rest}${location.search}`}>{c.name}</Link>{c.kind === 'own' ? <span className="muted small"> · your own company</span> : null}</li>
+            ))}
+          </ul>
+        </div>
+      </Shell>
+    );
+  }
+  if (pick) return <Navigate to={`/c/${pick.id}/cad${rest}${location.search}`} replace />;
+  const all = me.data.companies;
+  const fallback = all.find((c) => c.id === lastCompany()) ?? all.find((c) => c.kind !== 'demo') ?? all[0];
+  if (!fallback) return <Shell><div className="page"><EmptyState title="No company yet" icon="building">Reload the page to make your own company.</EmptyState></div></Shell>;
+  return <Navigate to={`/c/${fallback.id}/products/cad`} replace />;
+}
+
 /** "/": the company used last, else the first (registered, then the person's own). "/cad": its CAD page. */
 function SystemHome({ page = 'home' }: { page?: 'home' | 'cad' }) {
   const q = useMe();
@@ -328,7 +367,7 @@ function CompanyArea() {
     <Shell view={q.data}>
       <Routes>
         <Route path="home" element={<CompanyHome view={q.data} />} />
-        <Route path="cad" element={<Navigate to={`/c/${q.data.company.id}/products/cad`} replace />} />
+        <Route path="cad/*" element={<Suspense fallback={<Loading />}><CadArea companyId={q.data.company.id} companyName={q.data.company.name} fallback={<CadPage view={q.data} />} /></Suspense>} />
         <Route path="settings" element={<CompanySettings view={q.data} />} />
         <Route path="maintenance/*" element={<Suspense fallback={<Loading />}><MaintenanceArea companyId={q.data.company.id} companyName={q.data.company.name} /></Suspense>} />
         <Route path="products/*" element={<Suspense fallback={<Loading />}><ProductsArea companyId={q.data.company.id} companyName={q.data.company.name} cad={<CadPage view={q.data} embedded />} /></Suspense>} />
@@ -357,6 +396,8 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
   useEffect(() => setNavOpen(false), [location.pathname]);
   const id = view?.company.id ?? lastCompany() ?? me?.companies[0]?.id;
   const base = id ? `/c/${id}` : '';
+  const cadCompanies = useCadCompanies().data?.companies ?? [];
+  const cadHere = !!id && cadCompanies.some((c) => c.id === id);
   return (
     <div className={`shell crm-shell co-shell sys-shell${SUITE_SHELL ? ' in-suite' : ''}${navOpen ? ' nav-open' : ''}`}>
       <SuiteRail />
@@ -379,6 +420,7 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
           <>
             <NavLink to={`${base}/home`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="home" /> Dashboard</NavLink>
             <NavLink to={`${base}/products`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="diamond" /> Products and Engineering</NavLink>
+            {cadHere ? <NavLink to={`${base}/cad`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="bolt" /> CAD Automation</NavLink> : null}
             <NavLink to={`${base}/procurement`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="inbox" /> Procurement</NavLink>
             <NavLink to={`${base}/inventory`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="layers" /> Inventory</NavLink>
             <NavLink to={`${base}/manufacturing`} className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="settings" /> Manufacturing</NavLink>
@@ -405,9 +447,14 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
             <NavLink to="/admin/overview" className={({ isActive }) => `nav-item${isActive ? ' active' : ''}`}><Icon name="shield" /> ERP console</NavLink>
           </>
         ) : null}
-        {/* Every tool is in the module rail (SuiteRail); CAD Automation's own application opens at /cad. */}
-        <div className="nav-section">CAD Automation application</div>
-        <a className="nav-item" href={CAD.app}><Icon name="diamond" /> Open CAD Automation</a>
+        {/* Every tool is in the module rail (SuiteRail); CAD Automation's own application opens at /cad until it works
+            inside the ERP for this company (flag cad_in_erp). */}
+        {!cadHere ? (
+          <>
+            <div className="nav-section">CAD Automation application</div>
+            <a className="nav-item" href={CAD.app}><Icon name="diamond" /> Open CAD Automation</a>
+          </>
+        ) : null}
         <PlatformFooter />
       </nav>
       <main className="main" id="main">
@@ -788,6 +835,15 @@ function CadPage({ view, embedded }: { view: CompanyView; embedded?: boolean }) 
           ? 'The example company has no CAD computers. Yours are listed under your own company.'
           : `CAD computers are not shared with people who only share a tool with ${c.name}.`;
   const reported = (q.data?.people ?? []).filter((p) => p.status);
+  const inErp = (useCadCompanies().data?.companies ?? []).some((x) => x.id === c.id);
+  if (inErp && embedded) {
+    return (
+      <section className="co-prompt">
+        <p>CAD Automation works inside the ERP in {c.name}: its computers, AI assistants, history and exports are on its own page.</p>
+        <Link className="btn primary" to={`/c/${c.id}/cad`}>Open CAD Automation</Link>
+      </section>
+    );
+  }
   return (
     <div className={embedded ? 'stack' : 'page crm-page'}>
       {embedded ? (
@@ -1216,6 +1272,7 @@ const ADMIN_NAV = [
   { to: 'whs', label: 'WHS legal packs' },
   { to: 'billing', label: 'Billing' },
   { to: 'controls', label: 'Control Centre' },
+  { to: 'cad', label: 'CAD Automation' },
   { to: 'security', label: 'Security' },
   { to: 'ui-kit', label: 'UI kit' },
 ];
@@ -1245,6 +1302,7 @@ function AdminArea() {
         <Route path="controls" element={<Suspense fallback={<Loading />}><ControlCentre /></Suspense>} />
         <Route path="security" element={<Suspense fallback={<Loading />}><SecurityPage /></Suspense>} />
         <Route path="ui-kit" element={<Suspense fallback={<Loading />}><UiKit /></Suspense>} />
+        <Route path="cad" element={<Suspense fallback={<Loading />}><CadAdmin /></Suspense>} />
         <Route path="*" element={<Navigate to="overview" replace />} />
       </Routes>
     </div>

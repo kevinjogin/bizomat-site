@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { guardFetch, isPublicAddress } from '../src/node/outbound.ts';
+import { guardFetch, isPublicAddress, serviceOrigin } from '../src/node/outbound.ts';
 
 describe('outbound fetch guard', () => {
   it('classifies addresses', () => {
@@ -22,5 +22,24 @@ describe('outbound fetch guard', () => {
       await expect(guarded(url), url).rejects.toThrow('fetch failed');
     }
     expect(calls).toEqual(['https://hooks.example.com/x']);
+  });
+
+  it('lets the one configured private service through, and nothing else on that network', async () => {
+    const calls: string[] = [];
+    const original = (async (input: RequestInfo | URL) => {
+      calls.push(String(input));
+      return new Response('ok');
+    }) as typeof fetch;
+    const dns: Record<string, string[]> = { 'cados.internal': ['fdaa:0:1::3'], 'bizomat.internal': ['fdaa:0:1::4'] };
+    const guarded = guardFetch(original, async (h) => dns[h] ?? [], serviceOrigin('http://cados.internal:8080'));
+    expect(await (await guarded('http://cados.internal:8080/api/erp/v1/state', { method: 'POST' })).text()).toBe('ok');
+    for (const url of ['http://cados.internal:8081/', 'https://cados.internal:8080/', 'http://bizomat.internal:8080/', 'http://169.254.169.254/']) {
+      await expect(guarded(url), url).rejects.toThrow('fetch failed');
+    }
+    expect(calls).toEqual(['http://cados.internal:8080/api/erp/v1/state']);
+    expect(serviceOrigin('')).toEqual([]);
+    expect(serviceOrigin('ftp://cados.internal')).toEqual([]);
+    expect(serviceOrigin('http://user:pw@cados.internal:8080')).toEqual([]);
+    expect(serviceOrigin(' http://cados.internal:8080/ ')).toEqual(['http://cados.internal:8080']);
   });
 });

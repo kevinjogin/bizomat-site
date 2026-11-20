@@ -411,7 +411,7 @@ function Authorize() {
   const toast = useToast();
   const clientId = params.get('client_id') ?? '';
   const redirectUri = params.get('redirect_uri') ?? '';
-  const q = useQuery({ queryKey: ['id-client', clientId, redirectUri], queryFn: () => get<{ name: string }>(`/company/id/client?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}`), retry: false });
+  const q = useQuery({ queryKey: ['id-client', clientId, redirectUri], queryFn: () => get<{ name: string; auto?: boolean }>(`/company/id/client?client_id=${encodeURIComponent(clientId)}&redirect_uri=${encodeURIComponent(redirectUri)}`), retry: false });
   const go = async (deny: boolean) => {
     setBusy(true);
     try {
@@ -430,6 +430,11 @@ function Authorize() {
       setBusy(false);
     }
   };
+  // BIZOMAT's own CAD Automation, once its pages open in the ERP (flag cad_redirect): one sign-in, no second click.
+  const auto = !!q.data?.auto;
+  useEffect(() => {
+    if (auto && !busy) void go(false);
+  }, [auto]);
   return (
     <div className={`crm-start${SUITE_SHELL ? ' in-suite' : ''}`}>
       <SuiteRail />
