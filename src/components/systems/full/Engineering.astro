@@ -2,7 +2,7 @@
 // Moved from src/components/systems/full/Engineering.astro into the one-page Systems (owner, 20 Nov 2026: every module on one
 // page under Systems). /systems/#engineering answers 301 to /systems/#engineering; every id here starts with "engineering-".
 // /systems/#engineering: BIZOMAT Engineering Automation, the Engineering Automation System. Its application is CAD
-// Automation (formerly CADOS) at APP_LINKS.cad, with the same BIZOMAT account as every system (src/config/systems.ts). What it does, how
+// Automation (formerly CADOS), opened inside BIZOMAT ERP (APP_LINKS.erp.cad), with the same BIZOMAT account as every system (src/config/systems.ts). What it does, how
 // it connects, every tool, how to install it, how it is secured and how far it has been tested. Facts come from
 // src/data/platform-catalog.ts (CAD) and src/data/cad-tools.ts, which record their sources in apps/cad, and from the CAD
 // application itself: requirements and versions (apps/cad/opensketch/site.py docs page, apps/cad/docs/KEVOS-INSTALL.md,
@@ -72,7 +72,7 @@ const dashboardParts: { t: string; x: string; s: FeatureStatus }[] = [
   { t: 'Your computers\' status in the ERP', x: 'Live computer status in the ERP needs CAD Automation to report to it, which is not switched on yet. Until then the ERP page says so and links to your computers in CAD Automation.', s: 'in-development' },
 ];
 const walkthrough = [
-  { t: 'Sign in', x: 'At bizomat.ai/cad, with your CAD Automation email and password, or Google where your administrator turned it on.' },
+  { t: 'Sign in', x: 'In BIZOMAT ERP, with your BIZOMAT account: Products and Engineering, then CAD Automation. There is no second sign-in to remember.' },
   { t: 'Home', x: 'The task box, connection status, the four set-up steps and recent activity.' },
   { t: 'CAD Assistant', x: 'Your connector address, steps for Claude, ChatGPT and other assistants, connected assistants with Disconnect, and example requests.' },
   { t: 'SOLIDWORKS', x: 'The installer, your paired computers (make one the default or remove it) and how the add-in connects.' },
@@ -329,17 +329,17 @@ const schema = [
         <p class="bz-eyebrow">Getting started</p>
         <h2 id="engineering-install-title">Set up in four steps, then test</h2>
         <ol class="pp-steps pp-gap-sm">
-          <li><h3>Sign in to CAD Automation</h3><p>Open bizomat.ai/cad and sign in with the CAD Automation account your administrator gave you.</p></li>
+          <li><h3>Open CAD Automation in BIZOMAT ERP</h3><p>Sign in to BIZOMAT ERP and open Products and Engineering, then CAD Automation. It walks you through the set-up and gives you the installer.</p></li>
           <li><h3>Install on your Windows computer</h3><p>Download BIZOMAT CAD Automation for SOLIDWORKS, close SOLIDWORKS and run the installer. It adds the add-in and the Companion.</p></li>
           <li><h3>Pair the computer</h3><p>The Companion opens its pairing window. Enter your email and password, or confirm the code in your browser.</p></li>
           <li><h3>Connect your assistant</h3><p>Copy the connector address from the CAD Assistant page, add it as a custom connector in your assistant, and sign in.</p></li>
           <li><h3>Run the self test</h3><p>Ask your assistant to run it. It builds a plate, a set of shapes and an assembly on your computer, makes a drawing and a PDF, and reports each step as ok, check or failed with the reason.</p></li>
         </ol>
         <div class="pp-hero__actions">
-          <Button href={APP_LINKS.cad.download} variant="accent" rel="noopener" data-cta="eng-download">Download for SOLIDWORKS</Button>
-          <Button href={APP_LINKS.cad.docs} variant="secondary" rel="noopener" data-cta="eng-docs">Set-up and troubleshooting</Button>
+          <Button href={APP_LINKS.erp.cad} variant="accent" rel="noopener" data-cta="eng-open-erp">Set up in BIZOMAT ERP</Button>
+          <Button href={GUIDE} variant="secondary" data-cta="eng-docs">Set-up and troubleshooting</Button>
         </div>
-        <p class="pp-hero__note">The download needs a CAD Automation account. The <a href={GUIDE}>Knowledge Centre guide</a> walks through every step.</p>
+        <p class="pp-hero__note">The installer comes through BIZOMAT ERP, so you need to be signed in. The <a href={GUIDE}>Knowledge Centre guide</a> walks through every step.</p>
       </div>
       <div class="bz-stack">
         <h3>What you need</h3>
@@ -401,7 +401,7 @@ const schema = [
       <dl class="pp-faq">
         {faq.map((f) => <div><dt>{f.q}</dt><dd>{f.a}</dd></div>)}
       </dl>
-      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>Knowledge Centre guide</a>, the application's <a href={APP_LINKS.cad.docs} rel="noopener">set-up and troubleshooting guide</a>, or <a href="/contact/">contact BIZOMAT</a>.</p>
+      <p class="pp-table-note">Something not covered here? Read the <a href={GUIDE}>Knowledge Centre guide</a> or <a href="/contact/">contact BIZOMAT</a>.</p>
     </Container>
   </section>
 

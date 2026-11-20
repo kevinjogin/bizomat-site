@@ -134,7 +134,8 @@ export interface ErpEvent {
     | 'cad_pairing'
     | 'cad_bom_proposal'
     | 'cad_review'
-    | 'cad_settings';
+    | 'cad_settings'
+    | 'cad_access';
   entityId?: string | null;
   productId?: string | null;
   summary: string;

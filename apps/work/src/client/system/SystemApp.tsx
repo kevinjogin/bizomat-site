@@ -192,12 +192,15 @@ interface CadPerson {
 const APP_NAMES: Record<SysApp, string> = { tasks: 'Projects and Tasks', crm: 'Sales and CRM', finance: 'Finance and Accounting' };
 const APP_ICONS: Record<SysApp, string> = { tasks: 'grid', crm: 'briefcase', finance: 'dollar' };
 const ROLE_LABELS: Record<SysRole, string> = { owner: 'Owner', admin: 'Administrator', manager: 'Manager', employee: 'Employee', read_only: 'Read-only', member: 'Employee', guest: 'Shared with you' };
+// CAD Automation's own pages, linked only while the ERP's CAD Automation module (flag cad_in_erp) is off for a company:
+// once it is on, everything is inside the ERP (/erp/c/<company>/cad) and these never show. The sign-in page, not the
+// application's root, so a visitor sent from bizomat.ai/cad to the ERP never comes back here in a loop.
 const CAD = {
-  app: 'https://bizomat.ai/cad/',
+  app: 'https://bizomat.ai/cad/login',
   assistant: 'https://bizomat.ai/cad/assistant',
   computers: 'https://bizomat.ai/cad/solidworks',
   download: 'https://bizomat.ai/cad/download/solidworks',
-  docs: 'https://bizomat.ai/cad/docs',
+  docs: 'https://bizomat.ai/learn/#cad-automation',
 };
 
 const useMe = () => useQuery({ queryKey: ['system', 'me'], queryFn: () => get<Me>('/system/me') });
@@ -361,7 +364,7 @@ function CadRedirect() {
   }
   if (pick) return <Navigate to={`/c/${pick.id}/cad${rest}${location.search}`} replace />;
   const all = me.data.companies;
-  const fallback = all.find((c) => c.id === lastCompany()) ?? all.find((c) => c.kind !== 'demo') ?? all[0];
+  const fallback = all.find((c) => c.id === lastCompany() && c.kind !== 'demo') ?? all.find((c) => c.kind !== 'demo') ?? all[0];
   if (!fallback) return <Shell><div className="page"><EmptyState title="No company yet" icon="building">Reload the page to make your own company.</EmptyState></div></Shell>;
   return <Navigate to={`/c/${fallback.id}/products/cad`} replace />;
 }
@@ -867,6 +870,18 @@ function CadPage({ view, embedded }: { view: CompanyView; embedded?: boolean }) 
   const inErp = (useCadCompanies().data?.companies ?? []).some((x) => x.id === c.id);
   // Inside the ERP for this company: its own page, with the setup done in place.
   if (inErp && embedded) return <Navigate to={`/c/${c.id}/cad`} replace />;
+  // The example company has no CAD Automation (worker/cad/access.ts): send people to their own company's.
+  if (c.kind === 'demo') {
+    return (
+      <div className={embedded ? 'stack' : 'page crm-page'}>
+        {embedded ? null : <PageHeader title="Products and Engineering" subtitle="CAD Automation: your AI assistant builds native SOLIDWORKS parts, assemblies and drawings on your own computer." />}
+        <section className="card card-pad stack">
+          <p>The example company has no CAD Automation. Set it up and use it in your own company: your computers, AI assistants and history stay there.</p>
+          <div className="row"><Link className="btn primary" to="/cad">Open CAD Automation in my company</Link></div>
+        </section>
+      </div>
+    );
+  }
   return (
     <div className={embedded ? 'stack' : 'page crm-page'}>
       {embedded ? (
@@ -885,7 +900,7 @@ function CadPage({ view, embedded }: { view: CompanyView; embedded?: boolean }) 
           <li><strong>Pair the computer.</strong> <span className="muted">At the end of the install the Companion opens the browser to pair this computer with your account. It then appears under <a href={CAD.computers}>SOLIDWORKS</a>.</span></li>
           <li><strong>Connect your AI assistant.</strong> <span className="muted">Copy your connector address from <a href={CAD.assistant}>CAD Assistant</a> and add it as a custom connector in Claude, ChatGPT or another app that supports remote MCP servers.</span></li>
         </ol>
-        <p className="muted small">Full guide: <a href={CAD.docs}>CAD Automation setup and troubleshooting</a>. The connector, installer and add-in are the same ones CAD Automation has always used.</p>
+        <p className="muted small">Full guide: <a href={CAD.docs} target="_blank" rel="noreferrer">CAD Automation in the Knowledge Centre</a>. The connector, installer and add-in are the same ones CAD Automation has always used.</p>
       </section>
       <section className="card card-pad stack">
         <div className="row wrap">

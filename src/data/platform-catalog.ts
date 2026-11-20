@@ -12,7 +12,6 @@
 //   Finance:             apps/work/src/shared/fin/ (roles.ts, tax.ts, charts.ts, dates.ts, statement.ts),
 //                        apps/work/src/worker/fin/ (reports.ts REPORTS, ledger.ts), migrations/0011_finance.sql, docs/finance/README.md
 // Keep it that way: when a capability changes in an app, change it here in the same commit.
-import { APP_LINKS } from '../config/platform.ts';
 
 export type PlatformArea = 'CAD Automation' | 'Project Management' | 'Customer Relationship Management' | 'Finance' | 'Resources' | 'BIZOMAT';
 export type PlatformKind = 'Product' | 'Capability' | 'Documentation' | 'Integration' | 'Page';
@@ -204,7 +203,7 @@ export const PLATFORM_CATALOG: readonly PlatformEntry[] = [
     keywords: 'tools commands operations sw_status sw_batch sw_add_features sw_create_drawing sw_export sw_import sw_selftest api list supported commands' },
   { id: 'page:cad-security', title: 'CAD Automation security', summary: 'Signed commands, a key per computer, sign-in for every AI app, confirmation before deletions, and your model files stay on your computer.', url: '/systems/#engineering-security', area: C, kind: 'Capability',
     keywords: 'security signed commands device key oauth sign-in privacy local files confirmation permissions' },
-  { id: 'doc:cad', title: 'CAD Automation documentation', summary: 'Set-up, connection, sign-in for AI apps, the self test, troubleshooting and security, in the application itself.', url: APP_LINKS.cad.docs, area: C, kind: 'Documentation',
+  { id: 'doc:cad', title: 'How to use BIZOMAT CAD Automation: guide and tutorials', summary: 'Set-up in BIZOMAT ERP, connecting your AI assistant, the self test, troubleshooting and security, step by step.', url: '/learn/#cad-automation', area: C, kind: 'Documentation',
     keywords: 'documentation docs guide help troubleshooting connector address oauth self test faq manual' },
   { id: 'int:mcp', title: 'Integrations: Claude, ChatGPT and other MCP apps', summary: 'CAD Automation works with any assistant that supports remote MCP servers over Streamable HTTP: add the connector address and sign in.', url: '/systems/#engineering-how', area: C, kind: 'Integration',
     keywords: 'integration integrations claude chatgpt mcp clients streamable http connector oauth ai apps assistant cursor' },

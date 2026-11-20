@@ -70,7 +70,8 @@ export const PLATFORM_URLS = {
   crmGuide: 'https://bizomat.ai/learn/#crm',
   /** Finance's guide in the Knowledge Centre. */
   financeGuide: 'https://bizomat.ai/learn/#finance',
-  cad: 'https://bizomat.ai/cad/',
+  /** CAD Automation opens inside BIZOMAT ERP (Products and Engineering); its own pages answer 302 there. */
+  cad: 'https://bizomat.ai/erp/cad',
   // Inside the System, every tool opens inside it too (one system).
   tasks: `https://bizomat.ai${SUITE}/tasks/`,
   crm: `https://bizomat.ai${SUITE}/crm/`,

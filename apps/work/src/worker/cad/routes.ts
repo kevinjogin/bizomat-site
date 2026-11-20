@@ -176,6 +176,57 @@ cadRoutes.get('/c/:company/cad/installer', async (c) => {
   });
 });
 
+// ------------------------------------------------------------------ the person's own keys (CAD Automation's Settings)
+// Owner, 20 Nov 2026: everything of CAD Automation inside the ERP. The private connector address (for AI apps that cannot
+// sign in) and the add-in key (for the direct link without the Companion) are the person's own: CAD Automation hands them
+// only to their owner, and the ERP passes them through without keeping them. Renewing one is in the company's history.
+
+cadRoutes.get('/c/:company/cad/access', async (c) => {
+  const a = await requireCad(c);
+  need(!!a.perms.operate, 'Your role cannot use CAD Automation in this company.');
+  await rateLimit(c.env.DB, `cad-access:${a.erp.userId}`, 60, 10 * 60_000);
+  const out = await cadJson<{ privateUrl: string; addinKey: string; service: string; package: boolean }>(c.env, a.claims, 'access');
+  c.header('Cache-Control', 'no-store');
+  return c.json(out);
+});
+
+cadRoutes.post('/c/:company/cad/access/private/new', async (c) => {
+  const a = await requireCad(c);
+  need(!!a.perms.operate, 'Your role cannot use CAD Automation in this company.');
+  await rateLimit(c.env.DB, `cad-access-new:${a.erp.userId}`, 10, 60 * 60_000);
+  const out = await cadJson<{ privateUrl: string }>(c.env, a.claims, 'access/private/new');
+  await event(c, a, 'cad.private_address_renewed', 'cad_access', null, 'Made a new private connector address (the old one stopped working)').run();
+  c.header('Cache-Control', 'no-store');
+  return c.json(out);
+});
+
+cadRoutes.post('/c/:company/cad/access/addin-key/new', async (c) => {
+  const a = await requireCad(c);
+  need(!!a.perms.operate, 'Your role cannot use CAD Automation in this company.');
+  await rateLimit(c.env.DB, `cad-access-new:${a.erp.userId}`, 10, 60 * 60_000);
+  const out = await cadJson<{ addinKey: string }>(c.env, a.claims, 'access/addin-key/new');
+  await event(c, a, 'cad.addin_key_renewed', 'cad_access', null, 'Made a new add-in key (the direct link stops until it is pasted in)').run();
+  c.header('Cache-Control', 'no-store');
+  return c.json(out);
+});
+
+// The add-in package for a manual installation (CAD Automation's SOLIDWORKS page), handed out by the ERP.
+cadRoutes.get('/c/:company/cad/addin-package', async (c) => {
+  const a = await requireCad(c);
+  need(!!a.perms.operate, 'Your role cannot use CAD Automation in this company.');
+  await rateLimit(c.env.DB, `cad-installer:${a.erp.userId}`, 20, 60 * 60_000);
+  const f = await cadFile(c.env, a.claims, 'addin/package', 64 * 1024 * 1024);
+  return new Response(f.bytes, {
+    headers: {
+      'Content-Type': 'application/zip',
+      'Content-Disposition': `attachment; filename*=UTF-8''${enc(f.name)}`,
+      'Content-Length': String(f.size),
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff',
+    },
+  });
+});
+
 const saveSchema = z.object({
   productId: zId,
   revisionId: zId.nullable().optional(),

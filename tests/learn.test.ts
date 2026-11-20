@@ -70,7 +70,8 @@ test('every guide is complete: what, purpose, who, access, tutorials, questions 
     }
     if (g.access) {
       assert.ok(g.access.path.length >= 1 && g.access.label.length > 0, `${at}: the access path is named`);
-      assert.match(g.access.href, /^https:\/\/bizomat\.ai\/(erp|cad)\//, `${at}: the access link opens BIZOMAT ERP or CAD Automation`);
+      // CAD Automation opens inside BIZOMAT ERP too (owner, 20 Nov 2026): no guide links to its own pages at bizomat.ai/cad.
+      assert.match(g.access.href, /^https:\/\/bizomat\.ai\/erp(\/|$)/, `${at}: the access link opens BIZOMAT ERP`);
     }
     const ids = g.tutorials.map((t) => t.id);
     assert.equal(new Set(ids).size, ids.length, `${at}: tutorial ids are unique`);
