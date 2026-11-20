@@ -1319,6 +1319,9 @@ async def pair_password(request: Request):
         pair = authenticate(request, raw, pairing=True)
         if auth.mode() != "accounts":
             raise BridgeAuthError(403, "FORBIDDEN", "This CAD Automation server has no accounts yet. Its owner creates the first one on the website.")
+        if auth._password_retired():  # one sign-in, BIZOMAT's: the computer is paired with the code instead
+            raise BridgeAuthError(403, "PASSWORD_RETIRED", "Password sign-in is retired. Pair this computer with its code: "
+                                  "in BIZOMAT ERP open CAD Automation, Computers, Pair a computer, and type the code shown here.")
         email = str(body.get("email") or "").strip().lower()[:200]
         password = str(body.get("password") or "")[:500]
         keys = ("ip:" + _client_ip(request), "email:" + email)
