@@ -131,7 +131,7 @@ deploys never widens anyone's access. The console's CAD Automation panel shows t
 
 | Gap | What changed |
 | --- | --- |
-| G2, downloads | Where the company's download setting does not cover the role, an AI assistant's export has no link (it stays in Exports for an hour, for someone who may download). A link is checked again when used. Each download through a link is in the company's history once (`cad_downloads`, migration 0039), as a download from the ERP is |
+| G2, downloads | Where the company's download setting does not cover the role, an AI assistant's export has no link (it stays in Exports for an hour, for someone who may download). A link is checked again when used. Each download through a link is in the company's history once (`cad_downloads`, migration 0040), as a download from the ERP is |
 | G3, read-only roles | Named to the engine with `operate: false`: the AI connector refuses them in the company (`READ_ONLY`) instead of letting them work by person; the consent page offers only companies where they may work |
 | G4, queue | The console shows commands waiting for a computer and running apart |
 | G5, notices | A review request can name a reviewer: someone in the company who can open the board (`GET .../cad/review-boards/<board>/reviewers`). The task is given to them where the board has a People column (Projects then tells them, as for any task), and they get a notice in CAD Automation; without such a column the notice is also emailed where email is set up. The people who saved CAD exports to a revision, or asked for its review, get a notice when it is released. The notices (and failed runs) show under **For you** on the module's Overview (`GET .../cad/notices`, `POST .../cad/notices/read`) |
@@ -197,7 +197,7 @@ pages work again at once (CAD Automation follows the ERP's answer within a minut
 an answer older than 15 minutes counts for nothing). Switch `cad_in_erp` off for the company: the module shows the
 earlier CAD Automation page, AI connections and computers work as before by person, and nothing is lost: the company
 recorded on computers, commands and connections stays, ready for the next time. To go back further, the code is
-additive: migrations 0037 and 0039 have reverse scripts, and the engine's new columns and keys are ignored by the code
+additive: migrations 0037 and 0040 have reverse scripts, and the engine's new columns and keys are ignored by the code
 before them.
 
 ## Tests

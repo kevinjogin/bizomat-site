@@ -209,7 +209,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   the engine kevinjogin/bizomat-cad#19, `cados` 13db582, its deploy run 10; `apps/cad` synced in #95), after the staging
   verification with `cad_in_erp` on in staging only; the engine's sync to the ERP answers 200 every minute.
   **Contract 2** (owner, 20 Nov 2026: "Approved, go ahead with all five, pilot on my company"; the audit
-  `docs/cad/AUDIT-2026-11-20.md`, `docs/cad/README.md` "Contract 2"; migration 0039): read-only roles refused by the AI
+  `docs/cad/AUDIT-2026-11-20.md`, `docs/cad/README.md` "Contract 2"; migration 0040): read-only roles refused by the AI
   connector inside the company, the download setting on AI assistants' exports and every link download in the
   company's history, waiting and running counted apart, review requests with a reviewer and CAD notices on the module's
   Overview, a revision-released notice, a late-sync warning (5 minutes; the engine works by person after 15), and the
