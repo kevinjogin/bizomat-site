@@ -1,5 +1,5 @@
 ---
-// Global header: BIZOMAT wordmark (home), Home, Systems, Resources, About and Contact, AI Search, the theme switch and
+// Global header, solid (owner, 21 Nov 2026): BIZOMAT wordmark (home), Home, Systems, Resources, About and Contact, AI Search, the theme switch and
 // one Sign in (BIZOMAT ERP, where every system opens; owner, 20 Nov 2026). The Systems menu holds two groups side by
 // side, the systems and Learn (the Knowledge Centre), with Open BIZOMAT ERP across its foot (owner, 20 Nov 2026).
 // Menus are <details> elements, so they open without JavaScript; the script below adds one-at-a-time behaviour,
@@ -136,7 +136,8 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   }
 </script>
 <style>
-  .site-header { position: sticky; top: 0; z-index: 50; background: var(--paper); background: color-mix(in srgb, var(--paper) 92%, transparent); backdrop-filter: saturate(1.4) blur(12px); -webkit-backdrop-filter: saturate(1.4) blur(12px); border-bottom: 1px solid transparent; transition: border-color .2s var(--ease); }
+  /* Solid (owner, 21 Nov 2026): the page no longer shows through the header as it scrolls under it. */
+  .site-header { position: sticky; top: 0; z-index: 50; background: var(--paper); border-bottom: 1px solid transparent; transition: border-color .2s var(--ease); }
   .site-header.is-scrolled, .site-header.is-open { border-bottom-color: var(--line); }
   :global(.site-header__inner) { display: flex; align-items: center; gap: 1.25rem; min-height: var(--header-h); }
   .site-header__brand { display: inline-flex; align-items: center; flex: none; text-decoration: none; border-radius: 4px; }
