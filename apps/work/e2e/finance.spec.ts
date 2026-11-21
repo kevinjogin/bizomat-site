@@ -1,9 +1,14 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// BIZOMAT Finance under /finance (the same build and server as Project Management and the CRM): sign-up, a GST-registered
-// business workspace, a customer, a posted expense with GST, an invoice with a payment, and the reports computed from
-// the ledger, staying under /finance and /tasks (the shared sign-in) only.
+// BIZOMAT Finance inside BIZOMAT ERP, at /erp/finance (the same build and server as Project Management and the CRM):
+// Finance's own address /finance answers 302 there and a signed-out visitor signs in at the ERP's sign-in; then sign-up,
+// a GST-registered business workspace, a customer, a posted expense with GST, an invoice with a payment, and the reports
+// computed from the ledger, staying inside the ERP (/erp) only (src/worker/mount.ts).
 const password = 'e2e-Password-123!';
+
+// The only requests outside /erp: the page loads of a signed-out visit, each a 302 on the way to the ERP's sign-in
+// (Finance's own address, which the spec opens to see it answer into the ERP, and the shared session's carry).
+const SIGNED_OUT_HOPS = ['/finance/', '/tasks/api/app-carry'];
 
 // An address of its own for the sign-up limit (192.0.2.0/24 is reserved for documentation), as the CRM specs do.
 test.use({ extraHTTPHeaders: { 'CF-Connecting-IP': '192.0.2.45', 'X-Forwarded-For': '192.0.2.45' } });
@@ -18,36 +23,38 @@ async function choose(page: Page, label: string, text: string) {
 }
 
 async function signIn(page: Page) {
+  // Finance's own address opens inside the ERP: signed out, at the ERP's sign-in, which brings the visitor back to it.
   await page.goto('/finance/');
-  await expect(page).toHaveURL(/\/finance\/login/);
+  await expect(page).toHaveURL(/\/erp\/login\?next=%2Ffinance%2F$/);
   await page.getByLabel('Email').fill(EMAIL);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
-  await page.waitForURL(/\/finance\/(start|o\/)/, { timeout: 5000 }).catch(async () => {
-    await page.goto('/finance/signup');
+  await page.waitForURL(/\/erp\/finance\/(start|o\/)/, { timeout: 5000 }).catch(async () => {
+    await page.goto('/erp/finance/signup');
     await page.getByLabel('Full name').fill('Finance User');
     await page.getByLabel('Work email').fill(EMAIL);
     await page.getByLabel('Password').fill(password);
     await page.getByRole('button', { name: 'Create account' }).click();
   });
-  await expect(page).toHaveURL(/\/finance\/(start|o\/[^/]+\/dashboard)/);
+  await expect(page).toHaveURL(/\/erp\/finance\/(start|o\/[^/]+\/dashboard)/);
 }
 
 test('a new account creates a business workspace, records an expense and an invoice, and reads the reports', async ({ page }) => {
   const outside: string[] = [];
   page.on('request', (r) => {
     const u = new URL(r.url());
-    if (u.hostname === 'localhost' && !/^\/(finance|tasks)\//.test(u.pathname)) outside.push(u.pathname);
+    if (u.hostname !== 'localhost' || u.pathname.startsWith('/erp/')) return;
+    if (!(r.isNavigationRequest() && SIGNED_OUT_HOPS.includes(u.pathname))) outside.push(u.pathname);
   });
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await signIn(page);
-  if (/\/finance\/o\//.test(page.url())) await page.goto('/finance/start');
+  if (/\/erp\/finance\/o\//.test(page.url())) await page.goto('/erp/finance/start');
   await page.getByRole('radio', { name: /Business/ }).check();
   await page.getByLabel('Workspace name').fill('E2E Design Pty Ltd');
   await page.getByLabel(/Registered for GST/).check();
   await page.getByRole('button', { name: 'Create workspace' }).click();
-  await expect(page).toHaveURL(/\/finance\/o\/[^/]+\/dashboard/);
+  await expect(page).toHaveURL(/\/erp\/finance\/o\/[^/]+\/dashboard/);
   const ws = page.url().replace(/\/dashboard.*$/, '');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
 
@@ -101,11 +108,11 @@ test('a new account creates a business workspace, records an expense and an invo
 
 test('a personal workspace on a phone: the menu, a category and a transaction @mobile', async ({ page }) => {
   await signIn(page);
-  await page.goto('/finance/start');
+  await page.goto('/erp/finance/start');
   await page.getByRole('radio', { name: /Personal/ }).check();
   await page.getByLabel('Workspace name').fill('My money');
   await page.getByRole('button', { name: 'Create workspace' }).click();
-  await expect(page).toHaveURL(/\/finance\/o\/[^/]+\/dashboard/);
+  await expect(page).toHaveURL(/\/erp\/finance\/o\/[^/]+\/dashboard/);
   const ws = page.url().replace(/\/dashboard.*$/, '');
   await page.getByRole('button', { name: 'Toggle navigation' }).click();
   await page.getByRole('link', { name: 'Transactions' }).click();

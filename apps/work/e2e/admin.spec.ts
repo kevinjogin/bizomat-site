@@ -3,6 +3,11 @@ import { expect, test, type Page } from '@playwright/test';
 
 const PERSIST = '.wrangler/e2e-state';
 
+// An address of its own for the sign-up limit (ten an hour per address; 192.0.2.0/24 is reserved for documentation), as
+// the CRM and Finance specs do. The second visitor's page is a context of its own, so it is given the same address.
+const FROM = { 'CF-Connecting-IP': '192.0.2.41', 'X-Forwarded-For': '192.0.2.41' };
+test.use({ extraHTTPHeaders: FROM });
+
 async function signup(page: Page, name: string) {
   const email = `${name.toLowerCase().replace(/\W+/g, '')}.${Date.now().toString(36)}@example.com`;
   await page.goto('/signup');
@@ -31,7 +36,7 @@ test('founder sees real numbers and live sessions', async ({ page, browser }) =>
   const email = await signup(page, 'Founder Person');
   grantFounder(email);
   // A second user who is active right now.
-  const other = await browser.newPage();
+  const other = await browser.newPage({ extraHTTPHeaders: FROM });
   await signup(other, 'Active Visitor');
   await other.mouse.move(10, 10);
 

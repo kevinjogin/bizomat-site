@@ -3,6 +3,11 @@ import { expect, test, type Page, type Request } from '@playwright/test';
 const password = 'e2e-Password-123!';
 const unique = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
+// An address may sign up ten times an hour (src/worker/routes/auth.ts), so each spec that signs up comes from an address
+// of its own (192.0.2.0/24 is reserved for documentation), as the CRM and Finance specs do; the data folder is new on
+// every run, so the address is new too.
+test.use({ extraHTTPHeaders: { 'CF-Connecting-IP': '192.0.2.42', 'X-Forwarded-For': '192.0.2.42' } });
+
 async function signup(page: Page, name = 'E2E User') {
   const email = `e2e.${unique()}@example.com`;
   await page.goto('/signup');
@@ -76,7 +81,8 @@ test('BIZOMAT branding on the sign-in page and in the app shell', async ({ page 
   await expect(page.getByText(/© \d{4} BIZOMAT\. All rights reserved\./).first()).toBeVisible();
   const platform = page.getByRole('navigation', { name: 'BIZOMAT platform' });
   await expect(platform.getByRole('link', { name: 'BIZOMAT', exact: true })).toHaveAttribute('href', 'https://bizomat.ai/');
-  await expect(platform.getByRole('link', { name: 'CAD Automation', exact: true })).toHaveAttribute('href', 'https://bizomat.ai/cad/');
+  // Every CAD Automation page is in BIZOMAT ERP (owner, 20 Nov 2026): the link opens it there, never bizomat.ai/cad.
+  await expect(platform.getByRole('link', { name: 'CAD Automation', exact: true })).toHaveAttribute('href', 'https://bizomat.ai/erp/cad');
   await expect(platform.getByRole('link', { name: 'CAD Automation', exact: true })).toHaveAttribute('rel', 'noopener');
   await expect(page.locator('body')).not.toContainText(/KEVOS|WorkOS/i);
 });

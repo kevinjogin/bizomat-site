@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+// An address of its own for the sign-up limit (ten an hour per address; 192.0.2.0/24 is reserved for documentation), as
+// the other specs that sign up have.
+test.use({ extraHTTPHeaders: { 'CF-Connecting-IP': '192.0.2.43', 'X-Forwarded-For': '192.0.2.43' } });
+
 test('documents can be organised into coloured folders', async ({ page }) => {
   const email = `folders.${Date.now().toString(36)}@example.com`;
   await page.goto('/signup');

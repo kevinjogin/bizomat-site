@@ -1,8 +1,13 @@
 import { expect, test, type Page } from '@playwright/test';
 
-// BIZOMAT CRM under /crm (the same build and server as Project Management): sign-up, an organisation, records, the
-// pipeline board, activities and the dashboard, staying under /crm and /tasks (the shared sign-in) only.
+// BIZOMAT CRM inside BIZOMAT ERP, at /erp/crm (the same build and server as Project Management): the CRM's own address
+// /crm answers 302 there and a signed-out visitor signs in at the ERP's sign-in; then sign-up, an organisation, records,
+// the pipeline board, activities and the dashboard, staying inside the ERP (/erp) only (src/worker/mount.ts).
 const password = 'e2e-Password-123!';
+
+// The only requests outside /erp: the page loads of a signed-out visit, each a 302 on the way to the ERP's sign-in (the
+// CRM's own address, which the spec opens to see it answer into the ERP, and the shared session's carry).
+const SIGNED_OUT_HOPS = ['/crm/', '/tasks/api/app-carry'];
 
 // The suite's other specs already use the ten sign-ups an address may make per hour, so the CRM specs come from an
 // address of their own (192.0.2.0/24 is reserved for documentation) and share one account: the data folder is new on
@@ -10,34 +15,36 @@ const password = 'e2e-Password-123!';
 test.use({ extraHTTPHeaders: { 'CF-Connecting-IP': '192.0.2.44', 'X-Forwarded-For': '192.0.2.44' } });
 const EMAIL = 'e2e.crm.owner@example.com';
 
-/** Sign in (or, the first time in a run, sign up) under /crm, and open an organisation (created when there is none). */
+/** Sign in (or, the first time in a run, sign up) to the CRM in the ERP, and open an organisation (created when there is none). */
 async function signUpAndCreateOrg(page: Page, orgName: string) {
+  // The CRM's own address opens inside the ERP: signed out, at the ERP's sign-in, which brings the visitor back to it.
   await page.goto('/crm/');
-  await expect(page).toHaveURL(/\/crm\/login/);
+  await expect(page).toHaveURL(/\/erp\/login\?next=%2Fcrm%2F$/);
   await page.getByLabel('Email').fill(EMAIL);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
-  await page.waitForURL(/\/crm\/(start|o\/)/, { timeout: 5000 }).catch(async () => {
-    await page.goto('/crm/signup');
+  await page.waitForURL(/\/erp\/crm\/(start|o\/)/, { timeout: 5000 }).catch(async () => {
+    await page.goto('/erp/crm/signup');
     await page.getByLabel('Full name').fill('Crm User');
     await page.getByLabel('Work email').fill(EMAIL);
     await page.getByLabel('Password').fill(password);
     await page.getByRole('button', { name: 'Create account' }).click();
   });
-  await expect(page).toHaveURL(/\/crm\/(start|o\/[^/]+\/overview)/);
-  if (/\/crm\/start/.test(page.url())) {
+  await expect(page).toHaveURL(/\/erp\/crm\/(start|o\/[^/]+\/overview)/);
+  if (/\/erp\/crm\/start/.test(page.url())) {
     await page.getByLabel('Organisation name').fill(orgName);
     await page.getByRole('button', { name: 'Create organisation' }).click();
   }
-  await expect(page).toHaveURL(/\/crm\/o\/[^/]+\/overview/);
+  await expect(page).toHaveURL(/\/erp\/crm\/o\/[^/]+\/overview/);
   return page.url().replace(/\/overview.*$/, '');
 }
 
-test('a new account creates an organisation and works with contacts, deals and activities under /crm', async ({ page }) => {
+test('a new account creates an organisation and works with contacts, deals and activities in the ERP at /erp/crm', async ({ page }) => {
   const outside: string[] = [];
   page.on('request', (r) => {
     const u = new URL(r.url());
-    if (u.hostname === 'localhost' && !/^\/(crm|tasks)\//.test(u.pathname)) outside.push(u.pathname);
+    if (u.hostname !== 'localhost' || u.pathname.startsWith('/erp/')) return;
+    if (!(r.isNavigationRequest() && SIGNED_OUT_HOPS.includes(u.pathname))) outside.push(u.pathname);
   });
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));

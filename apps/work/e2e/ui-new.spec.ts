@@ -7,6 +7,10 @@ import { expect, test, type Page } from '@playwright/test';
 const password = 'e2e-Password-123!';
 const unique = () => `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
 
+// An address of its own for the sign-up limit (ten an hour per address; 192.0.2.0/24 is reserved for documentation), as
+// the other specs that sign up have.
+test.use({ extraHTTPHeaders: { 'CF-Connecting-IP': '192.0.2.48', 'X-Forwarded-For': '192.0.2.48' } });
+
 /** A new account in BIZOMAT ERP, with its own company and its example company. Returns their ids. */
 async function erpAccount(page: Page): Promise<{ own: string; example: string }> {
   await page.goto('/signup');

@@ -2,8 +2,14 @@ import { expect, test, type Page } from '@playwright/test';
 
 // BIZOMAT Finance, Stage 1 of the accounting upgrade, in the browser: a quote with a heading, an optional line and a
 // discount, its live preview (the PDF itself), the online link a signed-out customer opens and accepts, the invoice
-// made from it, a credit note for that invoice, and the document templates. Nothing leaves /finance and /tasks.
+// made from it, a credit note for that invoice, and the document templates. Finance is inside BIZOMAT ERP, at /erp/finance
+// (its own address /finance answers 302 there, src/worker/mount.ts): nothing leaves /erp but the customer's online
+// document, which stays at /finance/view/ and opens in a browser context of its own.
 const password = 'e2e-Password-123!';
+
+// The only requests outside /erp: the page loads of a signed-out visit, each a 302 on the way to the ERP's sign-in
+// (Finance's own address, which the spec opens to see it answer into the ERP, and the shared session's carry).
+const SIGNED_OUT_HOPS = ['/finance/', '/tasks/api/app-carry'];
 const EMAIL = 'e2e.sales.owner@example.com';
 test.use({ extraHTTPHeaders: { 'CF-Connecting-IP': '192.0.2.46', 'X-Forwarded-For': '192.0.2.46' } });
 
@@ -15,19 +21,20 @@ async function choose(page: Page, label: string, text: string) {
 }
 
 async function signIn(page: Page) {
+  // Finance's own address opens inside the ERP: signed out, at the ERP's sign-in, which brings the visitor back to it.
   await page.goto('/finance/');
-  await expect(page).toHaveURL(/\/finance\/login/);
+  await expect(page).toHaveURL(/\/erp\/login\?next=%2Ffinance%2F$/);
   await page.getByLabel('Email').fill(EMAIL);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: 'Sign in' }).click();
-  await page.waitForURL(/\/finance\/(start|o\/)/, { timeout: 5000 }).catch(async () => {
-    await page.goto('/finance/signup');
+  await page.waitForURL(/\/erp\/finance\/(start|o\/)/, { timeout: 5000 }).catch(async () => {
+    await page.goto('/erp/finance/signup');
     await page.getByLabel('Full name').fill('Sales Owner');
     await page.getByLabel('Work email').fill(EMAIL);
     await page.getByLabel('Password').fill(password);
     await page.getByRole('button', { name: 'Create account' }).click();
   });
-  await expect(page).toHaveURL(/\/finance\/(start|o\/[^/]+\/dashboard)/);
+  await expect(page).toHaveURL(/\/erp\/finance\/(start|o\/[^/]+\/dashboard)/);
 }
 
 const shots = process.env.E2E_SHOTS;
@@ -44,15 +51,16 @@ test('quote to online acceptance to invoice to credit note, with the live previe
   const outside: string[] = [];
   page.on('request', (r) => {
     const u = new URL(r.url());
-    if (u.hostname === 'localhost' && !/^\/(finance|tasks)\//.test(u.pathname)) outside.push(u.pathname);
+    if (u.hostname !== 'localhost' || u.pathname.startsWith('/erp/')) return;
+    if (!(r.isNavigationRequest() && SIGNED_OUT_HOPS.includes(u.pathname))) outside.push(u.pathname);
   });
   await signIn(page);
-  await page.goto('/finance/start');
+  await page.goto('/erp/finance/start');
   await page.getByRole('radio', { name: /Business/ }).check();
   await page.getByLabel('Workspace name').fill('E2E Sales Pty Ltd');
   await page.getByLabel(/Registered for GST/).check();
   await page.getByRole('button', { name: 'Create workspace' }).click();
-  await expect(page).toHaveURL(/\/finance\/o\/[^/]+\/dashboard/);
+  await expect(page).toHaveURL(/\/erp\/finance\/o\/[^/]+\/dashboard/);
   const ws = page.url().replace(/\/dashboard.*$/, '');
 
   // The sidebar is in sections, with quotes and credit notes under Sales.
@@ -108,7 +116,8 @@ test('quote to online acceptance to invoice to credit note, with the live previe
   // A secure online link; the customer, signed out, opens it and accepts.
   await page.getByRole('button', { name: 'Get a link' }).click();
   const link = await page.getByLabel('Online link').inputValue();
-  expect(link).toMatch(/\/finance\/view\/quote\/[^?]+\?k=/);
+  // The customer is not signed in: the link is Finance's own public page, never one inside the ERP.
+  expect(link).toMatch(/^https?:\/\/[^/]+\/finance\/view\/quote\/[^?]+\?k=/);
   await page.getByRole('dialog').getByRole('button', { name: 'Close' }).click().catch(() => page.keyboard.press('Escape'));
   const customer = await browser.newContext();
   const cp = await customer.newPage();
