@@ -10,6 +10,7 @@ import { abnValid } from '../src/worker/company/verify';
 import { qrSvg } from '../src/worker/erp/qr';
 import { assetLabelText, labelCode } from '../src/worker/maintenance/routes-setup';
 import { roundForCard } from '../src/worker/maintenance/routes-rounds';
+import roundsSrc from '../src/client/system/maintenance/Rounds.tsx?raw';
 
 function newAbn(): string {
   for (;;) {
@@ -630,5 +631,91 @@ describe('the example company', () => {
     expect((await a.req('POST', '/api/system/demo/remove', {})).status).toBe(200);
     const left = await env.DB.prepare('SELECT (SELECT COUNT(*) FROM mt_rounds WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_round_assets WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_round_results WHERE company_id = ?1) AS n').bind(co).first<{ n: number }>();
     expect(left!.n).toBe(0);
+  });
+});
+
+// The review of the field release. The losing order of a race is reproduced with a trigger: the competing change lands
+// inside the transaction it races, after the reads that transaction made first.
+async function withTrigger(name: string, sql: string, fn: () => Promise<void>) {
+  await env.DB.prepare(sql).run();
+  try {
+    await fn();
+  } finally {
+    await env.DB.prepare(`DROP TRIGGER IF EXISTS ${name}`).run();
+  }
+}
+
+describe('the review of the field release: rounds and readings', () => {
+  it('never completes a round whose asset was opened again after the check, and keeps nothing of that completion', async () => {
+    const p = await plant('Round Race');
+    const { workOrder: w } = await round(p, [{ assetId: p.m1.id }]);
+    const m1 = await lineOf(p.tech, p.co, w.id, 'M-1');
+    await passLine(p.tech, p, w.id, m1.id);
+    // Marked not approved at the moment the work order is completed: the asset is open again inside its transaction.
+    await withTrigger(
+      't_round_race',
+      `CREATE TRIGGER t_round_race AFTER UPDATE OF status ON mt_work_orders WHEN NEW.id = '${w.id}' AND NEW.status = 'completed'
+       BEGIN UPDATE mt_round_assets SET status = 'open', attempt = attempt + 1 WHERE company_id = '${p.co}' AND work_order_id = '${w.id}'; END`,
+      async () => {
+        const res = await p.tech.req('POST', mt(p.co, `/work-orders/${w.id}/complete`), { notes: 'Round done' });
+        expect(res.status).toBe(409);
+      },
+    );
+    const after = await p.tech.json('GET', mt(p.co, `/work-orders/${w.id}`));
+    expect(after.workOrder.status).not.toBe('completed');
+    expect(after.history.filter((e: any) => e.action === 'work_order.completed')).toEqual([]);
+    // With an asset really open, the answer says which.
+    await env.DB.prepare("UPDATE mt_round_assets SET status = 'open' WHERE company_id = ? AND work_order_id = ?").bind(p.co, w.id).run();
+    const open = await p.tech.req('POST', mt(p.co, `/work-orders/${w.id}/complete`), { notes: 'Round done' });
+    expect([open.status, await codeOf(open)]).toEqual([409, 'ROUND_INCOMPLETE']);
+  });
+
+  it('adds no asset to a round whose work order was completed after it was read', async () => {
+    const p = await plant('Round Add');
+    const { workOrder: w } = await round(p, [{ assetId: p.m1.id }]);
+    await withTrigger(
+      't_round_add',
+      `CREATE TRIGGER t_round_add AFTER INSERT ON mt_round_assets WHEN NEW.work_order_id = '${w.id}'
+       BEGIN UPDATE mt_work_orders SET status = 'completed' WHERE company_id = '${p.co}' AND id = '${w.id}'; END`,
+      async () => {
+        const res = await p.supervisor.req('POST', mt(p.co, `/work-orders/${w.id}/round/assets`), { assets: [{ assetId: p.m2.id }, { assetId: p.c1.id }] });
+        expect([res.status, await codeOf(res)]).toEqual([409, 'ROUND_LOCKED']);
+      },
+    );
+    expect(numbers(await p.supervisor.json('GET', mt(p.co, `/work-orders/${w.id}/round`)))).toEqual(['M-1']);
+    const added = await env.DB.prepare("SELECT COUNT(*) AS n FROM mt_events WHERE company_id = ? AND work_order_id = ? AND action = 'round.assets_added'").bind(p.co, w.id).first<{ n: number }>();
+    expect(added!.n).toBe(0);
+  });
+
+  it('reports a saved reading as saved when making its preventive work fails, and the next run makes it', async () => {
+    const p = await plant('Reading PM');
+    const { supervisor, requester, co } = p;
+    const hours = await supervisor.json('POST', mt(co, '/meters'), { assetId: p.c1.id, name: 'Run hours', unit: 'h' });
+    await supervisor.json('POST', mt(co, '/pm/schedules'), { assetId: p.c1.id, name: 'Every 100 h', triggerKind: 'meter', meterId: hours.id, meterInterval: 100 });
+    const readings = async () => (await env.DB.prepare('SELECT COUNT(*) AS n FROM mt_readings WHERE company_id = ? AND meter_id = ?').bind(co, hours.id).first<{ n: number }>())!.n;
+    // Making the work order fails with a database error that is not a duplicate.
+    await withTrigger('t_reading_pm', `CREATE TRIGGER t_reading_pm BEFORE INSERT ON mt_work_orders WHEN NEW.company_id = '${co}' BEGIN SELECT json('not json'); END`, async () => {
+      const res = await requester.req('POST', mt(co, '/readings/batch'), { entries: [{ meterId: hours.id, value: 120 }], today: today() });
+      expect(res.status).toBe(200);
+      const out = (await res.json()) as any;
+      expect(out).toMatchObject({ saved: 1, failed: 0 });
+      expect(out.results[0]).toMatchObject({ ok: true, generated: [], pmPending: true, reading: { value: 120, total: 120 } });
+      const one = await requester.req('POST', mt(co, `/meters/${hours.id}/readings`), { value: 125, today: today() });
+      expect(one.status).toBe(201);
+      expect(await one.json()).toMatchObject({ generated: [], pmPending: true });
+    });
+    expect(await readings()).toBe(2);
+    const out = (await (await requester.req('POST', mt(co, '/readings/batch'), { entries: [{ meterId: hours.id, value: 130 }], today: today() })).json()) as any;
+    expect(out.results[0]).toMatchObject({ ok: true, pmPending: false });
+    expect(out.results[0].generated).toHaveLength(1);
+  });
+
+  it('names each checklist field after its item, and keeps the answers on screen when completing an asset fails', () => {
+    // The phone screen (src/client/system/maintenance/Rounds.tsx): no DOM here, so its source is checked.
+    expect(roundsSrc).toContain('<span className="sr-only">{i.label}: </span>{i.unit ?');
+    expect(roundsSrc).toContain('<span className="sr-only">{i.label}: </span>Notes');
+    expect(roundsSrc).toContain('What is wrong<span className="sr-only"> with {i.label}</span>?');
+    expect(roundsSrc).toMatch(/const r = await post<Completed>\([^)]*\/complete`\), \{\}\);\s*setAnswers\(\{\}\);\s*setDone\(r\);/);
+    expect(roundsSrc).toMatch(/\} finally \{\s*await refresh\(\);\s*setBusy\(false\);/);
   });
 });

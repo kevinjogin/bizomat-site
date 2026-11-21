@@ -10,6 +10,10 @@ import { sendMtAlert } from '../src/worker/maintenance/alerts';
 import { FLAGS, flagOn } from '../src/worker/platform/flags';
 import { setEmailProviderForTests, type EmailProvider, type OutgoingEmail } from '../src/worker/services/email/provider';
 import { utcDate } from '../src/worker/maintenance/m2util';
+import signOffSrc from '../src/client/system/maintenance/SignOff.tsx?raw';
+import printSrc from '../src/client/system/maintenance/WorkOrderPrint.tsx?raw';
+import workOrdersSrc from '../src/client/system/maintenance/WorkOrders.tsx?raw';
+import overlaysSrc from '../src/client/components/ui/overlays.tsx?raw';
 
 const PNG = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3, 4, 5, 6, 7, 8]);
 
@@ -293,22 +297,39 @@ describe('the sign-off at completion', () => {
     expect((await technician.json('GET', mt(co, '/me'))).requireSignature).toBe(false);
   });
 
-  it('keeps the signature picture while the work order names it', async () => {
+  it('keeps every signature picture on record, never as a photo, also after a reopen and a new completion', async () => {
     const { owner, supervisor, technician, co } = await team('Keep');
     const pump = await owner.json('POST', mt(co, '/assets'), { name: 'Pump' });
     const wo = await workOrder(supervisor, co, pump.id, technician.userId);
+    const photo = await technician.req('POST', mt(co, '/files'), upload('workOrderId', wo.id, 'signature-before.png', PNG, 'image/png'));
+    expect(photo.status).toBe(201);
+    const photoId = ((await photo.json()) as any).id;
     const signed = await technician.json('POST', mt(co, `/work-orders/${wo.id}/complete`), { notes: 'Done', signature: { name: 'Pat Example', image: sigPng() } });
     // Completed: the work order is locked.
     expect((await technician.req('DELETE', mt(co, `/files/${signed.signatureFileId}`))).status).toBe(409);
     await supervisor.json('POST', mt(co, `/work-orders/${wo.id}/reopen`), { reason: 'One more check' });
+    const message = 'This is the signature of a sign-off of the work order. It stays on record with the work order.';
     const kept = await supervisor.req('DELETE', mt(co, `/files/${signed.signatureFileId}`));
     expect(kept.status).toBe(409);
-    expect(((await kept.json()) as any).error).toBe('This is the signature of the work order’s sign-off. It stays with the work order.');
-    // Completed again without a sign-off: the earlier picture is an ordinary file of the work order.
+    expect(((await kept.json()) as any).error).toBe(message);
+    // Completed again without a sign-off: the earlier picture stays on record, still not a photo.
     const again = await technician.json('POST', mt(co, `/work-orders/${wo.id}/complete`), { notes: 'Checked' });
     expect(again.signatureFileId).toBeNull();
+    const detail = await supervisor.json('GET', mt(co, `/work-orders/${wo.id}`));
+    expect(detail.files.find((f: any) => f.id === signed.signatureFileId)).toMatchObject({ signature: true });
+    // An upload, even one named like a signature, stays an ordinary photo.
+    expect(detail.files.find((f: any) => f.id === photoId)).toMatchObject({ signature: false, isImage: true });
+    const card = await technician.json('GET', mt(co, `/work-orders/${wo.id}/job-card`));
+    expect(card.files.images.map((f: any) => f.id)).toEqual([photoId]);
+    expect(card.files.documents).toEqual([]);
+    expect(card.signOff).toBeNull();
     await supervisor.json('POST', mt(co, `/work-orders/${wo.id}/reopen`), { reason: 'Tidy the files' });
-    expect((await supervisor.req('DELETE', mt(co, `/files/${signed.signatureFileId}`))).status).toBe(200);
+    const still = await supervisor.req('DELETE', mt(co, `/files/${signed.signatureFileId}`));
+    expect(still.status).toBe(409);
+    expect(((await still.json()) as any).error).toBe(message);
+    expect((await supervisor.req('DELETE', mt(co, `/files/${photoId}`))).status).toBe(200);
+    // The history keeps who signed.
+    expect(detail.history.find((e: any) => e.action === 'work_order.completed' && e.summary.includes('signed off by Pat Example'))).toBeTruthy();
   });
 
   it('stores one picture when two people complete the same work order at once', async () => {
@@ -660,5 +681,153 @@ describe('the flag and what /me says', () => {
     expect(await flagOn(env.DB, 'maintenance_email_alerts', { companyId: co })).toBe(false);
     const me = await requester.json('GET', mt(co, '/me'));
     expect(me).toMatchObject({ requireSignature: false, techniciansRecordWork: false, can: { recordWork: false } });
+  });
+});
+
+// The review of the field release. The losing order of a race is reproduced with a trigger inside the transaction it
+// races.
+async function withTrigger(name: string, sql: string, fn: () => Promise<void>) {
+  await env.DB.prepare(sql).run();
+  try {
+    await fn();
+  } finally {
+    await env.DB.prepare(`DROP TRIGGER IF EXISTS ${name}`).run();
+  }
+}
+
+describe('the review of the field release: the sign-off', () => {
+  it('takes a typed sign-off from someone who cannot draw, recorded as typed, also when a signature is required', async () => {
+    const { owner, supervisor, technician, co } = await team('Typed');
+    const pump = await owner.json('POST', mt(co, '/assets'), { name: 'Pump' });
+    await owner.json('PATCH', mt(co, '/settings/work-orders'), { requireSignature: true });
+    const wo = await workOrder(supervisor, co, pump.id, technician.userId);
+    const complete = (signature: unknown) => technician.req('POST', mt(co, `/work-orders/${wo.id}/complete`), { notes: 'Done', signature });
+    // A typed sign-off has no picture; a drawn one has no tick; neither is both.
+    for (const bad of [{ name: 'Sam Keys', typed: true, image: sigPng() }, { name: 'Sam Keys' }, { name: '', typed: true }]) expect((await complete(bad)).status).toBe(400);
+    const res = await complete({ name: 'Sam Keys', role: 'Technician', typed: true });
+    expect(res.status).toBe(200);
+    const done = (await res.json()) as any;
+    expect(done).toMatchObject({ status: 'completed', signedByName: 'Sam Keys', signedByRole: 'Technician', signedAt: expect.any(Number), signedTyped: true, signatureFileId: null, signatureUrl: null });
+    expect((await env.DB.prepare('SELECT COUNT(*) AS n FROM mt_files WHERE company_id = ? AND work_order_id = ?').bind(co, wo.id).first<{ n: number }>())!.n).toBe(0);
+    const detail = await supervisor.json('GET', mt(co, `/work-orders/${wo.id}`));
+    const line = detail.history.find((e: any) => e.action === 'work_order.completed');
+    expect(line.summary).toBe(`Work order ${wo.number} completed, signed off by Sam Keys with a typed name (no signature drawn)`);
+    expect(line.after).toMatchObject({ signedBy: 'Sam Keys', signedTyped: true });
+    const card = await technician.json('GET', mt(co, `/work-orders/${wo.id}/job-card`));
+    expect(card.signOff).toEqual({ name: 'Sam Keys', role: 'Technician', at: done.signedAt, typed: true, url: null });
+    // A drawn signature is not typed.
+    await supervisor.json('POST', mt(co, `/work-orders/${wo.id}/reopen`), { reason: 'Again' });
+    const drawn = await technician.json('POST', mt(co, `/work-orders/${wo.id}/complete`), { notes: 'Done', signature: { name: 'Pat Example', image: sigPng() } });
+    expect(drawn).toMatchObject({ signedTyped: false, signatureFileId: expect.any(String) });
+    expect((await technician.json('GET', mt(co, `/work-orders/${wo.id}/job-card`))).signOff).toMatchObject({ typed: false, url: drawn.signatureUrl });
+    // Work recorded after it was done takes one too.
+    const rec = await supervisor.req('POST', mt(co, '/work-orders/done'), { assetId: pump.id, description: 'Greased the bearings', doneDate: days(-1), notes: 'Greased', signature: { name: 'Sam Keys', typed: true } });
+    expect(rec.status).toBe(201);
+    expect(await rec.json()).toMatchObject({ signedByName: 'Sam Keys', signedTyped: true, signatureFileId: null });
+  });
+
+  it('keeps nothing of a completion that lost a race: no history line naming its sign-off, no picture', async () => {
+    const { owner, supervisor, technician, co } = await team('Lost');
+    const pump = await owner.json('POST', mt(co, '/assets'), { name: 'Pump' });
+    const wo = await workOrder(supervisor, co, pump.id, technician.userId);
+    // The other completion committed first: this one's UPDATE finds nothing to change (the row is skipped).
+    await withTrigger(
+      't_lost_completion',
+      `CREATE TRIGGER t_lost_completion BEFORE UPDATE OF status ON mt_work_orders WHEN NEW.id = '${wo.id}' AND NEW.completed_by = '${technician.userId}' BEGIN SELECT RAISE(IGNORE); END`,
+      async () => {
+        const res = await technician.req('POST', mt(co, `/work-orders/${wo.id}/complete`), { notes: 'Done', signature: { name: 'A. Lee', image: sigPng() } });
+        expect(res.status).toBe(409);
+      },
+    );
+    const lines = await env.DB.prepare("SELECT summary FROM mt_events WHERE company_id = ? AND work_order_id = ? AND action = 'work_order.completed'").bind(co, wo.id).all<{ summary: string }>();
+    expect(lines.results).toEqual([]);
+    expect((await env.DB.prepare('SELECT COUNT(*) AS n FROM mt_files WHERE company_id = ? AND work_order_id = ?').bind(co, wo.id).first<{ n: number }>())!.n).toBe(0);
+    const winner = await supervisor.json('POST', mt(co, `/work-orders/${wo.id}/complete`), { notes: 'Done', signature: { name: 'B. Kaur', image: sigPng() } });
+    expect(winner).toMatchObject({ status: 'completed', signedByName: 'B. Kaur' });
+    const after = await env.DB.prepare("SELECT summary FROM mt_events WHERE company_id = ? AND work_order_id = ? AND action = 'work_order.completed'").bind(co, wo.id).all<{ summary: string }>();
+    expect(after.results.map((r) => r.summary)).toEqual([`Work order ${wo.number} completed, signed off by B. Kaur`]);
+  });
+
+  it('offers a typed sign-off on the screens and never calls either a verified electronic signature', () => {
+    expect(signOffSrc).toContain('I cannot draw a signature here: sign with my typed name');
+    expect(signOffSrc).toContain("if (v.typed) return { name, role, typed: true as const };");
+    expect(signOffSrc).toContain('Signed with a typed name by');
+    expect(printSrc).toContain('Signed with a typed name by');
+    // Every mention of a verified electronic signature says the sign-off is not one.
+    for (const src of [signOffSrc, printSrc]) {
+      for (const m of src.matchAll(/verified electronic signature/gi)) expect(src.slice(Math.max(0, m.index! - 40), m.index)).toMatch(/\b(not|neither|never)\b/i);
+    }
+    // Sign-off pictures, the current one and earlier ones, are never among the work order's photos.
+    expect(workOrdersSrc).toContain('d.files.filter((f) => !f.signature && f.id !== w.signatureFileId)');
+  });
+});
+
+describe('the review of the field release: reports, alerts and dialogs', () => {
+  it('counts work recorded after it was done in the month it was done, in the breakdowns report', async () => {
+    const { owner, supervisor, co } = await team('Month');
+    const press = await owner.json('POST', mt(co, '/assets'), { name: 'Press' });
+    const now = new Date();
+    const lastMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - 1, 15)).toISOString().slice(0, 10);
+    const res = await supervisor.req('POST', mt(co, '/work-orders/done'), {
+      assetId: press.id,
+      description: 'Replaced the belt',
+      jobType: 'corrective',
+      doneDate: lastMonth,
+      notes: 'New belt fitted',
+      downtime: { startedAt: Date.parse(`${lastMonth}T08:00:00Z`), endedAt: Date.parse(`${lastMonth}T10:00:00Z`) },
+    });
+    expect(res.status).toBe(201);
+    const w = (await res.json()) as any;
+    const monthOf = (d: string) => d.slice(0, 7);
+    const report = async (from: string, to: string) => (await supervisor.json('GET', mt(co, `/reports/breakdowns?from=${from}&to=${to}`))).months as any[];
+    const [y, m] = lastMonth.split('-').map(Number);
+    const first = `${monthOf(lastMonth)}-01`;
+    const last = new Date(Date.UTC(y, m, 0)).toISOString().slice(0, 10);
+    const then = (await report(first, last)).find((r) => r.month === monthOf(lastMonth));
+    expect(then).toMatchObject({ corrective: 1, failures: 1, downtimeHours: 2 });
+    expect(then.workOrders.map((x: any) => x.id)).toEqual([w.id]);
+    const thisMonth = utcDate(Date.now()).slice(0, 7);
+    const nowRow = (await report(`${thisMonth}-01`, utcDate(Date.now()))).find((r) => r.month === thisMonth);
+    expect(nowRow).toMatchObject({ corrective: 0, failures: 0 });
+  });
+
+  it('alerts only active members with access to Maintenance, never a suspended one, and never the person acting', async () => {
+    const { owner, supervisor, technician, tech2, requester, co } = await team('Active');
+    await owner.json('PUT', mt(co, `/roles/${tech2.userId}`), { role: 'supervisor' });
+    const sender = { companyId: co, kind: 'registered' as const, companyName: 'Active Manufacturing', userId: requester.userId };
+    const n = (dedupe: string) => ({ to: [], managers: true, kind: 'approval' as const, title: 'A test request', link: `/c/${co}/maintenance`, recordId: dedupe, dedupe });
+    const got = async (dedupe: string) => (await env.DB.prepare('SELECT user_id FROM erp_alerts WHERE company_id = ? AND dedupe_key LIKE ?').bind(co, `mt:${dedupe}:%`).all<{ user_id: string }>()).results.map((r) => r.user_id).sort();
+    expect(await sendMtAlert(env, sender, n('all'))).toBe(3);
+    expect(await got('all')).toEqual([owner.userId, supervisor.userId, tech2.userId].sort());
+    // Suspended in the company: no alert, and a named supervisor who is suspended falls back to the others.
+    await env.DB.prepare("UPDATE co_members SET status = 'suspended' WHERE company_id = ? AND user_id = ?").bind(co, supervisor.userId).run();
+    expect(await sendMtAlert(env, sender, n('suspended'))).toBe(2);
+    expect(await got('suspended')).toEqual([owner.userId, tech2.userId].sort());
+    await sendMtAlert(env, sender, { ...n('named'), managers: false, orManagers: true, to: [supervisor.userId] });
+    expect(await got('named')).toEqual([owner.userId, tech2.userId].sort());
+    // With the members work on, Maintenance access switched off for a person stops their alerts; never the owner's.
+    await env.DB.prepare("INSERT OR REPLACE INTO feature_flags (key, scope, scope_id, value, reason, updated_by, updated_at) VALUES ('company_members_v2', 'company', ?, 'on', 'test', 'test', 1)").bind(co).run();
+    try {
+      for (const u of [tech2.userId, owner.userId]) {
+        await env.DB.prepare("INSERT OR REPLACE INTO co_member_access (company_id, user_id, module, access, scope, updated_at) VALUES (?, ?, 'maintenance', 0, 'all', 1)").bind(co, u).run();
+      }
+      expect(await sendMtAlert(env, sender, n('module'))).toBe(1);
+      expect(await got('module')).toEqual([owner.userId]);
+      expect(await sendMtAlert(env, sender, { ...n('assigned'), managers: false, to: [tech2.userId, technician.userId] })).toBe(1);
+      expect(await got('assigned')).toEqual([technician.userId]);
+    } finally {
+      await env.DB.prepare("DELETE FROM feature_flags WHERE key = 'company_members_v2' AND scope = 'company' AND scope_id = ?").bind(co).run();
+    }
+    // Never the person acting.
+    expect(await sendMtAlert(env, { ...sender, userId: owner.userId }, { ...n('self'), managers: false, to: [owner.userId] })).toBe(0);
+  });
+
+  it('opens a dialog with the focus on its first field once, not again each time its page renders', () => {
+    // src/client/components/ui/overlays.tsx: no DOM here, so its source is checked. The focus effect runs once (no
+    // dependency on onClose, which a parent may make anew each second), and Escape closes with the latest handler.
+    const modal = overlaysSrc.slice(overlaysSrc.indexOf('export function Modal('), overlaysSrc.indexOf('export function ConfirmProvider('));
+    expect(modal).toMatch(/prev\?\.focus\?\.\(\);\s*\};\s*\}, \[\]\);/);
+    expect(modal).toContain('closeRef.current();');
+    expect(modal).not.toContain('}, [onClose]);');
   });
 });

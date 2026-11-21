@@ -9,6 +9,10 @@ import { env } from 'cloudflare:test';
 import { describe, expect, it } from 'vitest';
 import { signup, uniqueEmail, type Client } from './helpers';
 import { abnValid } from '../src/worker/company/verify';
+import { closeCount, loadCount, type CountClosed } from '../src/worker/erp/inventory';
+import { eventIfStmt } from '../src/worker/maintenance/m2util';
+import stocktakesSrc from '../src/client/system/maintenance/Stocktakes.tsx?raw';
+import extrasSrc from '../src/client/system/maintenance/WorkOrderExtras.tsx?raw';
 
 function newAbn(): string {
   for (;;) {
@@ -653,5 +657,169 @@ describe('the example company', () => {
       .bind(co)
       .first<{ n: number }>();
     expect(left!.n).toBe(0);
+  });
+});
+
+// The review of the field release: races that must fail cleanly, never leave stuck state. A D1 batch commits every
+// statement it holds, so each side's own transaction checks the other. The losing order is reproduced with a trigger:
+// the competing change lands inside the transaction it races, after the reads that transaction made first.
+async function withTrigger(name: string, sql: string, fn: () => Promise<void>) {
+  await env.DB.prepare(sql).run();
+  try {
+    await fn();
+  } finally {
+    await env.DB.prepare(`DROP TRIGGER IF EXISTS ${name}`).run();
+  }
+}
+
+describe('a reservation and a completion or cancel at the same moment', () => {
+  it('refuses the completion or cancel that missed a reservation made after it read them, and nothing is left stuck', async () => {
+    const { owner, supervisor, tech, co } = await team('Race Res');
+    const { product } = await store(owner, co);
+    for (const how of ['complete', 'cancel'] as const) {
+      const { w } = await workOrder(supervisor, co, { assignedTo: tech.userId });
+      const line = await tech.json('POST', mt(co, `/work-orders/${w.id}/parts`), { productId: product.id, quantity: 2 });
+      const rid = (await tech.json('POST', mt(co, `/work-orders/${w.id}/parts/${line.id}/reserve`), {})).reserved[0].reservationId as string;
+      const link = (await env.DB.prepare('SELECT id FROM mt_wo_reservations WHERE company_id = ? AND reservation_id = ?').bind(co, rid).first<{ id: string }>())!;
+      // The completion (or cancel) reads no reservation; the reservation's link is committed just before its transaction.
+      await env.DB.prepare('DELETE FROM mt_wo_reservations WHERE company_id = ? AND id = ?').bind(co, link.id).run();
+      const status = how === 'complete' ? 'completed' : 'cancelled';
+      const trig = `t_race_res_${how}`;
+      await withTrigger(
+        trig,
+        `CREATE TRIGGER ${trig} AFTER UPDATE OF status ON mt_work_orders WHEN NEW.id = '${w.id}' AND NEW.status = '${status}'
+         BEGIN INSERT INTO mt_wo_reservations (id, company_id, reservation_id, work_order_id, part_id, created_by, created_at) VALUES ('${link.id}', '${co}', '${rid}', '${w.id}', '${line.id}', NULL, 1); END`,
+        async () => {
+          const res = how === 'complete' ? await tech.req('POST', mt(co, `/work-orders/${w.id}/complete`), { notes: 'Done' }) : await supervisor.req('POST', mt(co, `/work-orders/${w.id}/cancel`), { reason: 'Not needed' });
+          expect(res.status).toBe(409);
+          expect((await errorOf(res)).error).toBe(`${w.number} changed at the same moment: refresh and try again`);
+        },
+      );
+      // Nothing of it was kept: the work order is open, the reservation open and still Maintenance's to release.
+      expect((await env.DB.prepare('SELECT status FROM mt_work_orders WHERE company_id = ? AND id = ?').bind(co, w.id).first<any>())!.status).toBe('assigned');
+      const lines = await env.DB.prepare("SELECT COUNT(*) AS n FROM mt_events WHERE company_id = ? AND work_order_id = ? AND action IN ('work_order.completed','work_order.cancelled')").bind(co, w.id).first<{ n: number }>();
+      expect(lines!.n).toBe(0);
+      expect(await reservation(co, rid)).toMatchObject({ released_qty: 0, status: 'open' });
+      // Tried again, it sees the reservation and releases it.
+      await env.DB.prepare('INSERT INTO mt_wo_reservations (id, company_id, reservation_id, work_order_id, part_id, created_by, created_at) VALUES (?, ?, ?, ?, ?, NULL, 1)').bind(link.id, co, rid, w.id, line.id).run();
+      const again = how === 'complete' ? await tech.req('POST', mt(co, `/work-orders/${w.id}/complete`), { notes: 'Done' }) : await supervisor.req('POST', mt(co, `/work-orders/${w.id}/cancel`), { reason: 'Not needed' });
+      expect(again.status).toBe(200);
+      expect(await reservation(co, rid)).toMatchObject({ released_qty: 2, status: 'released' });
+    }
+    expect((await stockRow(co, product.id))!.reserved).toBe(0);
+  });
+
+  it('refuses a reservation or an issue on a work order completed or cancelled after it was read', async () => {
+    const { owner, supervisor, tech, co } = await team('Race Late');
+    const { bin, product } = await store(owner, co);
+    const { w } = await workOrder(supervisor, co, { assignedTo: tech.userId });
+    const line = await tech.json('POST', mt(co, `/work-orders/${w.id}/parts`), { productId: product.id, quantity: 2 });
+    // The completion commits after the reserve read the work order and before its transaction.
+    await withTrigger(
+      't_race_late_reserve',
+      `CREATE TRIGGER t_race_late_reserve AFTER INSERT ON mt_wo_reservations WHEN NEW.work_order_id = '${w.id}'
+       BEGIN UPDATE mt_work_orders SET status = 'completed' WHERE company_id = '${co}' AND id = '${w.id}'; END`,
+      async () => {
+        const res = await tech.req('POST', mt(co, `/work-orders/${w.id}/parts/${line.id}/reserve`), {});
+        expect(res.status).toBe(409);
+        expect((await errorOf(res)).error).toBe(`${w.number} was completed or cancelled at the same moment: nothing was reserved. Refresh to see it.`);
+      },
+    );
+    expect((await env.DB.prepare('SELECT COUNT(*) AS n FROM erp_reservations WHERE company_id = ?').bind(co).first<{ n: number }>())!.n).toBe(0);
+    expect(await stockRow(co, product.id)).toEqual({ on_hand: 10, reserved: 0 });
+    await withTrigger(
+      't_race_late_issue',
+      `CREATE TRIGGER t_race_late_issue AFTER INSERT ON mt_wo_stock WHEN NEW.work_order_id = '${w.id}'
+       BEGIN UPDATE mt_work_orders SET status = 'cancelled' WHERE company_id = '${co}' AND id = '${w.id}'; END`,
+      async () => {
+        const res = await tech.req('POST', mt(co, `/work-orders/${w.id}/stock/issue`), { lines: [{ productId: product.id, locationId: bin.id, quantity: 1 }] });
+        expect(res.status).toBe(409);
+        expect((await errorOf(res)).error).toBe(`${w.number} was completed or cancelled at the same moment: nothing was issued. Refresh to see it.`);
+      },
+    );
+    expect(await stockRow(co, product.id)).toEqual({ on_hand: 10, reserved: 0 });
+    // Without a race both work as before.
+    expect((await tech.req('POST', mt(co, `/work-orders/${w.id}/parts/${line.id}/reserve`), {})).status).toBe(201);
+  });
+});
+
+describe('the review of the field release: requisitions and stocktakes', () => {
+  it('raises a requisition from a work order whose department was archived since, without that department', async () => {
+    const { owner, supervisor, tech, co } = await team('Dept Gone');
+    await store(owner, co);
+    await erpRole(owner, co, tech, 'warehouse_operator');
+    const dept = (await owner.json('POST', `/api/company/c/${co}/departments`, { name: 'Workshop' })).id as string;
+    const asset = await supervisor.json('POST', mt(co, '/assets'), { name: 'Press' });
+    const w = await supervisor.json('POST', mt(co, '/work-orders'), { assetId: asset.id, description: 'Change the seal', assignedTo: tech.userId, departmentId: dept });
+    const part = (await tech.json('POST', mt(co, `/work-orders/${w.id}/parts`), { part: 'Seal kit', quantity: 1 })).id;
+    expect((await owner.req('POST', `/api/company/c/${co}/departments/${dept}/archive`, {})).status).toBe(200);
+    // What the form sent before the fix (the archived id), and the default (nothing sent): both work, with no department.
+    for (const sent of [{ departmentId: dept }, {}]) {
+      const res = await tech.req('POST', mt(co, `/work-orders/${w.id}/requisition`), { lines: [{ partId: part, quantity: 1 }], ...sent });
+      expect(res.status).toBe(201);
+      const id = ((await res.json()) as any).id;
+      expect((await env.DB.prepare('SELECT department_id FROM erp_requisitions WHERE company_id = ? AND id = ?').bind(co, id).first<any>())!.department_id).toBeNull();
+    }
+    // A department in use is kept.
+    const live = (await owner.json('POST', `/api/company/c/${co}/departments`, { name: 'Stores' })).id as string;
+    const kept = await tech.json('POST', mt(co, `/work-orders/${w.id}/requisition`), { lines: [{ partId: part, quantity: 1 }], departmentId: live });
+    expect((await env.DB.prepare('SELECT department_id FROM erp_requisitions WHERE company_id = ? AND id = ?').bind(co, kept.id).first<any>())!.department_id).toBe(live);
+  });
+
+  it('refuses a count other than 0 or 1 on a serial line, with a clear message, and keeps the line uncounted', async () => {
+    const { owner, supervisor, tech, co } = await team('Serial Count');
+    const { wh, bin, product } = await store(owner, co, { name: 'Pump motor', qty: 0, cost: 50_000 });
+    await owner.json('PUT', erp(co, `/products/${product.id}/stock-settings`), { trackSerials: true });
+    await owner.json('POST', erp(co, '/adjustments'), { productId: product.id, locationId: bin.id, serial: 'SN-77', quantity: 1, unitCostCents: 50_000, reason: 'Opening stock' });
+    await erpRole(owner, co, supervisor, 'warehouse_operator');
+    const count = await supervisor.json('POST', mt(co, '/stocktakes'), { warehouseId: wh.id });
+    const st = mt(co, `/stocktakes/${count.id}`);
+    const line = (await tech.json('GET', st)).lines[0];
+    expect(line.serial).toBe('SN-77');
+    for (const counted of [2, 0.5]) {
+      const res = await tech.req('PUT', `${st}/counted`, { lines: [{ id: line.id, counted }] });
+      expect(res.status).toBe(400);
+      expect(await errorOf(res)).toMatchObject({ error: 'Serial SN-77 is one item: count it as 0 or 1', details: { code: 'SERIAL_COUNT' } });
+    }
+    expect((await tech.json('GET', st)).lines[0].counted).toBeNull();
+    expect(await tech.json('PUT', `${st}/counted`, { lines: [{ id: line.id, counted: 1 }] })).toMatchObject({ ok: true, counted: 1 });
+  });
+
+  it('says on the screens what the stocktake kind and the requisition department do, and stops a serial count above 1', () => {
+    // src/client/system/maintenance: no DOM here, so their source is checked.
+    expect(stocktakesSrc).toContain('<option value="stocktake">Stocktake</option>');
+    expect(stocktakesSrc).toContain('<option value="cycle">Cycle count</option>');
+    expect(stocktakesSrc).not.toMatch(/every part in the store|one part of the store/);
+    expect(stocktakesSrc).toContain('This decides what is counted: the whole store, or one location and everything in it.');
+    expect(stocktakesSrc).toContain("if (line.serial && counted !== null && counted !== 0 && counted !== 1) {");
+    expect(extrasSrc).toContain("departmentId: woDeptActive ? wo.departmentId! : ''");
+    expect(extrasSrc).toContain('is no longer in use, so the requisition has no department');
+  });
+
+  it('writes no history line in Maintenance or Inventory for a submit or cancel that lost a race', async () => {
+    const { owner, supervisor, tech, co } = await team('Count Race');
+    const { wh } = await store(owner, co);
+    await erpRole(owner, co, supervisor, 'warehouse_operator');
+    const lines = async (countId: string) => {
+      const mtLines = await env.DB.prepare("SELECT action FROM mt_events WHERE company_id = ? AND action IN ('stocktake.submitted','stocktake.cancelled') AND after_json LIKE ?").bind(co, `%${countId}%`).all<{ action: string }>();
+      const erpLines = await env.DB.prepare("SELECT action FROM erp_events WHERE company_id = ? AND entity_id = ? AND action IN ('count.submitted','count.cancelled')").bind(co, countId).all<{ action: string }>();
+      return [...mtLines.results.map((r) => r.action), ...erpLines.results.map((r) => r.action)].sort();
+    };
+    const count = await supervisor.json('POST', mt(co, '/stocktakes'), { warehouseId: wh.id });
+    const st = mt(co, `/stocktakes/${count.id}`);
+    const all = (await tech.json('GET', st)).lines;
+    await tech.json('PUT', `${st}/counted`, { lines: all.map((l: any) => ({ id: l.id, counted: l.expected })) });
+    // Both read the count while it was open; the first submit wins, the second (on the same stale state) changes nothing.
+    const n = await loadCount(env.DB, co, count.id);
+    const extra = (what: string) => (done: CountClosed) => [eventIfStmt(env.DB, { companyId: co, actorId: supervisor.userId, action: what, summary: `Stocktake ${n.number} ${what}`, after: { countId: n.id }, at: done.t }, done.sql, done.args)];
+    expect((await closeCount(env.DB, { companyId: co, userId: supervisor.userId }, n, 'submit', extra('stocktake.submitted'))).changed).toBe(true);
+    expect((await closeCount(env.DB, { companyId: co, userId: owner.userId }, n, 'submit', extra('stocktake.submitted'))).changed).toBe(false);
+    // A cancel that read it open too loses as well.
+    expect((await closeCount(env.DB, { companyId: co, userId: owner.userId }, n, 'cancel', extra('stocktake.cancelled'))).changed).toBe(false);
+    expect(await lines(count.id)).toEqual(['count.submitted', 'stocktake.submitted']);
+    // Through the route, a lost submit answers 409 and adds nothing either.
+    const second = await supervisor.req('POST', `${st}/submit`, {});
+    expect(second.status).toBe(409);
+    expect(await lines(count.id)).toEqual(['count.submitted', 'stocktake.submitted']);
   });
 });

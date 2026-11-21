@@ -449,6 +449,33 @@ describe('a requester withdraws their own request', () => {
   });
 });
 
+describe('a work order made from a request withdrawn at the same moment', () => {
+  it('answers 409 saying it was withdrawn, makes nothing and keeps the withdrawal', async () => {
+    const t = await team('Conv Race');
+    const a = await t.supervisor.json('POST', mt(t.co, '/assets'), { name: 'Press brake' });
+    const rq = await t.requester.json('POST', mt(t.co, '/requests'), { description: 'Back gauge not homing', assetId: a.id });
+    // The withdrawal commits after the convert read the request and before its transaction: here, as the convert takes
+    // the work order's number (its own statement, before the transaction).
+    const close = `BEGIN UPDATE mt_requests SET status = 'closed', closed_at = 1, withdrawn_at = 1, withdraw_reason = 'Raised twice', updated_at = 1 WHERE company_id = '${t.co}' AND id = '${rq.id}'; END`;
+    const when = `WHEN NEW.company_id = '${t.co}' AND NEW.kind = 'work_order'`;
+    await env.DB.prepare(`CREATE TRIGGER t_conv_race_i AFTER INSERT ON mt_counters ${when} ${close}`).run();
+    await env.DB.prepare(`CREATE TRIGGER t_conv_race_u AFTER UPDATE ON mt_counters ${when} ${close}`).run();
+    try {
+      const res = await t.supervisor.req('POST', mt(t.co, `/requests/${rq.id}/convert`), {});
+      expect(res.status).toBe(409);
+      const body = (await res.json()) as any;
+      expect(body.error).toBe(`${rq.number} was withdrawn a moment ago by the person who raised it: it cannot be made into a work order`);
+      expect(body.details).toMatchObject({ code: 'REQUEST_CHANGED', status: 'closed' });
+    } finally {
+      await env.DB.prepare('DROP TRIGGER IF EXISTS t_conv_race_i').run();
+      await env.DB.prepare('DROP TRIGGER IF EXISTS t_conv_race_u').run();
+    }
+    const view = (await t.requester.json('GET', mt(t.co, `/requests/${rq.id}`))) as any;
+    expect(view.request ?? view).toMatchObject({ status: 'closed', workOrderId: null });
+    expect((await env.DB.prepare('SELECT COUNT(*) AS n FROM mt_work_orders WHERE company_id = ?').bind(t.co).first<{ n: number }>())!.n).toBe(0);
+  });
+});
+
 describe('the overview: counts by role', () => {
   it('counts awaiting approval apart from new requests, and due today, this week and unassigned within each scope', async () => {
     const t = await team('Dash');
