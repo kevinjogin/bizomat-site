@@ -3,7 +3,7 @@
 Generated from `src/data/learn/` by `node scripts/learn/coverage.ts`; do not edit by hand (`tests/learn.test.ts`
 fails when this file is out of step). The Knowledge Centre is at https://bizomat.ai/learn/.
 
-Totals: 33 guides, 15 workflows, 152 tutorials (839 steps), 392 questions, 275 buttons explained.
+Totals: 33 guides, 15 workflows, 157 tutorials (860 steps), 395 questions, 284 buttons explained.
 
 Columns: A what, B purpose, C who, D access path, E tutorials (steps), F buttons, G questions, H related guides,
 I workflows, J link into the ERP. "Not yet" counts the parts listed as planned or in development.
@@ -32,7 +32,7 @@ I workflows, J link into the ERP. "Not yet" counts the parts listed as planned o
 | [Manufacturing](/learn/#manufacturing) | Live | yes | 5 (25) | 12 | 10 | 7 | 5 | 6 | 2026-11-20 |
 | [Quality](/learn/#quality) | Live | yes | 4 (25) | 12 | 10 | 7 | 3 | 5 | 2026-11-20 |
 | [Warehouse: Orders and dispatch](/learn/#supply-chain) | Live | yes | 5 (28) | 12 | 10 | 7 | 4 | 6 | 2026-11-20 |
-| [Maintenance](/learn/#maintenance) | Live | yes | 5 (30) | 12 | 10 | 7 | 2 | 9 | 2026-11-20 |
+| [Maintenance](/learn/#maintenance) | Live | yes | 10 (51) | 21 | 13 | 7 | 2 | 10 | 2026-11-21 |
 | [Health and Safety](/learn/#whs) | Live | yes | 5 (33) | 12 | 10 | 6 | 1 | 10 | 2026-11-20 |
 | [People and HR](/learn/#people-hr) | Live | yes | 3 (12) | 5 | 6 | 4 | 0 | 3 | 2026-11-20 |
 | [Reports](/learn/#reports) | Live | yes | 4 (18) | 6 | 7 | 9 | 7 | 2 | 2026-11-20 |

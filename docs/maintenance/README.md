@@ -1,4 +1,4 @@
-# BIZOMAT ERP: Asset Management and Maintenance (stages M1 to M3)
+# BIZOMAT ERP: Asset Management and Maintenance (stages M1 to M3 and the field release)
 
 Owner's brief, 14 Nov 2026: "BIZOMAT ERP — Asset Management & Maintenance module, MEX-inspired". It asks for a
 maintenance management system (CMMS) inside BIZOMAT ERP, in four stages (M1 to M4). MEX is a functional reference only:
@@ -9,6 +9,11 @@ no MEX branding, interface designs, source code or content are used.
   15 Nov 2026 (kevinjogin/bizomat-site#68, migration `0024_maintenance_m2_m3.sql`). They cover preventive maintenance,
   meters and readings, inspections, prestart checks, parts through ERP Inventory, trades and labour costs, downtime,
   sites, QR labels and scanning, and the reliability reports.
+- **The field release** (21 Nov 2026, migration `0040_maintenance_field.sql`; the owner's "Maintenance additions using
+  MEX", with MEX's field app guide as the functional reference) brings the field app's work order, request, stocktake and
+  readings features into BIZOMAT: see "The field release" below. It ships on for everyone inside the Maintenance module
+  switch (the owner chose "straight on for everyone" for the ERP redesign this completes); the one new flag,
+  `maintenance_email_alerts` (email copies of alerts), ships off.
 - **Planned** (labelled Planned on every page): the AI scheduling assistant, technician workload planning, offline field
   work, maintenance costs posted to Finance, and the rest of M4 (predictive maintenance, IoT feeds, fuel records).
 
@@ -228,12 +233,97 @@ order (all of them, so the earlier releases' stock and product figures are uncha
 and a passed prestart. Stage 1's figures stay seven assets and two open work orders. **Existing example companies are not
 changed**: their owners can remove and remake them in Administration.
 
+## The field release (21 Nov 2026)
+
+Design records: `docs/maintenance/design/` (the gap analysis of MEX's field app against Maintenance, with its two checks,
+and the four work streams' designs). Tests: `apps/work/test/maintenance-A.test.ts` to `maintenance-D.test.ts`.
+
+### Lists, the asset and requests (`lists.ts`, `asset-summary.ts`, `routes-requests.ts`)
+
+- **Work order list:** filters by date raised, due start, due finish and completed (the person's local day), department,
+  raised by, contractor, trade, job type, status, priority, asset with the assets under it, and site; quick lists My work,
+  Outstanding, Due today, Due this week (today to Sunday), Overdue, Unassigned (managers) and All; sorts including due
+  start; paging; CSV of the filtered list (up to 5,000 rows, formula cells made safe).
+- **Request list:** Needing approval (managers), Outstanding, My requests and All, with asset (and the assets under it),
+  requester, department, site, status and priority filters; each row shows the other open requests and work orders on its
+  asset; CSV.
+- **The asset on a job:** the work order and the request show the asset's identity, path and site, and the other open work
+  on it. Counts and lists cover only what the person may see (managers see all), and an inspection round's open line counts
+  as open work on its asset.
+- **Duplicate warning:** the request form and Report a fault list the asset's other open work before sending. It never
+  blocks sending.
+- **Withdrawal:** the person who raised a request may withdraw it with a reason until it becomes or joins a work order
+  (approved included). It is closed (the status list of 0018 is unchanged) with `withdrawn_at` and the reason, and shows
+  as Withdrawn. Whoever was deciding it is alerted when it was waiting for a decision.
+- **Dashboard:** "Requests to approve" now counts only requests awaiting approval, and shows only to supervisors and
+  administrators; the Maintenance card on the ERP dashboard shows figures by role.
+
+### Parts, reservations, requisitions and stocktakes (`routes-parts.ts`, `routes-stock.ts`)
+
+- **Required parts** may name an ERP product (one line per product on a work order) or stay free text. Each line shows what
+  is free in the maintenance stores and its status: in the stores, short, reserved, on a requisition, issued, not stocked or
+  a service. Preventive maintenance templates and schedules carry products too.
+- **Reservations** are ERP Inventory's own (`erp_reservations`, made and released through StockOps); `mt_wo_reservations`
+  only links them to the work order and the part line. The assigned technician, supervisors and administrators reserve and
+  release; issuing takes the work order's reservation first. Completing or cancelling the work order releases what is
+  still reserved, in the same transaction, never through an ERP role. Inventory's own reservation screen refuses to release
+  or issue a maintenance reservation. Reserving and releasing write no Finance record.
+- **Requisitions** for what is short are Procurement's own (`createRequisition`), raised from the work order by someone
+  who holds the ERP right `requisitions.raise`; `mt_wo_requisitions` links them. Procurement approves and orders them.
+- **Stocktakes** are ERP Inventory counts of the maintenance stores, listed in Maintenance with a due date
+  (`erp_counts.due_date`). Starting, submitting and cancelling one need the ERP right `inventory.operate` (owners and
+  administrators are ERP administrators); technicians and above enter counted quantities without an ERP role. Only a
+  warehouse manager who did not submit it approves it in Inventory, which posts the differences. The Stocktakes menu item
+  hides when the company's Warehouse: stock module is off.
+
+### Inspection rounds, readings and labels (`routes-rounds.ts`, `round-guard.ts`, `routes-meters.ts`, `routes-setup.ts`)
+
+- **Inspection rounds** are one work order (job type inspection) over many assets (up to 300), each with its own checklist
+  (`mt_rounds`, `mt_round_assets`, `mt_round_results`). The work order keeps its timer, labour and photos, and cannot be
+  completed while an asset is open. Lists: Incomplete, Exceptions (a failed item), Awaiting approval and Not approved, with
+  an asset search. A failed asset makes its follow-up once per attempt. A supervisor or administrator who did not complete
+  an asset approves it or marks it not approved with a reason (which opens it again). When no other active supervisor or
+  administrator is in the company, the one there may decide their own, and the history records the exception (this
+  differs from the ERP's own one-person rule; see the decisions below). Approval never blocks completing the round.
+- **Readings page:** every meter the person may update, with its last reading, filters (site, search, not read for N days)
+  and one entry per row; several readings are saved at once with a result per row, each exactly as a single reading
+  (preventive maintenance by meter included).
+- **Labels** hold the asset's address in BIZOMAT ERP (`/erp/c/<company>/maintenance/scan?code=<number>`), so a phone's own
+  camera opens it after sign-in; older labels holding `ASSET:<number>` still work with Scan an asset.
+
+### The job (`routes-job.ts`, `signoff.ts`, `alerts.ts`)
+
+- **Job card:** a printable page of the work order (outside the ERP's frame, opened in a new tab): asset and path,
+  instructions and safety, tasks with tick boxes, required parts, inspections and round assets with blank answer boxes or
+  the recorded answers, labour, downtime, notes, photos inline (other files by name) and the sign-off. It never shows costs
+  or rates. There is no server PDF: the browser's print saves one.
+- **Sign-off:** completing may carry a typed name, an optional role and a signature drawn on screen (a PNG checked for size
+  and format, stored as a file of the work order). Required only when a maintenance administrator switches on "Completion
+  needs a signature". It records who signed on screen; it is not a verified electronic signature.
+- **Work recorded after it was done:** supervisors and administrators (and technicians, when "Technicians can record work
+  already done" is on) make and complete a work order in one step with the date done, time, downtime and notes. It counts
+  in the reports like any completed work order. No parts are issued in that step.
+- **Alerts** go to the ERP's alerts (`erp_alerts`): a request waiting for approval (supervisors and administrators), a
+  request decided, asked about, made into or attached to a work order, or withdrawn, work given to a technician (rounds
+  included), and requests completed. The Alerts button shows them only where the person has Maintenance in that company.
+  Email copies are sent only when `maintenance_email_alerts` is on (it ships off) and never for the example company; no
+  email carries an approve or decline action.
+
+### Example company
+
+New example companies also get: the chiller work order's bolts as a required part (then issued), a duplicate request
+withdrawn by the person who raised it, a belt change recorded after it was done, and a completed inspection round over
+three assets (one failed label with no follow-up, one approved, one awaiting approval). The figures of the earlier
+releases are unchanged (seven assets, two open work orders). Existing example companies are not changed.
+
 ## Not built yet
 
 - **Planned:** the AI scheduling assistant (it would only propose; a person would approve), technician workload
-  planning, offline field work, maintenance costs posted to Finance, notifications and emails, predictive maintenance,
-  IoT feeds, fuel records, reserving parts for a work order, photo and signature answers in inspections, inspections
-  across several assets, trend charts of readings, and repeat-failure and department breakdowns in the reports.
+  planning, offline field work, maintenance costs posted to Finance, predictive maintenance, IoT feeds, fuel records,
+  photo and signature answers in checklist items, inspection rounds made by preventive maintenance, trend charts of
+  readings, repeat-failure and department breakdowns in the reports, a server-made PDF of the job card, and alerts for
+  comments, overdue work orders, follow-ups and preventive work orders.
+- **Built but switched off:** email copies of maintenance alerts (`maintenance_email_alerts`).
 - **Small gaps:**
   - no asset deletion (archive only);
   - removing someone from a company leaves their maintenance role on record, but it gives no access;
@@ -258,6 +348,16 @@ Stages M2 and M3:
 - parts are issued only from warehouses marked as maintenance stores, and only while the work order is open;
 - maintenance costs (labour and parts) are recorded and reported but not posted to Finance; which accounts, if any;
 - existing example companies are not changed; remaking one shows the M2 and M3 records.
+
+The field release:
+- it ships on for everyone inside the Maintenance module switch (the owner's "straight on for everyone"); only email copies
+  of alerts sit behind a flag, off;
+- an inspection round's review: the one supervisor or administrator in a company may decide their own asset, recorded,
+  while the ERP's rule allows that only to the only person in the company; say which rule should hold;
+- M3's issue and return routes do not check the Warehouse: stock switch (reserving and stocktakes do);
+- Settings does not refuse to unmark a maintenance store that holds open work order reservations;
+- Inventory does not refuse to release manufacturing order reservations (as before this release);
+- counts and duplicate warnings cover only what each person may see (managers see all).
 
 ## Upgrade rehearsal (14 Nov 2026)
 
