@@ -275,6 +275,11 @@ and the four work streams' designs). Tests: `apps/work/test/maintenance-A.test.t
   administrators are ERP administrators); technicians and above enter counted quantities without an ERP role. Only a
   warehouse manager who did not submit it approves it in Inventory, which posts the differences. The Stocktakes menu item
   hides when the company's Warehouse: stock module is off.
+- **Changes in ERP Inventory itself** (`erp/inventory.ts`, for every count and reservation, not only maintenance's): a
+  count may carry a due date; recording counts refuses a count other than 0 or 1 on a serial-numbered line (it used to be
+  dropped silently); a count's submit or cancel that loses a race writes no history line; and Inventory's own reservation
+  screen refuses to release or issue a maintenance reservation. In Procurement, `createRequisition` takes an optional
+  extra statement (the work order link) in its own transaction.
 
 ### Inspection rounds, readings and labels (`routes-rounds.ts`, `round-guard.ts`, `routes-meters.ts`, `routes-setup.ts`)
 
@@ -302,6 +307,10 @@ and the four work streams' designs). Tests: `apps/work/test/maintenance-A.test.t
   reader, for example), the typed name alone, recorded as a typed sign-off. Required only when a maintenance administrator
   switches on "Completion needs a signature" (a typed sign-off counts). An earlier picture stays on record after a reopen
   but never shows as a photo. It records who signed on screen; it is not a verified electronic signature.
+- **Races between two people** fail cleanly (409) instead of leaving stuck records: a reservation made while its work
+  order is completed or cancelled, a round asset opened while its work order completes, a completion or cancel that
+  loses to another, and a request made into a work order while it is withdrawn. A cancel that loses such a race now
+  answers 409 rather than writing a second "cancelled" line.
 - **Work recorded after it was done:** supervisors and administrators (and technicians, when "Technicians can record work
   already done" is on) make and complete a work order in one step with the date done, time, downtime and notes. It counts
   in the reports like any completed work order. No parts are issued in that step.
