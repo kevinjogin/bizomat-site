@@ -34,7 +34,8 @@ import { Comments, FileList, FilterPanel, History, ListPager, PriorityBadge, Pro
 import { AssetPanel } from './AssetPanel';
 import { AssetPicker, DepartmentField, PersonSelect, useAssetLabel, type PickedAsset } from './pickers';
 import { ReasonDialog } from './Requests';
-import { DowntimeSection, InspectionsSection, LabourSection, PartsSection, PreventiveNote, ReadingsSection, type WoExtras } from './WorkOrderExtras';
+import { DowntimeSection, InspectionsSection, LabourSection, PreventiveNote, ReadingsSection, type WoExtras } from './WorkOrderExtras';
+import { PartLinesEditor, PartsArea, partLinesBody, type PartLine } from './WorkOrderExtras';
 
 const OUTSTANDING = ['open', 'assigned', 'in_progress', 'on_hold'];
 
@@ -244,7 +245,7 @@ export function NewWorkOrderPage({ companyId, me }: { companyId: string; me: MtM
   const [form, setForm] = useState({ description: '', jobType: 'corrective', priority: 'medium' as Priority, trade: '', assignedTo: '', contractor: '', dueStart: '', dueFinish: '', hours: '', instructions: '', safety: '', projectRef: '', customerRef: '' });
   const [dept, setDept] = useState({ departmentId: '', department: '' });
   const [tasks, setTasks] = useState<string[]>(['']);
-  const [parts, setParts] = useState<{ part: string; quantity: string }[]>([]);
+  const [parts, setParts] = useState<PartLine[]>([]);
   const [busy, setBusy] = useState(false);
   useEffect(() => {
     if (preset && preset.number !== '…' && !asset) setAsset(preset);
@@ -274,7 +275,7 @@ export function NewWorkOrderPage({ companyId, me }: { companyId: string; me: MtM
         department: dept.department,
         departmentId: dept.departmentId || null,
         tasks: tasks.map((t) => t.trim()).filter(Boolean),
-        parts: parts.filter((p) => p.part.trim() && Number(p.quantity) > 0).map((p) => ({ part: p.part.trim(), quantity: Number(p.quantity) })),
+        parts: partLinesBody(parts),
       });
       toast(`Work order ${w.number} made`);
       navigate(mtPage(companyId, `/work-orders/${w.id}`));
@@ -324,17 +325,8 @@ export function NewWorkOrderPage({ companyId, me }: { companyId: string; me: MtM
       </section>
       <section className="card card-pad stack">
         <h3 className="crm-subhead">Required parts</h3>
-        <p className="muted small">Write each part and the quantity. Issuing parts from stores comes in a later stage.</p>
-        <div className="mt-lines">
-          {parts.map((p, i) => (
-            <div key={i} className="mt-line">
-              <input className="input" aria-label={`Part ${i + 1}`} maxLength={200} value={p.part} placeholder="Part" onChange={(e) => setParts((x) => x.map((y, j) => (j === i ? { ...y, part: e.target.value } : y)))} />
-              <input className="input" aria-label={`Quantity of part ${i + 1}`} type="number" min="0" step="any" value={p.quantity} onChange={(e) => setParts((x) => x.map((y, j) => (j === i ? { ...y, quantity: e.target.value } : y)))} />
-              <button type="button" className="btn ghost icon" aria-label={`Remove part ${i + 1}`} onClick={() => setParts((x) => x.filter((_, j) => j !== i))}><Icon name="x" /></button>
-            </div>
-          ))}
-        </div>
-        <div className="row"><button type="button" className="btn sm" onClick={() => setParts((x) => [...x, { part: '', quantity: '1' }])}><Icon name="plus" size={14} /> Add a part</button></div>
+        <p className="muted small">Choose a product from the stores, or describe the part. Product lines can be reserved, issued and ordered from the work order.</p>
+        <PartLinesEditor companyId={companyId} value={parts} onChange={setParts} idPrefix="nwo-part" />
       </section>
       <div className="row wrap">
         <button className="btn primary lg" disabled={busy || !form.description.trim() || !asset}>{busy ? 'Making…' : 'Make the work order'}</button>
@@ -386,7 +378,6 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
   const q = useQuery({ queryKey: ['mt', companyId, 'work-order', workOrderId], queryFn: () => get<WoDetail>(mtPath(companyId, `/work-orders/${workOrderId}`)), retry: false });
   const [dialog, setDialog] = useState<null | 'complete' | 'reopen' | 'cancel' | 'edit' | 'hold'>(null);
   const [newTask, setNewTask] = useState('');
-  const [newPart, setNewPart] = useState({ part: '', quantity: '1' });
   useTick(!!q.data?.totals.myTimer);
   usePageTitle(q.data?.workOrder.number ?? 'Work order');
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
@@ -557,32 +548,8 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
               </form>
             ) : null}
           </Section>
-          <Section title="Required parts">
-            {d.parts.length ? (
-              <table className="data-table mt-table">
-                <thead><tr><th>Part</th><th>Quantity</th><th><span className="sr-only">Actions</span></th></tr></thead>
-                <tbody>
-                  {d.parts.map((p) => (
-                    <tr key={p.id}>
-                      <td data-label="Part">{p.part}</td>
-                      <td data-label="Quantity" className="mt-num">{p.quantity}</td>
-                      <td>{d.can.work ? <button className="btn ghost icon sm" aria-label={`Remove ${p.part}`} onClick={() => act(() => del(`${base}/parts/${p.id}`), 'Part line removed')}><Icon name="trash" size={14} /></button> : null}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : <p className="muted small">No parts listed.</p>}
-            {d.can.work ? (
-              <form className="mt-add-line" onSubmit={(e) => { e.preventDefault(); if (newPart.part.trim() && Number(newPart.quantity) > 0) void act(() => post(`${base}/parts`, { part: newPart.part.trim(), quantity: Number(newPart.quantity) })).then((ok) => ok && setNewPart({ part: '', quantity: '1' })); }}>
-                <input className="input" aria-label="Part" maxLength={200} placeholder="Part" value={newPart.part} onChange={(e) => setNewPart((x) => ({ ...x, part: e.target.value }))} />
-                <input className="input mt-qty" aria-label="Quantity" type="number" min="0" step="any" value={newPart.quantity} onChange={(e) => setNewPart((x) => ({ ...x, quantity: e.target.value }))} />
-                <button className="btn" disabled={!newPart.part.trim()}>Add</button>
-              </form>
-            ) : null}
-            <p className="muted small">A list of what the job needs. Parts taken from the maintenance stores are under Parts used.</p>
-          </Section>
+          <PartsArea {...extras} wo={w} locked={d.locked} />
           <InspectionsSection {...extras} />
-          <PartsSection {...extras} />
           <LabourSection {...extras} />
           <DowntimeSection key={`dt-${d.downtime?.startedAt ?? 0}-${d.downtime?.endedAt ?? 0}`} {...extras} />
           <ReadingsSection {...extras} />

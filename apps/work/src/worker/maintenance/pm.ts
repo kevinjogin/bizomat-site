@@ -28,6 +28,8 @@ import { assertPerson, isManager, requireMt, type MtAccess } from './access';
 import { loadAsset } from './routes-assets';
 import { PRIORITY, eventStmt, likeOf, nextNumber, searchText, validDate, zDate, zId, zText } from './util';
 import { addDays, addInterval, assertSite, daysBetween, eventIfStmt, inCompany, inSiteSql, isUnique, todayNear, utcDate, type IntervalUnit } from './m2util';
+// Required parts may name ERP products (the field release): the same rules as a work order's part lines.
+import { checkPmParts, pmPartStmts } from './routes-parts';
 
 export const pmRoutes = new Hono<AppEnv>();
 
@@ -37,7 +39,8 @@ export const BASES = ['completion', 'fixed'] as const;
 export const PM_JOB_TYPES = ['preventive', 'inspection'] as const;
 type Trigger = (typeof TRIGGERS)[number];
 
-const part = z.object({ part: zText(200).min(1), quantity: z.number().positive().max(1e6) });
+// A product of the company or the part in words, checked by checkPmParts (routes-parts.ts) in each handler below.
+const part = z.object({ part: zText(200).optional(), quantity: z.number().positive().max(1e6), productId: zId.nullable().optional() });
 const defFields = {
   name: zText(200).min(1),
   description: zText(5000).optional(),
@@ -169,7 +172,7 @@ function defDTO(s: any) {
     jobType: s.job_type,
     priority: s.priority,
     tasks: parseJson<string[]>(s.tasks_json, []),
-    parts: parseJson<{ part: string; quantity: number }[]>(s.parts_json, []),
+    parts: parseJson<{ part: string; quantity: number; productId?: string; productNumber?: string }[]>(s.parts_json, []),
     estimatedMinutes: s.estimated_minutes,
     leadDays: s.lead_days,
     trade: s.trade,
@@ -401,7 +404,7 @@ async function makeOccurrence(db: D1Database, s: any, today: string, actorId: st
   };
   const stmts: D1PreparedStatement[] = [insertCompanyRow(db, 'mt_work_orders', row)];
   parseJson<string[]>(s.tasks_json, []).forEach((text, i) => stmts.push(db.prepare('INSERT INTO mt_wo_tasks (id, company_id, work_order_id, position, text, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(newId(), s.company_id, woId, i + 1, String(text).slice(0, 500), actorId, t)));
-  parseJson<{ part: string; quantity: number }[]>(s.parts_json, []).forEach((p, i) => stmts.push(db.prepare('INSERT INTO mt_wo_parts (id, company_id, work_order_id, position, part, quantity, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(newId(), s.company_id, woId, i + 1, String(p.part).slice(0, 200), Number(p.quantity) > 0 ? Number(p.quantity) : 1, actorId, t)));
+  stmts.push(...pmPartStmts(db, s.company_id, woId, s.parts_json, actorId, t));
   if (s.inspection_template_id && !s.insp_archived) {
     stmts.push(db.prepare("INSERT INTO mt_wo_inspections (id, company_id, work_order_id, template_id, template_name, status, created_by, created_at) VALUES (?, ?, ?, ?, ?, 'open', ?, ?)").bind(newId(), s.company_id, woId, s.inspection_template_id, s.insp_name, actorId, t));
   }
@@ -550,6 +553,7 @@ pmRoutes.post('/c/:company/pm/schedules', async (c) => {
   const a = await requireMt(c, 'supervisor');
   const db = c.env.DB;
   const input = await body(c, scheduleCreate);
+  if (input.parts) input.parts = await checkPmParts(db, a.companyId, input.parts);
   const asset = await loadAsset(db, a.companyId, input.assetId).catch(() => {
     throw new HttpError(400, 'Choose an asset from this company');
   });
@@ -602,6 +606,7 @@ pmRoutes.patch('/c/:company/pm/schedules/:id', async (c) => {
   const db = c.env.DB;
   const s = await loadSchedule(db, a.companyId, c.req.param('id'));
   const input = await body(c, scheduleUpdate);
+  if (input.parts) input.parts = await checkPmParts(db, a.companyId, input.parts);
   const cols = defColumns(input);
   if (s.template_id && Object.keys(cols).some((k) => k !== 'active')) throw new HttpError(409, `This schedule follows the template "${s.template_name}": change the template, or pause this asset's schedule`);
   const meter = s.meter_id ? await db.prepare('SELECT * FROM mt_meters WHERE company_id = ? AND id = ?').bind(a.companyId, s.meter_id).first<any>() : null;
@@ -679,6 +684,7 @@ pmRoutes.post('/c/:company/pm/templates', async (c) => {
   const a = await requireMt(c, 'supervisor');
   const db = c.env.DB;
   const input = await body(c, templateCreate);
+  if (input.parts) input.parts = await checkPmParts(db, a.companyId, input.parts);
   if (input.triggerKind !== 'time' && !input.meterName?.trim()) throw new HttpError(400, 'Name the meter or gauge each asset of the class has (for example Hours)');
   await assertSite(db, a.companyId, input.siteId);
   const def: Record<string, any> = { ...DEFAULTS, ...defColumns(input), trigger_kind: input.triggerKind };
@@ -709,6 +715,7 @@ pmRoutes.patch('/c/:company/pm/templates/:id', async (c) => {
   const db = c.env.DB;
   const tpl = await loadTemplate(db, a.companyId, c.req.param('id'));
   const input = await body(c, templateUpdate);
+  if (input.parts) input.parts = await checkPmParts(db, a.companyId, input.parts);
   const cols = defColumns(input);
   delete cols.start_date;
   const merged: Record<string, any> = { ...tpl, ...cols };

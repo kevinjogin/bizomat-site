@@ -239,6 +239,18 @@ setupRoutes.put('/c/:company/stores/:warehouseId', async (c) => {
   return c.json({ warehouseId: wh.id, store: input.store });
 });
 
+/**
+ * The stock rows in the maintenance stores: erp_stock (s) at a location (l) outside quarantine, in a warehouse (w) marked
+ * as a maintenance store (ms). What is free there is STORE_FREE (on hand less reserved, never below zero). One
+ * definition for the store stock list below, the product search and the required parts of a work order
+ * (routes-parts.ts) and reserving them (routes-stock.ts).
+ */
+export const STORE_STOCK_FROM = `erp_stock s
+       JOIN erp_locations l ON l.company_id = s.company_id AND l.id = s.location_id AND l.kind <> 'quarantine'
+       JOIN erp_warehouses w ON w.company_id = l.company_id AND w.id = l.warehouse_id
+       JOIN mt_stores ms ON ms.company_id = w.company_id AND ms.warehouse_id = w.id`;
+export const STORE_FREE = 'MAX(s.on_hand - s.reserved, 0)';
+
 /** Stock in the maintenance stores (outside quarantine), for issuing parts to work orders (technicians and above; costs for supervisors and administrators). */
 setupRoutes.get('/c/:company/stores/stock', async (c) => {
   const a = await requireMt(c, 'technician');
@@ -247,10 +259,7 @@ setupRoutes.get('/c/:company/stores/stock', async (c) => {
   const rows = await c.env.DB.prepare(
     `SELECT s.product_id, p.number, p.name, p.uom, s.location_id, l.code AS location_code, w.code AS warehouse_code, w.name AS warehouse_name, s.lot, s.serial, s.on_hand, s.reserved,
             (SELECT CASE WHEN v.qty > 1e-9 THEN v.value_cents * 1.0 / v.qty END FROM erp_valuation v WHERE v.company_id = s.company_id AND v.product_id = s.product_id) AS avg_cost
-       FROM erp_stock s
-       JOIN erp_locations l ON l.company_id = s.company_id AND l.id = s.location_id AND l.kind <> 'quarantine'
-       JOIN erp_warehouses w ON w.company_id = l.company_id AND w.id = l.warehouse_id
-       JOIN mt_stores ms ON ms.company_id = w.company_id AND ms.warehouse_id = w.id
+       FROM ${STORE_STOCK_FROM}
        JOIN erp_products p ON p.company_id = s.company_id AND p.id = s.product_id
       WHERE s.company_id = ? AND s.on_hand > 1e-9 ${q ? 'AND (lower(p.number) LIKE ? OR lower(p.name) LIKE ?)' : ''} ${productId ? 'AND s.product_id = ?' : ''}
       ORDER BY p.number COLLATE NOCASE, w.code, l.code LIMIT 300`,

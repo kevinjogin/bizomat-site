@@ -55,7 +55,7 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
     ['/prestart', 'Prestart', 'checkSquare'],
     ['/readings', 'Readings', 'activity'],
     ['/scan', 'Scan', 'eye'],
-    ...(m.role !== 'requester' ? ([['/stocktakes', 'Stocktakes', 'archive']] as [string, string, string][]) : []),
+    ...(m.role !== 'requester' && m.stockModule !== false ? ([['/stocktakes', 'Stocktakes', 'archive']] as [string, string, string][]) : []),
     ...(m.can.reports ? ([['/reports', 'Reports', 'chart']] as [string, string, string][]) : []),
     ['/settings', 'Settings', 'settings'],
   ];

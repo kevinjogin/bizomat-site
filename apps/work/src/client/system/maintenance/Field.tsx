@@ -19,7 +19,8 @@ interface Detector {
   detect(source: CanvasImageSource): Promise<{ rawValue: string }[]>;
 }
 
-function CameraReader({ onCode, onClose }: { onCode: (code: string) => void; onClose: () => void }) {
+/** The camera reading a code (where the browser can); also used by Stocktakes to find a part or a location. */
+export function CameraReader({ onCode, onClose, label = "Camera view: point it at the asset's label" }: { onCode: (code: string) => void; onClose: () => void; label?: string }) {
   const video = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -58,7 +59,7 @@ function CameraReader({ onCode, onClose }: { onCode: (code: string) => void; onC
   }, [onCode]);
   return (
     <div className="card card-pad stack">
-      {error ? <p className="warn-box small">{error}</p> : <video ref={video} className="mt-camera" muted playsInline aria-label="Camera view: point it at the asset's label" />}
+      {error ? <p className="warn-box small">{error}</p> : <video ref={video} className="mt-camera" muted playsInline aria-label={label} />}
       <button className="btn" onClick={onClose}>Close the camera</button>
     </div>
   );

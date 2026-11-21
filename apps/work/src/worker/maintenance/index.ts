@@ -14,6 +14,7 @@
 //   the field release, stream A (lists.ts: list filters, CSV files and the overview's extra counts):
 //   GET   /c/:company/assets/:id/summary      the asset, its path and the other open work on it (asset-summary.ts)
 //   POST  /c/:company/requests/:id/withdraw   the person who raised a request withdraws it (routes-requests.ts)
+//   routes-stock.ts                     reservations, requisitions from work orders, stocktakes of the stores
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -42,6 +43,7 @@ import { roundRoutes } from './routes-rounds';
 import { stockRoutes } from './routes-stock';
 import { jobRoutes } from './routes-job';
 import { OPEN_REQUESTS, OUTSTANDING, eventDTO, eventStmt, sqlList, todayFrom } from './util';
+import { moduleEnabled } from '../platform/flags';
 
 export const maintenanceRoutes = new Hono<AppEnv>();
 
@@ -69,6 +71,8 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
     departments,
     // Names only for everyone; the role of each person matters to whoever assigns work.
     people: people.map((p) => ({ id: p.id, name: p.name, role: isManager(a) ? p.role : undefined })),
+    // ERP Inventory (Warehouse: stock) switched on for the company: stocktakes and reservations need it.
+    stockModule: await moduleEnabled(db, 'inventory', a.companyId).catch(() => true),
     can: {
       manageAssets: isManager(a),
       importAssets: a.role === 'admin',

@@ -15,7 +15,9 @@ import { requestDTO, workOrderDTO } from './dto';
 // work order shows its inspections, parts, costs, downtime and readings.
 import { pmCancelStmts, pmCompleteStmts, pmReopenStmts } from './pm';
 import { priceLabourStmt } from './routes-setup';
-import { workOrderExtras } from './routes-parts';
+import { checkPartLines, partLineStmts, workOrderExtras } from './routes-parts';
+// The field release: stock still reserved for a work order is released when it is completed or cancelled.
+import { runWoBatch, woReservationReleaseStmts } from './routes-stock';
 import { inSiteSql } from './m2util';
 // The field release, stream A: the list's extra filters and its CSV file.
 import { csvResponse } from '../erp/util';
@@ -101,7 +103,8 @@ const fields = {
 };
 const lines = {
   tasks: z.array(zText(500).min(1)).max(100).optional(),
-  parts: z.array(z.object({ part: zText(200).min(1), quantity: z.number().positive().max(1e6) })).max(100).optional(),
+  // A product of the company or the part in words: routes-parts.ts checkPartLines checks which (never a refine here).
+  parts: z.array(z.object({ part: zText(200).optional(), productId: zId.nullable().optional(), quantity: z.number().positive().max(1e6) })).max(100).optional(),
 };
 export const createSchema = z.object({ ...fields, ...lines });
 /** Making a work order from a request: the asset comes from the request unless it has none. */
@@ -159,6 +162,7 @@ const woSearch = (r: Record<string, unknown>) => searchText(r.number as string, 
 export async function workOrderStatements(db: D1Database, a: MtAccess, input: WoInput, fromRequest?: { id: string; number: string; assetId: string | null }) {
   const cols = columnsOf(input);
   await validate(db, a, cols, null);
+  const partLines = await checkPartLines(db, a.companyId, input.parts ?? []);
   const id = newId();
   const number = await nextNumber(db, a.companyId, 'work_order');
   const t = now();
@@ -176,7 +180,7 @@ export async function workOrderStatements(db: D1Database, a: MtAccess, input: Wo
     stmts.push(insertCompanyRow(db, 'mt_work_orders', row));
   }
   (input.tasks ?? []).forEach((text, i) => stmts.push(db.prepare('INSERT INTO mt_wo_tasks (id, company_id, work_order_id, position, text, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(newId(), a.companyId, id, i + 1, text, a.userId, t)));
-  (input.parts ?? []).forEach((p, i) => stmts.push(db.prepare('INSERT INTO mt_wo_parts (id, company_id, work_order_id, position, part, quantity, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(newId(), a.companyId, id, i + 1, p.part, p.quantity, a.userId, t)));
+  stmts.push(...partLineStmts(db, a.companyId, id, partLines, a.userId, t));
   stmts.push(
     eventStmt(db, {
       companyId: a.companyId,
@@ -186,7 +190,7 @@ export async function workOrderStatements(db: D1Database, a: MtAccess, input: Wo
       workOrderId: id,
       requestId: fromRequest?.id,
       summary: `Work order ${number} created${fromRequest ? ` from request ${fromRequest.number}` : ''}`,
-      after: { ...cols, tasks: input.tasks?.length ?? 0, parts: input.parts?.length ?? 0 },
+      after: { ...cols, tasks: input.tasks?.length ?? 0, parts: partLines.length },
       at: t,
     }),
   );
@@ -427,8 +431,11 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
   const input = await body(c, z.object({ notes: zText(10000).min(1, 'Write what was done') }));
   const linked = (await db.prepare("SELECT id, number FROM mt_requests WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(a.companyId, w.id).all<{ id: string; number: string }>()).results;
   const t = now();
-  const res = await db.batch([
+  // What is still reserved in the stores for it goes back to free stock, in the same transaction.
+  const release = await woReservationReleaseStmts(db, a, w, 'completed', t);
+  const res = await runWoBatch(db, [
     db.prepare(`UPDATE mt_work_orders SET status = 'completed', completion_notes = ?, completed_at = ?, completed_by = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(input.notes, t, a.userId, t, a.companyId, w.id),
+    ...release,
     stopAllTimers(db, a.companyId, w.id, t),
     priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
     // Completing a work order completes the requests it was made from.
@@ -437,7 +444,7 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
     ...linked.map((r) => eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.completed', assetId: w.asset_id, requestId: r.id, workOrderId: w.id, summary: `Request ${r.number} completed with work order ${w.number}`, before: { status: 'converted' }, after: { status: 'completed' }, at: t })),
     // A preventive work order: its schedule's next due date or meter value moves on (guarded on this completion).
     ...(await pmCompleteStmts(db, a.companyId, w, t, a.userId)),
-  ]);
+  ], `${w.number} changed at the same moment: refresh and try again`);
   if (!res[0].meta.changes) throw new HttpError(409, `${w.number} is not open any more`);
   return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
 });
@@ -483,14 +490,16 @@ workRoutes.post('/c/:company/work-orders/:id/cancel', async (c) => {
   assertUnlocked(w);
   const input = await body(c, z.object({ reason: zText(2000).min(1, 'Give a reason for cancelling') }));
   const t = now();
-  await db.batch([
+  const release = await woReservationReleaseStmts(db, a, w, 'cancelled', t);
+  await runWoBatch(db, [
     db.prepare(`UPDATE mt_work_orders SET status = 'cancelled', cancelled_at = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(t, t, a.companyId, w.id),
+    ...release,
     stopAllTimers(db, a.companyId, w.id, t),
     priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
     commentStmt(db, { companyId: a.companyId, workOrderId: w.id, authorId: a.userId, body: `Cancelled: ${input.reason}`, at: t }),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.cancelled', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} cancelled: ${input.reason}`, before: { status: w.status }, after: { status: 'cancelled', reason: input.reason }, at: t }),
     ...(await pmCancelStmts(db, a.companyId, w, t, a.userId)),
-  ]);
+  ], `${w.number} changed at the same moment: refresh and try again`);
   return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
 });
 
@@ -548,45 +557,7 @@ workRoutes.delete('/c/:company/work-orders/:id/tasks/:taskId', async (c) => {
   return c.json({ ok: true });
 });
 
-// ------------------------------------------------------------------ parts lines
-
-const partSchema = z.object({ part: zText(200).min(1), quantity: z.number().positive().max(1e6) });
-
-workRoutes.post('/c/:company/work-orders/:id/parts', async (c) => {
-  const { a, w, db } = await workable(c);
-  const input = await body(c, partSchema);
-  const pos = await db.prepare('SELECT COALESCE(MAX(position), 0) + 1 AS p FROM mt_wo_parts WHERE company_id = ? AND work_order_id = ?').bind(a.companyId, w.id).first<{ p: number }>();
-  const id = newId();
-  await db.batch([
-    db.prepare('INSERT INTO mt_wo_parts (id, company_id, work_order_id, position, part, quantity, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id, a.companyId, w.id, pos?.p ?? 1, input.part, input.quantity, a.userId, now()),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'part.added', assetId: w.asset_id, workOrderId: w.id, summary: `Part added: ${input.quantity} × ${input.part}`, after: input }),
-  ]);
-  return c.json({ id }, 201);
-});
-
-workRoutes.patch('/c/:company/work-orders/:id/parts/:partId', async (c) => {
-  const { a, w, db } = await workable(c);
-  const part = await db.prepare('SELECT * FROM mt_wo_parts WHERE company_id = ? AND work_order_id = ? AND id = ?').bind(a.companyId, w.id, c.req.param('partId')).first<any>();
-  if (!part) throw notFound('Part line');
-  const input = await body(c, partSchema.partial());
-  const next = { part: input.part ?? part.part, quantity: input.quantity ?? part.quantity };
-  await db.batch([
-    db.prepare('UPDATE mt_wo_parts SET part = ?, quantity = ? WHERE company_id = ? AND id = ?').bind(next.part, next.quantity, a.companyId, part.id),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'part.updated', assetId: w.asset_id, workOrderId: w.id, summary: `Part changed: ${next.quantity} × ${next.part}`, before: { part: part.part, quantity: part.quantity }, after: next }),
-  ]);
-  return c.json({ ok: true });
-});
-
-workRoutes.delete('/c/:company/work-orders/:id/parts/:partId', async (c) => {
-  const { a, w, db } = await workable(c);
-  const part = await db.prepare('SELECT * FROM mt_wo_parts WHERE company_id = ? AND work_order_id = ? AND id = ?').bind(a.companyId, w.id, c.req.param('partId')).first<any>();
-  if (!part) throw notFound('Part line');
-  await db.batch([
-    db.prepare('DELETE FROM mt_wo_parts WHERE company_id = ? AND id = ?').bind(a.companyId, part.id),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'part.removed', assetId: w.asset_id, workOrderId: w.id, summary: `Part removed: ${part.quantity} × ${part.part}`, before: { part: part.part, quantity: part.quantity } }),
-  ]);
-  return c.json({ ok: true });
-});
+// Required part lines (add, change, remove) are in routes-parts.ts, with their products and reservations.
 
 // ------------------------------------------------------------------ labour timer
 
