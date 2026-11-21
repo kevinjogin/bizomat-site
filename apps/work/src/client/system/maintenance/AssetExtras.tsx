@@ -58,7 +58,7 @@ export function QrLabel({ companyId, assetId, number, qrUrl }: { companyId: stri
     <div className="mt-qr">
       <img src={appUrl(qrUrl)} alt={`QR label of ${number}`} width={120} height={132} loading="lazy" />
       <div className="small stack">
-        <span>The label carries <span className="mt-num">ASSET:{number}</span>. Scan it to open the asset, its prestart check or a fault report.</span>
+        <span>The label’s QR code opens this asset in BIZOMAT ERP from a phone’s camera (after signing in), and the Scan screen reads it. Older labels holding <span className="mt-num">ASSET:{number}</span> still work on the Scan screen.</span>
         <Link to={mtPage(companyId, `/labels?ids=${assetId}`)}><Icon name="download" size={14} /> Print this label</Link>
       </div>
     </div>

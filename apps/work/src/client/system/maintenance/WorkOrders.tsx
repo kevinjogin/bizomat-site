@@ -31,6 +31,7 @@ import { Comments, FileList, FilterPanel, History, PriorityBadge, Props, Request
 import { AssetPicker, DepartmentField, PersonSelect, useAssetLabel, type PickedAsset } from './pickers';
 import { ReasonDialog } from './Requests';
 import { DowntimeSection, InspectionsSection, LabourSection, PartsSection, PreventiveNote, ReadingsSection, type WoExtras } from './WorkOrderExtras';
+import { RoundSection } from './Rounds';
 
 const OUTSTANDING = ['open', 'assigned', 'in_progress', 'on_hold'];
 
@@ -506,6 +507,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
             ) : null}
             <p className="muted small">A list of what the job needs. Parts taken from the maintenance stores are under Parts used.</p>
           </Section>
+          <RoundSection companyId={companyId} woId={w.id} />
           <InspectionsSection {...extras} />
           <PartsSection {...extras} />
           <LabourSection {...extras} />

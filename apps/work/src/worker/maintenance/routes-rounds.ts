@@ -1,5 +1,5 @@
 // Inspection rounds (/api/maintenance/c/:company/...): ONE work order of job type inspection that covers many assets,
-// each with its own checklist (the field release; MEX is a functional reference only).
+// each with its own checklist (the field release).
 //
 //   The round    one per work order (mt_rounds), with the checklist chosen for it. The work order keeps its own timer,
 //                labour, photos, parts and status, so the work order list shows one job: a 40-asset round is never 40
