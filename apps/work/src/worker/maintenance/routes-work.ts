@@ -17,6 +17,8 @@ import { pmCancelStmts, pmCompleteStmts, pmReopenStmts } from './pm';
 import { priceLabourStmt } from './routes-setup';
 import { workOrderExtras } from './routes-parts';
 import { inSiteSql } from './m2util';
+// The field release: an inspection round's work order completes only once every asset's checklist is done.
+import { assertRoundDone } from './round-guard';
 import {
   JOB_TYPES,
   LOCKED,
@@ -399,7 +401,8 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
   assertWork(a, w);
   if (!(OUTSTANDING as string[]).includes(w.status)) assertUnlocked(w);
   const input = await body(c, z.object({ notes: zText(10000).min(1, 'Write what was done') }));
-  const linked = (await db.prepare("SELECT id, number FROM mt_requests WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(a.companyId, w.id).all<{ id: string; number: string }>()).results;
+  await assertRoundDone(db, a.companyId, w);
+  const linked =(await db.prepare("SELECT id, number FROM mt_requests WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(a.companyId, w.id).all<{ id: string; number: string }>()).results;
   const t = now();
   const res = await db.batch([
     db.prepare(`UPDATE mt_work_orders SET status = 'completed', completion_notes = ?, completed_at = ?, completed_by = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(input.notes, t, a.userId, t, a.companyId, w.id),

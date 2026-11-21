@@ -11,6 +11,8 @@
 //   assets, requests, work orders and files:  routes-assets.ts, routes-requests.ts, routes-work.ts, routes-files.ts
 //   stages M2 and M3: pm.ts (preventive maintenance), routes-meters.ts, routes-inspections.ts (templates, inspections,
 //   prestarts), routes-parts.ts (parts, labour, downtime), routes-setup.ts (sites, trades, stores, QR, scan), reports.ts
+//   inspection rounds: routes-rounds.ts (one work order over many assets, approval per asset); the Readings page:
+//   routes-meters.ts (the meter list's filters and several readings at once); labels that open the ERP: routes-setup.ts
 
 import { Hono } from 'hono';
 import { z } from 'zod';

@@ -7,7 +7,8 @@ import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, body, newId, notFound, now } from '../lib/util';
-import { qrSvg } from '../erp/qr';
+import { QR_MAX_BYTES, qrSvg } from '../erp/qr';
+import { AppUrlError, appBase } from '../services/app-url';
 import { companyPeople, isManager, requireMt, workOrderScope } from './access';
 import { SUBTREE_SQL, loadAsset } from './routes-assets';
 import { OUTSTANDING, eventStmt, likeOf, sqlList, zId, zText } from './util';
@@ -276,25 +277,68 @@ setupRoutes.get('/c/:company/stores/stock', async (c) => {
 });
 
 // ------------------------------------------------------------------ QR labels and the scan lookup
+//
+// A label's QR code holds the asset's address in BIZOMAT ERP (<public origin>/erp/c/<company>/maintenance/scan?code=
+// <number>), so a phone's own camera opens it; the person signs in first, and the server still decides access. Labels
+// printed before hold ASSET:<number>, and the Scan screen reads both. Without a public address (APP_URL), or when the
+// address would not fit in a QR code, the label holds ASSET:<number> again.
 
-/** The code a label carries: ASSET:<number>. */
+/** The code older labels carry: ASSET:<number>. */
 export const assetCode = (number: string) => `ASSET:${number}`;
+
+/** The text of an asset's label: its address in the ERP, else ASSET:<number>. */
+export function assetLabelText(env: { APP_URL?: string; APP_BASE_URL?: string; CANONICAL_URL?: string; ENVIRONMENT?: string }, companyId: string, number: string): string {
+  try {
+    const url = `${appBase(env).origin}/erp/c/${encodeURIComponent(companyId)}/maintenance/scan?code=${encodeURIComponent(number)}`;
+    if (new TextEncoder().encode(url).length <= QR_MAX_BYTES) return url;
+  } catch (e) {
+    if (!(e instanceof AppUrlError)) throw e;
+  }
+  return assetCode(number);
+}
+
+/**
+ * The code in what was typed or scanned: the code of a label's address when the label is this company's (null when it
+ * names another company), ASSET:<number> without its prefix, or the text as it is.
+ */
+export function labelCode(raw: string, companyId: string): string | null {
+  if (/^https?:\/\//i.test(raw)) {
+    let u: URL;
+    try {
+      u = new URL(raw);
+    } catch {
+      return raw;
+    }
+    const m = /\/c\/([^/]+)\/maintenance\/scan\/?$/.exec(u.pathname);
+    if (!m) return raw;
+    let id: string;
+    try {
+      id = decodeURIComponent(m[1]);
+    } catch {
+      return null;
+    }
+    return id === companyId ? (u.searchParams.get('code') ?? '').trim() : null;
+  }
+  return raw.replace(/^ASSET:/i, '').trim();
+}
 
 setupRoutes.get('/c/:company/assets/:id/qr', async (c) => {
   const a = await requireMt(c);
   const asset = await loadAsset(c.env.DB, a.companyId, c.req.param('id'));
-  return new Response(qrSvg(assetCode(asset.number), `${asset.number} ${asset.name}`.slice(0, 60)), {
+  return new Response(qrSvg(assetLabelText(c.env, a.companyId, asset.number), `${asset.number} ${asset.name}`.slice(0, 60)), {
     headers: { 'Content-Type': 'image/svg+xml; charset=utf-8', 'Cache-Control': 'private, max-age=300', 'X-Content-Type-Options': 'nosniff', 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'" },
   });
 });
 
-/** A typed or scanned code to its asset: a label (ASSET:<number>), an asset number, a serial or a registration number. */
+/** A typed or scanned code to its asset: a label (its ERP address, or ASSET:<number>), an asset number, a serial or a registration number. */
 setupRoutes.get('/c/:company/scan', async (c) => {
   const a = await requireMt(c);
   const db = c.env.DB;
   const raw = (c.req.query('code') ?? '').trim().slice(0, 200);
   if (!raw) throw new HttpError(400, 'Type or scan a code');
-  const code = raw.replace(/^ASSET:/i, '').trim();
+  const code = labelCode(raw, a.companyId);
+  if (code === null) throw new HttpError(404, 'This label is not for an asset of this company');
+  if (!code) throw new HttpError(400, 'Type or scan a code');
   const asset =
     (await db.prepare('SELECT id FROM mt_assets WHERE company_id = ? AND number = ?').bind(a.companyId, code).first<{ id: string }>()) ??
     (await db.prepare("SELECT id FROM mt_assets WHERE company_id = ? AND serial_number <> '' AND serial_number = ? COLLATE NOCASE ORDER BY archived_at IS NOT NULL LIMIT 1").bind(a.companyId, code).first<{ id: string }>()) ??
