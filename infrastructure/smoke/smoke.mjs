@@ -30,14 +30,17 @@ import net from 'node:net';
 import tls from 'node:tls';
 
 // The Knowledge Centre (/learn/, owner 20 Nov 2026) holds every system's guide; the old /systems/*/guide/ answer 301 there.
+// An entry with a fragment (/systems/#erp) is a section of a page: a browser never sends the fragment, so the page is
+// requested without it (/systems/) and must hold the element the fragment names (id="erp").
 const PAGES = ['/', '/systems/', '/systems/#erp', '/systems/#crm', '/systems/#finance', '/systems/#projects', '/systems/#engineering', '/systems/#manufacturing', '/systems/#whs', '/learn/', '/learn/#crm', '/learn/#procurement', '/learn/#workflows', '/learn/#workflow-procure-to-pay', '/resources/', '/tools/', '/reados/', '/engine-room/', '/privacy/', '/terms/', '/disclaimer/'];
 // Pages that moved: the old address answers 301 to the new one (About and Proof of Work became the Engine Room; the
-// design preview was retired, owner 14 Nov 2026; the product pages became the Systems pages).
+// design preview was retired, owner 14 Nov 2026; the product pages became the Systems pages). The Location must name
+// the new address exactly, fragment included.
 const MOVED = [['/about/', '/engine-room/'], ['/proof-of-work/', '/engine-room/'], ['/system-preview/', '/systems/#erp'], ['/erp-design-preview/', '/systems/#erp'],
   // The product pages became the Systems pages (owner, 14 Nov 2026).
   ['/products/', '/systems/'], ['/work/', '/systems/#projects'], ['/cad-automation/', '/systems/#engineering'], ['/crm-platform/', '/systems/#crm'], ['/crm-platform/guide/', '/learn/#crm'], ['/finance-platform/', '/systems/#finance'], ['/finance-platform/guide/', '/learn/#finance'],
   // The user guides moved into the Knowledge Centre (owner, 20 Nov 2026).
-  ['/systems/erp/guide/', '/learn/'], ['/systems/crm/guide/', '/learn/#crm'], ['/systems/finance/guide/', '/learn/#finance'], ['/systems/projects/guide/', '/learn/#projects'],
+  ['/systems/erp/guide/', '/learn/#getting-started'], ['/systems/crm/guide/', '/learn/#crm'], ['/systems/finance/guide/', '/learn/#finance'], ['/systems/projects/guide/', '/learn/#projects'],
   ['/systems/engineering/guide/', '/learn/#cad-automation'], ['/systems/manufacturing/guide/', '/learn/#manufacturing'], ['/systems/whs/guide/', '/learn/#whs']];
 const HSTS = /max-age=\d{7,}/;
 
@@ -81,6 +84,9 @@ function target(host) {
   return { connectHost: base.hostname, port: basePort, tls: baseTls, servername: base.hostname, hostHeader: host };
 }
 
+// The most of a body kept: /learn/ is every guide on one page (1.7 MB on 21 Nov 2026).
+const MAX_BODY = 8_000_000;
+
 function send(host, { method = 'GET', path = '/', headers = {}, body } = {}) {
   const t = target(host);
   return new Promise((resolve) => {
@@ -102,11 +108,11 @@ function send(host, { method = 'GET', path = '/', headers = {}, body } = {}) {
       let size = 0;
       res.on('data', (c) => {
         size += c.length;
-        if (size <= 2_000_000) chunks.push(c);
+        if (size <= MAX_BODY) chunks.push(c);
       });
       res.on('end', () => {
         const text = Buffer.concat(chunks).toString('utf8');
-        resolve({ status: res.statusCode, headers: res.headers, text, json: () => JSON.parse(text) });
+        resolve({ status: res.statusCode, headers: res.headers, text, truncated: size > MAX_BODY, json: () => JSON.parse(text) });
       });
       res.on('error', (err) => resolve({ status: 0, error: err.code || err.message, headers: {}, text: '' }));
     });
@@ -209,6 +215,37 @@ const json = (r) => {
   }
 };
 
+/** A page entry as a browser uses it: the path it requests (never the fragment) and the id it then scrolls to. */
+function splitFragment(entry) {
+  const at = entry.indexOf('#');
+  return at < 0 ? { path: entry, id: '' } : { path: entry.slice(0, at), id: decodeURIComponent(entry.slice(at + 1)) };
+}
+
+/** Whether the HTML holds an element with this id (quoted or not). */
+function hasId(html, id) {
+  const e = id.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return new RegExp(`\\sid=(?:"${e}"|'${e}'|${e}(?=[\\s/>]))`).test(html);
+}
+
+/** Whether a redirect's Location (relative, or absolute on the platform's host) names `to` exactly: path, query and
+ * fragment. */
+function locationIs(location, to) {
+  const own = `https://${platformHost()}`;
+  try {
+    const got = new URL(location, own);
+    return (got.origin === own || got.origin === 'https://bizomat.ai') && got.href === new URL(to, got.origin).href;
+  } catch {
+    return false;
+  }
+}
+
+/** Each page once per run: several entries are sections of the same page (/systems/, /learn/). */
+const pages = new Map();
+function page(path) {
+  if (!pages.has(path)) pages.set(path, onPlatform({ path, headers: { Accept: 'text/html' } }));
+  return pages.get(path);
+}
+
 async function waitForProxy() {
   if (!opts.wait) return;
   const until = Date.now() + opts.wait * 1000;
@@ -300,13 +337,18 @@ async function webChecks() {
     await check('web', `${from} moved to ${to}`, async () => {
       const r = await onPlatform({ path: from, headers: { Accept: 'text/html' } });
       const location = r.headers.location || '';
-      return (r.status === 301 && (location === to || location.endsWith(`://bizomat.ai${to}`) || new URL(location, 'https://x').pathname === to)) || { fail: `${describe(r)} ${location}` };
+      return (r.status === 301 && locationIs(location, to)) || { fail: `${describe(r)} ${location}` };
     });
   }
-  for (const page of PAGES) {
-    await check('web', `page ${page}`, async () => {
-      const r = await onPlatform({ path: page, headers: { Accept: 'text/html' } });
-      if (r.status === 200) return /<html/i.test(r.text) || { fail: 'not an HTML page' };
+  for (const entry of PAGES) {
+    const { path, id } = splitFragment(entry);
+    await check('web', id ? `page ${entry} (${path} has id="${id}")` : `page ${entry}`, async () => {
+      const r = await page(path);
+      if (r.status === 200) {
+        if (!/<html/i.test(r.text)) return { fail: 'not an HTML page' };
+        if (id && !hasId(r.text, id)) return { fail: `no element with id="${id}"${r.truncated ? ` in its first ${MAX_BODY} bytes` : ''}` };
+        return true;
+      }
       if (r.status === 404) return { warn: '404: not built yet' };
       return { fail: describe(r) };
     });
@@ -314,7 +356,7 @@ async function webChecks() {
   // The retired design preview: none of its old files is served (every address under it answers 301 to /systems/#erp).
   await check('web', 'the retired design preview serves nothing (/system-preview/assets/...: 301 to /systems/#erp)', async () => {
     const r = await onPlatform({ path: '/system-preview/assets/index.js' });
-    return (r.status === 301 && /\/systems\/#erp$/.test(r.headers.location || '')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
+    return (r.status === 301 && locationIs(r.headers.location || '', '/systems/#erp')) || { fail: `${describe(r)} ${r.headers.location || ''}` };
   });
   await check('web', 'security headers on /', async () => {
     const r = await onPlatform({ path: '/', headers: { Accept: 'text/html' } });
