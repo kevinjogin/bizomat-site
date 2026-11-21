@@ -399,12 +399,14 @@ export async function loadSo(db: D1Database, companyId: string, id: string) {
 function keepNotes(priced: PricedLine[], before: { id: string; product_id: string; quantity: number; unit_price_cents: number; discount_bp: number; price_note?: string | null }[], sameHeader: boolean) {
   if (!sameHeader) return;
   const byId = new Map(before.map((l) => [l.id, l]));
-  const shape = (ls: { product: string; qty: number }[]) => ls.map((l) => `${l.product}:${q6(l.qty)}`).sort().join('|');
-  const sameOrder = shape(before.map((l) => ({ product: l.product_id, qty: l.quantity }))) === shape(priced.map((p) => ({ product: p.productId, qty: p.quantity })));
+  // the order's value, as priceLines works it out for a promotion's minimum: each line's product, quantity and price
+  const shape = (ls: { product: string; qty: number; unit: number }[]) => ls.map((l) => `${l.product}:${q6(l.qty)}:${l.unit}`).sort().join('|');
+  const sameOrder = shape(before.map((l) => ({ product: l.product_id, qty: l.quantity, unit: l.unit_price_cents }))) === shape(priced.map((p) => ({ product: p.productId, qty: p.quantity, unit: p.unitPriceCents })));
   for (const p of priced) {
     const was = p.id ? byId.get(p.id) : undefined;
     if (!was || was.product_id !== p.productId || Math.abs(was.quantity - p.quantity) > 1e-9 || was.unit_price_cents !== p.unitPriceCents || was.discount_bp !== p.discountBp) continue;
-    if (!sameOrder && /\bpromotion /.test(was.price_note ?? '')) continue;
+    // the promotion part of a note, as pricing.ts writes it (a list's own title may say 'promotion')
+    if (!sameOrder && /(^|, )promotion .+ \((?:[\d.]+% off|an amount off each)\)$/.test(was.price_note ?? '')) continue;
     p.priceNote = was.price_note ?? p.priceNote;
   }
 }

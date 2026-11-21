@@ -101,6 +101,17 @@ describe('price lists and promotions on sales orders', () => {
     const d2after = await owner.json('GET', erp(co, `/sales-orders/${d2.id}`));
     expect(d2after.lines[0].priceNote).not.toContain('Trade Customer contract prices');
 
+    // a promotion's note is not kept once another line's price takes the order below its minimum
+    const widget = await owner.json('POST', erp(co, '/products'), { name: 'Widget', type: 'finished_product', priceCents: 2_000, sku: 'WID-1' });
+    const big = await owner.json('POST', x(co, '/o/pr_promotion'), { data: { name: 'Big order', discountType: 'percent', discountValue: 5, product: widget.id, minOrder: 10_000, validFrom: day(-1), validTo: day(30) } });
+    await owner.json('POST', x(co, `/o/pr_promotion/${big.record.id}/step/activate`), {});
+    const d3 = await owner.json('POST', erp(co, '/sales-orders'), { crmCompanyId: third.crmCompanyId, lines: [{ productId: widget.id, quantity: 1 }, { productId: kit.id, quantity: 1, unitPriceCents: 9_000, discountBp: 0 }] });
+    const d3v = await owner.json('GET', erp(co, `/sales-orders/${d3.id}`));
+    expect(d3v.lines[0]).toMatchObject({ unitPriceCents: 2_000, discountBp: 500 });
+    expect(d3v.lines[0].priceNote).toContain('Big order');
+    await owner.json('PUT', erp(co, `/sales-orders/${d3.id}`), { lines: d3v.lines.map((l: any, i: number) => ({ id: l.id, productId: l.productId, quantity: l.quantity, unitPriceCents: i === 1 ? 1_000 : l.unitPriceCents, discountBp: l.discountBp, taxCode: l.taxCode })) });
+    expect((await owner.json('GET', erp(co, `/sales-orders/${d3.id}`))).lines[0].priceNote).not.toContain('Big order');
+
     // the Pricing module switched off: standard prices only, nothing noted from the lists
     await env.DB.prepare("INSERT INTO feature_flags (key, scope, scope_id, value, reason, updated_by, updated_at) VALUES ('module_commercial_enabled', 'company', ?, 'off', 'test switch', 'test', ?)").bind(co, Date.now()).run();
     const off = await owner.json('GET', erp(co, `/sales-orders/price?productId=${kit.id}&customer=crm:${trade.crmCompanyId}&qty=20`));

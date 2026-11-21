@@ -111,6 +111,11 @@ describe('custom fields', () => {
     const jpBefore = byLabel(jp.fields.find((f: any) => f.label === 'City').options);
     await owner.json('PATCH', x(co, '/fields/ct_contract/cf_city'), { options: [...cities].reverse() });
     expect(byLabel((await owner.json('GET', x(co, '/fields/ct_contract'))).fields.find((f: any) => f.key === 'cf_city').options)).toEqual(jpBefore);
+    // labels that differ only in case keep their own keys when reordered
+    const unit = await owner.json('POST', x(co, '/fields/ct_contract'), { label: 'Unit', type: 'select', options: ['kg', 'KG', 'g'] });
+    const unitBefore = byLabel(unit.fields.find((f: any) => f.label === 'Unit').options);
+    await owner.json('PATCH', x(co, '/fields/ct_contract/cf_unit'), { options: ['KG', 'g', 'kg'] });
+    expect(byLabel((await owner.json('GET', x(co, '/fields/ct_contract'))).fields.find((f: any) => f.key === 'cf_unit').options)).toEqual(unitBefore);
     // an offered label that itself ends like a retired one keeps its key
     const legacy = await owner.json('POST', x(co, '/fields/ct_contract'), { label: 'Legacy flag', type: 'select', options: ['A', 'Old (no longer offered)'] });
     const legacyKeys = legacy.fields.find((f: any) => f.label === 'Legacy flag').options.map((o: any) => o.key);

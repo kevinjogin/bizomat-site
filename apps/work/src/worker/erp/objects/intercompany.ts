@@ -79,14 +79,19 @@ async function contactFor(db: D1Database, companyId: string, fa: FinAccess, enti
       .bind(companyId, entity.id, fa.orgId)
       .first<C>();
   const usable = async (c: C) => {
-    const kind = c.kind === role || c.kind === 'both' ? c.kind : 'both';
-    if (kind === c.kind && !c.archived_at) return { id: c.id, name: c.name };
+    const other = role === 'customer' ? 'supplier' : 'customer';
+    if ((c.kind === role || c.kind === 'both') && !c.archived_at) return { id: c.id, name: c.name };
     // Finance's own rule for changing a contact (its scope: own, team or all)
     if (!(canRecord(fa, 'contacts', 'view', c) && canRecord(fa, 'contacts', 'edit', c)))
       throw new HttpError(403, c.archived_at ? `${c.name} is archived in ${fa.org.name}’s contacts and your Finance role cannot restore it: ask someone who can to restore it there` : `${c.name} is a ${c.kind} in ${fa.org.name}, and your Finance role cannot make it a ${role} as well`);
-    const changed = await db.prepare('UPDATE fin_contacts SET kind = ?, archived_at = NULL, updated_at = ? WHERE id = ? AND org_id = ? AND (kind <> ? OR archived_at IS NOT NULL)').bind(kind, now(), c.id, fa.orgId, kind).run();
-    if (changed.meta.changes)
-      await auditStmt(db, { orgId: fa.orgId, actorId: fa.userId, action: 'contact.updated', targetType: 'contact', targetId: c.id, before: { kind: c.kind, archived: !!c.archived_at }, after: { kind, archived: false }, metadata: { source: 'BIZOMAT ERP intercompany transaction', record } }).run();
+    // Each change is decided by the row as it is now, only ever restores or widens, and is audited once, by the request
+    // that made it (two requests at once cannot narrow a contact another made 'both').
+    const audit = (before: Record<string, unknown>, after: Record<string, unknown>) =>
+      auditStmt(db, { orgId: fa.orgId, actorId: fa.userId, action: 'contact.updated', targetType: 'contact', targetId: c.id, before, after, metadata: { source: 'BIZOMAT ERP intercompany transaction', record } }).run();
+    const restored = await db.prepare('UPDATE fin_contacts SET archived_at = NULL, updated_at = ? WHERE id = ? AND org_id = ? AND archived_at IS NOT NULL').bind(now(), c.id, fa.orgId).run();
+    if (restored.meta.changes) await audit({ archived: true }, { archived: false });
+    const widened = await db.prepare("UPDATE fin_contacts SET kind = 'both', updated_at = ? WHERE id = ? AND org_id = ? AND kind = ?").bind(now(), c.id, fa.orgId, other).run();
+    if (widened.meta.changes) await audit({ kind: other }, { kind: 'both' });
     return { id: c.id, name: c.name };
   };
   const linked = await linkedNow();

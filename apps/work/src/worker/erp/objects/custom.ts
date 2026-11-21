@@ -135,8 +135,13 @@ export async function changeCustom(db: D1Database, companyId: string, object: st
     const used = new Set(options.map((o) => o.key));
     const next: Choice[] = [];
     for (const label of labels) {
-      // only a retired choice carries the suffix this code added; an offered label is compared as it is
-      const hit = options.find((o) => (o.retired ? baseLabel(o.label) : o.label).toLowerCase() === label.toLowerCase() && !next.some((n) => n.key === o.key));
+      // only a retired choice carries the suffix this code added; an offered label is compared as it is, exactly first
+      // (so 'kg' and 'KG' keep their own keys), then whatever its case
+      const cmp = (o: Choice) => (o.retired ? baseLabel(o.label) : o.label);
+      const free = (o: Choice) => !next.some((n) => n.key === o.key);
+      // a choice another of the new labels names exactly is that label's, never this one's by case
+      const claimed = (o: Choice) => labels.some((l) => l !== label && l === cmp(o));
+      const hit = options.find((o) => free(o) && cmp(o) === label) ?? options.find((o) => free(o) && !claimed(o) && cmp(o).toLowerCase() === label.toLowerCase());
       if (hit) {
         next.push({ key: hit.key, label });
         continue;
