@@ -118,7 +118,12 @@ export function suggest(p: Pricing, q: { productId: string; standard: number | n
   const unit = listUnit === null ? null : promotion?.type === 'amount' ? listUnit - promotion.offPerUnit : listUnit;
   const discountBp = promotion?.type === 'percent' ? Math.round(Math.min(100, promotion.value) * 100) : 0;
   // each name shortened so the whole note fits the 300 characters a line keeps, its promotion part included
-  const cut = (t: string) => (t.length > 110 ? `${t.slice(0, 109)}…` : t);
+  // (never between the two halves of an emoji or another character outside the basic plane)
+  const cut = (t: string) => {
+    if (t.length <= 110) return t;
+    const end = t.charCodeAt(108) >= 0xd800 && t.charCodeAt(108) <= 0xdbff ? 108 : 109;
+    return `${t.slice(0, end)}…`;
+  };
   const parts = [best ? `Price list ${cut(best.label)}${best.minQty > 1 ? ` (from ${best.minQty})` : ''}` : listUnit !== null ? 'Standard price' : ''];
   if (promotion) parts.push(`promotion ${cut(promotion.label)} (${promotion.type === 'percent' ? `${promotion.value}% off` : 'an amount off each'})`);
   return { listUnit, unit, discountBp, priceList: best ? { id: best.listId, label: best.label, price: best.price, minQty: best.minQty, customer: !!best.customer } : null, promotion, note: parts.filter(Boolean).join(', ') };
