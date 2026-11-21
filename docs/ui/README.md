@@ -146,7 +146,8 @@ repository is public and screenshots are not source); they were delivered in the
 
 The behaviour (a closed dialog leaves only an inert copy that goes within a moment, and none with the flag off; a
 company switch never shows the old company's heading uncovered) is checked by `apps/work/e2e/ui-new.spec.ts`
-(`npm run test:e2e:node`, run locally; the work app's end-to-end specs are not part of CI).
+(`npm run test:e2e:node`; since 21 Nov 2026 the work job of `.github/workflows/bizomat-ci.yml` runs every one of the
+work app's end-to-end specs).
 
 ## Released
 
