@@ -142,7 +142,7 @@ export default function Integrations() {
           {(providers.data?.providers ?? []).map((p) => (
             <div key={p.id} className="card integration-card">
               <div className="row">
-                <div className="empty-icon" style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="empty-icon" style={{ width: 36, height: 36, borderRadius: 'var(--ui-r10, 10px)', background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icon name={PROVIDER_ICON[p.id] ?? 'plug'} size={18} />
                 </div>
                 <strong className="grow">{p.name}</strong>

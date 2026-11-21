@@ -750,6 +750,30 @@ adminRoutes.post('/users/:id/password', async (c) => {
   return c.json({ ok: true });
 });
 
+// Two-factor sign-in removed for someone who lost both their phone and their recovery codes (founder only, after
+// confirming who they are outside the app; src/worker/auth/two-factor.ts). Their sessions end; they sign in with their
+// password and can turn it on again. A reason is required and audited.
+adminRoutes.post('/users/:id/two-factor/remove', async (c) => {
+  if (c.get('platformRole') !== 'founder') throw new HttpError(403, 'Only the founder can remove two-factor sign-in for someone');
+  await requireReauth(c);
+  const actor = c.get('user');
+  await rateLimit(c.env.DB, `admin-mfa-remove:${actor.id}`, 10, 60 * 60_000);
+  const input = await body(c, z.object({ reason: z.string().trim().min(10, 'Give the reason (how you confirmed who they are)').max(500) }));
+  const target = await c.env.DB.prepare('SELECT id FROM users WHERE id = ?').bind(c.req.param('id')).first<{ id: string }>();
+  if (!target) throw notFound('User');
+  if (target.id === actor.id) throw badRequest('Turn your own two-factor sign-in off in Settings, Security');
+  const had = await c.env.DB.prepare('SELECT confirmed_at FROM user_mfa WHERE user_id = ?').bind(target.id).first<{ confirmed_at: number | null }>();
+  if (!had) throw badRequest('This person does not use two-factor sign-in');
+  const t = now();
+  await c.env.DB.batch([
+    c.env.DB.prepare('DELETE FROM user_mfa WHERE user_id = ?').bind(target.id),
+    c.env.DB.prepare('UPDATE login_challenges SET used_at = ? WHERE user_id = ? AND used_at IS NULL').bind(t, target.id),
+    c.env.DB.prepare("UPDATE sessions SET revoked_at = ?1, ended_at = ?1, end_reason = 'mfa_removed' WHERE user_id = ?2 AND revoked_at IS NULL").bind(t, target.id),
+    auditStmt(c.env.DB, { actorId: actor.id, action: 'admin.mfa_removed', targetType: 'user', targetId: target.id, metadata: { reason: input.reason }, ip: clientIp(c) }),
+  ]);
+  return c.json({ ok: true });
+});
+
 // Security reset (founder only): end every session but the founder's own, everywhere, at once; optionally require
 // everyone who signs in with a password to choose a new one first. For a suspected exposure of sessions or password
 // hashes. People keep their accounts and data; they sign in again (with their current password, then a new one).

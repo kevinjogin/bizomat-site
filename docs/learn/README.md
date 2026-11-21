@@ -52,7 +52,10 @@ add its two redirect lines (`/learn/<id>` and `/learn/<id>/` to `/learn/#<id>`) 
 
 ## Where it is linked
 
-The navigation's **Learn** menu and the footer; the homepage (hero, the learning band and the module grid); every
-system page ("Guides and tutorials"); `/systems/`; AI Search's catalogue (`doc:learn`, `doc:learn-workflows` and the
+The navigation's **Systems** menu, whose Learn group lists the Knowledge Centre and each of its sections (owner,
+20 Nov 2026: Learn under Systems; `LEARN_LINKS` in `src/config/site.ts`, checked against `SECTIONS` by
+`tests/navigation.test.ts`), and the footer; the homepage (hero, the learning band and the module grid); every
+system's section ("Guides and tutorials"); `/systems/` (its hero, the systems at a glance and its Learn section, from
+the same list); AI Search's catalogue (`doc:learn`, `doc:learn-workflows` and the
 module guides); `/llms.txt`; inside BIZOMAT ERP, the side menu's Help, every tool's platform footer, the CRM and Finance
 menus and the Projects help dialog.

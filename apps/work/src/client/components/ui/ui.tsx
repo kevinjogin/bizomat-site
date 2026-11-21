@@ -100,7 +100,7 @@ export function PageHeader({ title, subtitle, icon, actions }: { title: ReactNod
   return (
     <div className="page-header">
       {icon ? (
-        <div className="empty-icon" style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="empty-icon" style={{ width: 40, height: 40, borderRadius: 'var(--ui-r10, 10px)', background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <Icon name={icon} size={20} />
         </div>
       ) : null}

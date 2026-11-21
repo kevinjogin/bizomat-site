@@ -137,7 +137,7 @@ export function need(ok: boolean, message: string, code = 'CAD_FORBIDDEN'): void
 
 /** The companies where a person may use CAD Automation in the ERP: it is on there, and their role lets them see it
  * (operate: also work with it, as the sync and the AI connector need). Registered companies, then their own. */
-export async function cadCompanies(env: Env, user: { id: string; name: string; email: string }, opts: { operate?: boolean } = { operate: true }): Promise<{ id: string; name: string; kind: string; operate: boolean }[]> {
+export async function cadCompanies(env: Env, user: { id: string; name: string; email: string }, opts: { operate?: boolean } = { operate: true }): Promise<{ id: string; name: string; kind: string; operate: boolean; export: boolean }[]> {
   const db = env.DB;
   const reg = await db
     .prepare("SELECT co.id FROM co_members m JOIN co_companies co ON co.id = m.company_id AND co.deleted_at IS NULL AND co.suspended_at IS NULL WHERE m.user_id = ? AND COALESCE(m.status, 'active') = 'active' ORDER BY co.name")
@@ -145,12 +145,12 @@ export async function cadCompanies(env: Env, user: { id: string; name: string; e
     .all<{ id: string }>();
   const own = await db.prepare('SELECT id FROM sys_companies WHERE owner_id = ?').bind(user.id).first<{ id: string }>();
   const ids = [...reg.results.map((r) => r.id), ...(own ? [own.id] : [])];
-  const out: { id: string; name: string; kind: string; operate: boolean }[] = [];
+  const out: { id: string; name: string; kind: string; operate: boolean; export: boolean }[] = [];
   for (const id of ids) {
     if (!(await cadOn(db, id))) continue;
     try {
       const a = await loadCadAccess(env, id, user);
-      if (a.perms.operate || !opts.operate) out.push({ id, name: a.erp.companyName, kind: a.erp.kind, operate: !!a.perms.operate });
+      if (a.perms.operate || !opts.operate) out.push({ id, name: a.erp.companyName, kind: a.erp.kind, operate: !!a.perms.operate, export: !!a.perms.export });
     } catch {
       // not allowed in this company: left out
     }

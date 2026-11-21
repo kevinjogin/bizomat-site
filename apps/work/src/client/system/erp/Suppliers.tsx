@@ -16,6 +16,7 @@ import '../../styles/erp.css';
 import { SUPPLIER_STATUS, dayText, erpPath, money, numOrNull, procurementPage, productsPage, qualityPage, useErpMe, type ErpEvent, type ErpFile, type ErpMe, type Supplier } from './api';
 import { CsvLink, ErpFiles, ErpUpload, FilterPanel, History, Pager, Props, Section, SupplierBadge, options } from './common';
 import { NoteDialog } from './Changes';
+import { SupplierPortalPanel } from './SupplierPortal';
 import { PoEditor, PurchaseOrderDetail, PurchaseOrdersPage, ReceiptDetail, ReceiptsPage, RequisitionDetail, RequisitionsPage, RfqDetail, RfqsPage } from './Purchasing';
 
 export function ProcurementArea({ companyId, companyName }: { companyId: string; companyName: string }) {
@@ -398,6 +399,7 @@ function SupplierDetail({ companyId, me }: { companyId: string; me: ErpMe }) {
           <Section title="Documents" actions={v.can.edit ? <ErpUpload companyId={companyId} target={{ supplierId: s.id }} onDone={refresh} label="Add documents" /> : undefined}>
             <ErpFiles files={v.files} canRemove={v.can.edit} onRemove={(f) => void removeFile(f)} />
           </Section>
+          <SupplierPortalPanel companyId={companyId} supplierId={s.id} canEdit={v.can.edit} />
           <Section title="History"><History events={v.history as any} /></Section>
         </div>
       </div>

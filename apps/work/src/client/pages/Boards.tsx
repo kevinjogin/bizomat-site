@@ -101,7 +101,7 @@ function BoardTile({ board: b, wsId, onAction, folders, folder, draggable, onMov
     <div className="tile" style={{ position: 'relative' }} {...(draggable ? entityDragProps(b.id) : {})}>
       <Link to={`/w/${wsId}/boards/${b.id}`} style={{ color: 'inherit', textDecoration: 'none' }} className="col">
         <div className="row">
-          <span className="empty-icon" style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <span className="empty-icon" style={{ width: 34, height: 34, borderRadius: 'var(--ui-r9, 9px)', background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Icon name={b.kind === 'personal' ? 'user' : b.icon || 'grid'} />
           </span>
           <strong className="grow ellipsis">{b.name}</strong>

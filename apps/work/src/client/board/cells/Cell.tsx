@@ -95,7 +95,7 @@ export function CellDisplay({ column, value, item, ctx }: { column: ColumnDTO; v
       // character stays readable whatever the progress, in both themes.
       return (
         <div style={{ width: '100%', padding: '0 var(--ui-s4, 4px)' }}>
-          <div style={{ position: 'relative', height: 22, borderRadius: 11, background: 'var(--surface-3)', overflow: 'hidden' }}>
+          <div style={{ position: 'relative', height: 22, borderRadius: 'var(--ui-r11, 11px)', background: 'var(--surface-3)', overflow: 'hidden' }}>
             <span style={text('var(--text)')}>{label}</span>
             <span aria-hidden style={{ position: 'absolute', inset: 0, background: 'var(--accent-fill)', clipPath: `inset(0 ${100 - pct}% 0 0)` }}>
               <span style={text('#fff')}>{label}</span>
@@ -105,7 +105,7 @@ export function CellDisplay({ column, value, item, ctx }: { column: ColumnDTO; v
       );
     }
     case 'checkbox':
-      return value ? <Icon name="check" size={18} className="success-text" /> : <span style={{ width: 16, height: 16, border: '1.5px solid var(--border-strong)', borderRadius: 4, display: 'inline-block' }} />;
+      return value ? <Icon name="check" size={18} className="success-text" /> : <span style={{ width: 16, height: 16, border: '1.5px solid var(--border-strong)', borderRadius: 'var(--ui-r4, 4px)', display: 'inline-block' }} />;
     case 'tags':
       return Array.isArray(value) ? (
         <span className="row" style={{ gap: 'var(--ui-s4, 4px)', overflow: 'hidden' }}>{(value as string[]).map((t) => <span key={t} className="badge accent">{t}</span>)}</span>
@@ -290,7 +290,7 @@ function PopoverEditor({ column, value, item, ctx, onChange, close }: { column: 
       return (
         <div className="row" style={{ padding: 'var(--ui-s8, 8px)' }} role="radiogroup" aria-label={column.title}>
           {Array.from({ length: max }, (_, i) => (
-            <button key={i} className="btn ghost icon sm" aria-label={`${i + 1} stars`} style={{ color: (value as number) > i ? '#f5a524' : 'var(--border-strong)', fontSize: 18 }} onClick={() => { onChange(i + 1); close(); }}>★</button>
+            <button key={i} className="btn ghost icon sm" aria-label={`${i + 1} stars`} style={{ color: (value as number) > i ? '#f5a524' : 'var(--border-strong)', fontSize: 'var(--ui-f18, 18px)' }} onClick={() => { onChange(i + 1); close(); }}>★</button>
           ))}
           <button className="btn ghost sm" onClick={() => { onChange(null); close(); }}>Clear</button>
         </div>

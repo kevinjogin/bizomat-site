@@ -145,6 +145,8 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(params.get('error') ? OAUTH_ERRORS[params.get('error')!] ?? 'Sign-in failed' : null);
   const [unconfirmed, setUnconfirmed] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  // Two-factor sign-in: the password (or Google) was right; a code from the authenticator app makes the session.
+  const [challenge, setChallenge] = useState<string | null>(params.get('challenge'));
   const qc = useQueryClient();
   const navigate = useNavigate();
   const { session } = useSession();
@@ -159,6 +161,11 @@ export function LoginPage() {
     setUnconfirmed(null);
     try {
       const s = await post('/auth/login', { email, password });
+      if (s.secondFactorRequired) {
+        setChallenge(s.challenge);
+        setPassword('');
+        return;
+      }
       setCsrfToken(s.csrfToken);
       qc.setQueryData(['me'], s);
       navigate(next, { replace: true });
@@ -169,6 +176,7 @@ export function LoginPage() {
       setBusy(false);
     }
   };
+  if (challenge) return <SecondFactor challenge={challenge} next={next} onEnded={(msg) => { setChallenge(null); setError(msg); }} />;
   return (
     <AuthLayout title={`Sign in to ${BRAND.platform}`} subtitle={`Welcome back. Sign in to your ${BRAND.product} workspace.`}>
       <ProviderButtons next={next} />
@@ -195,6 +203,46 @@ export function LoginPage() {
       ) : (
         <p className="muted small" style={{ marginTop: 'var(--ui-s16, 16px)', textAlign: 'center' }}>Accounts are created by invitation.</p>
       )}
+    </AuthLayout>
+  );
+}
+
+function SecondFactor({ challenge, next, onEnded }: { challenge: string; next: string; onEnded: (message: string) => void }) {
+  const [code, setCode] = useState('');
+  const [recovery, setRecovery] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const qc = useQueryClient();
+  const navigate = useNavigate();
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setBusy(true);
+    setError(null);
+    try {
+      const s = await post('/auth/login/two-factor', { challenge, ...(recovery ? { recoveryCode: code.trim() } : { code: code.replace(/\s/g, '') }) });
+      setCsrfToken(s.csrfToken);
+      qc.setQueryData(['me'], s);
+      navigate(typeof s.redirectTo === 'string' && s.redirectTo.startsWith('/') && !s.redirectTo.startsWith('//') ? s.redirectTo : next, { replace: true });
+    } catch (err) {
+      const ended = err instanceof ApiError && (err.details as { code?: string } | undefined)?.code === 'CHALLENGE_ENDED';
+      if (ended) onEnded(errorMessage(err));
+      else setError(errorMessage(err));
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <AuthLayout title="Two-factor sign-in" subtitle={recovery ? 'Enter one of your recovery codes. Each works once.' : 'Enter the six-digit code from your authenticator app.'}>
+      <form onSubmit={submit} noValidate>
+        <Field label={recovery ? 'Recovery code' : 'Code'} htmlFor="second-factor">
+          <input id="second-factor" className="input" autoComplete="one-time-code" inputMode={recovery ? 'text' : 'numeric'} maxLength={recovery ? 20 : 8} value={code} onChange={(e) => setCode(e.target.value)} autoFocus required />
+        </Field>
+        {error ? <div className="error-box" role="alert">{error}</div> : null}
+        <button className="btn primary block lg" disabled={busy || code.trim().length < 6}>{busy ? 'Checking…' : 'Sign in'}</button>
+      </form>
+      <p className="muted small">
+        <button type="button" className="btn ghost sm" onClick={() => { setRecovery(!recovery); setCode(''); setError(null); }}>{recovery ? 'Use the authenticator app' : 'Use a recovery code'}</button>
+      </p>
     </AuthLayout>
   );
 }

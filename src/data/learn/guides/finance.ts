@@ -316,6 +316,10 @@ const guide: Guide = {
   ],
   faqs: [
     {
+      q: "Can overheads be spread across departments?",
+      a: "Yes, in BIZOMAT ERP: Cost allocation spreads what an account (for example Rent) holds in a period without a department across departments by percentage. Someone else approves it, and Post to Finance makes one journal here, with each department's share. Each department must be in Finance.",
+    },
+    {
       q: "Does Finance connect to my bank?",
       a: "No. It never connects to a bank and never asks for your internet banking password. Download a statement from your bank (CSV, OFX or QIF) and import it.",
     },
@@ -352,8 +356,12 @@ const guide: Guide = {
       a: "No. Inventory, Manufacturing, Supply Chain and Maintenance record their values in the ERP, and posting them to Finance's ledger is planned. Goods receipts, shipments and returns do create draft bills, invoices and credit notes in Finance for you to approve.",
     },
     {
+      q: "Which journals come from BIZOMAT ERP?",
+      a: "Depreciation of fixed assets (month by month), approved pay runs (one journal each) and earned revenue from revenue schedules, when someone whose Finance role may post journals chooses Post to Finance in the ERP. They are manual journals whose memo starts with BIZOMAT ERP, in the accounts chosen on the module's Finance postings tab; they respect the lock date and are corrected by reversing them.",
+    },
+    {
       q: "Can a workspace use more than one currency?",
-      a: "No. Each workspace has one currency, chosen when you create it, so totals are never mixed.",
+      a: "No. Each workspace has one currency, chosen when you create it, so totals are never mixed. A group with entities in several currencies keeps a workspace for each, and BIZOMAT ERP's Consolidation and intercompany module translates them into one consolidated report at the exchange rates you enter.",
     },
   ],
   related: ["crm", "projects", "procurement", "supply-chain", "reports", "companies", "roles-and-permissions", "data-management"],
@@ -362,9 +370,9 @@ const guide: Guide = {
   notYet: [
     { text: "Bank feeds through an approved provider (none is chosen; Finance never connects to a bank today).", status: "planned" },
     { text: "A BAS module with lodged-period snapshots (lodgement stays with the business or its agent).", status: "planned" },
-    { text: "Depreciation posted to the ledger (BIZOMAT ERP's Fixed assets module works it out; enter the journal here).", status: "planned" },
+    { text: "Disposals of fixed assets posted from BIZOMAT ERP (depreciation, pay runs and earned revenue are posted from there today; enter a disposal's journal here).", status: "planned" },
     { text: "PAYG withholding tables, superannuation payments and Single Touch Payroll (BIZOMAT ERP's Payroll module works out pay runs with the rates you set; it is not certified payroll).", status: "planned" },
-    { text: "More than one currency within one workspace, and consolidation across workspaces.", status: "planned" },
+    { text: "More than one currency within one workspace (BIZOMAT ERP's Consolidation and intercompany module consolidates several workspaces and converts between them at your exchange rates).", status: "planned" },
     { text: "Posting stock, production and maintenance values from the ERP to the ledger.", status: "planned" },
   ],
   keywords: [

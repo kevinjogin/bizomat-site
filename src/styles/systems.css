@@ -31,6 +31,12 @@
 .sys-glance a:hover strong { color: var(--accent); }
 .sys-glance span.sys-glance__kind { grid-column: 1; color: var(--muted); font-size: .84rem; }
 .sys-glance .sys-badge { grid-row: 1 / span 2; grid-column: 2; }
+/* Learn, under the systems: the Knowledge Centre's parts are in the Learn section of this page. */
+.sys-glance a.sys-glance__learn { grid-template-columns: minmax(0, 1fr); margin-top: .1rem; padding-bottom: .2rem; border-top: 1px solid var(--line); border-bottom: 0; }
+.sys-glance__learn span { color: var(--muted); font-size: .84rem; }
+/* The Learn section: the Knowledge Centre's eight parts, four to a row. */
+.sys-free.sys-learn { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.sys-free.sys-learn a { align-content: start; }
 
 /* ---------- A system in the catalogue ---------- */
 /* The name on the left, the status on the right, both from the top: a long status note (ERP, Manufacturing and
@@ -195,9 +201,11 @@
   .sys-entry__status p { max-width: 64ch; }
   .sys-features, .sys-related { grid-template-columns: 1fr; }
   .sys-guide-shot { position: static; }
+  .sys-free.sys-learn { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 760px) {
   .sys-free { grid-template-columns: 1fr; }
+  .sys-free.sys-learn { grid-template-columns: 1fr; }
   .sys-toc ol { grid-template-columns: 1fr; }
 }
 /* Phones: in the systems at a glance, the status goes under the name, so the name and kind keep the full width. */

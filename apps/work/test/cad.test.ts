@@ -386,3 +386,141 @@ describe('CAD Automation in the ERP', () => {
     expect(await drawingsOf(env.DB, 'another-company', rev.id)).toEqual([]);
   });
 });
+
+// Contract 2 and the fixes approved by the owner on 20 Nov 2026 (docs/cad/AUDIT-2026-11-20.md, G2 to G7).
+describe('CAD Automation in the ERP, contract 2', () => {
+  const sync = (body: unknown) => SELF.fetch(`${ORIGIN}/api/id/cad-sync`, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: CAD_AUTH }, body: JSON.stringify(body) });
+  const verified = (...ids: string[]) => env.DB.prepare(`UPDATE users SET email_verified_at = 1 WHERE id IN (${ids.map(() => '?').join(',')})`).bind(...ids).run();
+
+  it('names read-only roles and download permission to a contract 2 engine only, and records link downloads once', async () => {
+    const owner = await signup('C2 Owner');
+    const co = await company(owner, 'C2 Pty');
+    const other = await company(owner, 'C2 Other Pty');
+    await flag('cad_in_erp', 'company', co);
+    const reader = await signup('C2 Reader');
+    const employee = await signup('C2 Employee');
+    await join(owner, co, reader, 'read_only');
+    await join(owner, co, employee, 'employee');
+    await verified(owner.userId, reader.userId, employee.userId);
+    const accounts = [
+      { id: 'c2-owner', email: owner.email, emailVerified: true, sub: owner.userId },
+      { id: 'c2-reader', email: reader.email, emailVerified: true, sub: reader.userId },
+      { id: 'c2-emp', email: employee.email, emailVerified: true, sub: employee.userId },
+    ];
+    // An engine from before contract 2: only the companies where the person may work, as before.
+    const before = (await (await sync({ accounts })).json()) as any;
+    expect(before.accounts['c2-reader'].companies).toEqual([]);
+    expect(before.accounts['c2-owner'].companies).toEqual([{ id: co, name: 'C2 Pty', operate: true, export: true }]);
+    // Contract 2: the read-only company too, refused there; and who may download.
+    const at = Date.now();
+    const dl = { id: 'a'.repeat(32), export: 'exp-9', account: 'c2-owner', company: co, name: 'Bracket.step', format: 'step', size: 2048, sha256: 'b'.repeat(64), at };
+    const res = await sync({ contract: 2, accounts, downloads: [dl, dl, { ...dl, id: 'c'.repeat(32), company: other }] });
+    expect(res.status).toBe(200);
+    const a = (await res.json()) as any;
+    expect(a.accounts['c2-reader'].companies).toEqual([{ id: co, name: 'C2 Pty', operate: false, export: false }]);
+    expect(a.accounts['c2-reader'].default).toBeNull(); // earlier work never moves into a company where it is refused
+    expect(a.accounts['c2-emp'].companies).toEqual([{ id: co, name: 'C2 Pty', operate: true, export: false }]);
+    expect(a.passwordRetired).toBe(false);
+    // The download through an AI assistant's link: once, in the company's history, never in a company not named.
+    await sync({ contract: 2, accounts, downloads: [dl] });
+    const ev = await env.DB.prepare("SELECT actor_id, summary FROM erp_events WHERE company_id = ? AND action = 'cad.export_downloaded' AND entity_id = 'exp-9'").bind(co).all<any>();
+    expect(ev.results).toHaveLength(1);
+    expect(ev.results[0]).toMatchObject({ actor_id: owner.userId });
+    expect(ev.results[0].summary).toContain('AI assistant');
+    const elsewhere = await env.DB.prepare("SELECT COUNT(*) AS n FROM cad_downloads WHERE company_id = ?").bind(other).first<{ n: number }>();
+    expect(elsewhere?.n).toBe(0);
+  });
+
+  it('retires password sign-in only while the flag is on and every account is linked to a BIZOMAT account', async () => {
+    const owner = await signup('Pw Owner');
+    const co = await company(owner, 'Pw Pty');
+    await flag('cad_in_erp', 'company', co);
+    await verified(owner.userId);
+    const linked = { id: 'pw-owner', email: owner.email, emailVerified: true, sub: owner.userId };
+    const loose = { id: 'pw-nobody', email: 'pw-nobody@example.com', emailVerified: false, sub: null };
+    expect(((await (await sync({ contract: 2, accounts: [linked] })).json()) as any).passwordRetired).toBe(false);
+    await flag('cad_password_retired', 'global');
+    try {
+      expect(((await (await sync({ contract: 2, accounts: [linked, loose] })).json()) as any).passwordRetired).toBe(false);
+      const { cadOverview } = await import('../src/worker/cad/sync');
+      expect((await cadOverview(env.DB)).password).toMatchObject({ flag: true, accounts: 2, linked: 1, ready: false, retired: false });
+      expect(((await (await sync({ contract: 2, accounts: [linked] })).json()) as any).passwordRetired).toBe(true);
+      expect((await cadOverview(env.DB)).password).toMatchObject({ flag: true, ready: true, retired: true });
+    } finally {
+      await flag('cad_password_retired', 'global', '', 'off');
+    }
+    expect(((await (await sync({ contract: 2, accounts: [linked] })).json()) as any).passwordRetired).toBe(false);
+  });
+
+  it('says on the module when CAD Automation has not reported for a while', async () => {
+    const owner = await signup('Late Owner');
+    const co = await company(owner, 'Late Pty');
+    await flag('cad_in_erp', 'company', co);
+    const at = async (minutesAgo: number) => {
+      await env.DB.prepare("INSERT INTO system_kv (key, value, updated_at) VALUES ('cad_health', '{}', ?) ON CONFLICT(key) DO UPDATE SET updated_at = excluded.updated_at").bind(Date.now() - minutesAgo * 60_000).run();
+      return (await okJson(await call(owner, 'GET', `/api/erp/c/${co}/cad`))).sync;
+    };
+    expect(await at(1)).toMatchObject({ late: false, stale: false });
+    expect(await at(6)).toMatchObject({ late: true, stale: false, minutes: 6 });
+    expect(await at(16)).toMatchObject({ late: true, stale: true });
+  });
+
+  it('gives a review to someone in the company who can open the board, and tells them', async () => {
+    const owner = await signup('Rev Owner');
+    const res = await owner.req('POST', '/api/company/companies', { kind: 'business', name: 'Rev Pty', legalName: '', abn: newAbn(), acn: '', email: uniqueEmail('accounts'), phone: '(02) 9876 5432', addressLine1: '12 Example Street', addressLine2: '', suburb: 'Sydney', state: 'NSW', postcode: '2000', website: '', tools: { tasks: { create: true } } });
+    expect(res.status).toBe(201);
+    const made = (await res.json()) as any;
+    const co = made.company.id as string;
+    await flag('cad_in_erp', 'company', co);
+    await flag('cad_projects', 'company', co);
+    const reviewer = await signup('Rev Reviewer');
+    await join(owner, co, reviewer, 'employee');
+    const outsider = await signup('Rev Outsider');
+    const prod = await owner.json('POST', `/api/erp/c/${co}/products`, { type: 'component', number: 'RV-1', name: 'Plate' });
+    const doc = await owner.json('POST', `/api/erp/c/${co}/documents`, { productId: prod.id, title: 'Plate model', kind: 'model', docRevision: 'A', cadPath: 'C:\\Parts\\Plate.SLDPRT', cadConfig: 'Default' });
+    const made2 = await owner.json('POST', `/api/workspaces/${made.tools.tasks}/boards`, { name: 'Design reviews' });
+    const boardId = (made2.board?.id ?? made2.id) as string;
+    const list = await okJson(await call(owner, 'GET', `/api/erp/c/${co}/cad/review-boards/${boardId}/reviewers`));
+    expect(list.assigns).toBe(true);
+    expect(list.reviewers.map((r: any) => r.id)).toContain(reviewer.userId);
+    expect(list.reviewers.map((r: any) => r.id)).not.toContain(outsider.userId);
+    const refused = await call(owner, 'POST', `/api/erp/c/${co}/cad/documents/${doc.id}/review`, { boardId, reviewerId: outsider.userId });
+    expect(refused.status).toBe(400);
+    const r = await okJson(await call(owner, 'POST', `/api/erp/c/${co}/cad/documents/${doc.id}/review`, { boardId, reviewerId: reviewer.userId, note: 'Check the holes' }));
+    expect(r.assigned).toBe(true);
+    const item = await env.DB.prepare('SELECT values_json FROM items WHERE id = ?').bind(r.itemId).first<{ values_json: string }>();
+    expect(item!.values_json).toContain(reviewer.userId);
+    const task = await env.DB.prepare('SELECT reviewer_id FROM cad_review_tasks WHERE company_id = ? AND item_id = ?').bind(co, r.itemId).first<{ reviewer_id: string }>();
+    expect(task?.reviewer_id).toBe(reviewer.userId);
+    // The reviewer's notice, in this company's CAD Automation only, until read.
+    const mine = await okJson(await call(reviewer, 'GET', `/api/erp/c/${co}/cad/notices`));
+    expect(mine.notices).toHaveLength(1);
+    expect(mine.notices[0]).toMatchObject({ kind: 'cad.review_requested', read: false });
+    expect(mine.notices[0].body).toContain('Check the holes');
+    expect((await okJson(await call(owner, 'GET', `/api/erp/c/${co}/cad/notices`))).notices).toHaveLength(0);
+    await okJson(await call(reviewer, 'POST', `/api/erp/c/${co}/cad/notices/read`, { ids: [mine.notices[0].id] }));
+    expect((await okJson(await call(reviewer, 'GET', `/api/erp/c/${co}/cad/notices`))).notices[0].read).toBe(true);
+  });
+
+  it('tells the person who saved a CAD export to a revision when that revision is released', async () => {
+    const owner = await signup('Rel Owner');
+    const co = await company(owner, 'Rel Pty');
+    await flag('cad_in_erp', 'company', co);
+    await flag('cad_products', 'company', co);
+    const approver = await signup('Rel Approver');
+    await join(owner, co, approver, 'manager');
+    await owner.json('PUT', `/api/erp/c/${co}/roles/${approver.userId}`, { roles: ['engineering_approver'] });
+    const prod = await owner.json('POST', `/api/erp/c/${co}/products`, { type: 'component', number: 'RL-1', name: 'Arm' });
+    const rev = (await owner.json('GET', `/api/erp/c/${co}/products/${prod.id}`)).revisions[0];
+    await okJson(await call(owner, 'POST', `/api/erp/c/${co}/cad/exports/exp-1/save`, { productId: prod.id, revisionId: rev.id }));
+    const eco = await owner.json('POST', `/api/erp/c/${co}/change-orders`, { title: 'First release', reason: 'Ready to make', productIds: [prod.id] });
+    await owner.json('POST', `/api/erp/c/${co}/change-orders/${eco.id}/submit`, {});
+    await approver.json('POST', `/api/erp/c/${co}/change-orders/${eco.id}/approve`, { note: 'Checked' });
+    await approver.json('POST', `/api/erp/c/${co}/change-orders/${eco.id}/release`, {});
+    const n = await env.DB.prepare("SELECT user_id, title, link FROM co_member_notices WHERE company_id = ? AND kind = 'cad.revision_released'").bind(co).all<any>();
+    expect(n.results).toHaveLength(1);
+    expect(n.results[0].user_id).toBe(owner.userId);
+    expect(n.results[0].title).toContain('RL-1');
+    expect(n.results[0].link).toBe(`/erp/c/${co}/products/${prod.id}`);
+  });
+});

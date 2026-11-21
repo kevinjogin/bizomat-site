@@ -217,6 +217,7 @@ const guide: Guide = {
     { label: 'Export CSV', does: 'Downloads orders, costs, MRP results, capacity or work centres.', when: 'To work with the figures in a spreadsheet.' },
   ],
   faqs: [
+    { q: 'Is there an OEE report?', a: 'Yes. Reports, Overall equipment effectiveness (OEE) shows availability (machine time against machine time and downtime), performance (the routing’s run minutes for what was made against machine time) and quality (good against good and scrap), by work centre and machine. Where machine time or run minutes are missing it says it cannot be calculated.' },
     {
       q: 'Why is my product not offered on New order?',
       a: 'A product can be made only when it has a released bill of materials (in Product Management, released through a change order in Engineering) and a released routing (in Manufacturing, Routings). The New order window says so when no product qualifies (see /learn/products/).',
@@ -265,7 +266,7 @@ const guide: Guide = {
     { text: 'Posting production value (work in progress, finished goods, variances) to Finance’s ledger (each posting is recorded as planned; nothing is posted).', status: 'planned' },
     { text: 'Finite scheduling and a drag-and-drop planning board.', status: 'planned' },
     { text: 'Work in progress held as stock in work-in-progress locations.', status: 'planned' },
-    { text: 'Connections to machines and an OEE measure (machine time is recorded by hand or by timer).', status: 'planned' },
+    { text: 'Connections to machines (machine time and counts are recorded on the shop floor; the OEE report works from them).', status: 'planned' },
     { text: 'Process (formula and batch) manufacturing and rate-based repetitive schedules.', status: 'planned' },
     { text: 'The approved drawings of the released revision on manufacturing orders and the shop floor (CAD Automation inside the ERP).', status: 'in-development' },
   ],

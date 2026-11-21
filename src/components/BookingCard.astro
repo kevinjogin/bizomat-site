@@ -63,6 +63,10 @@ const { url } = SITE.booking;
   .booking__note { margin: 0.6rem 0 0; font-size: 0.82rem; color: var(--muted); }
   @media (max-width: 420px) { .booking { grid-template-columns: 1fr; } }
 
+  /* New UI: the site's button system (src/styles/ui-new.css): a large button with 8px corners. These rules are more
+     specific than the generated ones below, which keep the pill's corners. */
+  :global(html[data-ui="new"]) a.booking__button { min-height: var(--bz-control-lg); border-radius: var(--bz-radius-md); }
+
   /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
   :global(html[data-ui="new"]) .booking { gap: var(--bz-space-4) var(--bz-space-4); }
   :global(html[data-ui="new"]) .booking__icon { border-radius: var(--bz-radius-lg); }

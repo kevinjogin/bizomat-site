@@ -1,5 +1,6 @@
 // BIZOMAT ERP, Release 3 reports (/api/erp/c/:company/reports/...): production output, work order progress, material
-// consumption, labour utilisation, production variance, machine downtime, MRP suggestions and capacity load. Each takes
+// consumption, labour utilisation, production variance, machine downtime, overall equipment effectiveness (OEE), MRP
+// suggestions and capacity load. Each takes
 // the filters that fit it (dates, work centre, product, status), lists the records behind its numbers (the screen links
 // each row to its record) and exports CSV (?format=csv). Numbers come only from the company's own records. Job
 // profitability (Release 5) is its own report in supply-reports.ts: orders made to order for a sales order line.
@@ -223,6 +224,75 @@ mfgReportRoutes.get('/c/:company/reports/machine-downtime', async (c) => {
   const reasons = new Map<string, number>();
   for (const x of list) reasons.set(x.reason, Math.round(((reasons.get(x.reason) ?? 0) + x.minutes) * 100) / 100);
   return c.json({ from: r.from, to: r.to, rows: list, byMachine: [...by.values()].sort((x, y) => y.minutes - x.minutes), byReason: [...reasons.entries()].map(([reason, minutes]) => ({ reason, minutes })).sort((x, y) => y.minutes - x.minutes), note: `Downtime reported on the shop floor. ${label(REPORT_KINDS, 'downtime')} is recorded with its minutes and a reason.` });
+});
+
+// 6b. Overall equipment effectiveness (batch 2, item 6): from the shop floor's own records in the period, by work centre
+// and machine. Availability = machine time / (machine time + downtime); performance = the routing's run minutes for
+// what was made (good and scrap) / machine time; quality = good / (good + scrap); OEE is their product. A part with no
+// data says it cannot be calculated: nothing is guessed. Machine data is entered on the shop floor; no machine sends it.
+mfgReportRoutes.get('/c/:company/reports/oee', async (c) => {
+  const a = await requireErp(c, 'reports.view');
+  const r = range(c);
+  const db = c.env.DB;
+  const [time, reports] = await db.batch([
+    db.prepare(
+      `SELECT o.work_centre_id AS wc, COALESCE(t.machine_id, o.machine_id) AS machine, SUM(t.minutes) AS minutes
+         FROM erp_mo_time t JOIN erp_mo_operations o ON o.company_id = t.company_id AND o.id = t.operation_id
+        WHERE t.company_id = ? AND t.kind = 'machine' AND t.minutes IS NOT NULL AND COALESCE(t.ended_at, t.created_at) >= ? AND COALESCE(t.ended_at, t.created_at) < ?
+        GROUP BY o.work_centre_id, COALESCE(t.machine_id, o.machine_id)`,
+    ).bind(a.companyId, r.fromMs, r.toMs),
+    db.prepare(
+      `SELECT o.work_centre_id AS wc, COALESCE(x.machine_id, o.machine_id) AS machine, x.kind, SUM(x.quantity) AS qty, SUM(x.minutes) AS minutes, SUM(x.quantity * o.run_minutes) AS ideal
+         FROM erp_mo_reports x JOIN erp_mo_operations o ON o.company_id = x.company_id AND o.id = x.operation_id
+        WHERE x.company_id = ? AND x.kind IN ('good','scrap','downtime') AND x.created_at >= ? AND x.created_at < ?
+        GROUP BY o.work_centre_id, COALESCE(x.machine_id, o.machine_id), x.kind`,
+    ).bind(a.companyId, r.fromMs, r.toMs),
+  ]);
+  const names = await db.prepare("SELECT 'wc' AS t, id, code, name FROM erp_work_centres WHERE company_id = ? UNION ALL SELECT 'm' AS t, id, code, name FROM erp_machines WHERE company_id = ?").bind(a.companyId, a.companyId).all<any>();
+  const nameOf = new Map(names.results.map((n: any) => [`${n.t}:${n.id}`, `${n.code} ${n.name}`]));
+  type Acc = { wc: string | null; machine: string | null; run: number; down: number; good: number; scrap: number; ideal: number };
+  const by = new Map<string, Acc>();
+  const get = (wc: string | null, machine: string | null) => {
+    const k = `${wc ?? ''}|${machine ?? ''}`;
+    let v = by.get(k);
+    if (!v) by.set(k, (v = { wc, machine, run: 0, down: 0, good: 0, scrap: 0, ideal: 0 }));
+    return v;
+  };
+  for (const t of time.results as any[]) get(t.wc, t.machine).run += Number(t.minutes) || 0;
+  for (const x of reports.results as any[]) {
+    const v = get(x.wc, x.machine);
+    if (x.kind === 'downtime') v.down += Number(x.minutes) || 0;
+    else {
+      v[x.kind === 'good' ? 'good' : 'scrap'] += Number(x.qty) || 0;
+      v.ideal += Number(x.ideal) || 0;
+    }
+  }
+  const pct = (n: number | null) => (n === null ? null : Math.round(n * 1000) / 10);
+  const rows = [...by.values()].map((v) => {
+    const availability = v.run > 0 ? v.run / (v.run + v.down) : null;
+    const performance = v.run > 0 && v.ideal > 0 ? Math.min(1, v.ideal / v.run) : null;
+    const quality = v.good + v.scrap > 0 ? v.good / (v.good + v.scrap) : null;
+    const oee = availability !== null && performance !== null && quality !== null ? availability * performance * quality : null;
+    const made = v.good + v.scrap > 0;
+    const missing = [availability === null ? 'no machine time recorded' : '', performance === null && v.run > 0 && made ? 'no run minutes in the routing for what was made' : '', !made ? 'no output reported' : ''].filter(Boolean);
+    return {
+      workCentreId: v.wc,
+      workCentre: v.wc ? (nameOf.get(`wc:${v.wc}`) ?? '') : 'No work centre',
+      machineId: v.machine,
+      machine: v.machine ? (nameOf.get(`m:${v.machine}`) ?? '') : '',
+      machineHours: hours(v.run),
+      downtimeHours: hours(v.down),
+      good: q6(v.good),
+      scrap: q6(v.scrap),
+      availabilityPct: pct(availability),
+      performancePct: pct(performance),
+      qualityPct: pct(quality),
+      oeePct: pct(oee),
+      note: oee === null ? `Cannot be calculated: ${missing.join('; ')}` : v.ideal > v.run ? 'Performance capped at 100%: the routing’s run minutes are longer than the time recorded' : '',
+    };
+  }).sort((x, y) => x.workCentre.localeCompare(y.workCentre) || x.machine.localeCompare(y.machine));
+  if (wantsCsv(c)) return csvResponse('oee', [['Work centre', 'Machine', 'Machine hours', 'Downtime hours', 'Good', 'Scrap', 'Availability %', 'Performance %', 'Quality %', 'OEE %', 'Note'], ...rows.map((x) => [x.workCentre, x.machine, x.machineHours, x.downtimeHours, x.good, x.scrap, x.availabilityPct ?? '', x.performancePct ?? '', x.qualityPct ?? '', x.oeePct ?? '', x.note])]);
+  return c.json({ from: r.from, to: r.to, rows, note: 'From the machine time, downtime, good output and scrap recorded on the shop floor in the period, and each operation’s run minutes per unit in its routing. No machine sends data to BIZOMAT: figures are only as complete as what was recorded.' });
 });
 
 // 7. MRP suggestions: the latest run's (or a chosen run's) suggestions, by kind and status.

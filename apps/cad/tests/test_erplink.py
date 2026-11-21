@@ -533,3 +533,139 @@ def test_the_erp_hands_out_the_installer_this_server_holds(erp, client, data):
     r = client.get(path, headers={"Authorization": erp.assertion("GET", path, b"", "alice", "co_a")})
     assert r.status_code == 200 and r.content == msi and r.headers["x-sha256"] == hashlib.sha256(msi).hexdigest()
     assert client.get(path).status_code == 401  # never without the ERP's assertion
+
+
+# ----------------------------------------------------------------------------- contract 2 (owner's approval, 20 Nov 2026)
+
+def _link2(account_id: str, companies: list[dict], default: str | None = None, retired: bool = False) -> None:
+    """The answer of an ERP that speaks contract 2: each company with whether the role may work and download."""
+    erplink.apply({"accounts": {account_id: {"userId": "u-" + account_id, "companies": companies, "default": default, "review": False}},
+                   "limits": {}, "redirect": False, "passwordRetired": retired}, [])
+
+
+def test_an_answer_from_before_contract_2_keeps_its_meaning(erp, client):
+    owner = accounts._users()["users"][0]
+    _link(owner["id"], ["co_a"], "co_a")
+    assert erplink.allowed(owner["id"], "co_a") and erplink.may_export(owner["id"], "co_a")
+    assert erplink.working_companies(owner["id"]) == erplink.companies_of(owner["id"])
+    assert not erplink.password_retired()
+    assert erplink.build()["contract"] == 2  # the ERP then names read-only companies too
+
+
+def test_a_read_only_role_is_refused_in_the_company_never_worked_by_person(erp, client):
+    owner = accounts._users()["users"][0]
+    pc = _device(owner["id"], "PC", None)
+    _link2(owner["id"], [{"id": "co_a", "name": "Alpha", "operate": False, "export": False}], "co_a")
+    assert erplink.in_erp(owner["id"]) and not erplink.allowed(owner["id"], "co_a")
+    assert erplink.working_companies(owner["id"]) == []
+    for grant in ({"id": "g1"}, {"id": "g2", "company": "co_a"}):
+        with pytest.raises(erplink.ErpError) as e:
+            erplink.company_for_connection(owner["id"], grant)
+        assert e.value.code == "READ_ONLY" and "Alpha" in e.value.message
+    # earlier computers are not moved into a company where the person may not work
+    assert db._q("SELECT company FROM devices WHERE id = ?", (pc,), one=True)["company"] is None
+    # read only in one company, working in another: only the working one is offered and allowed
+    _link2(owner["id"], [{"id": "co_a", "name": "Alpha", "operate": False, "export": False},
+                         {"id": "co_b", "name": "Beta", "operate": True, "export": True}])
+    assert [c["id"] for c in erplink.working_companies(owner["id"])] == ["co_b"]
+    assert erplink.company_for_connection(owner["id"], {"id": "g3"}) == "co_b"
+    with pytest.raises(erplink.ErpError) as e:
+        erplink.company_for_connection(owner["id"], {"id": "g4", "company": "co_a"})
+    assert e.value.code == "READ_ONLY"
+
+
+def test_the_consent_page_refuses_a_read_only_role(erp, client):
+    owner = accounts._users()["users"][0]
+    _signed_in(client)
+    _link2(owner["id"], [{"id": "co_a", "name": "Alpha", "operate": False, "export": False}])
+    with mock.patch.object(mcpauth, "ensure_client", mock.AsyncMock()), \
+            mock.patch.object(mcpauth, "check_authorize", return_value=({"name": "Claude"}, {"redirect_uri": "https://claude.ai/cb"})):
+        r = client.get("/oauth/authorize?client_id=x")
+    assert r.status_code == 403 and "read only" in r.text and "Alpha" in r.text
+
+
+def _export(owner: dict, company: str, export: bool):
+    """sw_export through the connector, with SOLIDWORKS stood in by _run."""
+    from opensketch import sw_tools
+    _link2(owner["id"], [{"id": company, "name": "Alpha", "operate": True, "export": export}], company)
+
+    async def run():
+        user = mcp_server._mcp_user.set(accounts.public(owner))
+        try:
+            with tenancy.use(company, {}), \
+                    mock.patch.object(sw_tools, "_run", mock.AsyncMock(return_value=({"file": "f", "title": "Bracket"}, {"f": b"ISO-10303-21;"}, None))):
+                return await sw_tools.sw_export(format="step")
+        finally:
+            mcp_server._mcp_user.reset(user)
+
+    return json.loads(asyncio.run(run()).content[0].text)
+
+
+def test_an_export_has_no_link_where_the_role_may_not_download(erp, client):
+    owner = accounts._users()["users"][0]
+    out = _export(owner, "co_a", export=False)
+    assert "download_url" not in out and "Not allowed" in out["download"]
+    item = artifacts.path_of(out["artifact_id"])
+    assert item and item[1]["company"] == "co_a"  # kept for the company, where someone who may download can save it
+    allowed = _export(owner, "co_a", export=True)
+    assert allowed["download_url"].startswith("http")
+
+
+def test_a_link_download_is_checked_again_and_goes_into_the_companys_history(erp, client):
+    owner = accounts._users()["users"][0]
+    out = _export(owner, "co_a", export=True)
+    path = "/mcp/artifacts/" + out["download_url"].split("/mcp/artifacts/", 1)[1]
+    r = client.get(path)
+    assert r.status_code == 200 and r.content == b"ISO-10303-21;"
+    pending = erplink.state()["downloads"]
+    assert len(pending) == 1 and pending[0]["company"] == "co_a" and pending[0]["account"] == owner["id"]
+    assert pending[0]["sha256"] == hashlib.sha256(b"ISO-10303-21;").hexdigest() and "url" not in json.dumps(pending[0])
+    # the role changed within the hour: the same link is refused
+    _link2(owner["id"], [{"id": "co_a", "name": "Alpha", "operate": True, "export": False}], "co_a")
+    assert client.get(path).status_code == 403
+    # the sync carries the download once; the ERP's answer clears it
+    erp.answer = {"accounts": {}, "limits": {}, "redirect": False}
+    erplink.sync_once()
+    assert erp.syncs[-1]["downloads"][0]["export"] == out["artifact_id"] and erp.syncs[-1]["contract"] == 2
+    assert erplink.state()["downloads"] == []
+    erplink.sync_once()
+    assert erp.syncs[-1]["downloads"] == []
+
+
+def test_the_sync_counts_waiting_and_running_commands_apart(erp, client):
+    owner = accounts._users()["users"][0]
+    pc = _device(owner["id"], "PC", "co_a")
+    _command(owner["id"], pc, "queued", "co_a")
+    _command(owner["id"], pc, "queued", "co_a")
+    _command(owner["id"], pc, "running", "co_a")
+    _command(owner["id"], pc, "succeeded", "co_a")
+    co = next(c for c in erplink.build()["companies"] if c["id"] == "co_a")
+    assert (co["queued"], co["running"]) == (2, 1)
+
+
+def test_password_sign_in_is_retired_only_while_the_erp_says_so(erp, client):
+    owner = accounts._users()["users"][0]
+    accounts.set_open_signup(True)
+    assert client.get("/login?password=1", follow_redirects=False).status_code == 200
+    _link2(owner["id"], [{"id": "co_a", "name": "Alpha"}], "co_a", retired=True)
+    assert erplink.password_retired()
+    r = client.get("/login?password=1&next=/tools", follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"] == "/auth/bizomat?next=/tools"
+    r = client.post("/login", data={"email": "owner@example.com", "password": "a-long-password-1", "next": "/tools"}, follow_redirects=False)
+    assert r.status_code == 403 and "retired" in r.text and 'action="/auth/bizomat"' in r.text and 'value="/tools"' in r.text
+    assert "set-cookie" not in {k.lower() for k in r.headers}
+    r = client.get("/signup", follow_redirects=False)
+    assert r.status_code == 303 and r.headers["location"].startswith("/auth/bizomat")
+    r = client.get("/join/abc", follow_redirects=False)
+    assert r.status_code == 303 and "invite=abc" in r.headers["location"]
+    # the Companion's password pairing is refused with the way to pair instead
+    with mock.patch.object(db, "authenticate", return_value={"id": "p", "code": "C", "status": "pending", "expires": time.time() + 60}):
+        r = client.post("/v2/devices/pair/password", json={"email": "owner@example.com", "password": "a-long-password-1"})
+    assert r.status_code == 403 and r.json()["error"]["code"] == "PASSWORD_RETIRED" and "Pair a computer" in r.json()["error"]["message"]
+    # a stale answer counts for nothing: password sign-in works again (the ERP cannot be reached)
+    erplink.state()["at"] = time.time() - erplink.FRESH - 1
+    assert not erplink.password_retired()
+    assert client.get("/login?password=1", follow_redirects=False).status_code == 200
+    # and the ERP switching the flag off brings it back at once
+    _link2(owner["id"], [{"id": "co_a", "name": "Alpha"}], "co_a", retired=False)
+    _signed_in(client)

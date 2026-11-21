@@ -128,7 +128,7 @@ export default function Search() {
       <div className="row" style={{ marginBottom: 'var(--ui-s16, 16px)' }}>
         <div className="search-trigger" style={{ maxWidth: 'none', cursor: 'text', background: 'var(--surface)', height: 42 }}>
           <Icon name="search" />
-          <input className="grow" aria-label="Search query" autoFocus value={query.q} onChange={(e) => set('q', e.target.value)} placeholder="Search everything…" style={{ border: 0, background: 'transparent', outline: 'none', height: '100%', fontSize: 15 }} maxLength={200} />
+          <input className="grow" aria-label="Search query" autoFocus value={query.q} onChange={(e) => set('q', e.target.value)} placeholder="Search everything…" style={{ border: 0, background: 'transparent', outline: 'none', height: '100%', fontSize: 'var(--ui-f15, 15px)' }} maxLength={200} />
           {res.isFetching ? <Spinner /> : null}
         </div>
       </div>
@@ -318,7 +318,7 @@ function RuleEditor({ rule, onChange, onRemove }: { rule: FilterRule; onChange: 
   const field = FIELDS.find((f) => f.v === rule.field) ?? FIELDS[0];
   const needsValue = rule.field !== 'done' && opNeedsValue(rule.op);
   return (
-    <div className="col" style={{ gap: 'var(--ui-s4, 4px)', padding: 'var(--ui-s6, 6px)', border: '1px solid var(--border)', borderRadius: 6 }}>
+    <div className="col" style={{ gap: 'var(--ui-s4, 4px)', padding: 'var(--ui-s6, 6px)', border: '1px solid var(--border)', borderRadius: 'var(--ui-r6, 6px)' }}>
       <div className="row">
         <select className="select sm" aria-label="Field" value={rule.field} onChange={(e) => {
           const f = FIELDS.find((x) => x.v === e.target.value)!;

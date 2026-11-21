@@ -473,6 +473,7 @@ async function makeOne(c: Client, co: string, def: ObjectDef, ctx: { customer: s
   if (def.key === 'fl_trip') Object.assign(data, { startOdometer: 100, endOdometer: 150 });
   if (def.key === 'hr_leave') Object.assign(data, { fromDate: monday(1), toDate: monday(1) });
   if (def.key === 'hr_attendance') Object.assign(data, { clockIn: '08:00', clockOut: '16:30', breakMinutes: 30 });
+  if (def.key === 'ic_transaction') data.buyer = (await c.json('POST', obj(co, 'org_entity'), { data: { name: 'Second entity', entityType: 'subsidiary', country: 'NZ', currency: 'NZD' } })).record.id;
   const lines = def.lines ? [] : undefined;
   const res = await c.req('POST', obj(co, def.key), { data, ...(lines ? { lines } : {}) });
   const body = await res.text();

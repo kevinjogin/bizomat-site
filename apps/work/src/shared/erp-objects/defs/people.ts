@@ -391,7 +391,7 @@ export const PEOPLE_OBJECTS: ObjectDef[] = [
     prefix: 'PAY-',
     title: 'summary',
     what: 'A pay period worked out for every active employee: salary for the period, or approved timesheet hours at their rate; then approved by someone else and recorded as paid.',
-    notice: 'Not a certified payroll product. BIZOMAT works out gross pay, the withholding rate you set for each person and the employer contribution rate you set here. It works out no statutory tax, makes no payment and reports nothing to any tax authority. Check every amount before you pay.',
+    notice: 'Not a certified payroll product. BIZOMAT works out gross pay, the withholding rate you set for each person and the employer contribution rate you set here. It works out no statutory tax, makes no payment and reports nothing to any tax authority. Check every amount before you pay. An approved pay run can be posted to Finance’s ledger as one journal.',
     fields: [
       F.date('periodStart', 'Period from', { required: true, list: true }),
       F.date('periodEnd', 'Period to', { required: true, list: true }),
@@ -433,7 +433,11 @@ export const PEOPLE_OBJECTS: ObjectDef[] = [
     amountField: 'totalGross',
     currencyField: 'currency',
     reports: [byStatus('totalGross'), byMonth('payDate', 'Pay month', 'totalGross')],
-    actions: [{ key: 'calculate', label: 'Work out the pay', what: 'Works out a payslip for every active employee from their pay basis and approved timesheets in the period.', cap: 'edit', statuses: ['draft', 'calculated'] }],
+    actions: [
+      { key: 'calculate', label: 'Work out the pay', what: 'Works out a payslip for every active employee from their pay basis and approved timesheets in the period.', cap: 'edit', statuses: ['draft', 'calculated'] },
+      { key: 'post', label: 'Post to Finance', what: 'Posts one journal in Finance on the pay date: gross pay and the employer contribution as expenses, against tax withheld, the contribution and other deductions payable and the net pay, in the accounts chosen on the module’s Finance postings tab. It makes no payment.', cap: 'approve', statuses: ['approved', 'paid'], confirm: 'Post this pay run’s journal to Finance’s ledger?' },
+      { key: 'unpost', label: 'Reverse Finance posting', what: 'Reverses the pay run’s journal in Finance (dated today where the original is in a locked period), for example before taking it back to worked out.', cap: 'approve', statuses: ['approved', 'paid'], confirm: 'Reverse this pay run’s Finance journal?', input: [{ key: 'reason', label: 'Reason', type: 'text', required: true, max: 200 }] },
+    ],
   },
 ];
 
@@ -443,5 +447,5 @@ export const PEOPLE_MODULES: ModuleDef[] = [
   { key: 'onboarding', label: 'Onboarding and offboarding', area: 'people', catalogue: [87], summary: 'Checklists from templates, with who does each step and when.', icon: 'checkSquare', objects: ['ob_checklist', 'ob_template'], switch: 'people' },
   { key: 'training', label: 'Learning and training', area: 'people', catalogue: [88], summary: 'Courses, who did them, results and expiry reminders.', icon: 'template', objects: ['tr_record', 'tr_course'], switch: 'people', limits: ['No online course player: courses are recorded, not delivered.'] },
   { key: 'performance', label: 'Performance and talent', area: 'people', catalogue: [89], summary: 'Reviews with weighted objectives, self assessment and acknowledgement, and goals.', icon: 'chart', objects: ['pf_review', 'pf_goal'], switch: 'people' },
-  { key: 'payroll', label: 'Payroll', area: 'people', catalogue: [90], summary: 'Pay runs worked out from salaries and approved timesheets, approved by someone else; payslips in self service.', icon: 'dollar', objects: ['py_run'], switch: 'payroll', limits: ['Not certified payroll: no statutory tax tables, no payment files and no reporting to tax authorities.', 'Payroll is not posted to Finance’s ledger yet.'] },
+  { key: 'payroll', label: 'Payroll', area: 'people', catalogue: [90], summary: 'Pay runs worked out from salaries and approved timesheets, approved by someone else; payslips in self service.', icon: 'dollar', objects: ['py_run'], switch: 'payroll', limits: ['Not certified payroll: no statutory tax tables, no payment files and no reporting to tax authorities.', 'An approved pay run posts one journal to Finance’s ledger; paying the people and the tax office is done from your bank.'] },
 ];

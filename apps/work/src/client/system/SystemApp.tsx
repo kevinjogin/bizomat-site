@@ -38,6 +38,7 @@ const ProductsArea = lazy(() => import('./erp/Products').then((m) => ({ default:
 const ProcurementArea = lazy(() => import('./erp/Suppliers').then((m) => ({ default: m.ProcurementArea })));
 const ErpRolesPage = lazy(() => import('./erp/Roles').then((m) => ({ default: m.ErpRolesPage })));
 const ErpReportsArea = lazy(() => import('./erp/Reports').then((m) => ({ default: m.ErpReportsArea })));
+const SupplierPortalArea = lazy(() => import('./erp/SupplierPortal').then((m) => ({ default: m.SupplierPortalArea })));
 // ERP Release 2: /c/<company>/inventory and the purchasing and inventory settings.
 const InventoryArea = lazy(() => import('./erp/Inventory').then((m) => ({ default: m.InventoryArea })));
 const ErpSettingsPage = lazy(() => import('./erp/ErpSettings').then((m) => ({ default: m.ErpSettingsPage })));
@@ -95,6 +96,7 @@ const ERP_REPORT_LINKS: { key: string; label: string; what: string }[] = [
   { key: 'labour-utilisation', label: 'Labour utilisation', what: 'Hours recorded against available hours.' },
   { key: 'production-variance', label: 'Production variance', what: 'Estimated against actual cost of closed orders.' },
   { key: 'machine-downtime', label: 'Machine downtime', what: 'Downtime by machine and reason.' },
+  { key: 'oee', label: 'Overall equipment effectiveness (OEE)', what: 'Availability, performance and quality by work centre and machine.' },
   { key: 'mrp-suggestions', label: 'MRP suggestions', what: 'What to make, buy or expedite.' },
   { key: 'capacity-load', label: 'Capacity load', what: 'Load per work centre per week.' },
   // Release 4 part A: quality
@@ -244,6 +246,8 @@ export function SystemRoutes() {
       <Route path="/c/:companyId/maintenance/work-orders/:workOrderId/print" element={<Suspense fallback={<Loading label="Preparing the job card…" />}><WorkOrderPrintPage /></Suspense>} />
       <Route path="/c/:companyId/*" element={<CompanyArea />} />
       <Route path="/admin/*" element={<Shell><AdminArea /></Shell>} />
+      {/* A supplier's own people (flag supplier_portal): src/client/system/erp/SupplierPortal.tsx */}
+      <Route path="/supplier-portal/*" element={<Shell><Suspense fallback={<Loading />}><SupplierPortalArea /></Suspense></Shell>} />
       {/* CAD Automation: in the company used last where it works in the ERP (the Companion's pairing page included). */}
       <Route path="/cad/*" element={<CadRedirect />} />
       {/* Company Admin: the console of the company used last where the person is the owner or an administrator. */}

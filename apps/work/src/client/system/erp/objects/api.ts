@@ -21,7 +21,7 @@ export interface ObjectInfo {
   what: string;
   notice: string | null;
   sensitiveEditable?: string[];
-  can: { view: boolean; create: boolean; edit: boolean; approve: boolean; self: boolean; import: boolean; own: boolean };
+  can: { view: boolean; create: boolean; edit: boolean; approve: boolean; self: boolean; import: boolean; own: boolean; customFields?: boolean };
   reports: { key: string; label: string; what: string }[];
 }
 
@@ -83,6 +83,8 @@ export interface Detail {
   comments: { id: string; body: string; at: number; authorId: string; author: string | null }[];
   history: { id: string; action: string; summary: string; actorName: string | null; before: Record<string, unknown> | null; after: Record<string, unknown> | null; at: number }[];
   editableStatus: boolean;
+  /** Journals in Finance's ledger (fixed assets, pay runs, revenue schedules). */
+  postings: { journals: { number: number | null; date: string | null; amount: number; covers: string; reversed: boolean; reversalNumber: number | null }[]; url: string | null; currency?: string | null } | null;
 }
 
 export interface ModuleOverview {

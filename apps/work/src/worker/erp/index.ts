@@ -15,6 +15,8 @@
 //   quality.ts, ncr.ts, quality-reports.ts: Release 4 part A (quality)
 //   sales.ts, logistics.ts, returns.ts, supply-reports.ts: Release 5 part A (supply chain and logistics)
 
+import { supplierPortalStaffRoutes } from './supplier-portal';
+import { replenishRoutes } from './replenish';
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
@@ -262,5 +264,9 @@ erpRoutes.route('/', supplyReportRoutes);
 // The modules framework: People and HR, payroll, timesheets, service, contracts, fleet, calibration, fixed assets, the
 // industry solutions and the rest, with the 97-module catalogue
 erpRoutes.route('/', objectRoutes);
+// The supplier portal's side for buyers (flag supplier_portal, off): invitations and answers (supplier-portal.ts).
+erpRoutes.route('/', supplierPortalStaffRoutes);
+// Putaway suggestions and replenishment to maximum levels (replenish.ts).
+erpRoutes.route('/', replenishRoutes);
 // Product Management: sales and margin analysis, and stock against sales
 erpRoutes.route('/', analysisRoutes);

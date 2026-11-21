@@ -5,7 +5,9 @@ import type { Guide } from '../types.ts';
 // apps/work/src/client/system/erp/objects/ModulesHome.tsx (ModulesHome, InboxPage); each module's screens are
 // apps/work/src/client/system/erp/objects/ModuleArea.tsx; lists, steps, actions, files, comments, imports, saved filters,
 // alerts and the search are in apps/work/src/worker/erp/objects/ (routes.ts, store.ts, alerts.ts); module definitions in
-// apps/work/src/shared/erp-objects/. Tested in apps/work/test/erp-modules.test.ts.
+// apps/work/src/shared/erp-objects/; custom fields in apps/work/src/worker/erp/objects/custom.ts and
+// apps/work/src/client/system/erp/objects/CustomFields.tsx. Tested in apps/work/test/erp-modules.test.ts and
+// apps/work/test/erp-custom-fields.test.ts.
 const guide: Guide = {
   id: 'all-modules',
   section: 'modules',
@@ -65,6 +67,19 @@ const guide: Guide = {
       ],
     },
     {
+      id: 'custom-fields',
+      title: 'Add a field of your own',
+      outcome: 'A kind of record has a field your company needs, checked like the others.',
+      needs: 'An ERP administrator.',
+      steps: [
+        { title: 'Open the list', body: 'In a module, open the tab of the kind of record, for example Contracts.', where: 'Contracts' },
+        { title: 'Open Custom fields', body: 'Choose Custom fields at the top of the list.', where: 'Custom fields' },
+        { title: 'Describe the field', body: 'Give its Name and Kind (text, long text, number, money, date, a choice or yes or no). For a choice, type the choices separated by commas. Tick Required or Show in the list if you want.', where: 'Name' },
+        { title: 'Add it', body: 'Choose Add the field. It shows in a Custom fields section of the form and the record, in the CSV export, and in imports by its name.', where: 'Add the field' },
+      ],
+      after: 'Archive a field to hide it; what was entered is kept, and Restore brings it back.',
+    },
+    {
       id: 'workflow-rules',
       title: 'Tell people when a record reaches a status',
       outcome: 'A workflow rule tells a role at once, and escalates when a record waits too long.',
@@ -90,15 +105,16 @@ const guide: Guide = {
     { q: 'Why is a field hidden?', a: 'Pay details and some other fields are shown only to the roles that need them, and to the person themselves. The record says that some fields are hidden.' },
     { q: 'Why can I not approve something I made?', a: 'Segregation of duties: someone else approves it. In a company of one person the exception is allowed and recorded on the record.' },
     { q: 'Are favourites kept on my account?', a: 'No. Favourites and recently used modules are kept on this computer only, like the theme.' },
+    { q: 'Can we add our own fields?', a: 'Yes. An ERP administrator chooses Custom fields on a list. Each field is your company’s own; nobody else sees it.' },
     { q: 'What does Partly built mean?', a: 'Part of the module works today and the card says, under Not yet, what does not. Planned modules are not built.' },
   ],
   related: ['roles-and-permissions', 'notifications', 'reports', 'people-hr'],
   notYet: [
     { text: 'A drag-and-drop workflow designer: workflow rules notify and escalate, they do not change records.', status: 'planned' },
-    { text: 'Custom fields on the newer modules (custom fields exist in the CRM).', status: 'planned' },
+    { text: 'Custom fields on the earlier ERP screens (products, orders, stock); the newer modules and the CRM have them.', status: 'planned' },
   ],
   keywords: ['module list', 'catalogue', 'app launcher', 'menu', 'global search', 'universal search', 'inbox', 'approvals', 'tasks waiting', 'favourites', 'bookmarks', 'workflow', 'escalation', 'CSV import', 'bulk import', 'export'],
-  sources: ['apps/work/src/shared/erp-catalogue.ts', 'apps/work/src/client/system/erp/objects/ModulesHome.tsx', 'apps/work/src/client/system/erp/objects/ModuleArea.tsx', 'apps/work/src/worker/erp/objects/routes.ts', 'apps/work/test/erp-modules.test.ts'],
+  sources: ['apps/work/src/shared/erp-catalogue.ts', 'apps/work/src/client/system/erp/objects/ModulesHome.tsx', 'apps/work/src/client/system/erp/objects/ModuleArea.tsx', 'apps/work/src/worker/erp/objects/routes.ts', 'apps/work/src/worker/erp/objects/custom.ts', 'apps/work/test/erp-modules.test.ts', 'apps/work/test/erp-custom-fields.test.ts'],
   updated: '2026-11-20',
 };
 

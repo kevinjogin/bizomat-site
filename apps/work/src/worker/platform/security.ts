@@ -52,13 +52,13 @@ const sessionId = (c: Context<AppEnv>) => {
   return s.id;
 };
 
-function newRecoveryCodes(): string[] {
+export function newRecoveryCodes(): string[] {
   return Array.from({ length: RECOVERY_CODES }, () => {
     const raw = base32Encode(crypto.getRandomValues(new Uint8Array(8))).toLowerCase().slice(0, 12);
     return `${raw.slice(0, 4)}-${raw.slice(4, 8)}-${raw.slice(8, 12)}`;
   });
 }
-const normaliseRecovery = (code: string) => String(code ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
+export const normaliseRecovery = (code: string) => String(code ?? '').toLowerCase().replace(/[^a-z0-9]/g, '');
 
 /** Checks a code (or a recovery code, used up when it matches) for a confirmed enrolment. */
 export async function checkSecondFactor(env: Env, row: MfaRow, input: { code?: string; recoveryCode?: string }): Promise<'code' | 'recovery' | null> {

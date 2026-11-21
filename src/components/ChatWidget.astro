@@ -193,10 +193,22 @@ const prompts = SITE.assistant.starters;
       prompts.hidden = state.messages.length > 0;
     };
 
+    let closing = 0;
     const setOpen = (open: boolean, focus = true) => {
       if (mode === 'page') return;
       state.open = open;
-      panel.hidden = !open;
+      window.clearTimeout(closing);
+      panel.classList.remove('is-closing');
+      // Under the new UI (flag new_ui_enabled) the panel fades out in 200 ms; otherwise, and under reduced motion, it
+      // closes at once, as before.
+      const fade = !open && !panel.hidden && document.documentElement.dataset.ui === 'new' && !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (fade) {
+        panel.classList.add('is-closing');
+        closing = window.setTimeout(() => {
+          panel.hidden = true;
+          panel.classList.remove('is-closing');
+        }, 200);
+      } else panel.hidden = !open;
       launcher?.setAttribute('aria-expanded', String(open));
       launcher?.classList.toggle('is-hidden', open);
       save();
@@ -463,11 +475,21 @@ const prompts = SITE.assistant.starters;
   }
   @media print { .assistant { display: none; } }
 
+  /* New UI: the floating panel has the largest shadow, as a modal does, and fades out in 200 ms when it closes. */
+  :global(html[data-ui="new"]) .assistant--floating .assistant__panel { box-shadow: var(--bz-shadow-xl); }
+  :global(html[data-ui="new"]) .assistant--floating .assistant__panel.is-closing { pointer-events: none; animation: assistant-out var(--bz-duration-base) var(--bz-ease-standard) forwards; }
+  @keyframes assistant-out { to { opacity: 0; transform: translateY(8px); } }
+  /* New UI: the site's button system (src/styles/ui-new.css): 8px corners, small (32) in a message, default (40) to send.
+     More specific than the generated rules below, which keep the pills' corners. */
+  :global(html[data-ui="new"]) .assistant__log :global(a.msg__button) { min-height: var(--bz-control-sm); border-radius: var(--bz-radius-md); }
+  :global(html[data-ui="new"]) button.assistant__send-btn { min-height: var(--bz-control-md); border-radius: var(--bz-radius-md); }
+
   /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
   :global(html[data-ui="new"]) .assistant { font-size: var(--bz-text-md); }
-  :global(html[data-ui="new"]) .assistant__launcher { gap: var(--bz-space-2); padding: 0 var(--bz-space-5) 0 var(--bz-space-2); border-radius: var(--bz-radius-full); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .assistant__launcher { gap: var(--bz-space-2); padding: 0 var(--bz-space-5) 0 var(--bz-space-2); border-radius: var(--bz-radius-full); font-size: var(--bz-text-md); transition-duration: var(--bz-duration-base), var(--bz-duration-base); transition-timing-function: var(--bz-ease-standard), var(--bz-ease-standard); }
   :global(html[data-ui="new"]) .assistant__launcher img { border-radius: var(--bz-radius-md); }
   :global(html[data-ui="new"]) .assistant__panel { border-radius: var(--bz-radius-lg); }
+  @media (prefers-reduced-motion: no-preference) { :global(html[data-ui="new"]) .assistant--floating .assistant__panel:not([hidden]) { animation-duration: var(--bz-duration-base); animation-timing-function: var(--bz-ease-out); } }
   :global(html[data-ui="new"]) .assistant__header { gap: var(--bz-space-3); padding: var(--bz-space-3) var(--bz-space-3) var(--bz-space-3) var(--bz-space-4); }
   :global(html[data-ui="new"]) .assistant__avatar { border-radius: var(--bz-radius-lg); }
   :global(html[data-ui="new"]) .assistant__heading h1, :global(html[data-ui="new"]) .assistant__heading h2 { font-size: var(--bz-text-md); }

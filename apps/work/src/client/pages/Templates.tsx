@@ -58,7 +58,7 @@ export default function Templates() {
               {builtin.map((t) => (
                 <article key={t.id} className="card template-card">
                   <div className="row">
-                    <div className="empty-icon" style={{ width: 34, height: 34, borderRadius: 9, background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={t.icon} /></div>
+                    <div className="empty-icon" style={{ width: 34, height: 34, borderRadius: 'var(--ui-r9, 9px)', background: 'var(--accent-soft)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Icon name={t.icon} /></div>
                     <div className="grow">
                       <h3>{t.name}</h3>
                       <span className="muted small">{t.category}</span>

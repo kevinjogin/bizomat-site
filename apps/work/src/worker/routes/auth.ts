@@ -7,6 +7,7 @@ import type { AppEnv } from '../env';
 import { HttpError, body, clientIp, newId, now, randomToken, sha256Hex } from '../lib/util';
 import { hashPassword, needsRehash, passwordProblems, verifyPassword } from '../auth/password';
 import { rateLimit, resetRateLimit } from '../auth/rate-limit';
+import { answerChallenge, markSession, signInNeedsCode, startChallenge } from '../auth/two-factor';
 import { checkOrigin, createSession, destroySession, isSecureEnv, requireAuth, resolveAuth } from '../auth/session';
 // Inside the System (/system/tasks, ...) a provider returns to the tool's own address, the one registered with it.
 import { appOf } from '../mount';
@@ -190,9 +191,30 @@ authRoutes.post('/login', async (c) => {
       throw new HttpError(403, `Confirm your email address first. ${sent ? 'We have just sent a link' : 'A link was sent'} to ${user.email}: open it, then sign in.`, { code: 'EMAIL_UNVERIFIED', email: user.email });
     }
   }
+  // Two-factor sign-in (flag account_two_factor): no session until a code from the authenticator app is given.
+  if (await signInNeedsCode(c.env, user.id)) {
+    const challenge = await startChallenge(c, user.id, 'password', null);
+    return c.json({ secondFactorRequired: true, challenge });
+  }
   const session = await createSession(c, user.id, 'password');
   await audit(c.env.DB, { actorId: user.id, action: 'auth.login', ip });
   return c.json({ user: userDTO(user), csrfToken: session.csrfToken, workspaces: await listWorkspaces(c.env.DB, user.id), platformRole: await getPlatformRole(c.env.DB, user.id) });
+});
+
+/** The second step of a sign-in with two-factor sign-in on: the challenge and a code (or a recovery code). */
+authRoutes.post('/login/two-factor', async (c) => {
+  checkOrigin(c);
+  const ip = clientIp(c);
+  await rateLimit(c.env.DB, `login-2fa:ip:${ip}`, 30, 15 * 60_000);
+  const input = await body(c, z.object({ challenge: z.string().min(20).max(200), code: z.string().trim().max(8).optional(), recoveryCode: z.string().trim().max(20).optional() }));
+  if (!input.code && !input.recoveryCode) throw new HttpError(400, 'Enter the code from your authenticator app');
+  const done = await answerChallenge(c, input.challenge, input);
+  const user = await c.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(done.userId).first<UserRow>();
+  if (!user || user.disabled_at) throw new HttpError(401, 'That sign-in has ended. Sign in again with your password.');
+  const session = await createSession(c, user.id, done.provider);
+  await c.env.DB.batch([markSession(c.env.DB, session.id)]);
+  await audit(c.env.DB, { actorId: user.id, action: 'auth.login', metadata: { provider: done.provider, secondFactor: done.how }, ip });
+  return c.json({ user: userDTO(user), csrfToken: session.csrfToken, workspaces: await listWorkspaces(c.env.DB, user.id), platformRole: await getPlatformRole(c.env.DB, user.id), redirectTo: done.redirectTo, usedRecoveryCode: done.how === 'recovery' });
 });
 
 // ------------------------------------------------------------ email confirmation
@@ -380,6 +402,11 @@ authRoutes.get('/oauth/:provider/callback', async (c) => {
       await sendVerification(c.env, { id: user.id, email: user.email, name: user.name });
       return fail('email_unverified');
     }
+  }
+  if (!row.link_user_id && (await signInNeedsCode(c.env, user.id))) {
+    // Two-factor sign-in: the sign-in page asks for the code, then makes the session (POST /login/two-factor).
+    const challenge = await startChallenge(c, user.id, provider.id, row.redirect_to ?? '/');
+    return c.redirect(`/login?challenge=${encodeURIComponent(challenge)}`, 302);
   }
   if (!row.link_user_id) await createSession(c, user.id, provider.id);
   await audit(db, { actorId: user.id, action: row.link_user_id ? 'auth.identity_linked' : 'auth.login', metadata: { provider: provider.id }, ip: clientIp(c) });
