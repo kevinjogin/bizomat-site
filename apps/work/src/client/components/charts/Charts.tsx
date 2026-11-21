@@ -80,11 +80,11 @@ export function BarChart({ data, height = 180, horizontal, showLegend = false }:
             const w = Math.max(2, (d.value / max) * 250);
             return (
               <g key={d.key} transform={`translate(0 ${i * rowH})`}>
-                <text x={0} y={16} style={{ fontSize: 11 }}>{d.label.length > 18 ? d.label.slice(0, 17) + '…' : d.label}</text>
+                <text x={0} y={16} style={{ fontSize: 'var(--ui-f11, 11px)' }}>{d.label.length > 18 ? d.label.slice(0, 17) + '…' : d.label}</text>
                 <rect x={120} y={4} width={w} height={rowH - 10} rx={4} fill={colorOf(d, i)}>
                   <title>{`${d.label}: ${fmt(d.value)}`}</title>
                 </rect>
-                <text x={124 + w} y={16} style={{ fontSize: 11 }}>{fmt(d.value)}</text>
+                <text x={124 + w} y={16} style={{ fontSize: 'var(--ui-f11, 11px)' }}>{fmt(d.value)}</text>
               </g>
             );
           })}
@@ -165,7 +165,7 @@ export function DonutChart({ data, size = 140, centerLabel }: { data: ChartDatum
           acc += frac;
           return el;
         })}
-        <text x={c} y={c + 2} textAnchor="middle" style={{ fontSize: 20, fontWeight: 700, fill: 'var(--text)' }}>{fmt(total)}</text>
+        <text x={c} y={c + 2} textAnchor="middle" style={{ fontSize: 'var(--ui-f20, 20px)', fontWeight: 700, fill: 'var(--text)' }}>{fmt(total)}</text>
         {centerLabel ? <text x={c} y={c + 18} textAnchor="middle">{centerLabel}</text> : null}
       </svg>
       <Legend data={data} />

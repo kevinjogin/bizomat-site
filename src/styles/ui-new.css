@@ -27,32 +27,67 @@ html[data-ui="new"] :is(.bz-eyebrow, .eyebrow) { font-size: var(--bz-text-xs); l
 html[data-ui="new"] :is(.pp-head, .sys-head, .section-head) > :is(.bz-eyebrow, .eyebrow) { margin: 0 0 var(--bz-space-3); }
 
 /* ---------------------------------------------------------------- buttons */
-html[data-ui="new"] .button {
+/* One button system for the whole website: the Button component (.button), the shared brand buttons of the Knowledge
+   Centre (.bz-btn), the Tools page (.btn) and the components' own buttons (the header's Sign in, Proof of Work, the
+   booking card, AI Search). Sizes: small 32, default 40, large 48; corners 8px; depth and motion from the tokens. A
+   component whose own rules are more specific sets its size and corners next to them (BookingCard, ChatWidget). */
+html[data-ui="new"] :is(.button, .bz-btn, .btn, .case__button, .booking__button, .site-header__cta, .site-nav__cta, .msg__button, .assistant__send-btn) {
   min-height: var(--bz-control-md);
-  padding: 0 var(--bz-control-pad-md);
   border-radius: var(--bz-radius-md);
-  font-size: var(--bz-text-base);
   box-shadow: var(--bz-shadow-xs);
   transition: background-color var(--bz-duration-base) var(--bz-ease-standard), border-color var(--bz-duration-base) var(--bz-ease-standard),
     color var(--bz-duration-base) var(--bz-ease-standard), box-shadow var(--bz-duration-base) var(--bz-ease-standard), transform var(--bz-duration-base) var(--bz-ease-standard);
 }
-html[data-ui="new"] .button:hover:not([disabled]) { box-shadow: var(--bz-shadow-md); transform: translateY(-1px); }
-html[data-ui="new"] .button:active:not([disabled]) { box-shadow: var(--bz-shadow-xs); transform: translateY(0); filter: brightness(0.95); }
-html[data-ui="new"] .button:focus-visible { outline: none; box-shadow: var(--bz-focus-ring), var(--bz-shadow-xs); }
-html[data-ui="new"] .button[disabled] { opacity: 0.5; box-shadow: none; transform: none; cursor: not-allowed; }
-html[data-ui="new"] .button[aria-busy="true"] { pointer-events: none; opacity: 0.75; }
-html[data-ui="new"] .button--small { min-height: var(--bz-control-sm); padding: 0 var(--bz-control-pad-sm); font-size: var(--bz-text-sm); }
-/* Large: hero and closing calls to action. */
+html[data-ui="new"] .button { padding: 0 var(--bz-control-pad-md); font-size: var(--bz-text-base); }
+html[data-ui="new"] .bz-btn { padding: 0 var(--bz-control-pad-md); font-size: var(--bz-text-base); }
+html[data-ui="new"] :is(.button, .bz-btn, .btn, .case__button, .booking__button, .site-header__cta, .site-nav__cta, .msg__button, .assistant__send-btn):hover:not([disabled]):not([aria-disabled="true"]) {
+  box-shadow: var(--bz-shadow-md); transform: translateY(-1px);
+}
+html[data-ui="new"] :is(.button, .bz-btn, .btn, .case__button, .booking__button, .site-header__cta, .site-nav__cta, .msg__button, .assistant__send-btn):active:not([disabled]):not([aria-disabled="true"]) {
+  box-shadow: var(--bz-shadow-xs); transform: translateY(0); filter: brightness(0.95);
+}
+html[data-ui="new"] :is(.button, .bz-btn, .btn, .assistant__send-btn, .lib-link-button, .assistant__text-btn):is([disabled], [aria-disabled="true"]) {
+  opacity: 0.5; box-shadow: none; transform: none; filter: none; cursor: not-allowed;
+}
+/* Loading: the label keeps its place (the width does not jump) behind a spinner, and the button takes no input. */
+html[data-ui="new"] :is(.button, .bz-btn, .btn, .assistant__send-btn)[aria-busy="true"] { position: relative; color: transparent; pointer-events: none; }
+html[data-ui="new"] :is(.button, .bz-btn, .btn, .assistant__send-btn)[aria-busy="true"] > * { visibility: hidden; }
+html[data-ui="new"] :is(.button, .bz-btn, .btn, .assistant__send-btn)[aria-busy="true"]::after {
+  content: ''; position: absolute; inset: 0; margin: auto; width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid var(--b-fg, var(--_fg, var(--muted))); border-right-color: transparent; border-left-color: transparent; animation: ui-spin 0.7s linear infinite;
+}
+/* The spinner in the button's own text colour (.button's --b-fg, .bz-btn's --_fg); the Tools page's dark .btn and AI
+   Search's send button have paper text. */
+html[data-ui="new"] :is(.btn:not(.secondary), .assistant__send-btn)[aria-busy="true"]::after { border-top-color: var(--paper); border-bottom-color: var(--paper); }
+@keyframes ui-spin { to { transform: rotate(360deg); } }
+/* Sizes */
+html[data-ui="new"] :is(.button--small, .bz-btn--sm, .msg__button) { min-height: var(--bz-control-sm); padding: 0 var(--bz-control-pad-sm); font-size: var(--bz-text-sm); }
+/* Large: hero and closing calls to action, and the booking card. */
 html[data-ui="new"] .button--large,
 html[data-ui="new"] :is(.hero, .cta, .home-close, .custom-cta, .pp-hero, .sys-hero) .button:not(.button--small):not(.button--text) {
   min-height: var(--bz-control-lg); padding: 0 var(--bz-control-pad-lg); font-size: var(--bz-text-md);
 }
-html[data-ui="new"] .button--secondary, html[data-ui="new"] .button--text { box-shadow: none; }
-html[data-ui="new"] .button--secondary:hover:not([disabled]) { box-shadow: var(--bz-shadow-sm); }
+/* Outline buttons (secondary): flat until hovered. */
+html[data-ui="new"] :is(.button--secondary, .bz-btn--secondary, .btn.secondary) { box-shadow: none; }
+html[data-ui="new"] :is(.button--secondary, .bz-btn--secondary, .btn.secondary):hover:not([disabled]):not([aria-disabled="true"]) { box-shadow: var(--bz-shadow-sm); }
+/* Ghost and link-style buttons (the Library's, AI Search's Cancel): no depth and no lift; a background (ghost) or an
+   underline (link) on hover. */
+html[data-ui="new"] :is(.button--text, .bz-btn--ghost) { box-shadow: none; }
 html[data-ui="new"] .button--text { min-height: 0; padding: var(--bz-space-1) 0; }
-html[data-ui="new"] .button--text:hover:not([disabled]) { box-shadow: none; transform: none; }
-html[data-ui="new"] .btn { border-radius: var(--bz-radius-md); min-height: var(--bz-control-md); transition: box-shadow var(--bz-duration-base) var(--bz-ease-standard), transform var(--bz-duration-base) var(--bz-ease-standard); }
-html[data-ui="new"] .btn:hover { box-shadow: var(--bz-shadow-md); transform: translateY(-1px); }
+html[data-ui="new"] .bz-btn--ghost { padding: 0 var(--bz-space-2); }
+html[data-ui="new"] :is(.button--text, .bz-btn--ghost):hover:not([disabled]):not([aria-disabled="true"]) { box-shadow: none; transform: none; }
+html[data-ui="new"] :is(.lib-link-button, .assistant__text-btn) {
+  border-radius: var(--bz-radius-sm); text-decoration-line: underline; text-decoration-color: transparent; text-underline-offset: 0.18em;
+  transition: text-decoration-color var(--bz-duration-fast) var(--bz-ease-standard), color var(--bz-duration-fast) var(--bz-ease-standard);
+}
+html[data-ui="new"] :is(.lib-link-button, .assistant__text-btn):hover { text-decoration-color: currentColor; }
+/* Focus from the keyboard, last so no variant takes it away: a solid 2px outline (at least 3:1 against the page, as
+   WCAG 2.1 asks of a focus indicator) with the brief's 30% ring around it. Its colour is the site's focus colour: teal,
+   or the light ink on the dark bands (global.css, --focus-ring). The outline is not a shadow, so a hover or a variant's
+   shadow never hides it. */
+html[data-ui="new"] :is(.button, .bz-btn, .btn, .case__button, .booking__button, .site-header__cta, .site-nav__cta, .msg__button, .assistant__send-btn, .lib-link-button, .assistant__text-btn):focus-visible {
+  outline: 2px solid var(--focus-ring, var(--accent)); outline-offset: 2px; box-shadow: var(--bz-focus-ring), var(--bz-shadow-xs);
+}
 
 /* ---------------------------------------------------------------- links */
 /* Text links in running text (links without a class of their own; buttons and cards have one): the brand colour, a
@@ -66,14 +101,16 @@ html[data-ui="new"] main :is(p, li, dd, td, figcaption, blockquote):not(nav *) >
 }
 html[data-ui="new"] main :is(p, li, dd, td, figcaption, blockquote):not(nav *) > a:not([class]):hover { text-decoration-color: currentColor; text-underline-offset: 0.26em; }
 html[data-ui="new"] main :is(p, li, dd, td, figcaption, blockquote):not(nav *) > a:not([class]):visited { color: var(--accent); }
-html[data-ui="new"] a:focus-visible { outline: none; box-shadow: var(--bz-focus-ring); border-radius: var(--bz-radius-sm); }
+html[data-ui="new"] a:focus-visible { outline: 2px solid var(--focus-ring, var(--accent)); outline-offset: 2px; box-shadow: var(--bz-focus-ring); border-radius: var(--bz-radius-sm); }
 /* Navigation: a highlight on hover, the indicator bar on the current section. */
 html[data-ui="new"] .site-nav__link { border-radius: var(--bz-radius-md); transition: background-color var(--bz-duration-fast) var(--bz-ease-standard), color var(--bz-duration-fast) var(--bz-ease-standard); }
 html[data-ui="new"] .site-nav__link.is-current::after { height: 3px; transform-origin: center; animation: ui-bar-in var(--bz-duration-base) var(--bz-ease-out); }
 @keyframes ui-bar-in { from { transform: scaleX(0.4); opacity: 0; } }
 
 /* ---------------------------------------------------------------- cards */
-html[data-ui="new"] :is(.pp-card, .v-card, .lg-card, .guide-card, .sys-card, .res-card, .reach-card, .lib-card, .work-card, .tool-card, .product-card, .bz-card) {
+/* Every card: large corners and a small shadow. A card that is a link (or holds only a link) lifts to the large
+   shadow on hover; cards with a link inside them stay still. */
+html[data-ui="new"] :is(.pp-card, .v-card, .lg-card, .guide-card, .sys-card, .res-card, .reach-card, .lib-card, .work-card, .tool-card, .product-card, .bz-card, .lc-card, .learn-card, .dr-card, .book-card, .price-card, .sys-box) {
   border-radius: var(--bz-radius-lg);
   box-shadow: var(--bz-shadow-sm);
 }
@@ -82,6 +119,25 @@ html[data-ui="new"] :is(.pp-card, .v-card, .lg-card, .guide-card, .sys-card, .re
   transition: box-shadow var(--bz-duration-base) var(--bz-ease-standard), transform var(--bz-duration-base) var(--bz-ease-standard);
 }
 html[data-ui="new"] a:is(.pp-card, .v-card, .lg-card, .guide-card, .sys-card, .res-card, .lib-card, .tool-card, .product-card):hover { box-shadow: var(--bz-shadow-lg); transform: translateY(-2px); }
+
+/* ---------------------------------------------------------------- tables */
+/* One table style everywhere (articles, Systems, the analysis tables, figures): the same cell padding and type, the
+   header in bold on a stronger rule, and a light highlight on the row under the pointer. Wide tables keep scrolling
+   inside their wrapper; the website's tables are short, so their headers do not stick. */
+html[data-ui="new"] :is(.prose table, .an-table, .sys-table, .kf-table, .bz-table) :is(th, td) {
+  padding: var(--bz-space-3) var(--bz-space-4) var(--bz-space-3) 0;
+  font-size: var(--bz-text-base);
+  line-height: var(--bz-leading-normal);
+}
+html[data-ui="new"] :is(.prose table, .an-table, .sys-table, .kf-table, .bz-table) th { font-weight: 600; color: var(--ink); border-bottom-color: var(--line-strong); }
+html[data-ui="new"] :is(.prose table, .an-table, .sys-table, .kf-table, .bz-table) tbody tr { transition: background-color var(--bz-duration-fast) var(--bz-ease-standard); }
+html[data-ui="new"] :is(.prose table, .an-table, .sys-table, .kf-table, .bz-table) tbody tr:hover { background: var(--paper-2); }
+
+/* ---------------------------------------------------------------- sections */
+/* One vertical rhythm: every section band takes --space-section (64px on a desktop, 48 on a tablet, 40 on a phone),
+   and every page's opening section the same at the top and three quarters of it below. */
+html[data-ui="new"] :is(.home-close, .sol-close, .lv-band) { padding-block: var(--space-section); }
+html[data-ui="new"] :is(.hero, .home-hero, .pp-hero, .lv-hero) { padding-top: var(--space-section); padding-bottom: calc(var(--space-section) * 0.75); }
 
 /* ---------------------------------------------------------------- forms */
 html[data-ui="new"] :is(.input-wrap input, .field select, .field input, .field textarea, input[type="text"], input[type="email"], input[type="search"], input[type="number"], select) {

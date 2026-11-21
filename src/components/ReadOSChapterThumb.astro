@@ -27,6 +27,7 @@ const html = chosen ? renderFigure(chosen, `toc-${id.replace(/[^a-z0-9]+/gi, '-'
 .toc-thumb-empty{background:linear-gradient(135deg,var(--surface),var(--accent-soft))}
 
   /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .toc-thumb { transition-duration: var(--bz-duration-base), var(--bz-duration-base); transition-timing-function: var(--bz-ease-standard), var(--bz-ease-standard); }
   :global(html[data-ui="new"]) .toc-thumb-inner :global(.kf) { padding: var(--bz-space-4) var(--bz-space-4); }
   /* ui-new:generated end */
 </style>

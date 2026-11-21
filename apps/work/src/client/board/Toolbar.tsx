@@ -133,7 +133,7 @@ export function FilterBuilder({ bundle, members, value, onChange, depth = 0 }: {
   const setRule = (i: number, r: FilterRule | FilterGroup) => onChange({ ...value, rules: value.rules.map((x, j) => (j === i ? r : x)) });
   const remove = (i: number) => onChange({ ...value, rules: value.rules.filter((_, j) => j !== i) });
   return (
-    <div className="col" style={{ padding: depth ? 8 : 6, gap: 'var(--ui-s8, 8px)', border: depth ? '1px solid var(--border)' : undefined, borderRadius: 8 }}>
+    <div className="col" style={{ padding: depth ? 8 : 6, gap: 'var(--ui-s8, 8px)', border: depth ? '1px solid var(--border)' : undefined, borderRadius: 'var(--ui-r8, 8px)' }}>
       {depth === 0 ? <div className="menu-label">Show items where…</div> : null}
       {value.rules.length === 0 ? <div className="muted small">No conditions — all items are shown.</div> : null}
       {value.rules.map((r, i) => (

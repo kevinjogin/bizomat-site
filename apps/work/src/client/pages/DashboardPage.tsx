@@ -223,8 +223,8 @@ export default function DashboardPage() {
                   <div className="widget-tools">
                     <button className="btn ghost icon sm" aria-label="Narrower" title="Narrower" onClick={() => resize(w, -1, 0)} disabled={w.w <= 1}><Icon name="chevronLeft" size={14} /></button>
                     <button className="btn ghost icon sm" aria-label="Wider" title="Wider" onClick={() => resize(w, 1, 0)} disabled={w.w >= 4}><Icon name="chevronRight" size={14} /></button>
-                    <button className="btn ghost icon sm" aria-label="Shorter" title="Shorter" onClick={() => resize(w, 0, -1)} disabled={w.h <= 1}><span aria-hidden style={{ fontSize: 11, fontWeight: 700 }}>H−</span></button>
-                    <button className="btn ghost icon sm" aria-label="Taller" title="Taller" onClick={() => resize(w, 0, 1)} disabled={w.h >= 4}><span aria-hidden style={{ fontSize: 11, fontWeight: 700 }}>H+</span></button>
+                    <button className="btn ghost icon sm" aria-label="Shorter" title="Shorter" onClick={() => resize(w, 0, -1)} disabled={w.h <= 1}><span aria-hidden style={{ fontSize: 'var(--ui-f11, 11px)', fontWeight: 700 }}>H−</span></button>
+                    <button className="btn ghost icon sm" aria-label="Taller" title="Taller" onClick={() => resize(w, 0, 1)} disabled={w.h >= 4}><span aria-hidden style={{ fontSize: 'var(--ui-f11, 11px)', fontWeight: 700 }}>H+</span></button>
                     <button className="btn ghost icon sm" aria-label={`Edit ${w.title}`} onClick={() => setEditingWidget(w)}><Icon name="edit" size={14} /></button>
                     <button
                       className="btn ghost icon sm"
@@ -278,7 +278,7 @@ function ItemList({ items, wsId, empty }: { items: any[]; wsId: string; empty: s
             {i.name}
             <span className="muted small"> · {i.boardName}</span>
           </span>
-          {i.status ? <span className="pill" style={{ background: i.status.color, height: 20, fontSize: 11 }}>{i.status.label}</span> : null}
+          {i.status ? <span className="pill" style={{ background: i.status.color, height: 20, fontSize: 'var(--ui-f11, 11px)' }}>{i.status.label}</span> : null}
           <span className="small" style={{ color: 'var(--text-3)', flex: 'none' }}>{formatDate(i.due)}</span>
         </Link>
       ))}
@@ -324,14 +324,14 @@ function WidgetBody({ widget, data, wsId }: { widget: WidgetDTO; data: any; wsId
     case 'overdue':
       return (
         <div>
-          <div className="row" style={{ marginBottom: 'var(--ui-s4, 4px)' }}><span className="big-number danger-text" style={{ fontSize: 28 }}>{data.count}</span><span className="muted small">overdue</span></div>
+          <div className="row" style={{ marginBottom: 'var(--ui-s4, 4px)' }}><span className="big-number danger-text" style={{ fontSize: 'var(--ui-f28, 28px)' }}>{data.count}</span><span className="muted small">overdue</span></div>
           <ItemList items={data.items} wsId={wsId} empty="Nothing overdue 🎉" />
         </div>
       );
     case 'upcoming':
       return (
         <div>
-          <div className="row" style={{ marginBottom: 'var(--ui-s4, 4px)' }}><span className="big-number" style={{ fontSize: 28 }}>{data.count}</span><span className="muted small">due in the next {widget.config.days ?? 7} days</span></div>
+          <div className="row" style={{ marginBottom: 'var(--ui-s4, 4px)' }}><span className="big-number" style={{ fontSize: 'var(--ui-f28, 28px)' }}>{data.count}</span><span className="muted small">due in the next {widget.config.days ?? 7} days</span></div>
           <ItemList items={data.items} wsId={wsId} empty="No upcoming deadlines" />
         </div>
       );
@@ -369,7 +369,7 @@ function WidgetBody({ widget, data, wsId }: { widget: WidgetDTO; data: any; wsId
     case 'time':
       return (
         <div className="col">
-          <div className="row"><span className="big-number" style={{ fontSize: 28 }}>{data.totalHours}</span><span className="muted small">hours logged</span></div>
+          <div className="row"><span className="big-number" style={{ fontSize: 'var(--ui-f28, 28px)' }}>{data.totalHours}</span><span className="muted small">hours logged</span></div>
           {data.byPerson?.length ? <BarChart data={data.byPerson} horizontal /> : <div className="muted small">No time logged in this range</div>}
           {!short && data.byBoard?.length > 1 ? <BarChart data={data.byBoard} horizontal /> : null}
         </div>
