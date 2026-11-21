@@ -170,3 +170,12 @@
   .mt-cal-date { flex-basis: 100%; }
   .mt-scan-row .btn { flex: 1 1 auto; height: 48px; }
 }
+
+/* ------------------------------------------------------------------ field release, stream A: the work order list's toolbar */
+/* Seven list tabs keep a line of their own; the trade, CSV and new work order controls sit under them, on the right. On a
+   wide screen everything fits on one line. */
+.mt-toolbar > .mt-wo-tabs { flex-basis: 100%; }
+.mt-toolbar > .mt-wo-tabs + * { margin-left: auto; }
+@media (min-width: 1440px) {
+  .mt-toolbar > .mt-wo-tabs { flex-basis: 0; }
+}

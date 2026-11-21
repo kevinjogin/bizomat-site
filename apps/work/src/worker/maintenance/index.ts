@@ -11,6 +11,9 @@
 //   assets, requests, work orders and files:  routes-assets.ts, routes-requests.ts, routes-work.ts, routes-files.ts
 //   stages M2 and M3: pm.ts (preventive maintenance), routes-meters.ts, routes-inspections.ts (templates, inspections,
 //   prestarts), routes-parts.ts (parts, labour, downtime), routes-setup.ts (sites, trades, stores, QR, scan), reports.ts
+//   the field release, stream A (lists.ts: list filters, CSV files and the overview's extra counts):
+//   GET   /c/:company/assets/:id/summary      the asset, its path and the other open work on it (asset-summary.ts)
+//   POST  /c/:company/requests/:id/withdraw   the person who raised a request withdraws it (routes-requests.ts)
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -34,6 +37,7 @@ import { reportRoutes } from './reports';
 // inspection rounds and readings, reservations, requisitions and stocktakes, and the job card, sign-off and record of
 // work already done. Each stream's routes live in its own file.
 import { assetSummaryRoutes } from './asset-summary';
+import { overviewExtras } from './lists';
 import { roundRoutes } from './routes-rounds';
 import { stockRoutes } from './routes-stock';
 import { jobRoutes } from './routes-job';
@@ -104,7 +108,7 @@ maintenanceRoutes.get('/c/:company/overview', async (c) => {
     db
       .prepare(
         `SELECT
-           SUM(CASE WHEN r.status IN ('awaiting_approval','submitted') THEN 1 ELSE 0 END) AS awaiting,
+           SUM(CASE WHEN r.status = 'awaiting_approval' THEN 1 ELSE 0 END) AS awaiting,
            SUM(CASE WHEN r.status = 'info_requested' THEN 1 ELSE 0 END) AS info,
            SUM(CASE WHEN r.status IN (${sqlList(OPEN_REQUESTS)}) THEN 1 ELSE 0 END) AS open_requests,
            SUM(CASE WHEN r.requested_by = ? AND r.status NOT IN ('closed','declined','completed') THEN 1 ELSE 0 END) AS my_requests
@@ -127,7 +131,11 @@ maintenanceRoutes.get('/c/:company/overview', async (c) => {
     .prepare('SELECT l.work_order_id, l.started_at, w.number FROM mt_labour l JOIN mt_work_orders w ON w.company_id = l.company_id AND w.id = l.work_order_id WHERE l.company_id = ? AND l.user_id = ? AND l.ended_at IS NULL ORDER BY l.started_at')
     .bind(a.companyId, a.userId)
     .all<{ work_order_id: string; started_at: number; number: string }>();
+  // The field release: due today and this week, unassigned, new and outstanding requests, and whether approval applies.
+  const extra = await overviewExtras(db, a, today);
   return c.json({
+    ...extra,
+    approvalRequired: await requireApproval(db, a.companyId),
     today,
     role: a.role,
     awaitingApproval: r.awaiting ?? 0,

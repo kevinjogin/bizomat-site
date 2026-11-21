@@ -9,6 +9,7 @@ import { get } from '../lib/api';
 import { usePageTitle } from '../lib/hooks';
 import { Icon } from '../components/ui/Icon';
 import { PageHeader } from '../components/ui/ui';
+import { localToday } from './maintenance/api';
 
 interface ProductCounts {
   products: { total: number; active: number; unreleased: number };
@@ -27,6 +28,7 @@ export interface OperationsCounts {
   supplyChain?: { ordersDraft: number; ordersToAllocate: number; ordersLate: number; toPick: number; toPack: number; toDispatch: number; inTransit: number; toInvoice: number; returnsToAuthorise: number; returnsToReceive: number };
 }
 interface MaintenanceCounts {
+  role: 'admin' | 'supervisor' | 'technician' | 'requester';
   awaitingApproval: number;
   openRequests: number;
   openWorkOrders: number;
@@ -36,17 +38,53 @@ interface MaintenanceCounts {
   assetsDown: number;
   preventiveOpen: number;
   preventiveOverdue: number;
+  newRequests: number;
+  infoRequested: number;
+  myRequests: number;
+  myWork: number;
+  dueThisWeek: number;
 }
 
 const enc = encodeURIComponent;
 const useProductCounts = (id: string, on: boolean) => useQuery({ queryKey: ['erp', id, 'overview'], queryFn: () => get<ProductCounts>(`/erp/c/${enc(id)}/overview`), enabled: on, retry: false, staleTime: 60_000 });
 export const useOperationsCounts = (id: string, on: boolean) => useQuery({ queryKey: ['erp', id, 'operations'], queryFn: () => get<OperationsCounts>(`/erp/c/${enc(id)}/operations`), enabled: on, retry: false, staleTime: 60_000 });
-const useMaintenanceCounts = (id: string, on: boolean) => useQuery({ queryKey: ['mt', id, 'overview'], queryFn: () => get<MaintenanceCounts>(`/maintenance/c/${enc(id)}/overview`), enabled: on, retry: false, staleTime: 60_000 });
+// The same query (and key) as the Maintenance overview, so the two share one answer: the person's own date.
+const useMaintenanceCounts = (id: string, on: boolean) => {
+  const today = localToday();
+  return useQuery({ queryKey: ['mt', id, 'overview', today], queryFn: () => get<MaintenanceCounts>(`/maintenance/c/${enc(id)}/overview?today=${today}`), enabled: on, retry: false, staleTime: 60_000 });
+};
 
 const n = (v: number | undefined | null) => (v ?? 0).toLocaleString();
 const dollars = (cents: number | undefined) => `$${Math.round((cents ?? 0) / 100).toLocaleString()}`;
 
 type Figure = [label: string, value: string, warn?: boolean];
+
+/** The Maintenance card's figures for the person's maintenance role (the server counts only what they may see). */
+function maintenanceFigures(m: MaintenanceCounts): Figure[] {
+  if (m.role === 'admin' || m.role === 'supervisor') {
+    return [
+      ['Open work orders', n(m.openWorkOrders)],
+      ['Overdue', n(m.overdue), m.overdue > 0],
+      ['Due this week', n(m.dueThisWeek)],
+      ['Requests to approve', n(m.awaitingApproval), m.awaitingApproval > 0],
+      ...(m.newRequests > 0 ? ([['New requests', n(m.newRequests)]] as Figure[]) : []),
+      ['Assets down', n(m.assetsDown), m.assetsDown > 0],
+    ];
+  }
+  if (m.role === 'technician') {
+    return [
+      ['My work', n(m.myWork)],
+      ['Overdue', n(m.overdue), m.overdue > 0],
+      ['Due this week', n(m.dueThisWeek)],
+      ['My open requests', n(m.myRequests)],
+    ];
+  }
+  return [
+    ['My open requests', n(m.myRequests)],
+    ['Waiting for your answer', n(m.infoRequested), m.infoRequested > 0],
+    ['Work orders on my requests', n(m.openWorkOrders)],
+  ];
+}
 
 /** One module's card on the dashboard: its figures, or what it holds when this person has none to see. */
 function ModuleCard({ icon, title, to, what, figures, loading }: { icon: string; title: string; to: string; what: string; figures: Figure[] | null; loading: boolean }) {
@@ -127,12 +165,7 @@ export function ModuleProgress({ companyId, guest }: { companyId: string; guest:
       <ModuleCard
         icon="wrench" title="Maintenance" to={`${base}/maintenance`} loading={m.isLoading}
         what="Requests, work orders, assets, preventive maintenance and inspections."
-        figures={m.data ? [
-          ['Open work orders', n(m.data.openWorkOrders)],
-          ['Overdue', n(m.data.overdue), m.data.overdue > 0],
-          ['Requests to approve', n(m.data.awaitingApproval), m.data.awaitingApproval > 0],
-          ['Assets down', n(m.data.assetsDown), m.data.assetsDown > 0],
-        ] : null}
+        figures={m.data ? maintenanceFigures(m.data) : null}
       />
     </>
   );

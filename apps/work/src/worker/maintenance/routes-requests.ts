@@ -12,17 +12,25 @@ import { rateLimit } from '../auth/rate-limit';
 import { deny, isManager, requestScope, requireMt, workOrderScope, type MtAccess } from './access';
 import { requestDTO, workOrderDTO } from './dto';
 import { WO_SELECT, fromRequestSchema, loadWorkOrder, workOrderStatements } from './routes-work';
-import { OPEN_REQUESTS, OUTSTANDING, PRIORITY, PRIORITY_RANK, commentStmt, commentsOf, departmentName, eventDTO, eventStmt, filesOf, likeOf, nextNumber, searchText, sqlList, validDate, zDate, zId, zText, type RequestStatus } from './util';
+import { OPEN_REQUESTS, OUTSTANDING, PRIORITY, PRIORITY_RANK, commentStmt, commentsOf, departmentName, eventDTO, eventStmt, filesOf, likeOf, nextNumber, searchText, sqlList, todayFrom, validDate, zDate, zId, zText, type RequestStatus } from './util';
+// The field release, stream A: the list's extra filters, the other open work on each request's asset, the CSV file and
+// withdrawing a request.
+import { csvResponse } from '../erp/util';
+import { SUBTREE_SQL } from './routes-assets';
+import { doneStmt, eventIfStmt, isUnique } from './m2util';
+import { CSV_MAX, WITHDRAWABLE, dayStartMs, requestCsvRows, requestListColumns, requestListFilters } from './lists';
 
 export const requestRoutes = new Hono<AppEnv>();
 
-const SELECT = `SELECT r.*, a.number AS asset_number, a.name AS asset_name, u.name AS requester_name, dc.name AS decider_name, d.name AS department_name, w.number AS wo_number, w.status AS wo_status
-  FROM mt_requests r
+/** The request columns with asset, people, department and work order (REQUEST_FROM's tables). */
+const REQUEST_COLUMNS = `r.*, a.number AS asset_number, a.name AS asset_name, u.name AS requester_name, dc.name AS decider_name, d.name AS department_name, w.number AS wo_number, w.status AS wo_status`;
+const REQUEST_FROM = `FROM mt_requests r
   LEFT JOIN mt_assets a ON a.company_id = r.company_id AND a.id = r.asset_id
   LEFT JOIN users u ON u.id = r.requested_by
   LEFT JOIN users dc ON dc.id = r.decided_by
   LEFT JOIN co_departments d ON d.id = r.department_id
   LEFT JOIN mt_work_orders w ON w.company_id = r.company_id AND w.id = r.work_order_id`;
+const SELECT = `SELECT ${REQUEST_COLUMNS} ${REQUEST_FROM}`;
 
 export async function requireApproval(db: D1Database, companyId: string): Promise<boolean> {
   const s = await db.prepare('SELECT require_approval FROM mt_settings WHERE company_id = ?').bind(companyId).first<{ require_approval: number }>();
@@ -102,30 +110,50 @@ requestRoutes.get('/c/:company/requests', async (c) => {
     args.push(qp('priority'));
   }
   if (qp('assetId')) {
-    where.push('r.asset_id = ?');
-    args.push(qp('assetId').slice(0, 64));
+    if (qp('includeChildren') === '1') {
+      where.push(`r.asset_id IN (${SUBTREE_SQL})`);
+      args.push(a.companyId, qp('assetId').slice(0, 64), a.companyId);
+    } else {
+      where.push('r.asset_id = ?');
+      args.push(qp('assetId').slice(0, 64));
+    }
   }
-  // Dates: when the request was raised, from and to (inclusive, UTC days).
+  // The field release: requested by, department, site and the statuses outstanding, withdrawn and work order cancelled.
+  const f = requestListFilters(qp);
+  // Dates: when the request was raised, from and to (inclusive, the person's own days with tzOffset, else UTC days).
   if (validDate(qp('from'))) {
     where.push('r.created_at >= ?');
-    args.push(Date.parse(`${qp('from')}T00:00:00Z`));
+    args.push(dayStartMs(qp('from'), f.tz));
   }
   if (validDate(qp('to'))) {
     where.push('r.created_at < ?');
-    args.push(Date.parse(`${qp('to')}T00:00:00Z`) + 86_400_000);
+    args.push(dayStartMs(qp('to'), f.tz) + 86_400_000);
   }
   if (qp('q').trim()) {
     where.push('(r.search LIKE ? OR a.search LIKE ?)');
     args.push(likeOf(qp('q')), likeOf(qp('q')));
   }
+  where.push(...f.where);
+  args.push(...f.args);
   const sort = qp('sort') === 'priority' ? `${PRIORITY_RANK.replace('{col}', 'r.priority')} DESC, r.created_at DESC` : qp('sort') === 'number' ? 'r.number COLLATE NOCASE DESC' : qp('sort') === 'oldest' ? 'r.created_at ASC' : 'r.created_at DESC';
+  // The other open work on each request's asset, and its site (the columns' own arguments bind first).
+  const cols = requestListColumns(a);
+  if (qp('format') === 'csv') {
+    const all = await c.env.DB.prepare(`SELECT ${REQUEST_COLUMNS}${cols.sql} ${REQUEST_FROM} WHERE ${where.join(' AND ')} ORDER BY ${sort} LIMIT ${CSV_MAX}`).bind(...cols.args, ...args).all<any>();
+    return csvResponse(`maintenance-requests-${todayFrom(qp('today'))}`, requestCsvRows(all.results, f.tz));
+  }
   const limit = Math.min(Math.max(Number(qp('limit')) || 100, 1), 500);
   const offset = Math.max(Number(qp('offset')) || 0, 0);
   const [rows, total] = await c.env.DB.batch([
-    c.env.DB.prepare(`${SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} LIMIT ? OFFSET ?`).bind(...args, limit, offset),
+    c.env.DB.prepare(`SELECT ${REQUEST_COLUMNS}${cols.sql} ${REQUEST_FROM} WHERE ${where.join(' AND ')} ORDER BY ${sort} LIMIT ? OFFSET ?`).bind(...cols.args, ...args, limit, offset),
     c.env.DB.prepare(`SELECT COUNT(*) AS n FROM mt_requests r LEFT JOIN mt_assets a ON a.company_id = r.company_id AND a.id = r.asset_id WHERE ${where.join(' AND ')}`).bind(...args),
   ]);
-  return c.json({ requests: (rows.results as any[]).map(requestDTO), total: (total.results[0] as any)?.n ?? 0 });
+  return c.json({
+    requests: (rows.results as any[]).map((r) => ({ ...requestDTO(r), openOnAsset: { requests: r.other_open_requests ?? 0, workOrders: r.other_open_work_orders ?? 0 }, siteCode: r.site_code ?? null })),
+    total: (total.results[0] as any)?.n ?? 0,
+    limit,
+    offset,
+  });
 });
 
 // ------------------------------------------------------------------ raise, read, change
@@ -188,6 +216,8 @@ requestRoutes.get('/c/:company/requests/:id', async (c) => {
       close: manager && r.status !== 'closed',
       comment: (mine || manager) && r.status !== 'closed',
       upload: (mine || manager) && r.status !== 'closed',
+      // The field release: the person who raised it, until it becomes or joins a work order.
+      withdraw: mine && !r.work_order_id && (WITHDRAWABLE as string[]).includes(r.status),
     },
   });
 });
@@ -281,6 +311,45 @@ requestRoutes.post('/c/:company/requests/:id/respond', async (c) => {
     commentStmt(db, { companyId: a.companyId, requestId: r.id, authorId: a.userId, body: input.comment, at: t }),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.info_given', assetId: r.asset_id, requestId: r.id, summary: `Information given on ${r.number}`, before: { status: r.status }, after: { status: to }, at: t }),
   ]);
+  return c.json(requestDTO(await loadRequest(db, a, r.id)));
+});
+
+/**
+ * The field release: the person who raised a request withdraws it, with a reason, while it is submitted, awaiting
+ * approval, waiting for more information or approved, and has not become or joined a work order. It is closed, and
+ * withdrawn_at and withdraw_reason say it was withdrawn. Supervisors and administrators withdraw only their own; for
+ * other people's they keep Close and Decline. The comment and the history line are written only when the guarded change
+ * is made, so a conversion at the same moment wins or loses whole.
+ */
+requestRoutes.post('/c/:company/requests/:id/withdraw', async (c) => {
+  const a = await requireMt(c);
+  const db = c.env.DB;
+  const r = await loadRequest(db, a, c.req.param('id'));
+  if (r.requested_by !== a.userId) deny('Only the person who raised a request can withdraw it. A supervisor can close or decline it.');
+  if (r.work_order_id) throw new HttpError(409, `${r.number} already has work order ${r.wo_number ?? ''}. Ask a supervisor to close it.`, { code: 'REQUEST_HAS_WORK_ORDER', workOrderNumber: r.wo_number ?? null });
+  if (!(WITHDRAWABLE as string[]).includes(r.status)) throw new HttpError(409, `${r.number} is ${r.status.replace(/_/g, ' ')}: it can no longer be withdrawn`, { code: 'REQUEST_NOT_WITHDRAWABLE', status: r.status });
+  const input = await body(c, z.object({ reason: zText(2000).min(1, 'Give a reason for withdrawing') }));
+  const t = now();
+  const changed = () => new HttpError(409, `${r.number} changed while you were withdrawing it`, { code: 'REQUEST_CHANGED' });
+  const guard = 'EXISTS (SELECT 1 FROM mt_requests g WHERE g.company_id = ? AND g.id = ? AND g.withdrawn_at = ?)';
+  let res: D1Result[];
+  try {
+    res = await db.batch([
+      // Once only: a second withdrawal at the same moment fails whole, so the comment and history line are never doubled.
+      doneStmt(db, a.companyId, `request.withdrawn:${r.id}`, t),
+      db
+        .prepare(`UPDATE mt_requests SET status = 'closed', closed_at = ?, withdrawn_at = ?, withdraw_reason = ?, updated_at = ? WHERE company_id = ? AND id = ? AND requested_by = ? AND work_order_id IS NULL AND status IN (${sqlList(WITHDRAWABLE)})`)
+        .bind(t, t, input.reason, t, a.companyId, r.id, a.userId),
+      db
+        .prepare(`INSERT INTO mt_comments (id, company_id, request_id, work_order_id, author_id, body, created_at) SELECT ?, ?, ?, NULL, ?, ?, ? WHERE ${guard}`)
+        .bind(newId(), a.companyId, r.id, a.userId, `Withdrawn: ${input.reason}`.slice(0, 5000), t, a.companyId, r.id, t),
+      eventIfStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.withdrawn', assetId: r.asset_id, requestId: r.id, summary: `Request ${r.number} withdrawn: ${input.reason}`, before: { status: r.status }, after: { status: 'closed', withdrawn: true, reason: input.reason }, at: t }, guard, [a.companyId, r.id, t]),
+    ]);
+  } catch (e) {
+    if (isUnique(e)) throw changed();
+    throw e;
+  }
+  if (!res[1].meta.changes) throw changed();
   return c.json(requestDTO(await loadRequest(db, a, r.id)));
 });
 
