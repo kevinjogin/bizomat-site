@@ -309,6 +309,57 @@ describe('the request list: filters, outstanding, other open work on the asset, 
   });
 });
 
+describe('an inspection round counts as open work on each asset still open on it', () => {
+  it('in the asset summary and the request list, once, within each scope, until its checklist or the round is done', async () => {
+    const t = await team('Rounds');
+    const make = (body: Record<string, unknown>) => t.supervisor.json('POST', mt(t.co, '/assets'), body);
+    const bay = await make({ number: 'BAY-1', name: 'Bay' });
+    const m1 = await make({ number: 'M-1', name: 'Mill one', parentId: bay.id });
+    const m2 = await make({ number: 'M-2', name: 'Mill two', parentId: bay.id });
+    const saw = await make({ number: 'SAW-1', name: 'Saw' });
+    const tpl = await t.supervisor.json('POST', mt(t.co, '/inspection-templates'), { name: 'Guard check', items: [{ label: 'Guards in place', kind: 'pass_fail' }] });
+    const made = await t.supervisor.json('POST', mt(t.co, '/inspection-rounds'), { templateId: tpl.id, assets: [{ assetId: m1.id }, { assetId: m2.id }], assignedTo: t.technician.userId });
+    const w = made.workOrder;
+    // The round's work order sits on the bay, the asset above both mills.
+    expect(w.assetNumber).toBe('BAY-1');
+    const open = async (c: Client, assetId: string, qs = '') => ((await c.json('GET', mt(t.co, `/assets/${assetId}/summary${qs}`))) as any).open;
+    for (const asset of [m1, m2, bay]) {
+      const o = await open(t.supervisor, asset.id);
+      expect([asset.number, o.workOrders, ids(o.workOrderList)]).toEqual([asset.number, 1, [w.id]]);
+    }
+    expect((await open(t.supervisor, saw.id)).workOrders).toBe(0);
+    // Within each scope: the technician it is given to sees it; a requester does not.
+    expect((await open(t.technician, m1.id)).workOrders).toBe(1);
+    expect((await open(t.requester, m1.id)).workOrders).toBe(0);
+    expect((await open(t.supervisor, m1.id, `?excludeWorkOrderId=${w.id}`)).workOrders).toBe(0);
+    // A request on a mill shows the round as other open work on its asset.
+    const rq = await t.requester.json('POST', mt(t.co, '/requests'), { description: 'Mill one guard rattles', assetId: m1.id });
+    const rowOf = async (c: Client) => ((await c.json('GET', mt(t.co, '/requests?limit=100'))) as any).requests.find((x: any) => x.id === rq.id);
+    expect((await rowOf(t.supervisor)).openOnAsset).toEqual({ requests: 0, workOrders: 1 });
+    expect((await rowOf(t.requester)).openOnAsset).toEqual({ requests: 0, workOrders: 0 });
+
+    // Mill one's checklist completed: the round is no longer open work on it, and still is on mill two and the bay.
+    const lines = ((await t.technician.json('GET', mt(t.co, `/work-orders/${w.id}/round`))) as any).lines as any[];
+    const l1 = lines.find((l) => l.assetNumber === 'M-1');
+    await t.technician.json('PUT', mt(t.co, `/work-orders/${w.id}/round/lines/${l1.id}/results`), { results: [{ itemId: tpl.items[0].id, passed: true }] });
+    await t.technician.json('POST', mt(t.co, `/work-orders/${w.id}/round/lines/${l1.id}/complete`), {});
+    expect((await open(t.supervisor, m1.id)).workOrders).toBe(0);
+    expect((await open(t.supervisor, m2.id)).workOrders).toBe(1);
+    expect((await open(t.supervisor, bay.id)).workOrders).toBe(1);
+    expect((await rowOf(t.supervisor)).openOnAsset).toEqual({ requests: 0, workOrders: 0 });
+
+    // A round on mill two alone sits on mill two: counted once, not once for its asset and once for its line.
+    const solo = (await t.supervisor.json('POST', mt(t.co, '/inspection-rounds'), { templateId: tpl.id, assets: [{ assetId: m2.id }] })).workOrder;
+    expect(solo.assetNumber).toBe('M-2');
+    const both = await open(t.supervisor, m2.id);
+    expect([both.workOrders, new Set(ids(both.workOrderList))]).toEqual([2, new Set([w.id, solo.id])]);
+    // A cancelled round is not open work.
+    await t.supervisor.json('POST', mt(t.co, `/work-orders/${w.id}/cancel`), { reason: 'Done another way' });
+    expect(ids((await open(t.supervisor, m2.id)).workOrderList)).toEqual([solo.id]);
+    expect((await open(t.supervisor, bay.id)).workOrders).toBe(0);
+  });
+});
+
 describe('a requester withdraws their own request', () => {
   let t: Awaited<ReturnType<typeof team>>;
   let a: any;

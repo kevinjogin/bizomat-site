@@ -36,6 +36,8 @@ import { workOrderDTO } from './dto';
 import { assertUnlocked, canWork, createSchema, loadWorkOrder, workOrderStatements } from './routes-work';
 import { evaluate, followUpStatements, itemDTO, resultDTO, resultInput, type FollowUp } from './routes-inspections';
 import { doneStmt, eventIfStmt, isUnique } from './m2util';
+// The technician given a round is told, as for any work order given to them (alerts.ts).
+import { alertWorkOrderAssigned } from './alerts';
 import { LOCKED, OUTSTANDING, eventDTO, eventStmt, likeOf, sqlList, zId, zText } from './util';
 
 export const roundRoutes = new Hono<AppEnv>();
@@ -264,7 +266,9 @@ roundRoutes.post('/c/:company/inspection-rounds', async (c) => {
     }),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'round.created', assetId: woAsset, workOrderId: made.id, summary: `Inspection round made: ${plural(n, 'asset', 'assets')}, checklist "${tpl.name}"`, after: { roundId, templateId: tpl.id, assets: n }, at: t }),
   ]);
-  return c.json({ workOrder: workOrderDTO(await loadWorkOrder(db, a, made.id)), roundId, assets: n }, 201);
+  const w = await loadWorkOrder(db, a, made.id);
+  if (w.assigned_to) await alertWorkOrderAssigned(c, a, w, t);
+  return c.json({ workOrder: workOrderDTO(w), roundId, assets: n }, 201);
 });
 
 roundRoutes.get('/c/:company/inspection-rounds', async (c) => {

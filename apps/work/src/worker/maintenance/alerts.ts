@@ -5,7 +5,10 @@
 //                                                                          supervisor and administrator
 //   a request approved, declined, asked for more information, made into
 //   or added to a work order, or done (its work order completed)          the person who raised it
-//   a work order given to a technician (made, from a request, changed)     that technician
+//   a work order given to a technician (made, from a request, changed,     that technician
+//   or an inspection round made)
+//   a request withdrawn while it waited for a decision or for more         the supervisor who last decided on it, else
+//   information                                                            every supervisor and administrator
 //
 // The person acting is never alerted, and every recipient is checked against the company's people when the alert is
 // sent. Email copies go only while the flag maintenance_email_alerts is on (it ships off) and email is set up on this
@@ -143,6 +146,28 @@ export function alertRequestDecided(c: Context<AppEnv>, a: Sender, r: RequestRow
     link: requestLink(a.companyId, r.id),
     recordId: r.id,
     dedupe: `req:${r.id}:${what}:${t}`,
+  });
+}
+
+/** The statuses in which a withdrawal is news to a supervisor: the request was still waiting for one of them. */
+const WITHDRAWN_ALERTED = ['submitted', 'awaiting_approval', 'info_requested'];
+
+/**
+ * The person who raised a request withdrew it: the supervisor who last decided on it (asked for more information, say),
+ * else every supervisor and administrator, so an earlier "waiting for your approval" is not left to act on. Only while
+ * it was submitted, awaiting approval or waiting for information; `r` is the request as it was before the withdrawal.
+ */
+export function alertRequestWithdrawn(c: Context<AppEnv>, a: Sender, r: RequestRow, reason: string, t: number) {
+  if (!WITHDRAWN_ALERTED.includes(r.status ?? '')) return Promise.resolve(0);
+  return mtAlert(c, a, {
+    to: [r.decided_by],
+    orManagers: true,
+    kind: 'request',
+    title: `Request ${r.number} was withdrawn`,
+    body: cut(reason, 300),
+    link: requestLink(a.companyId, r.id),
+    recordId: r.id,
+    dedupe: `req:${r.id}:withdrawn:${t}`,
   });
 }
 

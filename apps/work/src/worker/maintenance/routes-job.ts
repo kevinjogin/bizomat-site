@@ -1,10 +1,11 @@
 // The job itself (migration 0040), under /api/maintenance/c/:company/...
 //
 //   GET   /work-orders/:id/job-card   what the printable job card shows (read only): the asset and its place, the work,
-//                                     tasks, parts, inspections with their answer boxes, labour, downtime, notes, photos
-//                                     (other files by name) and the sign-off. Never a cost, rate or value. Anyone who
-//                                     may see the work order may print it. The page prints in the browser, whose "Save
-//                                     as PDF" keeps it as a file: there is no PDF made on the server.
+//                                     tasks, parts, inspections with their answer boxes, an inspection round's assets
+//                                     with their checklists, labour, downtime, notes, photos (other files by name) and
+//                                     the sign-off. Never a cost, rate or value. Anyone who may see the work order may
+//                                     print it. The page prints in the browser, whose "Save as PDF" keeps it as a file:
+//                                     there is no PDF made on the server.
 //   POST  /work-orders/done           work already done, recorded in one step: a work order made and completed in one
 //                                     transaction, with the time it took, any downtime and an optional sign-off.
 //                                     Supervisors and administrators always may; technicians only their own work, and
@@ -20,9 +21,12 @@ import { rateLimit } from '../auth/rate-limit';
 import { deny, isManager, requestScope, requireMt } from './access';
 import { workOrderDTO } from './dto';
 import { loadWorkOrder, workOrderStatements } from './routes-work';
-import { workOrderExtras } from './routes-parts';
+// The work order's extras, and the downtime of work recorded after it was done (the statements of PUT /downtime).
+import { downtimeStmts, workOrderExtras } from './routes-parts';
 import { assetPath } from './routes-assets';
 import { priceLabourStmt } from './routes-setup';
+// An inspection round's assets on the card, from the rounds' own code.
+import { roundForCard } from './routes-rounds';
 import { JOB_TYPES, PRIORITY, commentsOf, eventStmt, filesOf, validDate, zId, zText } from './util';
 import { DAY_MS, addDays, doneStmt, utcDate } from './m2util';
 import { SIGN_OFF_SET, discardSignature, signOffValues, signatureBytes, signatureFileStmts, signatureSchema, storeSignature, workSettings, type PreparedSignature } from './signoff';
@@ -91,6 +95,8 @@ jobRoutes.get('/c/:company/work-orders/:id/job-card', async (c) => {
       items: i.items.map((x: any) => ({ id: x.id, position: x.position, label: x.label, kind: x.kind, unit: x.unit ?? '', min: x.min ?? null, max: x.max ?? null, critical: !!x.critical })),
       results: i.results.map((r: any) => ({ itemId: r.itemId, label: r.label, kind: r.kind, unit: r.unit ?? '', passed: r.passed, value: r.value ?? null, text: r.text ?? '', note: r.note ?? '' })),
     })),
+    // An inspection round: each asset with its checklist (null for any other work order).
+    round: await roundForCard(db, a, w),
     labour: extras.labourCosts.map((l) => ({ workDate: l.workDate, userName: l.userName, minutes: l.minutes, entry: l.entry })),
     totals: { actualMinutes: w.actual_minutes ?? 0, estimatedMinutes: w.estimated_minutes ?? null },
     downtime: extras.downtime ? { startedAt: extras.downtime.startedAt, endedAt: extras.downtime.endedAt, minutes: extras.downtime.minutes, cause: extras.downtime.cause } : null,
@@ -162,6 +168,9 @@ jobRoutes.post('/c/:company/work-orders/done', async (c) => {
   const t = made.at;
   const completedAt = Math.min(t, Date.parse(`${input.doneDate}T12:00:00Z`) + (input.tzOffset ?? 0) * 60_000);
   const minutes = input.minutes ?? 0;
+  // The downtime goes in as PUT /downtime records it (routes-parts.ts); its times were checked above. Read before the
+  // picture is stored, so nothing outside the transaction is written before the last read.
+  const downtime = dt ? await downtimeStmts(db, a, { id: made.id, asset_id: input.assetId }, dt, t) : [];
   const sig: PreparedSignature | null = bytes && input.signature ? await storeSignature(c, a, { id: made.id, number: made.number }, input.signature, bytes) : null;
   const stmts: D1PreparedStatement[] = [
     ...(input.requestKey ? [doneStmt(db, a.companyId, `wo-done:${a.userId}:${input.requestKey}`, t)] : []),
@@ -180,12 +189,7 @@ jobRoutes.post('/c/:company/work-orders/done', async (c) => {
       priceLabourStmt(db, a.companyId, made.id, { labourId }, { entry: 'manual', note: 'Recorded with the work done', t }),
     );
   }
-  if (dt) {
-    stmts.push(
-      db.prepare('INSERT INTO mt_downtime (company_id, work_order_id, asset_id, started_at, ended_at, cause, recorded_by, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(a.companyId, made.id, input.assetId, dt.startedAt, dt.endedAt, dt.cause ?? '', a.userId, t),
-      eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'downtime.recorded', assetId: input.assetId, workOrderId: made.id, summary: `Downtime recorded: ${Math.round((dt.endedAt - dt.startedAt) / 60000)} min`, after: { startedAt: dt.startedAt, endedAt: dt.endedAt }, at: t }),
-    );
-  }
+  stmts.push(...downtime);
   stmts.push(
     eventStmt(db, {
       companyId: a.companyId,

@@ -147,10 +147,57 @@ describe('the job card', () => {
     expect(card.files.images[0].url).toBe(`/api/maintenance/c/${co}/files/${photo.id}`);
     expect(card.files.documents.map((f: any) => f.name)).toEqual(['manual.pdf']);
     expect(card.notes[0].body).toBe('Seal weeping');
+    // Not an inspection round.
+    expect(card.round).toBeNull();
     expect(JSON.stringify(card)).not.toMatch(/cents/i);
     const ownerCard = await owner.json('GET', mt(co, `/work-orders/${wo.id}/job-card`));
     expect(JSON.stringify(ownerCard)).not.toMatch(/cents/i);
     expect(ownerCard.labour).toHaveLength(1);
+  });
+
+  it('prints an inspection round: each asset with its checklist, boxes while open and answers once done, never a cost', async () => {
+    const { owner, supervisor, technician, requester, co } = await team('Round Card');
+    const bay = await owner.json('POST', mt(co, '/assets'), { number: 'BAY-1', name: 'Press bay', purchaseCostCents: 900000 });
+    const p1 = await owner.json('POST', mt(co, '/assets'), { number: 'PR-1', name: 'Press one', parentId: bay.id, purchaseCostCents: 250000 });
+    const p2 = await owner.json('POST', mt(co, '/assets'), { number: 'PR-2', name: 'Press two', parentId: bay.id });
+    const site = await owner.json('POST', mt(co, '/sites'), { code: 'S1', name: 'North' });
+    await owner.json('PUT', mt(co, `/assets/${p1.id}/site`), { siteId: site.id });
+    const tpl = await owner.json('POST', mt(co, '/inspection-templates'), {
+      name: 'Press guard round',
+      failAction: 'none',
+      items: [
+        { label: 'Guards fitted', kind: 'pass_fail', critical: true },
+        { label: 'Oil level', kind: 'number', unit: 'L', min: 2, max: 5 },
+      ],
+    });
+    const item = (label: string) => tpl.items.find((x: any) => x.label === label).id;
+    const made = await supervisor.json('POST', mt(co, '/inspection-rounds'), { templateId: tpl.id, assets: [{ assetId: p1.id }, { assetId: p2.id }], assignedTo: technician.userId });
+    const woId = made.workOrder.id;
+    const lines = (await technician.json('GET', mt(co, `/work-orders/${woId}/round`))).lines as any[];
+    const first = lines.find((l) => l.assetNumber === 'PR-1');
+    await technician.json('PUT', mt(co, `/work-orders/${woId}/round/lines/${first.id}/results`), { results: [{ itemId: item('Guards fitted'), passed: true }, { itemId: item('Oil level'), value: 3.5 }] });
+    await technician.json('POST', mt(co, `/work-orders/${woId}/round/lines/${first.id}/complete`), {});
+
+    const card = await technician.json('GET', mt(co, `/work-orders/${woId}/job-card`));
+    expect(card.workOrder).toMatchObject({ jobType: 'inspection', assetNumber: 'BAY-1' });
+    expect(card.round).toMatchObject({ id: made.roundId, templateName: 'Press guard round' });
+    expect(card.round.lines.map((l: any) => [l.assetNumber, l.assetName, l.siteCode, l.templateName, l.status, l.review])).toEqual([
+      ['PR-1', 'Press one', 'S1', 'Press guard round', 'passed', 'awaiting'],
+      ['PR-2', 'Press two', null, 'Press guard round', 'open', null],
+    ]);
+    // Completed: the answers as recorded. Open: the checklist's items to fill in, nothing recorded.
+    expect(card.round.lines[0].results.map((r: any) => [r.label, r.passed, r.value])).toEqual([
+      ['Guards fitted', true, null],
+      ['Oil level', true, 3.5],
+    ]);
+    expect(card.round.lines[1].items.map((i: any) => [i.label, i.kind, i.unit, i.min, i.max, i.critical])).toEqual([
+      ['Guards fitted', 'pass_fail', '', null, null, true],
+      ['Oil level', 'number', 'L', 2, 5, false],
+    ]);
+    expect(card.round.lines[1].results).toEqual([]);
+    for (const who of [technician, owner]) expect(JSON.stringify(await who.json('GET', mt(co, `/work-orders/${woId}/job-card`)))).not.toMatch(/cents/i);
+    // Who may see the round's work order, as for any job card.
+    expect((await requester.req('GET', mt(co, `/work-orders/${woId}/job-card`))).status).toBe(404);
   });
 
   it('is shown only to people who may see the work order, and not while the module is off', async () => {
@@ -424,6 +471,43 @@ describe('alerts', () => {
     expect((await alertsOf(co, owner.userId)).find((x) => x.title === given)).toBeUndefined();
   });
 
+  it('tells the supervisors it was waiting for when a request is withdrawn', async () => {
+    const { owner, supervisor, technician, requester, co } = await team('Withdrawn');
+    const withdrawnOf = async (who: Client, id: string) => (await alertsOf(co, who.userId)).filter((x) => x.record_id === id && x.title.endsWith('was withdrawn'));
+    // Awaiting approval and decided by nobody yet: every supervisor and administrator.
+    const r1 = await requester.json('POST', mt(co, '/requests'), { description: 'Leak under the press' });
+    await requester.json('POST', mt(co, `/requests/${r1.id}/withdraw`), { reason: 'Raised twice' });
+    for (const p of [owner, supervisor]) {
+      const got = await withdrawnOf(p, r1.id);
+      expect(got).toHaveLength(1);
+      expect(got[0]).toMatchObject({ kind: 'request', title: `Request ${r1.number} was withdrawn`, body: 'Raised twice', link: `/c/${co}/maintenance/requests/${r1.id}`, emailed: 0 });
+      expect(got[0].dedupe_key).toMatch(new RegExp(`^mt:req:${r1.id}:withdrawn:\\d+:${p.userId}$`));
+    }
+    for (const p of [technician, requester]) expect(await withdrawnOf(p, r1.id)).toHaveLength(0);
+    // A refused second withdrawal alerts nobody again.
+    expect((await requester.req('POST', mt(co, `/requests/${r1.id}/withdraw`), { reason: 'Again' })).status).toBe(409);
+    expect(await withdrawnOf(owner, r1.id)).toHaveLength(1);
+
+    // Waiting for information asked by the supervisor: that supervisor only.
+    const r2 = await requester.json('POST', mt(co, '/requests'), { description: 'A noise from the fan' });
+    await supervisor.json('POST', mt(co, `/requests/${r2.id}/request-info`), { comment: 'Which fan?' });
+    await requester.json('POST', mt(co, `/requests/${r2.id}/withdraw`), { reason: 'It stopped' });
+    expect((await withdrawnOf(supervisor, r2.id)).map((x) => x.body)).toEqual(['It stopped']);
+    expect(await withdrawnOf(owner, r2.id)).toHaveLength(0);
+
+    // Already approved: nobody is waiting on it, so nobody is alerted.
+    const r3 = await requester.json('POST', mt(co, '/requests'), { description: 'Door sticks' });
+    await supervisor.json('POST', mt(co, `/requests/${r3.id}/approve`), {});
+    await requester.json('POST', mt(co, `/requests/${r3.id}/withdraw`), { reason: 'Fixed it myself' });
+    for (const p of [owner, supervisor, technician, requester]) expect(await withdrawnOf(p, r3.id)).toHaveLength(0);
+
+    // A supervisor withdrawing their own request: the others are told, never the person acting.
+    const own = await supervisor.json('POST', mt(co, '/requests'), { description: 'Light out in the store' });
+    await supervisor.json('POST', mt(co, `/requests/${own.id}/withdraw`), { reason: 'Wrong store' });
+    expect(await withdrawnOf(owner, own.id)).toHaveLength(1);
+    expect(await withdrawnOf(supervisor, own.id)).toHaveLength(0);
+  });
+
   it('tells requesters about their work orders and technicians about work given to them', async () => {
     const { owner, supervisor, technician, tech2, requester, co } = await team('Assign');
     const pump = await owner.json('POST', mt(co, '/assets'), { name: 'Pump' });
@@ -534,6 +618,37 @@ describe('email copies of alerts', () => {
       await env.DB.prepare("DELETE FROM feature_flags WHERE key = 'maintenance_email_alerts' AND scope = 'company' AND scope_id = ?").bind(ex).run();
       setEmailProviderForTests(null);
     }
+  });
+});
+
+describe('the example company', () => {
+  it('gets a belt change recorded after it was done, and loses it with the rounds on removal', async () => {
+    const a = await signup('Recorded Example Owner');
+    const built = (await a.json('POST', '/api/system/demo', {})) as any;
+    expect(built.status).toBe('ready');
+    const ex = built.companyId;
+    // The owner is the only person, so nothing is alerted; the example never sends email either.
+    expect(await alertCount(ex)).toBe(0);
+    const done = ((await a.json('GET', mt(ex, '/work-orders?status=completed&limit=100'))).workOrders as any[]).filter((w) => w.description === 'Replaced the worn drive belt on the air compressor');
+    expect(done).toHaveLength(1);
+    const w = done[0];
+    expect(w).toMatchObject({ status: 'completed', recordedDone: true, assetNumber: 'UT-0201', jobType: 'corrective', priority: 'medium', assignedTo: a.userId, completedBy: a.userId, dueStart: days(-3), dueFinish: days(-3), completionNotes: 'Belt replaced and tensioned. Compressor run for ten minutes without a fault.', signedByName: null, signatureFileId: null });
+    expect(new Date(w.completedAt).toISOString().slice(0, 10)).toBe(days(-3));
+    const detail = await a.json('GET', mt(ex, `/work-orders/${w.id}`));
+    expect(detail.labourCosts).toEqual([expect.objectContaining({ minutes: 40, entry: 'manual', workDate: days(-3), userId: a.userId })]);
+    expect(detail.history.map((e: any) => e.action)).toContain('work_order.recorded_done');
+    expect(detail.downtime).toBeNull();
+    const overview = await a.json('GET', mt(ex, '/overview'));
+    expect(overview.assets).toBe(7);
+    expect(overview.openWorkOrders).toBe(2);
+
+    expect((await a.req('POST', '/api/system/demo/remove', {})).status).toBe(200);
+    const left = await env.DB.prepare(
+      'SELECT (SELECT COUNT(*) FROM mt_work_orders WHERE company_id = ?1 AND id = ?2) + (SELECT COUNT(*) FROM mt_labour WHERE company_id = ?1 AND work_order_id = ?2) + (SELECT COUNT(*) FROM mt_labour_costs WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_rounds WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_round_assets WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_round_results WHERE company_id = ?1) AS n',
+    )
+      .bind(ex, w.id)
+      .first<{ n: number }>();
+    expect(left!.n).toBe(0);
   });
 });
 

@@ -13,7 +13,7 @@ import { deny, isManager, requestScope, requireMt, workOrderScope, type MtAccess
 import { requestDTO, workOrderDTO } from './dto';
 import { WO_SELECT, fromRequestSchema, loadWorkOrder, workOrderStatements } from './routes-work';
 // The field release (migration 0040): alerts to the people concerned, after each change is saved.
-import { alertInfoGiven, alertRequestDecided, alertRequestOnWorkOrder, alertRequestRaised, alertWorkOrderAssigned } from './alerts';
+import { alertInfoGiven, alertRequestDecided, alertRequestOnWorkOrder, alertRequestRaised, alertRequestWithdrawn, alertWorkOrderAssigned } from './alerts';
 import { OPEN_REQUESTS, OUTSTANDING, PRIORITY, PRIORITY_RANK, commentStmt, commentsOf, departmentName, eventDTO, eventStmt, filesOf, likeOf, nextNumber, searchText, sqlList, todayFrom, validDate, zDate, zId, zText, type RequestStatus } from './util';
 // The field release, stream A: the list's extra filters, the other open work on each request's asset, the CSV file and
 // withdrawing a request.
@@ -356,6 +356,8 @@ requestRoutes.post('/c/:company/requests/:id/withdraw', async (c) => {
     throw e;
   }
   if (!res[1].meta.changes) throw changed();
+  // The supervisors it was waiting for are told (alerts.ts), only once the withdrawal is saved.
+  await alertRequestWithdrawn(c, a, r, input.reason, t);
   return c.json(requestDTO(await loadRequest(db, a, r.id)));
 });
 

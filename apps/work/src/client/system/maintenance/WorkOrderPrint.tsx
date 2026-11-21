@@ -2,8 +2,9 @@
 // at /erp/c/<company>/maintenance/work-orders/<id>/print, opened in a new tab from the work order. A4-shaped on screen,
 // with print styles. It prints in the browser, whose "Save as PDF" keeps it as a file with its photos: there is no PDF
 // made on the server. It shows the asset and its place, the work, tasks with tick boxes, parts, inspections with answer
-// boxes (or what was recorded), labour and blank rows, downtime, notes, photos (other files by name only) and the
-// sign-off or blank lines for it. It never shows a cost, rate or value: the server leaves them out (routes-job.ts).
+// boxes (or what was recorded), an inspection round's assets each with its checklist in the same way, labour and blank
+// rows, downtime, notes, photos (other files by name only) and the sign-off or blank lines for it. It never shows a
+// cost, rate or value: the server leaves them out (routes-job.ts).
 import { Fragment } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -37,6 +38,24 @@ interface CardResult {
   note: string;
 }
 
+/** One asset of an inspection round: its checklist's items now while it is open, the recorded results once completed. */
+interface CardRoundLine {
+  id: string;
+  position: number;
+  assetNumber: string;
+  assetName: string;
+  siteCode: string | null;
+  templateName: string;
+  status: 'open' | 'passed' | 'failed';
+  attempt: number;
+  review: 'awaiting' | 'approved' | 'not_approved' | null;
+  reviewNote: string;
+  completedAt: number | null;
+  completedByName: string | null;
+  items: CardItem[];
+  results: CardResult[];
+}
+
 export interface JobCard {
   company: { id: string; name: string };
   printedAt: number;
@@ -49,6 +68,7 @@ export interface JobCard {
   parts: { position: number; part: string; quantity: number; productNumber: string | null; uom: string | null }[];
   partsIssued: { number: string; name: string; uom: string; quantity: number }[];
   inspections: { id: string; templateName: string; status: string; completedAt: number | null; completedByName: string | null; items: CardItem[]; results: CardResult[] }[];
+  round: { id: string; templateName: string; lines: CardRoundLine[] } | null;
   labour: { workDate: string; userName: string | null; minutes: number; entry: 'timer' | 'manual' }[];
   totals: { actualMinutes: number; estimatedMinutes: number | null };
   downtime: { startedAt: number; endedAt: number | null; minutes: number | null; cause: string } | null;
@@ -58,6 +78,7 @@ export interface JobCard {
 }
 
 const INSPECTION_STATUS: Record<string, string> = { open: 'Not done yet', passed: 'Passed', failed: 'Failed' };
+const ROUND_REVIEW: Record<string, string> = { awaiting: 'Awaiting approval', approved: 'Approved', not_approved: 'Not approved' };
 
 function limits(i: { min: number | null; max: number | null; unit: string }): string {
   const u = i.unit ? ` ${i.unit}` : '';
@@ -88,6 +109,38 @@ function Facts({ items }: { items: [string, string | null | undefined][] }) {
 }
 
 const blank = (n: number) => Array.from({ length: n }, (_, i) => i);
+
+/** A checklist's items with answer boxes to fill in (open), or with the answers recorded (done). */
+function ChecklistTable({ items, results, open }: { items: CardItem[]; results: CardResult[]; open: boolean }) {
+  return (
+    <div className="mt-print-scroll">
+      <table>
+        <thead><tr><th>#</th><th>Item</th><th>Limits</th><th>Answer</th></tr></thead>
+        <tbody>
+          {items.map((it, n) => {
+            const r = open ? null : results.find((x) => x.itemId === it.id) ?? null;
+            return (
+              <tr key={it.id ?? n}>
+                <td>{n + 1}</td>
+                <td>{it.label}{it.critical ? <strong> (Critical)</strong> : null}</td>
+                <td>{limits(it)}</td>
+                <td>
+                  {r ? answer(r) : it.kind === 'pass_fail' ? (
+                    <span className="mt-passfail-print"><span className="mt-box" aria-hidden /> Pass <span className="mt-box" aria-hidden /> Fail</span>
+                  ) : it.kind === 'number' ? (
+                    <span><span className="mt-answer" aria-hidden /> {it.unit}</span>
+                  ) : (
+                    <span className="mt-answer wide" aria-hidden />
+                  )}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 export function WorkOrderPrintPage() {
   const { companyId = '', workOrderId = '' } = useParams();
@@ -221,32 +274,30 @@ function JobCardView({ card, companyId }: { card: JobCard; companyId: string }) 
                   {i.templateName}: {INSPECTION_STATUS[i.status] ?? i.status}
                   {i.status !== 'open' && i.completedAt ? <span className="small"> ({i.completedByName ?? 'someone'}, {dateTimeText(i.completedAt)})</span> : null}
                 </h3>
-                <div className="mt-print-scroll">
-                  <table>
-                    <thead><tr><th>#</th><th>Item</th><th>Limits</th><th>Answer</th></tr></thead>
-                    <tbody>
-                      {i.items.map((it, n) => {
-                        const r = i.status === 'open' ? null : i.results.find((x) => x.itemId === it.id) ?? null;
-                        return (
-                          <tr key={it.id ?? n}>
-                            <td>{n + 1}</td>
-                            <td>{it.label}{it.critical ? <strong> (Critical)</strong> : null}</td>
-                            <td>{limits(it)}</td>
-                            <td>
-                              {r ? answer(r) : it.kind === 'pass_fail' ? (
-                                <span className="mt-passfail-print"><span className="mt-box" aria-hidden /> Pass <span className="mt-box" aria-hidden /> Fail</span>
-                              ) : it.kind === 'number' ? (
-                                <span><span className="mt-answer" aria-hidden /> {it.unit}</span>
-                              ) : (
-                                <span className="mt-answer wide" aria-hidden />
-                              )}
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
+                <ChecklistTable items={i.items} results={i.results} open={i.status === 'open'} />
+              </div>
+            ))}
+          </section>
+        ) : null}
+
+        {card.round && card.round.lines.length ? (
+          <section aria-labelledby="jc-round">
+            <h2 id="jc-round">Round</h2>
+            <p className="small">
+              {card.round.lines.length === 1 ? '1 asset' : `${card.round.lines.length} assets`} on this round, each with its own checklist below.
+            </p>
+            {card.round.lines.map((l) => (
+              <div key={l.id} className="mt-print-insp">
+                <h3>
+                  {l.assetNumber} {l.assetName}
+                  {l.siteCode ? <span className="small"> (site {l.siteCode})</span> : null}
+                </h3>
+                <p className="small">
+                  {[`Checklist: ${l.templateName}`, INSPECTION_STATUS[l.status] ?? l.status, l.review ? ROUND_REVIEW[l.review] : ''].filter(Boolean).join(' · ')}
+                  {l.status !== 'open' && l.completedAt ? ` (${l.completedByName ?? 'someone'}, ${dateTimeText(l.completedAt)})` : ''}
+                  {l.review === 'not_approved' && l.reviewNote ? `. Not approved because: ${l.reviewNote}` : ''}
+                </p>
+                <ChecklistTable items={l.items} results={l.results} open={l.status === 'open'} />
               </div>
             ))}
           </section>

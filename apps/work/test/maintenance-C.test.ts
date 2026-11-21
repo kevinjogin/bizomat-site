@@ -143,6 +143,23 @@ describe('inspection rounds', () => {
     expect(history).toEqual(expect.arrayContaining(['work_order.created', 'round.created']));
   });
 
+  it('tells the technician given a round, as for any work order given to them', async () => {
+    const p = await plant('Alerted');
+    const alertsOf = async (userId: string, recordId: string) => (await env.DB.prepare('SELECT * FROM erp_alerts WHERE company_id = ? AND user_id = ? AND record_id = ?').bind(p.co, userId, recordId).all<any>()).results;
+    const { workOrder: w } = await round(p, undefined, { dueFinish: day(3) });
+    const got = await alertsOf(p.tech.userId, w.id);
+    expect(got).toHaveLength(1);
+    expect(got[0]).toMatchObject({ kind: 'assigned', title: `Work order ${w.number} was given to you`, body: `AREA-1 Workshop area: Inspection round: Guard round, 3 assets Due ${day(3)}.`, link: `/c/${p.co}/maintenance/work-orders/${w.id}`, emailed: 0 });
+    // Nobody else is told, and never the supervisor who made it.
+    for (const who of [p.owner, p.supervisor, p.tech2, p.requester]) expect(await alertsOf(who.userId, w.id)).toHaveLength(0);
+    // A round given to nobody, or to the supervisor making it, alerts nobody.
+    const unassigned = (await p.supervisor.json('POST', mt(p.co, '/inspection-rounds'), { templateId: p.G.id, assets: [{ assetId: p.m1.id }] })).workOrder;
+    expect(unassigned.status).toBe('open');
+    const self = (await p.supervisor.json('POST', mt(p.co, '/inspection-rounds'), { templateId: p.G.id, assets: [{ assetId: p.m2.id }], assignedTo: p.supervisor.userId })).workOrder;
+    const n = await env.DB.prepare('SELECT COUNT(*) AS n FROM erp_alerts WHERE company_id = ? AND record_id IN (?, ?)').bind(p.co, unassigned.id, self.id).first<{ n: number }>();
+    expect(n!.n).toBe(0);
+  });
+
   it("chooses the work order's asset, refuses wrong assets and checklists, and answers null for other work orders", async () => {
     const p = await plant('Bravo');
     expect((await round(p, [{ assetId: p.m1.id }, { assetId: p.m2.id }])).workOrder.assetNumber).toBe('LINE-1');
@@ -577,5 +594,41 @@ describe('asset labels', () => {
     expect(((await elsewhere.json()) as any).error).toBe('This label is not for an asset of this company');
     expect((await requester.req('GET', mt(co, `/scan?code=${encodeURIComponent(`http://example.com/erp/c/${co}/maintenance/scan?code=`)}`))).status).toBe(400);
     expect((await requester.req('GET', mt(co, '/scan?code=https%3A%2F%2Fexample.org%2Fpage'))).status).toBe(404);
+  });
+});
+
+describe('the example company', () => {
+  it('gets a completed inspection round over three machines, and loses it on removal', async () => {
+    const a = await signup('Round Example');
+    const built = (await a.json('POST', '/api/system/demo', {})) as any;
+    expect(built.status).toBe('ready');
+    const co = built.companyId;
+    const rounds = (await a.json('GET', mt(co, '/inspection-rounds?status=all'))).rounds as any[];
+    expect(rounds).toHaveLength(1);
+    expect(rounds[0]).toMatchObject({ assets: 3, completed: 3, percent: 100, exceptions: 1, awaitingApproval: 2, notApproved: 0, status: 'completed', assetNumber: 'AREA-02', templateName: 'Weekly machine guard round', description: 'Inspection round: Weekly machine guard round, 3 assets' });
+    const r = await a.json('GET', mt(co, `/work-orders/${rounds[0].workOrderId}/round`));
+    expect(r.round.totals).toEqual({ assets: 3, completed: 3, open: 0, passed: 2, failed: 1, percent: 100, questions: 9, answered: 9, exceptions: 1, approved: 1, notApproved: 0, awaitingApproval: 2 });
+    expect(r.lines.map((l: any) => [l.assetNumber, l.status, l.review, l.followUp])).toEqual([
+      ['MC-0104', 'passed', 'approved', null],
+      ['MC-0107', 'failed', 'awaiting', null],
+      ['UT-0201', 'passed', 'awaiting', null],
+    ]);
+    // The faded label is recorded only (the checklist makes no follow-up); the owner, alone, approved under the exception.
+    const brake = await a.json('GET', mt(co, `/work-orders/${rounds[0].workOrderId}/round/lines/${r.lines[1].id}`));
+    expect(brake.results.find((x: any) => x.label === 'Warning labels readable')).toMatchObject({ passed: false, note: 'Label on the rear guard has faded' });
+    const approved = await env.DB.prepare("SELECT summary FROM mt_events WHERE company_id = ? AND action = 'round.approved'").bind(co).first<{ summary: string }>();
+    expect(approved!.summary).toContain('segregation exception');
+    const wo = await a.json('GET', mt(co, `/work-orders/${rounds[0].workOrderId}`));
+    expect(wo.workOrder).toMatchObject({ status: 'completed', completionNotes: 'Round done. The press brake rear guard label needs replacing.' });
+    // The earlier figures stay as they were.
+    const overview = await a.json('GET', mt(co, '/overview'));
+    expect(overview.assets).toBe(7);
+    expect(overview.openWorkOrders).toBe(2);
+    expect(overview.openRequests).toBeGreaterThanOrEqual(2);
+    expect((await env.DB.prepare('SELECT COUNT(*) AS n FROM erp_alerts WHERE company_id = ?').bind(co).first<{ n: number }>())!.n).toBe(0);
+
+    expect((await a.req('POST', '/api/system/demo/remove', {})).status).toBe(200);
+    const left = await env.DB.prepare('SELECT (SELECT COUNT(*) FROM mt_rounds WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_round_assets WHERE company_id = ?1) + (SELECT COUNT(*) FROM mt_round_results WHERE company_id = ?1) AS n').bind(co).first<{ n: number }>();
+    expect(left!.n).toBe(0);
   });
 });

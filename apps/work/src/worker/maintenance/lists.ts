@@ -43,6 +43,13 @@ export function weekEndOf(today: string): string {
 export const outstandingRequestSql = (alias: string) =>
   `(${alias}.status IN (${sqlList(OPEN_REQUESTS)}) OR (${alias}.status = 'converted' AND EXISTS (SELECT 1 FROM mt_work_orders xo WHERE xo.company_id = ${alias}.company_id AND xo.id = ${alias}.work_order_id AND xo.status IN (${sqlList(OUTSTANDING)}))))`;
 
+/**
+ * An outstanding inspection round's work order counts as open work on each asset whose checklist is still open on it,
+ * not only on its own asset (the one above all of them). `asset` is the asset's column, or ? to bind its id.
+ */
+export const openRoundLineSql = (alias: string, asset = '?') =>
+  `EXISTS (SELECT 1 FROM mt_round_assets ra WHERE ra.company_id = ${alias}.company_id AND ra.work_order_id = ${alias}.id AND ra.asset_id = ${asset} AND ra.status = 'open')`;
+
 /** "The due dates include a day up to `end`": bind the last day of the window, then its first. */
 const dueWindowSql = (alias: string) => `COALESCE(${alias}.due_start, ${alias}.due_finish) <= ? AND COALESCE(${alias}.due_finish, ${alias}.due_start) >= ?`;
 
@@ -126,15 +133,16 @@ export function requestListFilters(qp: Query): { where: string[]; args: unknown[
 }
 
 /**
- * The request list's extra columns: the other outstanding requests and work orders on the same asset, counted within
- * what the person may see (a request's own work order is not counted), and the asset's site. Bind `args` first.
+ * The request list's extra columns: the other outstanding requests and work orders on the same asset (an inspection
+ * round's with that asset's checklist still open included), counted within what the person may see (a request's own
+ * work order is not counted), and the asset's site. Bind `args` first.
  */
 export function requestListColumns(a: MtAccess): { sql: string; args: unknown[] } {
   const rq = requestScope(a, 'oq');
   const wo = workOrderScope(a, 'ow');
   return {
     sql: `, (SELECT COUNT(*) FROM mt_requests oq WHERE oq.company_id = r.company_id AND oq.asset_id = r.asset_id AND oq.id <> r.id AND ${outstandingRequestSql('oq')} AND ${rq.sql}) AS other_open_requests,
-      (SELECT COUNT(*) FROM mt_work_orders ow WHERE ow.company_id = r.company_id AND ow.asset_id = r.asset_id AND ow.id IS NOT r.work_order_id AND ow.status IN (${sqlList(OUTSTANDING)}) AND ${wo.sql}) AS other_open_work_orders,
+      (SELECT COUNT(*) FROM mt_work_orders ow WHERE ow.company_id = r.company_id AND (ow.asset_id = r.asset_id OR ${openRoundLineSql('ow', 'r.asset_id')}) AND ow.id IS NOT r.work_order_id AND ow.status IN (${sqlList(OUTSTANDING)}) AND ${wo.sql}) AS other_open_work_orders,
       (SELECT st.code FROM mt_asset_sites xs JOIN mt_sites st ON st.company_id = xs.company_id AND st.id = xs.site_id WHERE xs.company_id = r.company_id AND xs.asset_id = r.asset_id) AS site_code`,
     args: [...rq.args, ...wo.args],
   };
