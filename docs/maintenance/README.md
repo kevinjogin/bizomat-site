@@ -9,7 +9,7 @@ no MEX branding, interface designs, source code or content are used.
   15 Nov 2026 (kevinjogin/bizomat-site#68, migration `0024_maintenance_m2_m3.sql`). They cover preventive maintenance,
   meters and readings, inspections, prestart checks, parts through ERP Inventory, trades and labour costs, downtime,
   sites, QR labels and scanning, and the reliability reports.
-- **The field release** (21 Nov 2026, migration `0040_maintenance_field.sql`; the owner's "Maintenance additions using
+- **The field release** (21 Nov 2026, migration `0042_maintenance_field.sql`; the owner's "Maintenance additions using
   MEX", with MEX's field app guide as the functional reference) brings the field app's work order, request, stocktake and
   readings features into BIZOMAT: see "The field release" below. It ships on for everyone inside the Maintenance module
   switch (the owner chose "straight on for everyone" for the ERP redesign this completes); the one new flag,

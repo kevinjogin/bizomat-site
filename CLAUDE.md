@@ -48,7 +48,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   readings, inspections with follow-ups, prestart checks that can set an asset out of service, parts issued through
   ERP Inventory's StockOps, trades and labour costs, downtime, sites, QR scanning and reliability reports; migration
   0024) are live since 15 Nov 2026. The **field release** (owner, 21 Nov 2026: "Maintenance additions using MEX", MEX's
-  field app guide a functional reference only; migration 0040; `docs/maintenance/README.md`, design records in
+  field app guide a functional reference only; migration 0042; `docs/maintenance/README.md`, design records in
   `docs/maintenance/design/`): MEX-style list filters and quick lists with CSV, the asset summary and duplicate warnings,
   request withdrawal, required parts by product with reservations (ERP Inventory's own, released on completion) and
   purchase requisitions (Procurement's own), stocktakes of the maintenance stores (ERP Inventory counts; starting,
