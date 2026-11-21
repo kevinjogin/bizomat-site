@@ -22,6 +22,9 @@ import { inSiteSql } from './m2util';
 // The field release, stream A: the list's extra filters and its CSV file.
 import { csvResponse } from '../erp/util';
 import { CSV_MAX, workOrderCsvRows, workOrderListFilters } from './lists';
+// The field release (migration 0040): the sign-off when a work order is completed, and alerts to the people concerned.
+import { alertRequestsCompleted, alertWorkOrderAssigned } from './alerts';
+import { SIGN_OFF_SET, completeSchema, discardSignature, prepareSignature, signOffValues, signatureFileStmts } from './signoff';
 import {
   JOB_TYPES,
   LOCKED,
@@ -313,7 +316,9 @@ workRoutes.post('/c/:company/work-orders', async (c) => {
   const input = await body(c, createSchema);
   const made = await workOrderStatements(c.env.DB, a, input);
   await c.env.DB.batch(made.stmts);
-  return c.json(workOrderDTO(await loadWorkOrder(c.env.DB, a, made.id)), 201);
+  const w = await loadWorkOrder(c.env.DB, a, made.id);
+  if (w.assigned_to) await alertWorkOrderAssigned(c, a, w, made.at);
+  return c.json(workOrderDTO(w), 201);
 });
 
 workRoutes.get('/c/:company/work-orders/:id', async (c) => {
@@ -394,7 +399,10 @@ workRoutes.patch('/c/:company/work-orders/:id', async (c) => {
     }),
   ]);
   if (!res[0].meta.changes) throw new HttpError(409, `${w.number} was locked while you were changing it`);
-  return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
+  const after = await loadWorkOrder(db, a, w.id);
+  // A technician given the work order is told; taking one off, or any other change, tells nobody.
+  if (cols.assigned_to && cols.assigned_to !== w.assigned_to) await alertWorkOrderAssigned(c, a, after, set.updated_at as number);
+  return c.json(workOrderDTO(after));
 });
 
 // ------------------------------------------------------------------ status, complete, reopen, close, cancel
@@ -428,24 +436,44 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
   const w = await loadWorkOrder(db, a, c.req.param('id'));
   assertWork(a, w);
   if (!(OUTSTANDING as string[]).includes(w.status)) assertUnlocked(w);
-  const input = await body(c, z.object({ notes: zText(10000).min(1, 'Write what was done') }));
-  const linked = (await db.prepare("SELECT id, number FROM mt_requests WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(a.companyId, w.id).all<{ id: string; number: string }>()).results;
+  // What was done, and an optional sign-off (required when the company asks for one: signoff.ts).
+  const input = await body(c, completeSchema);
+  const linked = (await db.prepare("SELECT id, number, requested_by FROM mt_requests WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(a.companyId, w.id).all<{ id: string; number: string; requested_by: string | null }>()).results;
   const t = now();
   // What is still reserved in the stores for it goes back to free stock, in the same transaction.
   const release = await woReservationReleaseStmts(db, a, w, 'completed', t);
-  const res = await runWoBatch(db, [
-    db.prepare(`UPDATE mt_work_orders SET status = 'completed', completion_notes = ?, completed_at = ?, completed_by = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(input.notes, t, a.userId, t, a.companyId, w.id),
-    ...release,
-    stopAllTimers(db, a.companyId, w.id, t),
-    priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
-    // Completing a work order completes the requests it was made from.
-    db.prepare("UPDATE mt_requests SET status = 'completed', completed_at = ?, updated_at = ? WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(t, t, a.companyId, w.id),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.completed', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} completed`, before: { status: w.status }, after: { status: 'completed', notes: input.notes }, at: t }),
-    ...linked.map((r) => eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.completed', assetId: w.asset_id, requestId: r.id, workOrderId: w.id, summary: `Request ${r.number} completed with work order ${w.number}`, before: { status: 'converted' }, after: { status: 'completed' }, at: t })),
-    // A preventive work order: its schedule's next due date or meter value moves on (guarded on this completion).
-    ...(await pmCompleteStmts(db, a.companyId, w, t, a.userId)),
-  ], `${w.number} changed at the same moment: refresh and try again`);
-  if (!res[0].meta.changes) throw new HttpError(409, `${w.number} is not open any more`);
+  // A preventive work order: its schedule's next due date or meter value moves on (guarded on this completion).
+  const pm = await pmCompleteStmts(db, a.companyId, w, t, a.userId);
+  // The signature picture is stored last: it is the one step outside the transaction, deleted again if that fails.
+  const sig = await prepareSignature(c, a, w, input.signature);
+  let res: D1Result[];
+  try {
+    res = await runWoBatch(
+      db,
+      [
+        // Every completion writes the sign-off columns, so one without a signature clears an earlier sign-off.
+        db.prepare(`UPDATE mt_work_orders SET status = 'completed', completion_notes = ?, completed_at = ?, completed_by = ?, updated_at = ?, ${SIGN_OFF_SET} WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(input.notes, t, a.userId, t, ...signOffValues(sig, t), a.companyId, w.id),
+        ...release,
+        ...signatureFileStmts(db, a, w, sig, t),
+        stopAllTimers(db, a.companyId, w.id, t),
+        priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
+        // Completing a work order completes the requests it was made from.
+        db.prepare("UPDATE mt_requests SET status = 'completed', completed_at = ?, updated_at = ? WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(t, t, a.companyId, w.id),
+        eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.completed', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} completed${sig ? `, signed off by ${sig.name}` : ''}`, before: { status: w.status }, after: { status: 'completed', notes: input.notes, ...(sig ? { signedBy: sig.name, signedByRole: sig.role } : {}) }, at: t }),
+        ...linked.map((r) => eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.completed', assetId: w.asset_id, requestId: r.id, workOrderId: w.id, summary: `Request ${r.number} completed with work order ${w.number}`, before: { status: 'converted' }, after: { status: 'completed' }, at: t })),
+        ...pm,
+      ],
+      `${w.number} changed at the same moment: refresh and try again`,
+    );
+  } catch (e) {
+    discardSignature(c, sig);
+    throw e;
+  }
+  if (!res[0].meta.changes) {
+    discardSignature(c, sig);
+    throw new HttpError(409, `${w.number} is not open any more`);
+  }
+  await alertRequestsCompleted(c, a, w, linked, t);
   return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
 });
 

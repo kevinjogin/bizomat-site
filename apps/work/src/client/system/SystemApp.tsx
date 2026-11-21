@@ -26,9 +26,12 @@ import { SUITE_SHELL, SuiteRail } from '../components/layout/SuiteRail';
 import { MODULE_DEFS } from '../../shared/erp-objects';
 import { ModuleMenu } from './modules';
 import { EngineeringHome, ModuleProgress, WarehouseHome } from './ModuleHome';
+import { AlertsBell } from './AlertsBell';
 
 // Asset Management and Maintenance (stages M1 to M3), inside a company at /c/<company>/maintenance; loaded when it is opened.
 const MaintenanceArea = lazy(() => import('./maintenance/Maintenance').then((m) => ({ default: m.MaintenanceArea })));
+// A work order's printable job card, outside the shell (no rail or side menu on paper).
+const WorkOrderPrintPage = lazy(() => import('./maintenance/WorkOrderPrint').then((m) => ({ default: m.WorkOrderPrintPage })));
 // ERP Release 1 (src/client/system/erp): Product Management at /c/<company>/products, Procurement (suppliers) at
 // /c/<company>/procurement, ERP roles and the products, engineering and supplier reports; loaded when opened.
 const ProductsArea = lazy(() => import('./erp/Products').then((m) => ({ default: m.ProductsArea })));
@@ -237,6 +240,8 @@ export function SystemRoutes() {
   return (
     <Routes>
       <Route path="/" element={<SystemHome />} />
+      {/* More specific than the company area, so the job card prints without the shell. */}
+      <Route path="/c/:companyId/maintenance/work-orders/:workOrderId/print" element={<Suspense fallback={<Loading label="Preparing the job card…" />}><WorkOrderPrintPage /></Suspense>} />
       <Route path="/c/:companyId/*" element={<CompanyArea />} />
       <Route path="/admin/*" element={<Shell><AdminArea /></Shell>} />
       {/* CAD Automation: in the company used last where it works in the ERP (the Companion's pairing page included). */}
@@ -466,6 +471,8 @@ function Shell({ view, children }: { view?: CompanyView; children: ReactNode }) 
         </Link>
         <CompanySwitcher current={view?.company.id} />
         <div className="spacer" />
+        {/* Alerts of the company being worked in, where the person has Maintenance there (AlertsBell.tsx). */}
+        <AlertsBell companyId={id} />
         <ThemeButton />
         <Profile />
       </header>

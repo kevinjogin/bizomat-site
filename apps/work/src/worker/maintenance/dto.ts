@@ -71,5 +71,12 @@ export function workOrderDTO(w: any) {
     updatedAt: w.updated_at,
     actualMinutes: w.actual_minutes ?? null,
     timerRunning: w.my_timer ? true : false,
+    // The sign-off (migration 0040): a typed name and a picture drawn on screen, not a verified electronic signature.
+    signedByName: w.signed_by_name ?? null,
+    signedByRole: w.signed_by_role ?? '',
+    signedAt: w.signed_at ?? null,
+    signatureFileId: w.signature_file_id ?? null,
+    signatureUrl: w.signature_file_id ? `/api/maintenance/c/${w.company_id}/files/${w.signature_file_id}` : null,
+    recordedDone: !!w.recorded_done,
   };
 }

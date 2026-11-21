@@ -52,11 +52,15 @@ export interface MtMe {
   roleIsDefault: boolean;
   companyRole: 'owner' | 'admin' | 'manager' | 'employee' | 'read_only';
   approvalRequired: boolean;
+  /** Completing a work order needs a sign-off (migration 0040). */
+  requireSignature: boolean;
+  /** Technicians may record their own work already done. */
+  techniciansRecordWork: boolean;
   departments: { id: string; name: string; parentId: string | null }[];
   people: { id: string; name: string; role?: MtRole }[];
   /** ERP Inventory (Warehouse: stock) is switched on for the company: stocktakes and reservations need it. */
   stockModule?: boolean;
-  can: { manageAssets: boolean; importAssets: boolean; manageWork: boolean; decide: boolean; roles: boolean; managePm: boolean; manageSetup: boolean; manageStores: boolean; reports: boolean; readings: boolean; prestart: boolean };
+  can: { manageAssets: boolean; importAssets: boolean; manageWork: boolean; decide: boolean; roles: boolean; managePm: boolean; manageSetup: boolean; manageStores: boolean; reports: boolean; readings: boolean; prestart: boolean; recordWork: boolean };
 }
 
 export interface Asset {
@@ -192,6 +196,15 @@ export interface WorkOrder {
   createdAt: number;
   actualMinutes: number | null;
   timerRunning: boolean;
+  createdBy?: string | null;
+  /** The sign-off: a typed name and a picture drawn on screen, not a verified electronic signature. */
+  signedByName: string | null;
+  signedByRole: string;
+  signedAt: number | null;
+  signatureFileId: string | null;
+  signatureUrl: string | null;
+  /** Made and completed in one step for work already done. */
+  recordedDone: boolean;
 }
 
 export const mtPath = (companyId: string, path = '') => `/maintenance/c/${encodeURIComponent(companyId)}${path}`;

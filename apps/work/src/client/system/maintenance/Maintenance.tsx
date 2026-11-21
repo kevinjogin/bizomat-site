@@ -3,6 +3,8 @@
 // Checklists (inspection templates), Prestart and Scan (phone screens), Reports, and Settings (roles, the approval rule,
 // sites, trades and rates, maintenance stores). The server
 // (src/worker/maintenance) decides who may see and do what; these screens follow its answers.
+// The field release adds the printable job card (WorkOrderPrint.tsx, outside the ERP shell), the sign-off at completion
+// (SignOff.tsx) and recording work already done (RecordWork.tsx, with the Settings section for completing work orders).
 import { useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -25,7 +27,7 @@ import { SitesSection, StoresSection, TradesSection } from './Setup';
 import { NewRoundPage, RoundsPage } from './Rounds';
 import { ReadingsPage } from './Readings';
 import { StocktakeDetail, StocktakesPage } from './Stocktakes';
-import { RecordWorkPage } from './RecordWork';
+import { RecordWorkPage, WorkOrderSettingsSection } from './RecordWork';
 
 export function MaintenanceArea({ companyId, companyName }: { companyId: string; companyName: string }) {
   const me = useMtMe(companyId);
@@ -161,6 +163,7 @@ function Overview({ companyId, me }: { companyId: string; me: MtMe }) {
       <div className="row wrap">
         <Link className="btn primary lg" to={mtPage(companyId, '/requests/new')}><Icon name="alert" /> Report a fault</Link>
         {me.can.manageWork ? <Link className="btn lg" to={mtPage(companyId, '/work-orders/new')}><Icon name="wrench" /> New work order</Link> : null}
+        {me.can.recordWork ? <Link className="btn lg" to={mtPage(companyId, '/work-orders/record')}><Icon name="check" /> Record work done</Link> : null}
         {me.can.manageAssets ? <Link className="btn lg" to={mtPage(companyId, '/assets')}><Icon name="layers" /> Assets</Link> : null}
         <Link className="btn lg" to={mtPage(companyId, '/prestart')}><Icon name="checkSquare" /> Prestart check</Link>
         <Link className="btn lg" to={mtPage(companyId, '/scan')}><Icon name="eye" /> Scan an asset</Link>
@@ -278,6 +281,7 @@ function Settings({ companyId, me }: { companyId: string; me: MtMe }) {
         </div>
         <p className="muted small">{me.approvalRequired ? 'New requests wait as Awaiting approval.' : 'New requests are Submitted straight away; a supervisor can still decline them.'}{me.can.roles ? '' : ' Only maintenance administrators change this.'}</p>
       </Section>
+      <WorkOrderSettingsSection companyId={companyId} me={me} />
       {me.can.roles ? (
         <Section title="Maintenance roles">
           <ul className="mt-docs small">
