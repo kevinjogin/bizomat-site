@@ -1,7 +1,7 @@
 // Asset Management and Maintenance in BIZOMAT ERP (stages M1 to M3): the section inside a company, at
 // /erp/c/<company>/maintenance. Overview, Assets, Requests, Work orders, Preventive (schedules, calendar, templates),
-// Checklists (inspection templates), Prestart and Scan (phone screens), Reports, and Settings (roles, the approval rule,
-// sites, trades and rates, maintenance stores). The server
+// Checklists (inspection templates), Rounds (inspection rounds: one work order over many assets), Prestart, Readings and
+// Scan (phone screens), Reports, and Settings (roles, the approval rule, sites, trades and rates, maintenance stores). The server
 // (src/worker/maintenance) decides who may see and do what; these screens follow its answers.
 // The field release adds the printable job card (WorkOrderPrint.tsx, outside the ERP shell), the sign-off at completion
 // (SignOff.tsx) and recording work already done (RecordWork.tsx, with the Settings section for completing work orders).
@@ -24,7 +24,7 @@ import { ChecklistEditor, ChecklistsPage } from './Checklists';
 import { LabelsPage, PrestartPage, ScanPage } from './Field';
 import { ReportsPage } from './MtReports';
 import { SitesSection, StoresSection, TradesSection } from './Setup';
-import { NewRoundPage, RoundsPage } from './Rounds';
+import { NewRoundPage, RoundLinePage, RoundPage, RoundsPage } from './Rounds';
 import { ReadingsPage } from './Readings';
 import { StocktakeDetail, StocktakesPage } from './Stocktakes';
 import { RecordWorkPage, WorkOrderSettingsSection } from './RecordWork';
@@ -91,6 +91,8 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
         <Route path="checklists/:templateId" element={<ChecklistEditor companyId={companyId} me={m} />} />
         <Route path="rounds" element={<RoundsPage companyId={companyId} me={m} />} />
         <Route path="rounds/new" element={<NewRoundPage companyId={companyId} me={m} />} />
+        <Route path="rounds/:workOrderId" element={<RoundPage companyId={companyId} me={m} />} />
+        <Route path="rounds/:workOrderId/lines/:lineId" element={<RoundLinePage companyId={companyId} me={m} />} />
         <Route path="readings" element={<ReadingsPage companyId={companyId} me={m} />} />
         <Route path="stocktakes" element={<StocktakesPage companyId={companyId} me={m} />} />
         <Route path="stocktakes/:countId" element={<StocktakeDetail companyId={companyId} me={m} />} />

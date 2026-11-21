@@ -10,6 +10,8 @@
 //               item also sets the asset out of service. That is the one place Maintenance changes an asset's status by
 //               itself, and it is recorded on the prestart and in the asset's history with the status before. A work
 //               order's status still never changes the asset's status.
+//   Rounds      inspection rounds (routes-rounds.ts) use the same checklists, results and follow-ups through the exports
+//               here (loadTemplate, itemDTO, resultDTO, resultInput, evaluate and followUpStatements).
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -41,10 +43,10 @@ const itemSchema = z.object({
 });
 const templateSchema = z.object({ name: zText(200).min(1), description: zText(2000).optional(), failAction: z.enum(FAIL_ACTIONS).optional(), items: z.array(itemSchema).min(1).max(100) });
 
-const itemDTO = (i: any) => ({ id: i.id, position: i.position, label: i.label, kind: i.kind, unit: i.unit, min: i.min_value, max: i.max_value, required: !!i.required, critical: !!i.critical });
-const resultDTO = (r: any) => ({ id: r.id, itemId: r.item_id, position: r.position, label: r.label, kind: r.kind, unit: r.unit, min: r.min_value, max: r.max_value, critical: !!r.critical, passed: r.passed === null ? null : !!r.passed, value: r.value_num, text: r.value_text, note: r.note, recordedBy: r.recorded_by, recordedByName: r.recorder ?? null, recordedAt: r.recorded_at });
+export const itemDTO = (i: any) => ({ id: i.id, position: i.position, label: i.label, kind: i.kind, unit: i.unit, min: i.min_value, max: i.max_value, required: !!i.required, critical: !!i.critical });
+export const resultDTO = (r: any) => ({ id: r.id, itemId: r.item_id, position: r.position, label: r.label, kind: r.kind, unit: r.unit, min: r.min_value, max: r.max_value, critical: !!r.critical, passed: r.passed === null ? null : !!r.passed, value: r.value_num, text: r.value_text, note: r.note, recordedBy: r.recorded_by, recordedByName: r.recorder ?? null, recordedAt: r.recorded_at });
 
-async function loadTemplate(db: D1Database, companyId: string, id: string) {
+export async function loadTemplate(db: D1Database, companyId: string, id: string) {
   const t = await db.prepare('SELECT * FROM mt_insp_templates WHERE company_id = ? AND id = ?').bind(companyId, String(id).slice(0, 64)).first<any>();
   if (!t) throw notFound('Inspection template');
   const items = await db.prepare('SELECT * FROM mt_insp_items WHERE company_id = ? AND template_id = ? AND archived_at IS NULL ORDER BY position, created_at').bind(companyId, t.id).all<any>();
@@ -156,11 +158,11 @@ inspectionRoutes.put('/c/:company/assets/:id/prestart', async (c) => {
 
 // ------------------------------------------------------------------ results
 
-const resultInput = z.object({ itemId: zId, passed: z.boolean().nullable().optional(), value: z.number().finite().nullable().optional(), text: zText(2000).optional(), note: zText(1000).optional() });
-type ResultInput = z.infer<typeof resultInput>;
+export const resultInput = z.object({ itemId: zId, passed: z.boolean().nullable().optional(), value: z.number().finite().nullable().optional(), text: zText(2000).optional(), note: zText(1000).optional() });
+export type ResultInput = z.infer<typeof resultInput>;
 
 /** A result checked against its item: pass/fail as given, a number inside its limits, text recorded (never failing). */
-function evaluate(item: any, r: ResultInput | undefined, n: number): { passed: number | null; value: number | null; text: string; note: string } | null {
+export function evaluate(item: any, r: ResultInput | undefined, n: number): { passed: number | null; value: number | null; text: string; note: string } | null {
   const given = r && (r.passed !== undefined && r.passed !== null ? true : r.value !== undefined && r.value !== null ? true : !!r.text?.trim());
   if (!r || !given) {
     if (item.required) throw new HttpError(400, `Item ${n} (${item.label}) needs a result`);
@@ -213,6 +215,63 @@ export async function inspectionsOf(db: D1Database, companyId: string, woId: str
       failed: rs.filter((r) => r.passed === 0).length,
     };
   });
+}
+
+export interface FollowUp {
+  kind: 'work_order' | 'request';
+  id: string;
+  number: string;
+}
+
+/**
+ * The follow-up a failed checklist makes, as statements for the caller's transaction: one corrective work order on the
+ * asset (priority low raised to medium, the department and trade of the work order it comes from), one request (its
+ * status from the approval rule), or nothing. Inspections on work orders and the assets of an inspection round
+ * (routes-rounds.ts) both use it, each with its own wording.
+ */
+export async function followUpStatements(
+  db: D1Database,
+  a: MtAccess,
+  o: {
+    action: string;
+    assetId: string;
+    from: { id: string; number: string; priority: string; department: string; department_id: string | null; trade: string };
+    description: string;
+    woSummary: (number: string) => string;
+    reqSummary: (number: string) => string;
+    woAfter: Record<string, unknown>;
+    t: number;
+  },
+): Promise<{ stmts: D1PreparedStatement[]; followUp: FollowUp | null }> {
+  const { from: w, description, t } = o;
+  if (o.action === 'work_order') {
+    const id = newId();
+    const number = await nextNumber(db, a.companyId, 'work_order');
+    return {
+      stmts: [
+        db
+          .prepare("INSERT INTO mt_work_orders (id, company_id, number, asset_id, description, job_type, priority, status, department, department_id, trade, search, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'corrective', ?, 'open', ?, ?, ?, ?, ?, ?, ?)")
+          .bind(id, a.companyId, number, o.assetId, description, w.priority === 'low' ? 'medium' : w.priority, w.department, w.department_id, w.trade, searchText(number, description, w.trade), a.userId, t, t),
+        eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.created', assetId: o.assetId, workOrderId: id, summary: o.woSummary(number), after: o.woAfter, at: t }),
+      ],
+      followUp: { kind: 'work_order', id, number },
+    };
+  }
+  if (o.action === 'request') {
+    const id = newId();
+    const number = await nextNumber(db, a.companyId, 'request');
+    const rstatus = (await requireApproval(db, a.companyId)) ? 'awaiting_approval' : 'submitted';
+    return {
+      stmts: [
+        db
+          .prepare('INSERT INTO mt_requests (id, company_id, number, description, asset_id, priority, department, department_id, status, requested_by, search, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+          .bind(id, a.companyId, number, description, o.assetId, w.priority === 'low' ? 'medium' : w.priority, w.department, w.department_id, rstatus, a.userId, searchText(number, description, w.department), t, t),
+        eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.created', assetId: o.assetId, requestId: id, workOrderId: w.id, summary: o.reqSummary(number), after: { status: rstatus }, at: t }),
+      ],
+      followUp: { kind: 'request', id, number },
+    };
+  }
+  return { stmts: [], followUp: null };
 }
 
 async function workableWo(c: any) {
@@ -289,30 +348,18 @@ inspectionRoutes.post('/c/:company/work-orders/:id/inspections/:inspId/complete'
   const t = now();
   const what = failedItems.map((r) => `${r.label}${r.kind === 'number' && r.value_num !== null ? ` (${r.value_num}${r.unit ? ` ${r.unit}` : ''})` : ''}`).join('; ');
   const description = `Follow-up of the failed inspection "${i.template_name}" on ${w.number}: ${what}`.slice(0, 5000);
-  const stmts: D1PreparedStatement[] = [doneStmt(db, a.companyId, `inspection-complete:${i.id}`, t)];
-  let followUp: { kind: string; id: string; number: string } | null = null;
-  if (action === 'work_order') {
-    const id = newId();
-    const number = await nextNumber(db, a.companyId, 'work_order');
-    stmts.push(
-      db
-        .prepare("INSERT INTO mt_work_orders (id, company_id, number, asset_id, description, job_type, priority, status, department, department_id, trade, search, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'corrective', ?, 'open', ?, ?, ?, ?, ?, ?, ?)")
-        .bind(id, a.companyId, number, w.asset_id, description, w.priority === 'low' ? 'medium' : w.priority, w.department, w.department_id, w.trade, searchText(number, description, w.trade), a.userId, t, t),
-      eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.created', assetId: w.asset_id, workOrderId: id, summary: `Work order ${number} made as the follow-up of the failed inspection "${i.template_name}" on ${w.number}`, after: { from: w.id, inspection: i.id }, at: t }),
-    );
-    followUp = { kind: 'work_order', id, number };
-  } else if (action === 'request') {
-    const id = newId();
-    const number = await nextNumber(db, a.companyId, 'request');
-    const rstatus = (await requireApproval(db, a.companyId)) ? 'awaiting_approval' : 'submitted';
-    stmts.push(
-      db
-        .prepare('INSERT INTO mt_requests (id, company_id, number, description, asset_id, priority, department, department_id, status, requested_by, search, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-        .bind(id, a.companyId, number, description, w.asset_id, w.priority === 'low' ? 'medium' : w.priority, w.department, w.department_id, rstatus, a.userId, searchText(number, description, w.department), t, t),
-      eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.created', assetId: w.asset_id, requestId: id, workOrderId: w.id, summary: `Request ${number} raised as the follow-up of the failed inspection "${i.template_name}" on ${w.number}`, after: { status: rstatus }, at: t }),
-    );
-    followUp = { kind: 'request', id, number };
-  }
+  const made = await followUpStatements(db, a, {
+    action,
+    assetId: w.asset_id,
+    from: w,
+    description,
+    woSummary: (number) => `Work order ${number} made as the follow-up of the failed inspection "${i.template_name}" on ${w.number}`,
+    reqSummary: (number) => `Request ${number} raised as the follow-up of the failed inspection "${i.template_name}" on ${w.number}`,
+    woAfter: { from: w.id, inspection: i.id },
+    t,
+  });
+  const stmts: D1PreparedStatement[] = [doneStmt(db, a.companyId, `inspection-complete:${i.id}`, t), ...made.stmts];
+  const followUp = made.followUp;
   stmts.push(
     db
       .prepare("UPDATE mt_wo_inspections SET status = ?, completed_at = ?, completed_by = ?, follow_up_work_order_id = ?, follow_up_request_id = ? WHERE company_id = ? AND id = ? AND status = 'open'")

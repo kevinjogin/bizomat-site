@@ -25,6 +25,8 @@ import { CSV_MAX, workOrderCsvRows, workOrderListFilters } from './lists';
 // The field release (migration 0040): the sign-off when a work order is completed, and alerts to the people concerned.
 import { alertRequestsCompleted, alertWorkOrderAssigned } from './alerts';
 import { SIGN_OFF_SET, completeSchema, discardSignature, prepareSignature, signOffValues, signatureFileStmts } from './signoff';
+// The field release: an inspection round's work order completes only once every asset's checklist is done.
+import { assertRoundDone } from './round-guard';
 import {
   JOB_TYPES,
   LOCKED,
@@ -438,6 +440,8 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
   if (!(OUTSTANDING as string[]).includes(w.status)) assertUnlocked(w);
   // What was done, and an optional sign-off (required when the company asks for one: signoff.ts).
   const input = await body(c, completeSchema);
+  // An inspection round's work order completes only once every asset's checklist is done (round-guard.ts).
+  await assertRoundDone(db, a.companyId, w);
   const linked = (await db.prepare("SELECT id, number, requested_by FROM mt_requests WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(a.companyId, w.id).all<{ id: string; number: string; requested_by: string | null }>()).results;
   const t = now();
   // What is still reserved in the stores for it goes back to free stock, in the same transaction.

@@ -1,6 +1,6 @@
-// Inspection templates (stage M2): checklists of pass/fail, number and text items, used for inspections on work orders and
-// for prestart checks. Supervisors and administrators make and change them; items taken out are archived, so recorded
-// results keep their own copy.
+// Inspection templates (stage M2): checklists of pass/fail, number and text items, used for inspections on work orders,
+// inspection rounds (one work order over many assets, Rounds.tsx) and prestart checks. Supervisors and administrators
+// make and change them; items taken out are archived, so recorded results keep their own copy.
 import { useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -28,7 +28,8 @@ export function ChecklistsPage({ companyId, me }: { companyId: string; me: MtMe 
   return (
     <div className="stack">
       <div className="row wrap">
-        <p className="grow muted small">Checklists for inspections on work orders and for prestart checks. A failed inspection makes its follow-up once; a failed critical item in a prestart sets the asset out of service and raises a request.</p>
+        <p className="grow muted small">Checklists for inspections on work orders, inspection rounds (one work order over many assets) and prestart checks. A failed inspection makes its follow-up once; a failed critical item in a prestart sets the asset out of service and raises a request.</p>
+        {me.role !== 'requester' ? <Link className="btn" to={mtPage(companyId, '/rounds')}><Icon name="target" /> Inspection rounds</Link> : null}
         {me.can.managePm ? <Link className="btn primary" to={mtPage(companyId, '/checklists/new')}><Icon name="plus" /> New template</Link> : null}
       </div>
       {q.error ? <ErrorBox error={q.error} retry={() => q.refetch()} /> : !q.data ? <Loading /> : !q.data.templates.length ? (
@@ -119,7 +120,12 @@ export function ChecklistEditor({ companyId, me }: { companyId: string; me: MtMe
     <div className="stack">
       <div className="mt-head">
         <h2 className="mt-title">{isNew ? 'New inspection template' : f.name}</h2>
-        {!isNew && editable ? <div className="mt-head-actions"><button className="btn ghost" onClick={archive}>{q.data!.archived ? 'Restore' : 'Archive'}</button></div> : null}
+        {!isNew && editable ? (
+          <div className="mt-head-actions">
+            {!q.data!.archived && me.can.manageWork ? <Link className="btn" to={mtPage(companyId, `/rounds/new?templateId=${encodeURIComponent(templateId)}`)}><Icon name="target" /> Start an inspection round</Link> : null}
+            <button className="btn ghost" onClick={archive}>{q.data!.archived ? 'Restore' : 'Archive'}</button>
+          </div>
+        ) : null}
       </div>
       <Section title="Template">
         <div className="crm-form-grid">

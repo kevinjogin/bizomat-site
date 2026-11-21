@@ -17,6 +17,8 @@
 //   routes-stock.ts                     reservations, requisitions from work orders, stocktakes of the stores
 //   the field release: routes-job.ts (the job card, work recorded after it was done, the completing settings), signoff.ts
 //   (the sign-off at completion), alerts.ts (alerts in the ERP, with email copies behind maintenance_email_alerts)
+//   inspection rounds: routes-rounds.ts (one work order over many assets, approval per asset); the Readings page:
+//   routes-meters.ts (the meter list's filters and several readings at once); labels that open the ERP: routes-setup.ts
 
 import { Hono } from 'hono';
 import { z } from 'zod';

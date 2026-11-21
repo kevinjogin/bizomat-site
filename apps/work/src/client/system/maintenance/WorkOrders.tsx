@@ -37,6 +37,7 @@ import { ReasonDialog } from './Requests';
 import { DowntimeSection, InspectionsSection, LabourSection, PreventiveNote, ReadingsSection, type WoExtras } from './WorkOrderExtras';
 import { PartLinesEditor, PartsArea, partLinesBody, type PartLine } from './WorkOrderExtras';
 import { CompleteDialog, SignOffSection } from './SignOff';
+import { RoundSection } from './Rounds';
 
 const OUTSTANDING = ['open', 'assigned', 'in_progress', 'on_hold'];
 
@@ -557,6 +558,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
             ) : null}
           </Section>
           <PartsArea {...extras} wo={w} locked={d.locked} />
+          <RoundSection companyId={companyId} woId={w.id} />
           <InspectionsSection {...extras} />
           <LabourSection {...extras} />
           <DowntimeSection key={`dt-${d.downtime?.startedAt ?? 0}-${d.downtime?.endedAt ?? 0}`} {...extras} />
