@@ -95,7 +95,7 @@ const guide: Guide = {
     { q: 'Are my choices the same in every company?', a: 'Yes. Your CRM choices apply in every CRM organisation you belong to and your Finance choices in every Finance workspace. Your Project Management choices belong to your account.' },
     { q: 'Why did the example company send no email?', a: 'The example company never sends email. Its notifications stay in the app.' },
     { q: 'Where do health and safety alerts appear?', a: 'Under Alerts for you on the Health and Safety overview, and as a count of unread alerts in My Work. They are emailed too where email is set up (/learn/whs/).' },
-    { q: 'Where are maintenance and ERP approvals?', a: 'On each module’s own pages: Awaiting approval on the Maintenance overview, and the counts on the Dashboard’s module cards, such as Purchase orders to approve and Requisitions to approve (/learn/dashboard/).' },
+    { q: 'Where are maintenance and ERP approvals?', a: 'On each module’s own pages: Requests to approve on the Maintenance overview, and the counts on the Dashboard’s module cards, such as Purchase orders to approve and Requisitions to approve (/learn/dashboard/). Maintenance also alerts you in the ERP: the Alerts button at the top, where you have Maintenance, lists requests waiting for your approval (/learn/maintenance/).' },
     { q: 'Can I get a reminder before a customer’s invoice is due?', a: 'Yes, if the Finance workspace sets Remind before an invoice is due (days) and you keep Invoices due soon or overdue switched on. Reminders go to your team, not to the customer: send the customer a reminder from your own email.' },
   ],
   related: ['dashboard', 'projects', 'crm', 'finance', 'whs', 'automations', 'account-and-sign-in'],
