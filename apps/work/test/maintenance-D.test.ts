@@ -825,9 +825,13 @@ describe('the review of the field release: reports, alerts and dialogs', () => {
   it('opens a dialog with the focus on its first field once, not again each time its page renders', () => {
     // src/client/components/ui/overlays.tsx: no DOM here, so its source is checked. The focus effect runs once (no
     // dependency on onClose, which a parent may make anew each second), and Escape closes with the latest handler.
-    const modal = overlaysSrc.slice(overlaysSrc.indexOf('export function Modal('), overlaysSrc.indexOf('export function ConfirmProvider('));
-    expect(modal).toMatch(/prev\?\.focus\?\.\(\);\s*\};\s*\}, \[\]\);/);
-    expect(modal).toContain('closeRef.current();');
-    expect(modal).not.toContain('}, [onClose]);');
+    // Modal, and the Drawer beside it, which has the same focus effect.
+    const modal = overlaysSrc.slice(overlaysSrc.indexOf('export function Modal('), overlaysSrc.indexOf('export function Drawer('));
+    const drawer = overlaysSrc.slice(overlaysSrc.indexOf('export function Drawer('), overlaysSrc.indexOf('export function ConfirmProvider('));
+    for (const part of [modal, drawer]) {
+      expect(part).toMatch(/prev\?\.focus\?\.\(\);\s*\};\s*\}, \[\]\);/);
+      expect(part).toContain('closeRef.current();');
+      expect(part).not.toContain('}, [onClose]);');
+    }
   });
 });

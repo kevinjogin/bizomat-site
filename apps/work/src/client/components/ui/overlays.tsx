@@ -75,13 +75,18 @@ export function Drawer({ title, onClose, children, footer, labelledBy = 'drawer-
   const ref = useRef<HTMLElement>(null);
   const scrim = useRef<HTMLDivElement>(null);
   useExitAnimation([scrim, ref]);
+  // As in Modal: the latest onClose, so the focus effect runs once and never pulls the focus back on a re-render.
+  const closeRef = useRef(onClose);
+  useLayoutEffect(() => {
+    closeRef.current = onClose;
+  });
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
     (ref.current?.querySelector<HTMLElement>('input, textarea, select, button:not(.drawer-close)') ?? ref.current)?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !document.querySelector('.popover, .overlay:not(.ui-exit)')) {
         e.stopPropagation();
-        onClose();
+        closeRef.current();
       }
       if (e.key === 'Tab' && ref.current) {
         const focusables = ref.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])');
@@ -102,7 +107,7 @@ export function Drawer({ title, onClose, children, footer, labelledBy = 'drawer-
       document.removeEventListener('keydown', onKey, true);
       prev?.focus?.();
     };
-  }, [onClose]);
+  }, []);
   return createPortal(
     <>
       <div className="sidepanel-overlay" ref={scrim} onClick={onClose} />
