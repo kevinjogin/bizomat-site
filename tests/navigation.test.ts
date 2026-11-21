@@ -59,6 +59,10 @@ test('the main navigation reads Home, Systems, Resources, About, Contact, with L
   assert.match(header, /<a class="site-header__cta site-header__signin" href=\{SIGN_IN\.href\}/);
   assert.match(header, /AI_SEARCH\.label/);
   assert.match(header, /aria-expanded="false" data-nav-toggle/);
+  // The header is solid (owner, 21 Nov 2026): the page never shows through it.
+  const headerRule = header.match(/\n  \.site-header \{[^}]*\}/)![0];
+  assert.match(headerRule, /background: var\(--paper\);/);
+  assert.doesNotMatch(headerRule, /transparent\)|backdrop-filter|opacity/, 'the header has no see-through background or blur');
   // Learn is under Systems on the pages too: /learn/'s trail goes through Systems, and /systems/ has a Learn section built
   // from the menu's own list. Both stay one page each.
   const learnPage = read('src/pages/learn/index.astro');
