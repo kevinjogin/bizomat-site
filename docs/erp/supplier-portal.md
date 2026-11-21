@@ -23,8 +23,9 @@ two-factor sign-in when that is on), and never company membership:
 
 ## What they see and do (`/erp/supplier-portal`)
 
-- **Purchase orders** of that supplier that were approved or sent (and later received, closed or cancelled after being
-  sent): lines, prices, dates, delivery address, payment terms and terms. Never the company's internal notes.
+- **Purchase orders** of that supplier once sent to it (and later received, closed or cancelled): lines, prices, dates,
+  delivery address, payment terms, terms and the notes for the supplier, as the order's PDF shows them. An approved
+  order not yet sent stays the company's.
 - **Answering an order**: accepted with the promised delivery date, or declined with the reason, once per revision (an
   amended order is answered again). The buyer who made and sent the order is told, and the order's page shows the
   answer.
