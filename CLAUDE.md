@@ -198,6 +198,7 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   held with a skeleton until the new company's data has loaded (`e2e/ui-new.spec.ts`), inline font sizes and corners,
   focus as a solid 2 px outline with the 30% ring, and the kit's drawer and website section; still behind the flag,
   and nothing changes with it off (compared pixel by pixel). Breakpoints wait for the clean-up after the switch-on.
+  Released 21 Nov 2026 with the flag off (kevinjogin/bizomat-site#123, deploy run 59).
   **CAD Automation inside the ERP** (owner's brief and approved audit of 19 Nov 2026; `docs/cad/README.md`, and
   kevinjogin/bizomat-cad `docs/ERP-MODULE.md`; migration 0037; flags `cad_in_erp`, `cad_redirect`, `cad_products`,
   `cad_bom`, `cad_manufacturing`, `cad_quality`, `cad_projects`, all off): the screens, accounts, computers, history and
