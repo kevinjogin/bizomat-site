@@ -1,9 +1,11 @@
-// Maintenance requests: raise one (only the description is needed), follow your own, and, for supervisors and
-// administrators, decide on them: approve, decline, ask for more information, make a work order or attach to one.
+// Maintenance requests: raise one (only the description is needed), follow your own and withdraw it before it becomes a
+// work order, and, for supervisors and administrators, decide on them: approve, decline, ask for more information, make
+// a work order or attach to one.
 import { useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { del, errorMessage, get, patch, post } from '../../lib/api';
+import { appUrl } from '../../lib/base';
 import { timeAgo } from '../../lib/format';
 import { usePageTitle } from '../../lib/hooks';
 import { Icon } from '../../components/ui/Icon';
@@ -15,8 +17,10 @@ import {
   REQUEST_STATUS_LABELS,
   dateText,
   dateTimeText,
+  localToday,
   mtPage,
   mtPath,
+  useSites,
   type MtComment,
   type MtEvent,
   type MtFile,
@@ -25,16 +29,19 @@ import {
   type Priority,
   type WorkOrder,
 } from './api';
-import { Comments, FileList, FilterPanel, History, PriorityBadge, Props, RequestBadge, Section, UploadButton, WoBadge, options, uploadMtFile } from './common';
+import { Comments, FileList, FilterPanel, History, ListPager, PriorityBadge, Props, RequestBadge, Section, UploadButton, WoBadge, options, uploadMtFile } from './common';
 import { AssetPicker, DepartmentField, PersonSelect, useAssetLabel, type PickedAsset } from './pickers';
+import { AssetPanel, OpenOnAsset, useAssetSummary } from './AssetPanel';
 
 // ------------------------------------------------------------------ the request form (also the rail's "Report a fault")
 
-export function RequestForm({ companyId, me, initialAsset, onDone, onCancel, compact }: { companyId: string; me: MtMe | null; initialAsset?: PickedAsset | null; onDone: (r: MtRequest) => void; onCancel?: () => void; compact?: boolean }) {
+export function RequestForm({ companyId, me, initialAsset, onDone, onCancel, compact, linkMode = 'router' }: { companyId: string; me: MtMe | null; initialAsset?: PickedAsset | null; onDone: (r: MtRequest) => void; onCancel?: () => void; compact?: boolean; linkMode?: 'router' | 'page' }) {
   const toast = useToast();
   const qc = useQueryClient();
   const [description, setDescription] = useState('');
   const [asset, setAsset] = useState<PickedAsset | null>(initialAsset ?? null);
+  // The field release: the other open work on the chosen asset, as a warning that never stops the request being sent.
+  const onAsset = useAssetSummary(companyId, asset?.id ?? '');
   const [priority, setPriority] = useState<Priority>('medium');
   const [location, setLocation] = useState('');
   const [dept, setDept] = useState({ departmentId: '', department: '' });
@@ -83,6 +90,7 @@ export function RequestForm({ companyId, me, initialAsset, onDone, onCancel, com
         <span className="hint">This is the only thing you must fill in.</span>
       </div>
       <AssetPicker companyId={companyId} id="mtr-asset" label="Asset (if you know it)" value={asset} onChange={setAsset} />
+      {asset && onAsset.data && onAsset.data.asset.id === asset.id ? <OpenOnAsset form companyId={companyId} summary={onAsset.data} linkMode={linkMode} /> : null}
       <div className="field">
         <label htmlFor="mtr-photos">Photos or documents</label>
         <input id="mtr-photos" className="input" type="file" multiple accept="image/*,.pdf,.txt,.docx,.xlsx" onChange={(e) => setFiles(Array.from(e.target.files ?? []))} />
@@ -145,74 +153,131 @@ export function NewRequestPage({ companyId, me }: { companyId: string; me: MtMe 
 
 // ------------------------------------------------------------------ lists
 
-type View = 'mine' | 'awaiting' | 'open' | 'all';
+type View = 'approval' | 'outstanding' | 'mine' | 'all';
+/** The filters kept in the address and sent to the server as they are. */
+const REQUEST_FILTERS = ['priority', 'from', 'to', 'q', 'assetId', 'requestedBy', 'departmentId', 'department', 'siteId'];
+const REQUEST_LIMIT = 100;
+/** The status filter: every status, and the field release's outstanding, withdrawn and work order cancelled. */
+const STATUS_FILTER: Record<string, string> = { outstanding: 'Outstanding', ...REQUEST_STATUS_LABELS, withdrawn: 'Withdrawn', wo_cancelled: 'Work order cancelled' };
+
+/** A request's status: Withdrawn when the person who raised it withdrew it (it is then closed). */
+export function RequestStatusBadge({ r }: { r: Pick<MtRequest, 'status' | 'withdrawnAt'> }) {
+  return r.withdrawnAt ? <span className="badge">Withdrawn</span> : <RequestBadge status={r.status} />;
+}
 
 export function RequestsPage({ companyId, me }: { companyId: string; me: MtMe }) {
   usePageTitle('Maintenance requests');
   const [params, setParams] = useSearchParams();
   const manager = me.can.decide;
-  const view = (params.get('view') as View) ?? (manager ? 'awaiting' : 'mine');
-  const set = (k: string, v: string) => setParams((p) => { const n = new URLSearchParams(p); if (v) n.set(k, v); else n.delete(k); return n; }, { replace: true });
-  const status = params.get('status') ?? '';
-  const priority = params.get('priority') ?? '';
-  const from = params.get('from') ?? '';
-  const to = params.get('to') ?? '';
-  const q = params.get('q') ?? '';
-  const assetId = params.get('assetId') ?? '';
-  const assetLabel = useAssetLabel(companyId, assetId);
-  const query = new URLSearchParams();
+  const requester = me.role === 'requester';
+  // The earlier addresses keep working: view=awaiting is Needing approval, view=open is Outstanding.
+  const asked = ({ awaiting: 'approval', open: 'outstanding' } as Record<string, View>)[params.get('view') ?? ''] ?? (params.get('view') as View | null);
+  const fallback: View = manager ? (me.approvalRequired ? 'approval' : 'outstanding') : 'mine';
+  const view: View = asked && ['approval', 'outstanding', 'mine', 'all'].includes(asked) && (manager || asked !== 'approval') ? asked : fallback;
+  // A new filter starts the list again from its first page.
+  const set = (k: string, v: string) => setParams((p) => { const n = new URLSearchParams(p); if (v) n.set(k, v); else n.delete(k); if (k !== 'offset') n.delete('offset'); return n; }, { replace: true });
+  const g = (k: string) => params.get(k) ?? '';
+  const offset = Math.max(0, Number(g('offset')) || 0);
+  const assetLabel = useAssetLabel(companyId, g('assetId'));
+  const sites = useSites(companyId);
+  const query = new URLSearchParams({ tzOffset: String(new Date().getTimezoneOffset()) });
+  if (view === 'approval') query.set('status', 'awaiting_approval');
+  else if (view === 'outstanding') query.set('status', g('status') || 'outstanding');
+  else if (g('status')) query.set('status', g('status'));
   if (view === 'mine') query.set('mine', '1');
-  if (view === 'awaiting') query.set('status', 'awaiting');
-  if (view === 'open') query.set('status', 'open');
-  if (status && view !== 'awaiting') query.set('status', status);
-  for (const [k, v] of Object.entries({ priority, from, to, q, assetId })) if (v) query.set(k, v);
-  const list = useQuery({ queryKey: ['mt', companyId, 'requests', query.toString()], queryFn: () => get<{ requests: MtRequest[]; total: number }>(mtPath(companyId, `/requests?${query}`)) });
-  const views: [View, string][] = manager ? [['awaiting', 'Awaiting approval'], ['open', 'Open'], ['mine', 'My requests'], ['all', 'All']] : [['mine', 'My requests'], ['all', 'All I can see']];
+  for (const k of REQUEST_FILTERS) if (g(k)) query.set(k, g(k));
+  if (g('assetId') && g('includeChildren') === '1') query.set('includeChildren', '1');
+  const csvQuery = new URLSearchParams(query);
+  csvQuery.set('format', 'csv');
+  csvQuery.set('today', localToday());
+  query.set('limit', String(REQUEST_LIMIT));
+  if (offset) query.set('offset', String(offset));
+  const list = useQuery({ queryKey: ['mt', companyId, 'requests', query.toString()], queryFn: () => get<{ requests: MtRequest[]; total: number; limit: number; offset: number }>(mtPath(companyId, `/requests?${query}`)) });
+  const views: [View, string][] = manager
+    ? [['approval', 'Needing approval'], ['outstanding', 'Outstanding'], ['mine', 'My requests'], ['all', 'All']]
+    : [['mine', 'My requests'], ['outstanding', 'Outstanding'], ['all', 'All I can see']];
+  const active = [...REQUEST_FILTERS, ...(view === 'approval' ? [] : ['status'])].filter((k) => g(k)).length;
+  const clear = () => setParams((p) => { const n = new URLSearchParams(); if (p.get('view')) n.set('view', p.get('view')!); return n; }, { replace: true });
   return (
     <div className="stack">
-      <div className="row wrap">
+      <div className="row wrap mt-toolbar">
         <nav className="tabs grow" aria-label="Request lists">
           {views.map(([v, l]) => <button key={v} className={`tab${view === v ? ' active' : ''}`} aria-current={view === v ? 'page' : undefined} onClick={() => set('view', v)}>{l}</button>)}
         </nav>
+        <a className="btn" href={appUrl(`/api${mtPath(companyId, `/requests?${csvQuery}`)}`)} download><Icon name="download" /> CSV</a>
         <Link className="btn primary" to={mtPage(companyId, '/requests/new')}><Icon name="plus" /> Report a fault</Link>
       </div>
-      <FilterPanel active={[status, priority, from, to, q, assetId].filter(Boolean).length}>
+      <FilterPanel active={active}>
         <div className="field">
           <label htmlFor="mtq-q">Search</label>
-          <input id="mtq-q" className="input" type="search" value={q} onChange={(e) => set('q', e.target.value)} placeholder="Number or words" />
+          <input id="mtq-q" className="input" type="search" value={g('q')} onChange={(e) => set('q', e.target.value)} placeholder="Number or words" />
         </div>
-        {view !== 'awaiting' ? (
+        {view !== 'approval' ? (
           <div className="field">
             <label htmlFor="mtq-status">Status</label>
-            <select id="mtq-status" className="select" value={status} onChange={(e) => set('status', e.target.value)}>
-              <option value="">Any</option>
-              {options(REQUEST_STATUS_LABELS)}
+            <select id="mtq-status" className="select" value={view === 'outstanding' && g('status') === 'outstanding' ? '' : g('status')} onChange={(e) => set('status', e.target.value)}>
+              <option value="">{view === 'outstanding' ? 'Outstanding' : 'Any'}</option>
+              {options(view === 'outstanding' ? Object.fromEntries(Object.entries(STATUS_FILTER).filter(([k]) => k !== 'outstanding')) : STATUS_FILTER)}
             </select>
           </div>
         ) : null}
         <div className="field">
           <label htmlFor="mtq-priority">Priority</label>
-          <select id="mtq-priority" className="select" value={priority} onChange={(e) => set('priority', e.target.value)}>
+          <select id="mtq-priority" className="select" value={g('priority')} onChange={(e) => set('priority', e.target.value)}>
             <option value="">Any</option>
             {options(PRIORITY_LABELS)}
           </select>
         </div>
         <div className="field">
           <label htmlFor="mtq-from">Raised from</label>
-          <input id="mtq-from" className="input" type="date" value={from} onChange={(e) => set('from', e.target.value)} />
+          <input id="mtq-from" className="input" type="date" value={g('from')} onChange={(e) => set('from', e.target.value)} />
         </div>
         <div className="field">
           <label htmlFor="mtq-to">Raised to</label>
-          <input id="mtq-to" className="input" type="date" value={to} onChange={(e) => set('to', e.target.value)} />
+          <input id="mtq-to" className="input" type="date" value={g('to')} onChange={(e) => set('to', e.target.value)} />
         </div>
+        {!requester ? <PersonSelect me={me} id="mtq-requested-by" label="Requested by" value={g('requestedBy')} onChange={(v) => set('requestedBy', v)} empty="Anyone" /> : null}
+        {me.departments.length ? (
+          <div className="field">
+            <label htmlFor="mtq-dept">Department</label>
+            <select id="mtq-dept" className="select" value={g('departmentId')} onChange={(e) => set('departmentId', e.target.value)}>
+              <option value="">Any</option>
+              {me.departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </select>
+          </div>
+        ) : (
+          <div className="field">
+            <label htmlFor="mtq-dept">Department</label>
+            <input id="mtq-dept" className="input" maxLength={120} value={g('department')} onChange={(e) => set('department', e.target.value)} />
+          </div>
+        )}
+        {sites.data?.sites.length ? (
+          <div className="field">
+            <label htmlFor="mtq-site">Site</label>
+            <select id="mtq-site" className="select" value={g('siteId')} onChange={(e) => set('siteId', e.target.value)}>
+              <option value="">Any</option>
+              {sites.data.sites.filter((s) => !s.archived || s.id === g('siteId')).map((s) => <option key={s.id} value={s.id}>{s.code} {s.name}</option>)}
+            </select>
+          </div>
+        ) : null}
         <div className="crm-span">
           <AssetPicker companyId={companyId} id="mtq-asset" label="Asset" value={assetLabel} onChange={(a) => set('assetId', a?.id ?? '')} />
+          {g('assetId') ? (
+            <label className="checkbox">
+              <input type="checkbox" checked={g('includeChildren') === '1'} onChange={(e) => set('includeChildren', e.target.checked ? '1' : '')} /> Include child assets
+            </label>
+          ) : null}
         </div>
+        {active ? (
+          <div className="crm-span">
+            <button type="button" className="btn ghost sm" onClick={clear}><Icon name="x" size={14} /> Clear filters</button>
+          </div>
+        ) : null}
       </FilterPanel>
       {list.error ? <ErrorBox error={list.error} retry={() => list.refetch()} /> : null}
       <div className="card crm-table-card">
         {!list.data ? <Loading /> : !list.data.requests.length ? (
-          <EmptyState icon="inbox" title="No requests here">{view === 'awaiting' ? 'Nothing is waiting for approval.' : 'Raise one with Report a fault.'}</EmptyState>
+          <EmptyState icon="inbox" title="No requests here">{view === 'approval' && !active ? 'Nothing is waiting for approval.' : active ? 'Try another list or remove a filter.' : 'Raise one with Report a fault.'}</EmptyState>
         ) : (
           <table className="data-table mt-table">
             <thead><tr><th>Number</th><th>Description</th><th>Asset</th><th>Priority</th><th>Status</th><th>Raised by</th><th>Raised</th></tr></thead>
@@ -221,9 +286,13 @@ export function RequestsPage({ companyId, me }: { companyId: string; me: MtMe })
                 <tr key={r.id}>
                   <td data-label="Number"><Link className="mt-primary mt-num" to={mtPage(companyId, `/requests/${r.id}`)}>{r.number}</Link></td>
                   <td data-label="Description" className="mt-desc">{r.description.length > 140 ? `${r.description.slice(0, 140)}…` : r.description}</td>
-                  <td data-label="Asset">{r.assetId ? <Link to={mtPage(companyId, `/assets/${r.assetId}`)}>{r.assetNumber} {r.assetName}</Link> : <span className="muted">None</span>}</td>
+                  <td data-label="Asset">
+                    {r.assetId ? <Link to={mtPage(companyId, `/assets/${r.assetId}`)}>{r.assetNumber} {r.assetName}</Link> : <span className="muted">None</span>}
+                    {r.siteCode ? <span className="small muted"> · {r.siteCode}</span> : null}
+                    <AlsoOpen r={r} />
+                  </td>
                   <td data-label="Priority"><PriorityBadge priority={r.priority} /></td>
-                  <td data-label="Status"><RequestBadge status={r.status} />{r.workOrderNumber ? <div className="small muted">{r.workOrderNumber}</div> : null}</td>
+                  <td data-label="Status"><RequestStatusBadge r={r} />{r.workOrderNumber ? <div className="small muted">{r.workOrderNumber}{r.workOrderStatus === 'cancelled' ? ' (cancelled)' : ''}</div> : null}</td>
                   <td data-label="Raised by">{r.requestedByName ?? ''}</td>
                   <td data-label="Raised" className="small" title={dateTimeText(r.createdAt)}>{timeAgo(r.createdAt)}</td>
                 </tr>
@@ -232,9 +301,17 @@ export function RequestsPage({ companyId, me }: { companyId: string; me: MtMe })
           </table>
         )}
       </div>
-      {list.data && list.data.total > list.data.requests.length ? <p className="muted small">Showing {list.data.requests.length} of {list.data.total}. Narrow the filters to see the rest.</p> : null}
+      {list.data ? <ListPager offset={offset} limit={REQUEST_LIMIT} total={list.data.total} shown={list.data.requests.length} setOffset={(n) => set('offset', n ? String(n) : '')} /> : null}
     </div>
   );
+}
+
+/** "Also open on this asset: 1 request, 1 work order" (what the person may see), under a list row's asset. */
+function AlsoOpen({ r }: { r: MtRequest }) {
+  const o = r.openOnAsset;
+  if (!o || (!o.requests && !o.workOrders)) return null;
+  const parts = [o.requests ? `${o.requests} ${o.requests === 1 ? 'request' : 'requests'}` : '', o.workOrders ? `${o.workOrders} ${o.workOrders === 1 ? 'work order' : 'work orders'}` : ''].filter(Boolean);
+  return <div className="small muted">Also open on this asset: {parts.join(', ')}</div>;
 }
 
 // ------------------------------------------------------------------ detail
@@ -247,7 +324,7 @@ interface RequestView {
   files: MtFile[];
   history: MtEvent[];
   approvalRequired: boolean;
-  can: { edit: boolean; approve: boolean; decline: boolean; requestInfo: boolean; respond: boolean; convert: boolean; attach: boolean; close: boolean; comment: boolean; upload: boolean };
+  can: { edit: boolean; approve: boolean; decline: boolean; requestInfo: boolean; respond: boolean; convert: boolean; attach: boolean; close: boolean; comment: boolean; upload: boolean; withdraw?: boolean };
 }
 
 export function RequestDetail({ companyId, me }: { companyId: string; me: MtMe }) {
@@ -256,7 +333,7 @@ export function RequestDetail({ companyId, me }: { companyId: string; me: MtMe }
   const toast = useToast();
   const navigate = useNavigate();
   const q = useQuery({ queryKey: ['mt', companyId, 'request', requestId], queryFn: () => get<RequestView>(mtPath(companyId, `/requests/${requestId}`)), retry: false });
-  const [dialog, setDialog] = useState<null | 'decline' | 'info' | 'respond' | 'convert' | 'edit' | 'close'>(null);
+  const [dialog, setDialog] = useState<null | 'decline' | 'info' | 'respond' | 'convert' | 'edit' | 'close' | 'withdraw'>(null);
   usePageTitle(q.data?.request.number ?? 'Request');
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
   if (!q.data) return <Loading />;
@@ -277,7 +354,7 @@ export function RequestDetail({ companyId, me }: { companyId: string; me: MtMe }
       <div className="mt-head">
         <div>
           <h2 className="mt-title">{r.number}</h2>
-          <div className="mt-badges"><RequestBadge status={r.status} /><PriorityBadge priority={r.priority} /></div>
+          <div className="mt-badges"><RequestStatusBadge r={r} /><PriorityBadge priority={r.priority} /></div>
         </div>
         <div className="mt-head-actions">
           {can.approve ? <button className="btn primary" onClick={() => act(() => post(mtPath(companyId, `/requests/${r.id}/approve`), {}), 'Approved')}><Icon name="check" /> Approve</button> : null}
@@ -287,8 +364,10 @@ export function RequestDetail({ companyId, me }: { companyId: string; me: MtMe }
           {can.respond ? <button className="btn primary" onClick={() => setDialog('respond')}>Give the information</button> : null}
           {can.edit ? <button className="btn" onClick={() => setDialog('edit')}><Icon name="edit" /> Edit</button> : null}
           {can.close ? <button className="btn ghost" onClick={() => setDialog('close')}>Close the request</button> : null}
+          {can.withdraw ? <button className="btn ghost" onClick={() => setDialog('withdraw')}>Withdraw</button> : null}
         </div>
       </div>
+      {r.withdrawnAt ? <div className="info-box">Withdrawn by {r.requestedByName ?? 'the person who raised it'} on {dateTimeText(r.withdrawnAt)}: {r.withdrawReason}</div> : null}
       {r.status === 'info_requested' ? <div className="warn-box">More information was asked for. {can.respond ? 'Answer it with Give the information.' : 'Waiting for the requester.'}</div> : null}
       {r.status === 'declined' ? <div className="warn-box">Declined{r.decidedByName ? ` by ${r.decidedByName}` : ''}: {r.decisionNote}</div> : null}
       {r.workOrderId ? (
@@ -315,6 +394,7 @@ export function RequestDetail({ companyId, me }: { companyId: string; me: MtMe }
               ]}
             />
           </Section>
+          {r.assetId ? <AssetPanel companyId={companyId} assetId={r.assetId} excludeRequestId={r.id} excludeWorkOrderId={r.workOrderId ?? undefined} showWorkOrders={!can.attach} /> : null}
           {can.attach && q.data.assetOutstandingWorkOrders.length ? (
             <Section title="Open work on this asset">
               <p className="muted small">Attach the request to one of these instead of making another work order for the same fault.</p>
@@ -347,6 +427,7 @@ export function RequestDetail({ companyId, me }: { companyId: string; me: MtMe }
       {dialog === 'info' ? <ReasonDialog title="Ask for more information" label="What do you need to know?" confirm="Ask" onClose={() => setDialog(null)} onSubmit={(comment) => act(() => post(mtPath(companyId, `/requests/${r.id}/request-info`), { comment }), 'Asked for more information')} /> : null}
       {dialog === 'respond' ? <ReasonDialog title="Give the information" label="Your answer" confirm="Send" onClose={() => setDialog(null)} onSubmit={(comment) => act(() => post(mtPath(companyId, `/requests/${r.id}/respond`), { comment }), 'Sent')} /> : null}
       {dialog === 'close' ? <ReasonDialog title={`Close ${r.number}`} label="Note (optional)" confirm="Close the request" optional onClose={() => setDialog(null)} onSubmit={(note) => act(() => post(mtPath(companyId, `/requests/${r.id}/close`), note ? { note } : {}), 'Closed')} /> : null}
+      {dialog === 'withdraw' ? <ReasonDialog danger title={`Withdraw ${r.number}`} label="Why are you withdrawing it? The maintenance team sees this." confirm="Withdraw the request" onClose={() => setDialog(null)} onSubmit={(reason) => act(() => post(mtPath(companyId, `/requests/${r.id}/withdraw`), { reason }), 'Withdrawn')} /> : null}
       {dialog === 'convert' ? <ConvertDialog companyId={companyId} me={me} request={r} onClose={() => setDialog(null)} onDone={(woId) => { void refresh(); navigate(mtPage(companyId, `/work-orders/${woId}`)); }} /> : null}
       {dialog === 'edit' ? <EditRequestDialog companyId={companyId} me={me} request={r} onClose={() => setDialog(null)} onSaved={() => { void refresh(); setDialog(null); }} /> : null}
     </div>

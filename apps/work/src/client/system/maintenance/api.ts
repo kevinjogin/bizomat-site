@@ -150,6 +150,12 @@ export interface MtRequest {
   workOrderNumber: string | null;
   workOrderStatus: WoStatus | null;
   createdAt: number;
+  // The field release: withdrawn by the person who raised it; on list rows, the other open work on the same asset that
+  // the person may see, and the asset's site.
+  withdrawnAt: number | null;
+  withdrawReason: string;
+  openOnAsset?: { requests: number; workOrders: number };
+  siteCode?: string | null;
 }
 
 export interface WorkOrder {

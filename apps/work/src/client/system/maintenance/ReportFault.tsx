@@ -51,7 +51,7 @@ export default function ReportFault({ onClose }: { onClose: () => void }) {
               </select>
             </div>
           ) : null}
-          {companyId ? <RequestForm key={companyId} companyId={companyId} me={me.data ?? null} compact onDone={setDone} onCancel={onClose} /> : null}
+          {companyId ? <RequestForm key={companyId} companyId={companyId} me={me.data ?? null} compact linkMode="page" onDone={setDone} onCancel={onClose} /> : null}
         </div>
       )}
     </Modal>

@@ -226,3 +226,22 @@ export function FilterPanel({ active, children }: { active: number; children: Re
 
 /** Options for a select of fixed values with labels. */
 export const options = (labels: Record<string, string>) => Object.entries(labels).map(([v, l]) => <option key={v} value={v}>{l}</option>);
+
+/** The field release: a list's pages ("Showing 101 to 200 of 340"), and a note when the CSV file holds only the first 5,000. */
+export function ListPager({ offset, limit, total, shown, setOffset }: { offset: number; limit: number; total: number; shown: number; setOffset: (n: number) => void }) {
+  if (!total) return null;
+  return (
+    <div className="stack">
+      <div className="row wrap">
+        <span className="muted small grow">{shown ? `Showing ${(offset + 1).toLocaleString()} to ${(offset + shown).toLocaleString()} of ${total.toLocaleString()}` : `${total.toLocaleString()} in all`}</span>
+        {total > limit ? (
+          <>
+            <button type="button" className="btn sm" disabled={offset === 0} onClick={() => setOffset(Math.max(0, offset - limit))}>Previous</button>
+            <button type="button" className="btn sm" disabled={offset + limit >= total} onClick={() => setOffset(offset + limit)}>Next</button>
+          </>
+        ) : null}
+      </div>
+      {total > 5000 ? <p className="muted small">The CSV has the first 5,000.</p> : null}
+    </div>
+  );
+}
