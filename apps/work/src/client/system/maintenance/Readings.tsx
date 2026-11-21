@@ -33,6 +33,8 @@ interface RowResult {
   status?: number;
   error?: string;
   generated?: { number: string; workOrderId: string }[];
+  /** Saved, but the preventive maintenance it may trigger is checked again by the scheduled run. */
+  pmPending?: boolean;
 }
 
 const PAGE = 200;
@@ -196,7 +198,7 @@ export function ReadingsPage({ companyId }: { companyId: string; me: MtMe }) {
                       <td data-label="Result" aria-live="polite">
                         {r ? (
                           r.ok ? (
-                            <span className="mt-reading-ok small"><Icon name="check" size={14} /> Saved{r.generated?.length ? `; made work order ${r.generated.map((x) => x.number).join(', ')}` : ''}</span>
+                            <span className="mt-reading-ok small"><Icon name="check" size={14} /> Saved{r.generated?.length ? `; made work order ${r.generated.map((x) => x.number).join(', ')}` : ''}{r.pmPending ? '; preventive maintenance is checked again by the scheduled run' : ''}</span>
                           ) : (
                             <span className="mt-reading-error small">{r.error}</span>
                           )

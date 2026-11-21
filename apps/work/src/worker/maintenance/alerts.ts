@@ -11,7 +11,8 @@
 //   information                                                            every supervisor and administrator
 //
 // The person acting is never alerted, and every recipient is checked against the company's people when the alert is
-// sent. Email copies go only while the flag maintenance_email_alerts is on (it ships off) and email is set up on this
+// sent: only active members with access to Maintenance there (never a suspended member, nor, while the members work
+// acts for the company, one whose Maintenance access is off). Email copies go only while the flag maintenance_email_alerts is on (it ships off) and email is set up on this
 // service, and never from the example company. No email carries an approve or decline action: it opens the record,
 // after sign-in, where the person's own access applies. An alert is sent after its record is saved and never fails or
 // undoes it: any error is swallowed (and logged without content).
@@ -20,6 +21,7 @@ import type { Context } from 'hono';
 import type { AppEnv, Env } from '../env';
 import { alert } from '../erp/objects/alerts';
 import { flagOn } from '../platform/flags';
+import { membersV2 } from '../company/members-access';
 import { atLeast, companyPeople, type MtAccess } from './access';
 
 export const MT_EMAIL_FLAG = 'maintenance_email_alerts';
@@ -48,10 +50,30 @@ const uniq = (xs: (string | null | undefined)[]) => [...new Set(xs.filter((x): x
 
 type Sender = Pick<MtAccess, 'companyId' | 'kind' | 'companyName' | 'userId'>;
 
+/**
+ * The company's people who may be alerted about Maintenance: in a registered company, a member suspended there is left
+ * out, and so is one whose Maintenance access is off while the members work (company_members_v2) acts for the company
+ * (its owner and administrators always have it, as members-access.ts gives them).
+ */
+async function alertablePeople(db: D1Database, a: Sender) {
+  const people = await companyPeople(db, a);
+  if (a.kind !== 'registered' || !people.length) return people;
+  const v2 = await membersV2(db, a.companyId);
+  const rows = await db
+    .prepare(
+      `SELECT m.user_id, m.role, m.status, (SELECT x.access FROM co_member_access x WHERE x.company_id = m.company_id AND x.user_id = m.user_id AND x.module = 'maintenance') AS mt_access
+         FROM co_members m WHERE m.company_id = ?`,
+    )
+    .bind(a.companyId)
+    .all<{ user_id: string; role: string; status: string | null; mt_access: number | null }>();
+  const left = new Set(rows.results.filter((r) => r.status === 'suspended' || (v2 && r.role !== 'owner' && r.role !== 'admin' && r.mt_access === 0)).map((r) => r.user_id));
+  return people.filter((p) => !left.has(p.id));
+}
+
 /** Sends one alert; the number of people alerted (0 when nobody is left, or on any error). */
 export async function sendMtAlert(env: Env, a: Sender, n: MtAlert, waitUntil?: (p: Promise<unknown>) => void): Promise<number> {
   try {
-    const people = await companyPeople(env.DB, a);
+    const people = await alertablePeople(env.DB, a);
     const everyone = new Set(people.map((p) => p.id));
     const managers = people.filter((p) => atLeast(p, 'supervisor')).map((p) => p.id);
     const onlyManagers = n.managers || n.orManagers;

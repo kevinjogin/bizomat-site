@@ -332,6 +332,15 @@ export async function recordReading(db: D1Database, a: MtAccess, meterId: string
     if (isUnique(e)) throw new HttpError(409, 'Someone entered a reading of this meter at the same moment. Refresh and try again.');
     throw e;
   }
-  const generated = await generateDue(db, { companyId: a.companyId, meterId: m.id, today: todayNear(input.today), actorId: a.userId });
-  return { reading: { id: r.id, seq: r.seq, value: r.value, delta: r.delta, total: r.total, outOfRange: r.outOfRange }, generated: generated.made };
+  const reading = { id: r.id, seq: r.seq, value: r.value, delta: r.delta, total: r.total, outOfRange: r.outOfRange };
+  // The reading is saved. Making the preventive work it triggers is a step of its own: when that fails, the reading stays
+  // saved (never reported as not saved, which would have it entered twice) and the scheduled run checks the meter again.
+  try {
+    const generated = await generateDue(db, { companyId: a.companyId, meterId: m.id, today: todayNear(input.today), actorId: a.userId });
+    return { reading, generated: generated.made, pmPending: false };
+  } catch (e) {
+    // Never the value or the note: the meter and the kind of error only.
+    console.error('reading saved, preventive maintenance not checked', { meterId: m.id, error: (e as Error)?.name });
+    return { reading, generated: [] as Awaited<ReturnType<typeof generateDue>>['made'], pmPending: true };
+  }
 }

@@ -15,7 +15,8 @@
 //                the due date (UTC date of completion); late = completed after it; missed = still open past its due
 //                date; skipped = its work order was cancelled. Compliance (%) = on time / due x 100.
 //   breakdowns   per month: breakdown and emergency repair work orders made, corrective work orders made, and failures
-//                with their downtime (as in reliability).
+//                with their downtime (as in reliability). Work recorded after it was done counts in the month it was
+//                done (its completion), not the month it was recorded, as its downtime does.
 //   costs        per asset: labour cost (labour lines priced when recorded, by the date of the work), labour minutes
 //                without a rate, parts cost (the stock ledger's value of parts issued less returned, by the date of the
 //                movement), and their total. Its posting to Finance is planned, not built.
@@ -169,9 +170,11 @@ export async function pmCompliance(db: D1Database, companyId: string, p: ReturnT
 
 export async function breakdowns(db: D1Database, companyId: string, p: ReturnType<typeof period>) {
   const sf = siteFilter(p.site);
+  // When a work order counts: when it was made, or for work recorded after it was done, when it was done.
+  const dated = 'CASE WHEN w.recorded_done = 1 THEN COALESCE(w.completed_at, w.created_at) ELSE w.created_at END';
   const [made, failures] = await db.batch([
     db
-      .prepare(`SELECT w.id, w.number, w.job_type, w.created_at FROM mt_work_orders w JOIN mt_assets a ON a.company_id = w.company_id AND a.id = w.asset_id WHERE w.company_id = ? AND w.created_at >= ? AND w.created_at < ? AND w.status <> 'cancelled' AND w.job_type IN (${sqlList(FAILURE_TYPES)})${sf.sql}`)
+      .prepare(`SELECT w.id, w.number, w.job_type, ${dated} AS dated_at FROM mt_work_orders w JOIN mt_assets a ON a.company_id = w.company_id AND a.id = w.asset_id WHERE w.company_id = ? AND ${dated} >= ? AND ${dated} < ? AND w.status <> 'cancelled' AND w.job_type IN (${sqlList(FAILURE_TYPES)})${sf.sql}`)
       .bind(companyId, p.start, p.end, ...sf.args),
     db
       .prepare(
@@ -189,7 +192,7 @@ export async function breakdowns(db: D1Database, companyId: string, p: ReturnTyp
   const rows = months.map((month) => ({ month, breakdowns: 0, corrective: 0, failures: 0, downtimeHours: 0, workOrders: [] as { id: string; number: string; jobType: string }[] }));
   const at = (t: number) => rows.find((r) => r.month === utcDate(t).slice(0, 7));
   for (const w of made.results as any[]) {
-    const r = at(w.created_at);
+    const r = at(w.dated_at);
     if (!r) continue;
     if (BREAKDOWN_TYPES.includes(w.job_type)) r.breakdowns++;
     else r.corrective++;
