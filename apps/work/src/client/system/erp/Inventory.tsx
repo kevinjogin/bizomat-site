@@ -40,6 +40,7 @@ import { AdjBadge, CountBadge, CsvLink, FilterPanel, History, Pager, Props, Sect
 import { NoteDialog } from './Changes';
 import { useListParams } from './Purchasing';
 import { WarehouseScreen } from './WarehouseScreen';
+import { ReplenishmentPage } from './Replenishment';
 
 export function InventoryArea({ companyId, companyName }: { companyId: string; companyName: string }) {
   const me = useErpMe(companyId);
@@ -69,6 +70,7 @@ export function InventoryArea({ companyId, companyName }: { companyId: string; c
         {tab('/adjustments', 'edit', 'Adjustments')}
         {tab('/counts', 'checkSquare', 'Counts')}
         {tab('/valuation', 'dollar', 'Valuation')}
+        {tab('/replenishment', 'refresh', 'Replenishment')}
         {tab('/scan', 'search', 'Warehouse screen')}
       </nav>
       <Routes>
@@ -82,6 +84,7 @@ export function InventoryArea({ companyId, companyName }: { companyId: string; c
         <Route path="counts" element={<CountsPage companyId={companyId} me={m} />} />
         <Route path="counts/:id" element={<CountDetail companyId={companyId} />} />
         <Route path="valuation" element={<ValuationPage companyId={companyId} />} />
+        <Route path="replenishment" element={<ReplenishmentPage companyId={companyId} me={m} />} />
         <Route path="trace" element={<TracePage companyId={companyId} />} />
         <Route path="scan" element={<WarehouseScreen companyId={companyId} me={m} />} />
         <Route path="*" element={<Navigate to={inventoryPage(companyId)} replace />} />

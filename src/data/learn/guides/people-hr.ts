@@ -4,7 +4,8 @@ import type { Guide } from '../types.ts';
 // leave types, leave requests, attendance, job openings, applicants, onboarding templates and checklists, courses,
 // training records, performance reviews, goals, pay runs); the rules are apps/work/src/worker/erp/objects/hooks.ts
 // (working days, leave balances, the reviewer's and the person's ratings, payroll totals) and actions.ts (hiring, the
-// onboarding checklist, working out a pay run); payslips are GET /x/payslips in routes.ts. Tested end to end in
+// onboarding checklist, working out a pay run); payslips are GET /x/payslips in routes.ts; posting a pay run to Finance
+// is postings.ts (test/erp-postings.test.ts). Tested end to end in
 // apps/work/test/erp-modules.test.ts ("workflow 7").
 const guide: Guide = {
   id: 'people-hr',
@@ -63,8 +64,9 @@ const guide: Guide = {
         { title: 'Work out the pay', body: 'Choose Work out the pay. Salaried people get their salary for the period; hourly people their approved timesheet hours at their rate; tax withheld is the rate set on their record.', where: 'Work out the pay' },
         { title: 'Check every payslip', body: 'Open the Payslips tab and check the amounts. BIZOMAT is not certified payroll: it uses the rates you set.', where: 'Payslips' },
         { title: 'Approve and record payment', body: 'Someone else chooses Approve. After you pay from your bank, choose Record as paid.', where: 'Approve' },
+        { title: 'Post it to Finance', body: 'Choose Post to Finance. One journal goes to the company’s Finance workspace on the pay date: gross pay and the employer contribution as expenses, against tax withheld, the contribution payable and the net pay. It needs a Finance role that may post journals, and the accounts chosen on the Finance postings tab.', where: 'Post to Finance' },
       ],
-      after: 'Each person sees their payslip under My payslips.',
+      after: 'Each person sees their payslip under My payslips. A posted pay run goes back to worked out only after Reverse Finance posting.',
     },
   ],
   buttons: [
@@ -73,6 +75,7 @@ const guide: Guide = {
     { label: 'Hire', does: 'Makes the employee record and the onboarding checklist from an applicant with an offer.' },
     { label: 'Work out the pay', does: 'Makes a payslip for every active employee from their pay basis and approved timesheets in the period.' },
     { label: 'My payslips', does: 'Shows your own payslips from approved pay runs.' },
+    { label: 'Post to Finance', does: 'Posts an approved pay run to Finance’s ledger as one balanced journal, once. It makes no payment.', when: 'After approval; your Finance role must be able to post journals.' },
   ],
   faqs: [
     { q: 'Why can I not see an employee?', a: 'Employee records are read by HR roles only. Everyone else sees only their own record, once it names their account.' },
@@ -80,16 +83,16 @@ const guide: Guide = {
     { q: 'Who approves my leave?', a: 'The manager named on your employee record, or the HR manager. You never approve your own.' },
     { q: 'How are leave balances worked out?', a: 'Each leave type gives days a year. Approved and waiting requests that start in the year count against them; the Leave balances report shows what is left.' },
     { q: 'Does BIZOMAT pay people or report to the tax office?', a: 'No. Pay runs are worked out with the rates you set; you pay from your bank and record it. Nothing is reported to any tax authority and it is not certified payroll.' },
+    { q: 'Which accounts does a pay run post to?', a: 'The ones an ERP administrator or finance controller chooses on Payroll’s Finance postings tab, suggested from your chart (for example Wages and salaries, Superannuation, PAYG withholding payable). Ask your accountant which to use.' },
     { q: 'Can a person see their own payslip?', a: 'Yes, under My payslips, once a pay run that includes them is approved and their employee record names their account.' },
   ],
   related: ['all-modules', 'roles-and-permissions', 'projects', 'finance'],
   notYet: [
     { text: 'Statutory tax tables, superannuation payments, payment files and Single Touch Payroll: pay runs use the rates you set.', status: 'planned' },
-    { text: 'Pay runs posted to Finance’s ledger.', status: 'planned' },
     { text: 'A public careers page for applicants.', status: 'planned' },
   ],
   keywords: ['HR', 'HRM', 'HRIS', 'human resources', 'staff', 'employee records', 'leave', 'annual leave', 'sick leave', 'holiday', 'time off', 'attendance', 'clock in', 'recruitment', 'ATS', 'hiring', 'onboarding', 'offboarding', 'training', 'LMS', 'appraisal', 'performance review', 'payroll', 'payslip', 'pay run', 'salary', 'wages'],
-  sources: ['apps/work/src/shared/erp-objects/defs/people.ts', 'apps/work/src/worker/erp/objects/hooks.ts', 'apps/work/src/worker/erp/objects/actions.ts', 'apps/work/test/erp-modules.test.ts'],
+  sources: ['apps/work/src/shared/erp-objects/defs/people.ts', 'apps/work/src/worker/erp/objects/hooks.ts', 'apps/work/src/worker/erp/objects/actions.ts', 'apps/work/src/worker/erp/objects/postings.ts', 'apps/work/test/erp-modules.test.ts', 'apps/work/test/erp-postings.test.ts'],
   updated: '2026-11-20',
 };
 

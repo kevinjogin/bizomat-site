@@ -7,6 +7,7 @@ import { ErrorBox, Field, Loading } from '../../components/ui/ui';
 import { Icon } from '../../components/ui/Icon';
 import { Modal, useConfirm, useToast } from '../../components/ui/overlays';
 import { appUrl } from '../../lib/base';
+import { TwoFactorCard } from './TwoFactor';
 
 interface SessionRow {
   id: string;
@@ -30,6 +31,7 @@ export function SecuritySettings() {
   return (
     <div className="col" style={{ gap: 'var(--ui-s16, 16px)' }}>
       <PasswordCard />
+      <TwoFactorCard />
       <SessionsCard />
       <ProvidersCard />
       <TokensCard />

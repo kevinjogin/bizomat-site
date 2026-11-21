@@ -32,7 +32,7 @@ export type FieldType =
  * customers (the company's CRM companies), suppliers (ERP supplier master), products (ERP product master), warehouses,
  * maintenance assets, Projects boards, departments, and other records of this framework (`obj:<object key>`).
  */
-export type RefKind = 'user' | 'customer' | 'supplier' | 'product' | 'warehouse' | 'asset' | 'project' | 'department' | 'purchase_order' | 'sales_order' | 'mfg_order' | 'shipment' | `obj:${string}`;
+export type RefKind = 'user' | 'customer' | 'supplier' | 'product' | 'warehouse' | 'asset' | 'project' | 'department' | 'purchase_order' | 'sales_order' | 'mfg_order' | 'shipment' | 'fin_workspace' | `obj:${string}`;
 
 export interface FieldDef {
   key: string;
@@ -43,6 +43,8 @@ export interface FieldDef {
   max?: number;
   min?: number;
   options?: Record<string, string>;
+  /** Choices no longer offered on the form; the values already given still read and save. */
+  retired?: string[];
   ref?: RefKind;
   help?: string;
   /** Shown as a column in the list. */
@@ -60,6 +62,8 @@ export interface FieldDef {
   wide?: boolean;
   /** Shown (and kept) only while another field has one of these values; cleared otherwise. */
   showIf?: { field: string; is: readonly string[] };
+  /** A company's own field (src/worker/erp/objects/custom.ts), not part of the definition. */
+  custom?: boolean;
 }
 
 export type Tone = 'neutral' | 'info' | 'success' | 'warning' | 'danger';

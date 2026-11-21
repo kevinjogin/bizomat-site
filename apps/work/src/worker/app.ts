@@ -5,6 +5,7 @@ import { HttpError } from './lib/util';
 import { isSecureEnv, requireAuth, resolveAuth, sessionCookieName } from './auth/session';
 import { authRoutes } from './routes/auth';
 import { passwordResetRoutes } from './routes/password-reset';
+import { twoFactorRoutes } from './auth/two-factor';
 import { workspaceRoutes } from './routes/workspaces';
 import { orgRoutes } from './routes/org';
 import { accessRoutes } from './routes/access';
@@ -50,6 +51,7 @@ import { idPublicRoutes } from './company/id-provider';
 import { scanRoutes } from './company/scan';
 import { maintenanceRoutes } from './maintenance';
 import { erpRoutes } from './erp';
+import { supplierPortalRoutes } from './erp/supplier-portal';
 import { cadRoutes } from './cad/routes';
 import { cadAdminRoutes } from './cad/admin';
 import { drawingRoutes } from './cad/drawings';
@@ -171,6 +173,8 @@ export function createApp() {
   app.route('/api/auth', authRoutes);
   // Forgotten password (R7; flag self_service_password_reset, off): answers 404 until it is switched on.
   app.route('/api/auth', passwordResetRoutes);
+  // Two-factor sign-in for everyone (batch 2; flag account_two_factor, off): enrolment in Settings, Security.
+  app.route('/api/auth/two-factor', twoFactorRoutes);
   // CRM invitation previews and calendar feeds: no session, the token in the address is the secret.
   app.route('/api/crm-public', crmPublicRoutes);
   // Finance invitation previews: no session, the token in the address is the secret.
@@ -271,6 +275,9 @@ export function createApp() {
   // BIZOMAT ERP, Release 1 (src/worker/erp): products, variants, revisions and change control, bills of materials,
   // engineering documents and the supplier master.
   api.route('/erp', erpRoutes);
+  // The supplier portal (flag supplier_portal, off): a supplier's own people, signed in, see only that supplier's orders
+  // and requests in one company (src/worker/erp/supplier-portal.ts). Never company members; browser sessions only.
+  api.route('/supplier-portal', supplierPortalRoutes);
   // CAD Automation inside the ERP (flag cad_in_erp, off): src/worker/cad, docs/cad/README.md.
   api.route('/erp', cadRoutes);
   api.route('/erp', drawingRoutes);

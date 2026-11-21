@@ -1,7 +1,7 @@
 // ERP core additions (catalogue 1, 6, 8, 10, 18, 21, 22): the organisation's structure (legal entities with country,
 // currency, fiscal year, time zone and language; business units; locations), exchange rates, controlled documents with
 // review and retention, workflow rules (notify and escalate on any module's status), fixed assets with depreciation, and
-// revenue schedules. Postings to Finance's ledger from fixed assets and revenue schedules are planned, never claimed.
+// revenue schedules. Depreciation and earned revenue post journals to Finance's ledger (src/worker/erp/objects/postings.ts).
 import { F, S, T, byField, byMonth, byStatus, type ModuleDef, type ObjectDef } from '../types';
 import { R } from '../roles';
 
@@ -35,6 +35,7 @@ export const CORE_OBJECTS: ObjectDef[] = [
       F.select('language', 'Language', LANGUAGES, { default: 'en', filter: false }),
       F.select('dateFormat', 'Date format', DATE_FORMATS, { default: 'dd/mm/yyyy', filter: false }),
       F.long('address', 'Registered address', { max: 500 }),
+      F.ref('finWorkspace', 'Finance workspace', 'fin_workspace', { help: 'The Finance business workspace that keeps this entity’s books, for consolidation and intercompany invoices. It may be another company’s: you must be able to read its books.' }),
     ],
     statuses: [S('active', 'Active', 'success'), S('inactive', 'Inactive', 'neutral')],
     initial: 'active',
@@ -181,7 +182,7 @@ export const CORE_OBJECTS: ObjectDef[] = [
     prefix: 'FA-',
     title: 'name',
     what: 'The register of what the business owns: cost, useful life, depreciation by straight line or diminishing value, book value and disposal.',
-    notice: 'Depreciation is worked out here; posting it to Finance’s ledger is planned, so enter the journal in Finance for now.',
+    notice: 'Depreciation is worked out here and posted to Finance’s ledger month by month with Post depreciation to Finance, into the accounts chosen on the module’s Finance postings tab. The purchase is entered in Finance (a bill); a disposal’s journal is entered in Finance for now.',
     fields: [
       F.text('name', 'Name', { required: true, max: 200, list: true }),
       F.select('category', 'Category', { buildings: 'Land and buildings', plant: 'Plant and equipment', vehicles: 'Vehicles', it: 'IT equipment', furniture: 'Furniture and fittings', intangible: 'Intangible', other: 'Other' }, { required: true, list: true, default: 'plant' }),
@@ -218,7 +219,81 @@ export const CORE_OBJECTS: ObjectDef[] = [
     amountField: 'cost',
     currencyField: 'currency',
     reports: [byStatus('cost'), byField('category', 'Category', 'cost'), { key: 'register', label: 'Asset register and depreciation', what: 'Cost, depreciation to date and book value of every asset, and this year’s depreciation.', by: 'custom' }],
-    actions: [{ key: 'schedule', label: 'Depreciation schedule', what: 'Shows the depreciation month by month over the asset’s life.', cap: 'edit' }],
+    actions: [
+      { key: 'schedule', label: 'Depreciation schedule', what: 'Shows the depreciation month by month over the asset’s life.', cap: 'edit' },
+      { key: 'post', label: 'Post depreciation to Finance', what: 'Posts a journal in Finance for each month of depreciation up to the date that is not posted yet: depreciation expense against accumulated depreciation. Months in a locked period go together on the first open day.', cap: 'edit', statuses: ['in_service', 'disposed', 'written_off'], input: [{ key: 'upTo', label: 'Post months that end on or before', type: 'date', required: true }] },
+      { key: 'unpost', label: 'Reverse Finance postings', what: 'Reverses every journal this asset posted in Finance (dated today where the original is in a locked period), so the depreciation can be posted again.', cap: 'edit', statuses: ['in_service', 'disposed', 'written_off'], confirm: 'Reverse every Finance journal of this asset?', input: [{ key: 'reason', label: 'Reason', type: 'text', required: true, max: 200 }] },
+    ],
+  },
+  {
+    key: 'ic_transaction',
+    module: 'consolidation',
+    label: 'Intercompany transaction',
+    plural: 'Intercompany transactions',
+    prefix: 'IC-',
+    title: 'description',
+    what: 'A sale of goods or services between two legal entities of the group: approved by someone else, then a draft invoice in the seller’s Finance workspace and a draft bill in the buyer’s, which the consolidation eliminates.',
+    notice: 'The invoice and the bill are drafts: each workspace’s Finance roles approve them. When the two currencies differ, the bill is converted at your exchange rate on the transaction’s date.',
+    fields: [
+      F.ref('seller', 'Seller', 'obj:org_entity', { required: true, list: true }),
+      F.ref('buyer', 'Buyer', 'obj:org_entity', { required: true, list: true }),
+      F.date('date', 'Date', { required: true, list: true }),
+      F.text('description', 'What is sold', { required: true, max: 200 }),
+      F.money('amount', 'Amount before tax', { required: true, list: true }),
+      F.currency(),
+      F.text('reference', 'Reference', { max: 60 }),
+      F.text('buyerAmount', 'Bill amount in the buyer’s currency', { computed: true }),
+      F.text('rateUsed', 'Exchange rate used', { computed: true }),
+      F.text('invoiceNumber', 'Seller’s invoice', { computed: true }),
+      F.text('billNumber', 'Buyer’s bill', { computed: true }),
+    ],
+    statuses: [S('draft', 'Draft'), S('submitted', 'Waiting for approval', 'warning'), S('approved', 'Approved', 'success'), S('documented', 'Invoice and bill made', 'success'), S('cancelled', 'Cancelled')],
+    initial: 'draft',
+    editable: ['draft'],
+    closed: ['documented', 'cancelled'],
+    transitions: [
+      T('submit', 'Ask for approval', ['draft'], 'submitted', 'edit', { notify: ['approvers'] }),
+      T('approve', 'Approve', ['submitted'], 'approved', 'approve', { segregation: true, notify: ['creator'] }),
+      T('return', 'Send back', ['submitted'], 'draft', 'approve', { note: 'required', notify: ['creator'] }),
+      T('cancel', 'Cancel', ['draft', 'submitted', 'approved'], 'cancelled', 'edit', { note: 'required' }),
+    ],
+    access: { view: R.FIN_READ, edit: R.FIN, approve: R.FIN },
+    dateField: 'date',
+    amountField: 'amount',
+    currencyField: 'currency',
+    reports: [byStatus('amount'), byMonth('date', 'Month', 'amount')],
+    actions: [{ key: 'documents', label: 'Make the invoice and the bill', what: 'Makes a draft invoice in the seller’s Finance workspace to the buyer, and a draft bill in the buyer’s to the seller, once each. You need to be able to create invoices in the first and bills in the second.', cap: 'edit', statuses: ['approved'], confirm: 'Make the draft invoice and the draft bill?' }],
+  },
+  {
+    key: 'ca_allocation',
+    module: 'cost_allocation',
+    label: 'Cost allocation',
+    plural: 'Cost allocations',
+    prefix: 'CA-',
+    title: 'name',
+    what: 'An overhead account’s cost for a period, spread across departments by percentage: approved by someone else, then posted to Finance’s ledger as one journal.',
+    notice: 'The amount is what the account holds in the period without a department. Each department must be in Finance (a tracking department). Posting needs a Finance role that may post journals; reversing makes the amount free to allocate again.',
+    fields: [
+      F.text('name', 'Name', { required: true, max: 200, list: true }),
+      F.text('sourceAccount', 'Account to allocate (code)', { required: true, max: 12, list: true, help: 'The code of the account in your Finance chart, for example 469 for Rent.' }),
+      F.text('targetAccount', 'Allocate to account (code)', { max: 12, help: 'Leave empty to keep the cost in the same account, by department.' }),
+      F.date('periodFrom', 'Period from', { required: true, list: true }),
+      F.date('periodTo', 'Period to', { required: true, list: true }),
+      F.pct('totalPct', 'Total of the shares', { computed: true }),
+    ],
+    lines: { label: 'Shares', fields: [F.ref('department', 'Department', 'department', { required: true, filter: false }), F.pct('percent', 'Share (%)', { required: true })], max: 100 },
+    statuses: [S('draft', 'Draft'), S('approved', 'Approved', 'success'), S('posted', 'Posted', 'success'), S('cancelled', 'Cancelled')],
+    initial: 'draft',
+    editable: ['draft'],
+    closed: ['cancelled'],
+    transitions: [T('approve', 'Approve', ['draft'], 'approved', 'approve', { segregation: true }), T('reopen', 'Back to draft', ['approved'], 'draft', 'approve'), T('cancel', 'Cancel', ['draft', 'approved'], 'cancelled', 'edit', { note: 'required' })],
+    access: { view: R.FIN_READ, edit: R.FIN, approve: R.FIN },
+    dateField: 'periodTo',
+    reports: [byStatus()],
+    actions: [
+      { key: 'post', label: 'Post to Finance', what: 'Posts one journal in Finance on the last day of the period: the account’s amount without a department out, and each department’s share in.', cap: 'edit', statuses: ['approved'], confirm: 'Post the allocation to Finance’s ledger?' },
+      { key: 'unpost', label: 'Reverse Finance posting', what: 'Reverses the allocation’s journal in Finance, so it can be changed and posted again.', cap: 'edit', statuses: ['posted'], confirm: 'Reverse this allocation’s journal?', input: [{ key: 'reason', label: 'Reason', type: 'text', required: true, max: 200 }] },
+    ],
   },
   {
     key: 'rr_schedule',
@@ -228,7 +303,7 @@ export const CORE_OBJECTS: ObjectDef[] = [
     prefix: 'RS-',
     title: 'name',
     what: 'Revenue earned over time: an amount spread evenly by month between two dates, with what is earned and what is still deferred.',
-    notice: 'Schedules are worked out here; posting to Finance’s ledger is planned. Invoices still post revenue on their date in Finance.',
+    notice: 'Schedules are worked out here and posted to Finance’s ledger with Post earned revenue to Finance: each earned month moves from deferred revenue to revenue, in the accounts chosen on the module’s Finance postings tab. Invoice the customer to the deferred revenue account, or move the invoiced amount there once with Move the invoiced amount to deferred revenue.',
     fields: [
       F.text('name', 'Name', { required: true, max: 200, list: true }),
       F.ref('customer', 'Customer', 'customer', { list: true }),
@@ -252,6 +327,11 @@ export const CORE_OBJECTS: ObjectDef[] = [
     amountField: 'total',
     currencyField: 'currency',
     reports: [byStatus('total'), { key: 'deferred', label: 'Earned and deferred', what: 'Earned to date and still deferred, by schedule, and what is earned each month.', by: 'custom' }],
+    actions: [
+      { key: 'post', label: 'Post earned revenue to Finance', what: 'Posts a journal in Finance for each month earned up to the date that is not posted yet: deferred revenue against revenue. Months in a locked period go together on the first open day.', cap: 'edit', statuses: ['active', 'completed'], input: [{ key: 'upTo', label: 'Post months that end on or before', type: 'date', required: true }] },
+      { key: 'defer', label: 'Move the invoiced amount to deferred revenue', what: 'For an invoice that went to revenue: posts one journal moving the schedule’s amount from revenue to deferred revenue, dated the day it starts to be earned. Once per schedule.', cap: 'edit', statuses: ['active', 'completed'], confirm: 'Post one journal moving the whole amount from revenue to deferred revenue?' },
+      { key: 'unpost', label: 'Reverse Finance postings', what: 'Reverses every journal this schedule posted in Finance, so it can be posted again.', cap: 'edit', statuses: ['active', 'completed', 'cancelled'], confirm: 'Reverse every Finance journal of this schedule?', input: [{ key: 'reason', label: 'Reason', type: 'text', required: true, max: 200 }] },
+    ],
   },
 ];
 
@@ -259,6 +339,8 @@ export const CORE_MODULES: ModuleDef[] = [
   { key: 'organisation', label: 'Organisation structure', area: 'core', catalogue: [1], summary: 'Legal entities with country, currency, fiscal year, time zone and language; business units; locations; exchange rates.', icon: 'building', objects: ['org_entity', 'org_unit', 'org_location', 'fx_rate'], switch: 'organisation' },
   { key: 'documents', label: 'Controlled documents', area: 'core', catalogue: [8], summary: 'Policies, procedures and forms with versions, approval by someone else, review reminders and retention dates.', icon: 'doc', objects: ['doc_controlled'], switch: 'organisation' },
   { key: 'workflow', label: 'Workflow rules', area: 'core', catalogue: [6], summary: 'Tell a role or person when any record reaches a status, and escalate when it stays there too long; one approval inbox.', icon: 'refresh', objects: ['wf_rule'], switch: 'organisation', limits: ['Rules notify and escalate; they do not change records by themselves.'] },
-  { key: 'fixed_assets', label: 'Fixed assets', area: 'finance', catalogue: [18], summary: 'Asset register with straight-line or diminishing-value depreciation, book values and disposals.', icon: 'archive', objects: ['fa_asset'], switch: 'finance_plus', limits: ['Depreciation is not posted to Finance’s ledger yet.'] },
-  { key: 'revenue', label: 'Revenue recognition', area: 'finance', catalogue: [22], summary: 'Revenue spread over time by month, with earned and deferred amounts.', icon: 'chart', objects: ['rr_schedule'], switch: 'finance_plus', limits: ['Straight line by month only; not posted to Finance’s ledger yet.'] },
+  { key: 'consolidation', label: 'Consolidation and intercompany', area: 'finance', catalogue: [21], summary: 'Consolidated profit and loss and balance sheet across the legal entities’ Finance workspaces, translated at your exchange rates, with intercompany balances eliminated; intercompany sales as a draft invoice and a draft bill.', icon: 'layers', objects: ['ic_transaction'], switch: 'finance_plus', limits: ['Every amount is translated at the closing rate; no translation reserve or minority interest is worked out.', 'Intercompany balances are recognised by the Finance contact that stands for another entity.', 'One currency within each Finance workspace.'] },
+  { key: 'cost_allocation', label: 'Cost allocation', area: 'finance', catalogue: [20], summary: 'Overhead costs spread across departments by percentage, approved by someone else and posted to Finance’s ledger.', icon: 'chart', objects: ['ca_allocation'], switch: 'finance_plus', limits: ['Shares by percentage only; no allocation by headcount, floor area or hours yet.'] },
+  { key: 'fixed_assets', label: 'Fixed assets', area: 'finance', catalogue: [18], summary: 'Asset register with straight-line or diminishing-value depreciation, book values and disposals.', icon: 'archive', objects: ['fa_asset'], switch: 'finance_plus', limits: ['A disposal’s journal (cost, accumulated depreciation, proceeds, gain or loss) is entered in Finance; depreciation is posted from here.', 'An asset in another currency than the Finance workspace’s posts at your exchange rate on each journal’s date.'] },
+  { key: 'revenue', label: 'Revenue recognition', area: 'finance', catalogue: [22], summary: 'Revenue spread over time by month, with earned and deferred amounts.', icon: 'chart', objects: ['rr_schedule'], switch: 'finance_plus', limits: ['Straight line by month only.', 'A schedule in another currency than the Finance workspace’s posts at your exchange rate on each journal’s date.'] },
 ];

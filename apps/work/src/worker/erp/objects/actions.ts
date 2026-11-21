@@ -14,6 +14,8 @@ import { OBJECT_BY_KEY, type ObjectDef } from '../../../shared/erp-objects';
 import { loadRow, objAccess, parseValue, relation, type Data, type Line, type RecordRow } from './engine';
 import { addDays, addMonths, depreciationSchedule, getObj, workingDays } from './hooks';
 import { draftInvoice } from './finance';
+import { postRecord, reverseRecord, type PostResult } from './postings';
+import { intercompanyDocuments } from './intercompany';
 import { linesOf, saveRecord, statusStmts, todayUtc, type User } from './store';
 
 export interface ActionResult {
@@ -27,7 +29,7 @@ export interface ActionResult {
 const num = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? v : 0);
 const str = (v: unknown) => (typeof v === 'string' ? v : '');
 
-type Ctx = { env: Env; a: ErpAccess; user: User; def: ObjectDef; row: RecordRow; data: Data; input: Data; waitUntil?: (p: Promise<unknown>) => void };
+type Ctx = { env: Env; a: ErpAccess; user: User; def: ObjectDef; row: RecordRow; data: Data; input: Data; waitUntil?: (p: Promise<unknown>) => void; session?: boolean };
 type Action = (c: Ctx) => Promise<ActionResult>;
 
 async function setLines(c: Ctx, lines: Line[], status?: string) {
@@ -265,9 +267,57 @@ const ACTIONS: Record<string, Action> = {
     const rows = depreciationSchedule(c.data);
     return { record: c.row, message: rows.length ? `${rows.length} months of depreciation` : 'Give the cost, useful life and acquisition date first', result: rows };
   },
+
+  // ---------------------------------------------------------------- postings to Finance's ledger (postings.ts)
+  'fa_asset.post': async (c) => posted(c, await postRecord(c, { upTo: upTo(c) }), 'month of depreciation'),
+  'rr_schedule.post': async (c) => posted(c, await postRecord(c, { upTo: upTo(c) }), 'earned month'),
+  'rr_schedule.defer': async (c) => posted(c, await postRecord(c, { part: 'deferral' }), 'deferral'),
+  'py_run.post': async (c) => posted(c, await postRecord(c), 'pay run'),
+  'fa_asset.unpost': async (c) => unposted(c),
+  'rr_schedule.unpost': async (c) => unposted(c),
+  'py_run.unpost': async (c) => unposted(c),
+  'ca_allocation.post': async (c) => {
+    const r = posted(c, await postRecord(c), 'allocation');
+    await c.env.DB.batch(statusStmts(c.env.DB, c.a, c.def, c.row, 'posted', `${c.def.label} ${c.row.number}: posted to Finance`));
+    return { ...r, record: await loadRow(c.env.DB, c.a.companyId, c.def, c.row.id) };
+  },
+  'ca_allocation.unpost': async (c) => {
+    // also when its journal was reversed in Finance itself: the allocation is approved again, to be posted afresh
+    const r = await unposted(c);
+    await c.env.DB.batch(statusStmts(c.env.DB, c.a, c.def, c.row, 'approved', `${c.def.label} ${c.row.number}: Finance journal reversed`));
+    return { ...r, record: await loadRow(c.env.DB, c.a.companyId, c.def, c.row.id) };
+  },
+
+  // ---------------------------------------------------------------- intercompany (intercompany.ts)
+  'ic_transaction.documents': async (c) => {
+    const db = c.env.DB;
+    const made = await intercompanyDocuments(c.env, c.a, c.user, c.row, c.data, c.session);
+    await db.batch(statusStmts(db, c.a, c.def, c.row, 'documented', `${c.def.label} ${c.row.number}: ${made.message}`, made.data));
+    return { record: await loadRow(db, c.a.companyId, c.def, c.row.id), message: made.message };
+  },
 };
 
-export async function runAction(env: Env, a: ErpAccess, user: User, def: ObjectDef, id: string, key: string, input: Data, waitUntil?: (p: Promise<unknown>) => void): Promise<ActionResult> {
+function upTo(c: Ctx): string {
+  const v = parseValue({ key: 'upTo', label: 'Post months up to', type: 'date' }, c.input.upTo);
+  if (!v) throw new HttpError(400, 'Give the date to post up to');
+  return v as string;
+}
+
+function posted(c: Ctx, r: PostResult, noun: string): ActionResult {
+  const parts = r.posted.reduce((s, p) => s + p.parts.length, 0);
+  if (!r.posted.length) return { record: c.row, message: r.skipped ? 'Already posted to Finance' : `Nothing to post: every ${noun} up to that date is posted` };
+  const plural = parts === 1 ? noun : noun === 'month of depreciation' ? 'months of depreciation' : `${noun}s`;
+  return { record: c.row, message: `${r.posted.length === 1 ? 'One journal' : `${r.posted.length} journals`} posted in ${r.workspace.name} (${parts} ${plural})`, result: r.posted.map((p) => ({ date: p.date, amount: p.amount, covers: p.parts.join(', ') })) };
+}
+
+async function unposted(c: Ctx): Promise<ActionResult> {
+  const reason = str(c.input.reason).trim().slice(0, 200);
+  if (!reason) throw new HttpError(400, 'Give the reason');
+  const r = await reverseRecord(c, reason);
+  return { record: c.row, message: r.reversed ? `${r.reversed === 1 ? 'One journal' : `${r.reversed} journals`} reversed in ${r.workspace.name}` : 'The journals were already reversed in Finance' };
+}
+
+export async function runAction(env: Env, a: ErpAccess, user: User, def: ObjectDef, id: string, key: string, input: Data, waitUntil?: (p: Promise<unknown>) => void, session = false): Promise<ActionResult> {
   const action = def.actions?.find((x) => x.key === key);
   const fn = ACTIONS[`${def.key}.${key}`];
   if (!action || !fn) throw new HttpError(404, 'Action not found');
@@ -279,7 +329,7 @@ export async function runAction(env: Env, a: ErpAccess, user: User, def: ObjectD
   if (action.statuses && !action.statuses.includes(row.status)) throw new HttpError(409, `${action.label} is not possible while it is ${def.statuses.find((s) => s.key === row.status)?.label.toLowerCase() ?? row.status}`);
   const allowed = action.cap === 'edit' ? x.edit : action.cap === 'approve' ? x.approve || rel.approver : x.edit || rel.own;
   if (!allowed) throw new HttpError(403, `Your ERP roles do not let you ${action.label.toLowerCase()}`);
-  return fn({ env, a, user, def, row, data: parseJson<Data>(row.data_json, {}), input: input ?? {}, waitUntil });
+  return fn({ env, a, user, def, row, data: parseJson<Data>(row.data_json, {}), input: input ?? {}, waitUntil, session });
 }
 
 export { workingDays };

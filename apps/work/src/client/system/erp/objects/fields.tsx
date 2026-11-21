@@ -92,7 +92,7 @@ export function FieldInput({ f, id, value, label, onChange, companyId }: { f: Fi
       return (
         <select id={id} className="select" required={f.required} value={s(value)} onChange={(e) => onChange(e.target.value || null)}>
           {!f.required || value === null || value === undefined ? <option value="">Choose…</option> : null}
-          {Object.entries(f.options ?? {}).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
+          {Object.entries(f.options ?? {}).filter(([k]) => !f.retired?.includes(k) || k === value).map(([k, l]) => <option key={k} value={k}>{l}</option>)}
         </select>
       );
     case 'bool':

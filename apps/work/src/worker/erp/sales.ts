@@ -37,6 +37,8 @@ import { financeOrgsFor, maybeFin } from './suppliers';
 import { recordFiles } from './record-files';
 import { createMo } from './production';
 import { label, todayIso } from './manufacturing';
+import { customerRefsFor, loadPricing, suggest } from './objects/pricing';
+import { moduleEnabled } from '../platform/flags';
 
 export const salesRoutes = new Hono<AppEnv>();
 
@@ -269,10 +271,27 @@ interface PricedLine {
   tax: number;
   promisedDate: string | null;
   fulfil: 'stock' | 'make';
+  /** Where the price came from (pricing.ts), or that it was typed. */
+  priceNote: string;
 }
 
-/** Lines priced as Finance prices them (whole cents, three-decimal quantities, GST split per line). */
-async function priceLines(db: D1Database, companyId: string, lines: LineIn[], options: TaxOption[], mode: 'exclusive' | 'inclusive' | 'none'): Promise<{ lines: PricedLine[]; subtotal: number; tax: number; total: number }> {
+/** The order's customer, date and currency for the price lists (pricing.ts). */
+interface PriceCtx {
+  customerRefs: string[];
+  date: string;
+  currency: string;
+  /** What a price that differs from the suggestion is called (default: typed on the order). */
+  typed?: string;
+}
+
+const refsOf = (c: { crmCompanyId?: string | null; finContactId?: string | null }) => [c.crmCompanyId ? `crm:${c.crmCompanyId}` : '', c.finContactId ? `fin:${c.finContactId}` : ''].filter(Boolean);
+
+/**
+ * Lines priced as Finance prices them (whole cents, three-decimal quantities, GST split per line). A line without a price
+ * takes the one the price lists and promotions give (pricing.ts; the Pricing module's switch on), else the product's
+ * standard price; a line whose typed price is the suggested one is noted as such, any other as typed.
+ */
+async function priceLines(db: D1Database, companyId: string, lines: LineIn[], options: TaxOption[], mode: 'exclusive' | 'inclusive' | 'none', ctx?: PriceCtx): Promise<{ lines: PricedLine[]; subtotal: number; tax: number; total: number }> {
   if (!lines.length) throw new HttpError(400, 'Add at least one line');
   if (lines.length > 200) throw new HttpError(400, 'At most 200 lines');
   const ids = [...new Set(lines.map((l) => l.productId))];
@@ -282,6 +301,18 @@ async function priceLines(db: D1Database, companyId: string, lines: LineIn[], op
     const rows = await db.prepare(`SELECT id, number, name, uom, type, price_cents, archived_at FROM erp_products WHERE company_id = ? AND id IN (${chunk.map(() => '?').join(',')})`).bind(companyId, ...chunk).all<any>();
     for (const r of rows.results) products.set(r.id, r);
   }
+  const pricing = ctx && (await moduleEnabled(db, 'commercial', companyId).catch(() => true)) ? await loadPricing(db, companyId, ids) : null;
+  // the order's value at list prices, for promotions with a minimum order
+  let orderTotal = 0;
+  if (pricing && ctx) {
+    for (const l of lines) {
+      const p = products.get(l.productId);
+      if (!p) continue;
+      const q = Math.round(l.quantity * 1000) / 1000;
+      const s0 = suggest(pricing, { productId: p.id, standard: p.price_cents ?? null, customerRefs: ctx.customerRefs, qty: q, date: ctx.date, currency: ctx.currency });
+      orderTotal += Math.round((l.unitPriceCents ?? s0.listUnit ?? 0) * q);
+    }
+  }
   const priced = lines.map((l, i) => {
     const p = products.get(l.productId);
     if (!p) throw new HttpError(400, `Line ${i + 1}: choose a product of this company`);
@@ -289,12 +320,17 @@ async function priceLines(db: D1Database, companyId: string, lines: LineIn[], op
     if (p.archived_at && !l.id) throw new HttpError(400, `Line ${i + 1}: ${p.number} is archived`);
     const quantity = Math.round(l.quantity * 1000) / 1000;
     if (quantity <= 0) throw new HttpError(400, `Line ${i + 1}: use a quantity of at least 0.001`);
-    const unit = l.unitPriceCents ?? p.price_cents;
+    const sug = pricing && ctx ? suggest(pricing, { productId: p.id, standard: p.price_cents ?? null, customerRefs: ctx.customerRefs, qty: quantity, date: ctx.date, currency: ctx.currency, orderTotal }) : null;
+    const given = l.unitPriceCents !== undefined;
+    const unit = given ? l.unitPriceCents! : (sug?.unit ?? p.price_cents);
     if (unit === null || unit === undefined) throw new HttpError(400, `Line ${i + 1}: ${p.number} has no list price: give the price`);
+    const discountBp = l.discountBp ?? (!given && sug ? sug.discountBp : 0);
+    // the note says where the price and discount came from, never naming a promotion that was not applied
+    const priceNote = !sug ? (given ? '' : 'Standard price') : unit === sug.unit && discountBp === sug.discountBp ? sug.note : !given ? `${sug.note.split(', promotion')[0]}, discount typed on the order` : (ctx?.typed ?? 'Price typed on the order');
     const { taxCode, rate } = pickTax(options, l.taxCode, mode, `Line ${i + 1}`);
-    const amount = docLineAmount(unit, Math.round(quantity * 1000), l.discountBp ?? 0);
+    const amount = docLineAmount(unit, Math.round(quantity * 1000), discountBp);
     const s = splitTax(amount, rate, mode);
-    return { id: l.id ?? null, productId: p.id, productNumber: p.number, description: (l.description ?? '').trim() || p.name, quantity, uom: p.uom || 'each', unitPriceCents: unit, discountBp: l.discountBp ?? 0, taxCode, taxRateBp: rate, net: s.net, tax: s.tax, promisedDate: l.promisedDate ?? null, fulfil: l.fulfil ?? 'stock' };
+    return { id: l.id ?? null, productId: p.id, productNumber: p.number, description: (l.description ?? '').trim() || p.name, quantity, uom: p.uom || 'each', unitPriceCents: unit, discountBp, taxCode, taxRateBp: rate, net: s.net, tax: s.tax, promisedDate: l.promisedDate ?? null, fulfil: l.fulfil ?? 'stock', priceNote: priceNote.slice(0, 300) };
   });
   const subtotal = priced.reduce((s, l) => s + l.net, 0);
   const tax = priced.reduce((s, l) => s + l.tax, 0);
@@ -352,6 +388,27 @@ export async function loadSo(db: D1Database, companyId: string, id: string) {
   const o = await db.prepare(`${SO_SELECT} WHERE o.company_id = ? AND o.id = ?`).bind(companyId, String(id).slice(0, 64)).first<any>();
   if (!o) throw notFound('Sales order');
   return o;
+}
+
+/**
+ * A line whose product, quantity, price and discount did not change keeps the note it had (where its price came from
+ * then), when the customer and the order date did not change either. A note naming a promotion is kept only while the
+ * order's products and quantities are the same, as a promotion's minimum order depends on the whole order. Otherwise
+ * the note priceLines worked out stands.
+ */
+function keepNotes(priced: PricedLine[], before: { id: string; product_id: string; quantity: number; unit_price_cents: number; discount_bp: number; price_note?: string | null }[], sameHeader: boolean) {
+  if (!sameHeader) return;
+  const byId = new Map(before.map((l) => [l.id, l]));
+  // the order's value, as priceLines works it out for a promotion's minimum: each line's product, quantity and price
+  const shape = (ls: { product: string; qty: number; unit: number }[]) => ls.map((l) => `${l.product}:${q6(l.qty)}:${l.unit}`).sort().join('|');
+  const sameOrder = shape(before.map((l) => ({ product: l.product_id, qty: l.quantity, unit: l.unit_price_cents }))) === shape(priced.map((p) => ({ product: p.productId, qty: p.quantity, unit: p.unitPriceCents })));
+  for (const p of priced) {
+    const was = p.id ? byId.get(p.id) : undefined;
+    if (!was || was.product_id !== p.productId || Math.abs(was.quantity - p.quantity) > 1e-9 || was.unit_price_cents !== p.unitPriceCents || was.discount_bp !== p.discountBp) continue;
+    // the promotion part of a note, as pricing.ts writes it (a list's own title may say 'promotion')
+    if (!sameOrder && /(^|, )promotion .+ \((?:[\d.]+% off|an amount off each)\)$/.test(was.price_note ?? '')) continue;
+    p.priceNote = was.price_note ?? p.priceNote;
+  }
 }
 
 export async function soLines(db: D1Database, companyId: string, soId: string) {
@@ -483,6 +540,24 @@ salesRoutes.get('/c/:company/sales-order-options', async (c) => {
   });
 });
 
+/** The price a line would take (price lists and promotions, pricing.ts), for the order form. */
+salesRoutes.get('/c/:company/sales-orders/price', async (c) => {
+  const a = await requireErp(c, 'sales.edit');
+  const db = c.env.DB;
+  const productId = (c.req.query('productId') ?? '').slice(0, 64);
+  const p = await db.prepare('SELECT id, price_cents FROM erp_products WHERE company_id = ? AND id = ?').bind(a.companyId, productId).first<{ id: string; price_cents: number | null }>();
+  if (!p) throw new HttpError(400, 'Choose a product');
+  const settings = await loadSettings(db, a.companyId);
+  const customerRefs = await customerRefsFor(db, a.companyId, (c.req.query('customer') ?? '').split(',').map((x) => x.trim()));
+  const qty = Math.max(0.001, Number(c.req.query('qty')) || 1);
+  const orderTotal = Number(c.req.query('orderTotal'));
+  const date = /^\d{4}-\d{2}-\d{2}$/.test(c.req.query('date') ?? '') ? c.req.query('date')! : todayIso();
+  const on = await moduleEnabled(db, 'commercial', a.companyId).catch(() => true);
+  if (!on) return c.json({ unitPriceCents: p.price_cents, discountBp: 0, note: p.price_cents !== null ? 'Standard price' : '' });
+  const s = suggest(await loadPricing(db, a.companyId, [p.id]), { productId: p.id, standard: p.price_cents, customerRefs, qty, date, currency: settings.currency, ...(Number.isFinite(orderTotal) && orderTotal > 0 ? { orderTotal: Math.round(orderTotal) } : {}) });
+  return c.json({ unitPriceCents: s.unit, discountBp: s.discountBp, note: s.note, priceList: s.priceList, promotion: s.promotion });
+});
+
 salesRoutes.get('/c/:company/sales-orders', async (c) => {
   const a = await requireErp(c, 'sales.view');
   const db = c.env.DB;
@@ -558,8 +633,8 @@ const zCreate = z.object({ ...zHeader, lines: z.array(zLine).min(1).max(200), co
 
 function lineInsert(db: D1Database, companyId: string, soId: string, l: PricedLine, position: number, id = newId()) {
   return db
-    .prepare('INSERT INTO erp_so_lines (id, company_id, so_id, position, product_id, description, quantity, uom, unit_price_cents, discount_bp, tax_code, tax_rate_bp, net_cents, tax_cents, promised_date, fulfil) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
-    .bind(id, companyId, soId, position, l.productId, l.description, l.quantity, l.uom, l.unitPriceCents, l.discountBp, l.taxCode, l.taxRateBp, l.net, l.tax, l.promisedDate, l.fulfil);
+    .prepare('INSERT INTO erp_so_lines (id, company_id, so_id, position, product_id, description, quantity, uom, unit_price_cents, discount_bp, tax_code, tax_rate_bp, net_cents, tax_cents, promised_date, fulfil, price_note) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)')
+    .bind(id, companyId, soId, position, l.productId, l.description, l.quantity, l.uom, l.unitPriceCents, l.discountBp, l.taxCode, l.taxRateBp, l.net, l.tax, l.promisedDate, l.fulfil, l.priceNote);
 }
 
 const soSearch = (number: string, customer: Customer | { name: string; contactName: string }, po: string, lines: { productNumber: string; description: string }[]) => searchText(number, customer.name, customer.contactName, po, ...lines.map((l) => `${l.productNumber} ${l.description}`));
@@ -569,8 +644,8 @@ export async function createSo(db: D1Database, a: ErpAccess, user: { id: string;
   const customer = await resolveCustomer(db, a, user, input);
   const options = await salesTaxOptions(db, customer.finOrgId);
   const mode = await taxModeFor(db, customer.finOrgId, input.taxMode ?? 'exclusive');
-  const priced = await priceLines(db, a.companyId, input.lines, options, mode);
   const settings = await loadSettings(db, a.companyId);
+  const priced = await priceLines(db, a.companyId, input.lines, options, mode, { customerRefs: refsOf(customer), date: input.orderDate ?? todayIso(), currency: settings.currency, ...(input.crmDealId ? { typed: 'Price from the won deal in the CRM' } : {}) });
   const id = newId();
   const number = await nextNumber(db, a.companyId, 'sales_order');
   const t = now();
@@ -658,7 +733,8 @@ salesRoutes.put('/c/:company/sales-orders/:id', async (c) => {
       ? await resolveCustomer(db, a, c.get('user'), { crmCompanyId: input.crmCompanyId ?? null, crmContactId: input.crmContactId ?? null, finContactId: input.finContactId ?? null })
       : { crmOrgId: o.crm_org_id, crmCompanyId: o.crm_company_id, crmContactId: o.crm_contact_id, finOrgId: o.fin_org_id, finContactId: o.fin_contact_id, name: o.customer_name, contactName: o.contact_name, address: o.delivery_address };
   const mode = await taxModeFor(db, customer.finOrgId, input.taxMode ?? o.tax_mode);
-  const priced = await priceLines(db, a.companyId, input.lines, await salesTaxOptions(db, customer.finOrgId), mode);
+  const priced = await priceLines(db, a.companyId, input.lines, await salesTaxOptions(db, customer.finOrgId), mode, { customerRefs: refsOf(customer), date: input.orderDate ?? o.order_date, currency: o.currency });
+  keepNotes(priced.lines, await soLines(db, a.companyId, o.id), customer.crmCompanyId === o.crm_company_id && customer.finContactId === o.fin_contact_id && (input.orderDate ?? o.order_date) === o.order_date);
   const t = now();
   await db.batch([
     db.prepare('DELETE FROM erp_so_lines WHERE company_id = ? AND so_id = ?').bind(a.companyId, o.id),
@@ -751,14 +827,16 @@ salesRoutes.post('/c/:company/sales-orders/:id/:action{confirm|cancel|close|amen
     if (l.shipped_qty > 1e-9 || l.allocated_qty > 1e-9 || linked.has(l.id) || Number(l.on_shipment) > 1e-9) throw new HttpError(400, `Line ${l.position} (${l.product_number}) has stock allocated, shipped or a manufacturing order: it cannot be removed`);
   }
   const mode = await taxModeFor(db, o.fin_org_id, input.taxMode ?? o.tax_mode);
-  const priced = await priceLines(db, a.companyId, input.lines, await salesTaxOptions(db, o.fin_org_id), mode);
+  const priced = await priceLines(db, a.companyId, input.lines, await salesTaxOptions(db, o.fin_org_id), mode, { customerRefs: refsOf({ crmCompanyId: o.crm_company_id, finContactId: o.fin_contact_id }), date: o.order_date, currency: o.currency });
+  // the customer and the order date of a confirmed order do not change
+  keepNotes(priced.lines, current, true);
   for (const p of priced.lines) {
     if (!p.id) continue;
     const was = byId.get(p.id)!;
     if (p.productId !== was.product_id && (was.shipped_qty > 1e-9 || was.allocated_qty > 1e-9 || linked.has(was.id))) throw new HttpError(400, `Line ${was.position}: the product cannot change once stock is allocated, shipped or made for it`);
     if (p.quantity < q6(was.shipped_qty + was.allocated_qty) - 1e-9) throw new HttpError(400, `Line ${was.position}: the quantity cannot go below what is allocated and shipped (${q6(was.shipped_qty + was.allocated_qty)})`);
   }
-  const snapshot = { header: soDTO(o), lines: current.map((l) => ({ id: l.id, position: l.position, product: l.product_number, description: l.description, quantity: l.quantity, unitPriceCents: l.unit_price_cents, discountBp: l.discount_bp, taxCode: l.tax_code, netCents: l.net_cents, taxCents: l.tax_cents, promisedDate: l.promised_date })) };
+  const snapshot = { header: soDTO(o), lines: current.map((l) => ({ id: l.id, position: l.position, product: l.product_number, description: l.description, quantity: l.quantity, unitPriceCents: l.unit_price_cents, discountBp: l.discount_bp, taxCode: l.tax_code, netCents: l.net_cents, taxCents: l.tax_cents, promisedDate: l.promised_date, priceNote: l.price_note ?? '' })) };
   const stmts: D1PreparedStatement[] = [
     db.prepare('INSERT INTO erp_so_revisions (id, company_id, so_id, revision, snapshot_json, reason, changed_by, changed_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(newId(), a.companyId, o.id, o.revision, JSON.stringify(snapshot).slice(0, 200_000), input.reason, a.userId, t),
   ];
@@ -767,8 +845,8 @@ salesRoutes.post('/c/:company/sales-orders/:id/:action{confirm|cancel|close|amen
     if (p.id)
       stmts.push(
         db
-          .prepare('UPDATE erp_so_lines SET position = ?, product_id = ?, description = ?, quantity = ?, uom = ?, unit_price_cents = ?, discount_bp = ?, tax_code = ?, tax_rate_bp = ?, net_cents = ?, tax_cents = ?, promised_date = ?, fulfil = ? WHERE company_id = ? AND id = ?')
-          .bind(i + 1, p.productId, p.description, p.quantity, p.uom, p.unitPriceCents, p.discountBp, p.taxCode, p.taxRateBp, p.net, p.tax, p.promisedDate, p.fulfil, a.companyId, p.id),
+          .prepare('UPDATE erp_so_lines SET position = ?, product_id = ?, description = ?, quantity = ?, uom = ?, unit_price_cents = ?, discount_bp = ?, tax_code = ?, tax_rate_bp = ?, net_cents = ?, tax_cents = ?, promised_date = ?, fulfil = ?, price_note = ? WHERE company_id = ? AND id = ?')
+          .bind(i + 1, p.productId, p.description, p.quantity, p.uom, p.unitPriceCents, p.discountBp, p.taxCode, p.taxRateBp, p.net, p.tax, p.promisedDate, p.fulfil, p.priceNote, a.companyId, p.id),
       );
     else stmts.push(lineInsert(db, a.companyId, o.id, p, i + 1));
   });
@@ -956,6 +1034,7 @@ salesRoutes.get('/c/:company/sales-orders/:id', async (c) => {
         uom: l.uom,
         unitPriceCents: l.unit_price_cents,
         discountBp: l.discount_bp,
+        priceNote: l.price_note ?? '',
         taxCode: l.tax_code,
         taxRateBp: l.tax_rate_bp,
         netCents: l.net_cents,

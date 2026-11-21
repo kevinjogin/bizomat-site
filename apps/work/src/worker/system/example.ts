@@ -294,8 +294,9 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
   ]) {
     stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
   }
-  // The modules framework (migrations/0038_erp_modules.sql): lines, references and comments go with their records.
-  for (const table of ['erp_object_marks', 'erp_object_views', 'erp_alerts', 'erp_object_comments', 'erp_object_refs', 'erp_object_lines', 'erp_objects']) {
+  // The modules framework (migrations/0038_erp_modules.sql and 0041): lines, references, comments, posting accounts,
+  // intercompany contacts and custom fields go with their records.
+  for (const table of ['erp_object_marks', 'erp_object_views', 'erp_alerts', 'erp_object_comments', 'erp_object_refs', 'erp_object_lines', 'erp_objects', 'erp_posting_accounts', 'erp_ic_contacts', 'erp_custom_fields']) {
     stmts.push(db.prepare(`DELETE FROM ${table} WHERE company_id = ?`).bind(companyId));
   }
   for (const table of [
@@ -841,6 +842,49 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     const rmaView = await api('Supply chain', 'GET', e(`/rmas/${rma.id}`));
     await api('Supply chain', 'POST', e(`/rmas/${rma.id}/receive`), { lines: [{ lineId: rmaView.lines[0].id, quantity: 1, locationId: quarLoc.id }], note: 'Box crushed; kit to be inspected' });
     await api('Supply chain', 'POST', e(`/rmas/${rma.id}/credit-note`));
+
+    // ---------------------------------------------------------------- the newer modules (modules framework, migration 0038)
+    // A few invented records in each, made through the modules' own API: the legal entity that keeps its books in the
+    // example's Finance, a location, the person's own employee record (so their leave and payslips show), a leave type and
+    // a request waiting for approval, a course and training, a fixed asset in service with the Finance posting accounts
+    // suggested from the chart saved (posting is left for the person to try), a contract, a service ticket, a vehicle and a
+    // fuel purchase, a price list and a promotion for the kit, a revenue schedule, a pay run worked out and an instrument
+    // due for calibration. In a company of one the approvals are the recorded exception.
+    const x = (o: string, p = '') => e(`/x/o/${o}${p}`);
+    const make = async (o: string, data: Record<string, unknown>, lines?: unknown[]) => (await api('Modules', 'POST', x(o), { data, ...(lines ? { lines } : {}) })).record.id as string;
+    const go = (o: string, id: string, s: string, note?: string) => api('Modules', 'POST', x(o, `/${id}/step/${s}`), { note: note ?? null });
+    const monday = (() => {
+      const dow = today.getUTCDay();
+      return (8 - dow) % 7 || 7;
+    })();
+    await make('org_entity', { name: 'Acme Studio Pty Ltd (example)', entityType: 'parent', country: 'AU', currency: 'AUD', finWorkspace: fin.id });
+    const workshop = await make('org_location', { name: 'Workshop (example)', locationType: 'plant' });
+    const annual = await make('hr_leave_type', { name: 'Annual leave', paid: true, annualDays: 20 });
+    const me = await make('hr_employee', { firstName: 'Alex', lastName: 'Morgan (example)', user: user.id, position: 'Studio manager', location: workshop, employmentType: 'full_time', startDate: d(-400), hoursPerWeek: 38, payBasis: 'salary', annualSalary: 9_100_000, withholdingPct: 25 });
+    await go('hr_employee', me, 'activate');
+    const leave = await make('hr_leave', { employee: me, leaveType: annual, fromDate: d(monday + 14), toDate: d(monday + 18) });
+    await go('hr_leave', leave, 'submit');
+    const firstAid = await make('tr_course', { name: 'First aid (example)', provider: 'Example Training Co', delivery: 'classroom', durationHours: 8, validityMonths: 36, mandatory: true });
+    // completed almost three years ago, so it shows as expiring soon
+    const trained = await make('tr_record', { employee: me, course: firstAid, plannedDate: d(-1060), completedDate: d(-1060), result: 'passed', trainer: 'Example trainer' });
+    await go('tr_record', trained, 'complete');
+    const cutter = await make('fa_asset', { name: 'Laser cutter (example)', category: 'plant', assetTag: 'FA-LASER-1', acquisitionDate: d(-200), cost: 4_500_000, residualValue: 300_000, usefulLifeMonths: 60, method: 'straight_line', currency: 'AUD', location: workshop });
+    await go('fa_asset', cutter, 'place');
+    const posting = await api('Modules', 'GET', e('/x/postings'));
+    await api('Modules', 'PUT', e('/x/postings'), { accounts: Object.fromEntries(posting.roles.filter((r: any) => r.suggested).map((r: any) => [r.role, r.suggested.id])) });
+    await make('ct_contract', { title: 'Maintenance support for the workshop (example)', partyType: 'other', otherParty: 'Example Service Co', contractType: 'service', startDate: d(-60), endDate: d(305), value: 480_000, currency: 'AUD', autoRenew: true, noticeDays: 30, owner: user.id });
+    await make('sv_ticket', { subject: 'Bracket kit arrived with a missing wall plug (example)', priority: 'normal', channel: 'email', category: 'problem', product: kit.id, assignee: user.id, description: 'Invented example: a customer reports one wall plug missing from a kit.' });
+    const van = await make('fl_vehicle', { registration: 'EXAMPLE1', make: 'Example', model: 'Van', year: 2023, vehicleType: 'van', fuel: 'diesel', driver: user.id, location: workshop });
+    await make('fl_fuel', { vehicle: van, date: d(-6), litres: 62.5, cost: 13_750, odometer: 41_250, station: 'Example fuel stop' });
+    const prices = await make('pr_pricelist', { name: 'Trade prices (example)', customerGroup: 'Trade', currency: 'AUD', validFrom: d(-30) }, [{ product: kit.id, minQty: 10, unitPrice: 3_400 }, { product: kit.id, minQty: 50, unitPrice: 3_100 }]);
+    await go('pr_pricelist', prices, 'activate');
+    const promo = await make('pr_promotion', { name: 'Spring offer (example)', code: 'SPRING10', discountType: 'percent', discountValue: 10, product: kit.id, validFrom: d(-7), validTo: d(23) });
+    await go('pr_promotion', promo, 'activate');
+    const support = await make('rr_schedule', { name: 'Annual support plan (example)', total: 1_200_000, currency: 'AUD', startDate: `${d(-90).slice(0, 7)}-01`, endDate: `${d(270).slice(0, 7)}-28` });
+    await go('rr_schedule', support, 'activate');
+    const pay = await make('py_run', { periodStart: d(-14), periodEnd: d(-1), payDate: d(2), frequency: 'fortnightly', contributionPct: 12, currency: 'AUD' });
+    await api('Modules', 'POST', x('py_run', `/${pay}/action/calculate`), { input: {} });
+    await make('cal_instrument', { name: 'Digital caliper (example)', instrumentType: 'Caliper', serialNumber: 'EX-0001', range: '0 to 150 mm', tolerance: '0.02 mm', location: workshop, intervalDays: 365 });
 
     // ---------------------------------------------------------------- Health and Safety (BIZOMAT WHS, Release 1)
     // The workshop site in New South Wales (its legal pack is not verified, so no deadline is ever computed from it), a

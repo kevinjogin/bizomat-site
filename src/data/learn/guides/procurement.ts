@@ -272,6 +272,7 @@ const guide: Guide = {
     { text: 'Emailing purchase orders and requests for quotation with the PDF attached (today: download, send from your own email, record as sent).', status: 'planned' },
     { text: 'Three-way matching against the supplier’s own invoice (receipts and their draft bills are linked today).', status: 'planned' },
     { text: 'Supplier qualification, supplier contracts and purchase scheduling.', status: 'planned' },
+    { text: 'A supplier portal where the supplier’s own people see their orders and requests for quotation, answer orders, send quotations and add documents: built, and switched off until BIZOMAT turns it on.', status: 'in-development' },
     { text: 'Posting the value of goods received to Finance’s ledger (recorded as planned; nothing is posted).', status: 'planned' },
   ],
   keywords: [
