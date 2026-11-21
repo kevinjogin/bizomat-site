@@ -92,12 +92,14 @@ function cleanOptions(type: CustomType, options: unknown): { key: string; label:
   for (const o of options) {
     const label = String(typeof o === 'object' && o ? ((o as any).label ?? '') : o).trim().slice(0, 80);
     if (!label) continue;
-    let key = (typeof o === 'object' && o && typeof (o as any).key === 'string' ? (o as any).key : slug(label)).slice(0, 40);
-    while (out.some((x) => x.key === key)) key = `${key}_2`.slice(0, 40);
+    if (out.length >= 50) throw new HttpError(400, 'At most 50 choices');
+    const stem = (typeof o === 'object' && o && typeof (o as any).key === 'string' ? (o as any).key : slug(label)).slice(0, 36);
+    // a counter, so labels that make the same key (or none in Latin letters) always end with different ones
+    let key = stem;
+    for (let i = 2; out.some((x) => x.key === key); i++) key = `${stem}_${i}`;
     out.push({ key, label });
   }
   if (out.length < 2) throw new HttpError(400, 'A choice needs at least two options');
-  if (out.length > 50) throw new HttpError(400, 'At most 50 choices');
   return out;
 }
 
@@ -133,7 +135,8 @@ export async function changeCustom(db: D1Database, companyId: string, object: st
     const used = new Set(options.map((o) => o.key));
     const next: Choice[] = [];
     for (const label of labels) {
-      const hit = options.find((o) => baseLabel(o.label).toLowerCase() === label.toLowerCase() && !next.some((n) => n.key === o.key));
+      // only a retired choice carries the suffix this code added; an offered label is compared as it is
+      const hit = options.find((o) => (o.retired ? baseLabel(o.label) : o.label).toLowerCase() === label.toLowerCase() && !next.some((n) => n.key === o.key));
       if (hit) {
         next.push({ key: hit.key, label });
         continue;
@@ -144,7 +147,7 @@ export async function changeCustom(db: D1Database, companyId: string, object: st
       used.add(k);
       next.push({ key: k, label });
     }
-    for (const o of options) if (!next.some((n) => n.key === o.key)) next.push({ key: o.key, label: `${baseLabel(o.label)}${RETIRED}`, retired: true });
+    for (const o of options) if (!next.some((n) => n.key === o.key)) next.push({ key: o.key, label: o.retired ? o.label : `${o.label}${RETIRED}`, retired: true });
     if (next.length > 100) throw new HttpError(400, 'Too many choices, offered and no longer offered: make a new field instead');
     options = next;
   }

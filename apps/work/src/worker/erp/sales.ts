@@ -390,12 +390,22 @@ export async function loadSo(db: D1Database, companyId: string, id: string) {
   return o;
 }
 
-/** A line whose product, price and discount did not change keeps the note it had (where its price came from then). */
-function keepNotes(priced: PricedLine[], before: { id: string; product_id: string; unit_price_cents: number; discount_bp: number; price_note?: string | null }[]) {
+/**
+ * A line whose product, quantity, price and discount did not change keeps the note it had (where its price came from
+ * then), when the customer and the order date did not change either. A note naming a promotion is kept only while the
+ * order's products and quantities are the same, as a promotion's minimum order depends on the whole order. Otherwise
+ * the note priceLines worked out stands.
+ */
+function keepNotes(priced: PricedLine[], before: { id: string; product_id: string; quantity: number; unit_price_cents: number; discount_bp: number; price_note?: string | null }[], sameHeader: boolean) {
+  if (!sameHeader) return;
   const byId = new Map(before.map((l) => [l.id, l]));
+  const shape = (ls: { product: string; qty: number }[]) => ls.map((l) => `${l.product}:${q6(l.qty)}`).sort().join('|');
+  const sameOrder = shape(before.map((l) => ({ product: l.product_id, qty: l.quantity }))) === shape(priced.map((p) => ({ product: p.productId, qty: p.quantity })));
   for (const p of priced) {
     const was = p.id ? byId.get(p.id) : undefined;
-    if (was && was.product_id === p.productId && was.unit_price_cents === p.unitPriceCents && was.discount_bp === p.discountBp) p.priceNote = was.price_note ?? p.priceNote;
+    if (!was || was.product_id !== p.productId || Math.abs(was.quantity - p.quantity) > 1e-9 || was.unit_price_cents !== p.unitPriceCents || was.discount_bp !== p.discountBp) continue;
+    if (!sameOrder && /\bpromotion /.test(was.price_note ?? '')) continue;
+    p.priceNote = was.price_note ?? p.priceNote;
   }
 }
 
@@ -722,7 +732,7 @@ salesRoutes.put('/c/:company/sales-orders/:id', async (c) => {
       : { crmOrgId: o.crm_org_id, crmCompanyId: o.crm_company_id, crmContactId: o.crm_contact_id, finOrgId: o.fin_org_id, finContactId: o.fin_contact_id, name: o.customer_name, contactName: o.contact_name, address: o.delivery_address };
   const mode = await taxModeFor(db, customer.finOrgId, input.taxMode ?? o.tax_mode);
   const priced = await priceLines(db, a.companyId, input.lines, await salesTaxOptions(db, customer.finOrgId), mode, { customerRefs: refsOf(customer), date: input.orderDate ?? o.order_date, currency: o.currency });
-  keepNotes(priced.lines, await soLines(db, a.companyId, o.id));
+  keepNotes(priced.lines, await soLines(db, a.companyId, o.id), customer.crmCompanyId === o.crm_company_id && customer.finContactId === o.fin_contact_id && (input.orderDate ?? o.order_date) === o.order_date);
   const t = now();
   await db.batch([
     db.prepare('DELETE FROM erp_so_lines WHERE company_id = ? AND so_id = ?').bind(a.companyId, o.id),
@@ -816,7 +826,8 @@ salesRoutes.post('/c/:company/sales-orders/:id/:action{confirm|cancel|close|amen
   }
   const mode = await taxModeFor(db, o.fin_org_id, input.taxMode ?? o.tax_mode);
   const priced = await priceLines(db, a.companyId, input.lines, await salesTaxOptions(db, o.fin_org_id), mode, { customerRefs: refsOf({ crmCompanyId: o.crm_company_id, finContactId: o.fin_contact_id }), date: o.order_date, currency: o.currency });
-  keepNotes(priced.lines, current);
+  // the customer and the order date of a confirmed order do not change
+  keepNotes(priced.lines, current, true);
   for (const p of priced.lines) {
     if (!p.id) continue;
     const was = byId.get(p.id)!;

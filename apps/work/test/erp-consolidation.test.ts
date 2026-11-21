@@ -89,6 +89,16 @@ describe('consolidation and intercompany', () => {
     }
     const backBill = await env.DB.prepare("SELECT d.total, c.name FROM fin_docs d JOIN fin_contacts c ON c.id = d.contact_id WHERE d.org_id = ? AND d.kind = 'bill'").bind(fa).first<any>();
     expect(backBill).toMatchObject({ name: 'Pa NZ Ltd', total: 9_900 });
+    // the change of kind is in each workspace's audit log
+    expect((await env.DB.prepare("SELECT COUNT(*) AS n FROM fin_audit_log WHERE org_id = ? AND action = 'contact.updated' AND after_json LIKE '%both%'").bind(fa).first<any>()).n).toBe(1);
+    // an archived intercompany contact is restored, not replaced by a second one
+    const subContact = await env.DB.prepare("SELECT id FROM fin_contacts WHERE org_id = ? AND name = 'Pa NZ Ltd'").bind(fa).first<any>();
+    await owner.json('PATCH', `/api/fin/orgs/${fa}/contacts/${subContact.id}`, { archived: true });
+    const third = await create(owner, co, 'ic_transaction', { seller: parent.record.id, buyer: sub.record.id, date: day(-3), description: 'More services', amount: 1_000, currency: 'AUD' });
+    await step(owner, co, 'ic_transaction', third.record.id, 'submit');
+    await step(controller, co, 'ic_transaction', third.record.id, 'approve');
+    await owner.json('POST', obj(co, 'ic_transaction', `/${third.record.id}/action/documents`), {});
+    expect((await env.DB.prepare("SELECT id, archived_at FROM fin_contacts WHERE org_id = ? AND name = 'Pa NZ Ltd'").bind(fa).all<any>()).results).toEqual([{ id: subContact.id, archived_at: null }]);
 
     // Finance approves both (each workspace's own roles); the parent also sells 500.00 outside the group
     await owner.json('POST', `/api/fin/orgs/${fa}/docs/${invoices.results[0].id}/approve`, {});

@@ -97,6 +97,29 @@ describe('custom fields', () => {
     await owner.json('PATCH', x(co, '/fields/ct_contract/cf_risk_rating'), { options: ['Low', 'Medium', 'High', 'Critical'] });
     expect((await owner.json('GET', x(co, '/fields/ct_contract'))).fields.find((f: any) => f.key === 'cf_risk_rating').options.map((o: any) => o.key)).toEqual(['low', 'medium', 'high', 'critical']);
 
+    // labels that make the same key, or none in Latin letters, each get their own (and the request ends)
+    const regions = ['North', 'South', 'East', 'West', 'Central', 'Islands', 'Remote', 'Coast'].map((r) => `Customer category for the region ${r}`);
+    const long = await owner.json('POST', x(co, '/fields/ct_contract'), { label: 'Region category', type: 'select', options: regions });
+    const longKeys = long.fields.find((f: any) => f.label === 'Region category').options.map((o: any) => o.key);
+    expect(new Set(longKeys).size).toBe(8);
+    const cities = ['東京', '大阪', '名古屋', '札幌', '福岡', '神戸', '京都', '仙台', '広島', '千葉', '横浜', '川崎', '堺', '新潟', '浜松', '熊本', '岡山', '静岡', '鹿児島', '那覇', '金沢'];
+    const jp = await owner.json('POST', x(co, '/fields/ct_contract'), { label: 'City', type: 'select', options: cities });
+    const jpKeys = jp.fields.find((f: any) => f.label === 'City').options.map((o: any) => o.key);
+    expect(new Set(jpKeys).size).toBe(cities.length);
+    // reordered: each choice keeps its own key
+    const byLabel = (opts: any[]) => Object.fromEntries(opts.map((o: any) => [o.label, o.key]));
+    const jpBefore = byLabel(jp.fields.find((f: any) => f.label === 'City').options);
+    await owner.json('PATCH', x(co, '/fields/ct_contract/cf_city'), { options: [...cities].reverse() });
+    expect(byLabel((await owner.json('GET', x(co, '/fields/ct_contract'))).fields.find((f: any) => f.key === 'cf_city').options)).toEqual(jpBefore);
+    // an offered label that itself ends like a retired one keeps its key
+    const legacy = await owner.json('POST', x(co, '/fields/ct_contract'), { label: 'Legacy flag', type: 'select', options: ['A', 'Old (no longer offered)'] });
+    const legacyKeys = legacy.fields.find((f: any) => f.label === 'Legacy flag').options.map((o: any) => o.key);
+    await owner.json('PATCH', x(co, '/fields/ct_contract/cf_legacy_flag'), { options: ['A', 'Old (no longer offered)'] });
+    await owner.json('PATCH', x(co, '/fields/ct_contract/cf_legacy_flag'), { options: ['A', 'Old (no longer offered)'] });
+    const again = (await owner.json('GET', x(co, '/fields/ct_contract'))).fields.find((f: any) => f.key === 'cf_legacy_flag').options;
+    expect(again.map((o: any) => o.key)).toEqual(legacyKeys);
+    expect(again.every((o: any) => !o.retired)).toBe(true);
+
     // another company has none of them, and cannot reach these
     const other = await company('Cg');
     expect((await other.owner.json('GET', x(other.co, '/o/ct_contract'))).object.fields.some((f: any) => f.custom)).toBe(false);

@@ -17,8 +17,8 @@ import type { Env } from '../../env';
 import { HttpError, newId, now } from '../../lib/util';
 import { createDoc } from '../../fin/docs';
 import { accountBalances, chartOf, natural, type AccountRow } from '../../fin/ledger';
-import { hasPerm, type FinAccess } from '../../fin/access';
-import { searchText } from '../../fin/util';
+import { canRecord, hasPerm, type FinAccess } from '../../fin/access';
+import { auditStmt, searchText } from '../../fin/util';
 import type { ErpAccess } from '../access';
 import { badState } from '../util';
 import { maybeFin } from '../suppliers';
@@ -64,31 +64,38 @@ async function entities(db: D1Database, companyId: string): Promise<Entity[]> {
 
 /**
  * The contact for `entity` in workspace `fa` (customer for invoices, supplier for bills), found or made. One contact per
- * entity and workspace is remembered: when trade goes the other way, that contact becomes a customer and supplier ('both')
- * rather than a second contact of the same name. The link is replaced only when its contact is gone, and a new contact is
- * made only by the request whose link won, so two requests at once leave one contact.
+ * entity and workspace is remembered, and stays remembered: when trade goes the other way it becomes a customer and
+ * supplier ('both'), and when it was archived it is restored, never replaced, so the balances already posted against it
+ * are still eliminated on consolidation. Either change needs the person's Finance right to change that contact and is
+ * written to the workspace's audit log. A new contact is made only by the request whose link won, so two requests at
+ * once leave one contact.
  */
-async function contactFor(db: D1Database, companyId: string, fa: FinAccess, entity: Entity, role: 'customer' | 'supplier'): Promise<{ id: string; name: string }> {
+async function contactFor(db: D1Database, companyId: string, fa: FinAccess, entity: Entity, role: 'customer' | 'supplier', record: string): Promise<{ id: string; name: string }> {
   const name = entity.legalName || entity.name;
-  type C = { id: string; name: string; kind: string; created_by: string | null };
+  type C = { id: string; name: string; kind: string; created_by: string | null; archived_at: number | null };
   const linkedNow = () =>
     db
-      .prepare('SELECT c.id, c.name, c.kind, c.created_by FROM erp_ic_contacts l JOIN fin_contacts c ON c.id = l.contact_id AND c.org_id = l.fin_org_id WHERE l.company_id = ? AND l.entity_id = ? AND l.fin_org_id = ? AND c.archived_at IS NULL')
+      .prepare('SELECT c.id, c.name, c.kind, c.created_by, c.archived_at FROM erp_ic_contacts l JOIN fin_contacts c ON c.id = l.contact_id AND c.org_id = l.fin_org_id WHERE l.company_id = ? AND l.entity_id = ? AND l.fin_org_id = ?')
       .bind(companyId, entity.id, fa.orgId)
       .first<C>();
   const usable = async (c: C) => {
-    if (c.kind === role || c.kind === 'both') return { id: c.id, name: c.name };
-    const edit = (fa.perms.contacts as unknown as Record<string, unknown>).edit;
-    if (!(edit === true || edit === 'all' || (edit === 'own' && c.created_by === fa.userId))) throw new HttpError(403, `${c.name} is a ${c.kind} in ${fa.org.name}, and your Finance role cannot make it a ${role} as well`);
-    await db.prepare("UPDATE fin_contacts SET kind = 'both', updated_at = ? WHERE id = ? AND org_id = ? AND kind <> 'both'").bind(now(), c.id, fa.orgId).run();
+    const kind = c.kind === role || c.kind === 'both' ? c.kind : 'both';
+    if (kind === c.kind && !c.archived_at) return { id: c.id, name: c.name };
+    // Finance's own rule for changing a contact (its scope: own, team or all)
+    if (!(canRecord(fa, 'contacts', 'view', c) && canRecord(fa, 'contacts', 'edit', c)))
+      throw new HttpError(403, c.archived_at ? `${c.name} is archived in ${fa.org.name}’s contacts and your Finance role cannot restore it: ask someone who can to restore it there` : `${c.name} is a ${c.kind} in ${fa.org.name}, and your Finance role cannot make it a ${role} as well`);
+    const changed = await db.prepare('UPDATE fin_contacts SET kind = ?, archived_at = NULL, updated_at = ? WHERE id = ? AND org_id = ? AND (kind <> ? OR archived_at IS NOT NULL)').bind(kind, now(), c.id, fa.orgId, kind).run();
+    if (changed.meta.changes)
+      await auditStmt(db, { orgId: fa.orgId, actorId: fa.userId, action: 'contact.updated', targetType: 'contact', targetId: c.id, before: { kind: c.kind, archived: !!c.archived_at }, after: { kind, archived: false }, metadata: { source: 'BIZOMAT ERP intercompany transaction', record } }).run();
     return { id: c.id, name: c.name };
   };
   const linked = await linkedNow();
   if (linked) return usable(linked);
   const t = now();
+  // replaced only when the remembered contact no longer exists at all
   const link = (contactId: string) =>
     db
-      .prepare('INSERT INTO erp_ic_contacts (company_id, entity_id, fin_org_id, contact_id, created_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(company_id, entity_id, fin_org_id) DO UPDATE SET contact_id = excluded.contact_id WHERE NOT EXISTS (SELECT 1 FROM fin_contacts c WHERE c.id = erp_ic_contacts.contact_id AND c.org_id = erp_ic_contacts.fin_org_id AND c.archived_at IS NULL)')
+      .prepare('INSERT INTO erp_ic_contacts (company_id, entity_id, fin_org_id, contact_id, created_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(company_id, entity_id, fin_org_id) DO UPDATE SET contact_id = excluded.contact_id WHERE NOT EXISTS (SELECT 1 FROM fin_contacts c WHERE c.id = erp_ic_contacts.contact_id AND c.org_id = erp_ic_contacts.fin_org_id)')
       .bind(companyId, entity.id, fa.orgId, contactId, t);
   // a contact of that name already there (of this role first)
   const byName = await db
@@ -172,8 +179,8 @@ export async function intercompanyDocuments(env: Env, a: ErpAccess, user: User, 
   const billAmount = convert(amount, rate.rate);
   const reference = `${row.number}${data.reference ? ` ${str(data.reference)}` : ''}`.slice(0, 200);
   const description = str(data.description).slice(0, 1000);
-  const customer = await contactFor(db, a.companyId, fs, buyer, 'customer');
-  const supplier = await contactFor(db, a.companyId, fb, seller, 'supplier');
+  const customer = await contactFor(db, a.companyId, fs, buyer, 'customer', row.number);
+  const supplier = await contactFor(db, a.companyId, fb, seller, 'supplier', row.number);
   const accountOf = async (orgId: string, type: 'revenue' | 'expense') => (await db.prepare('SELECT id FROM fin_accounts WHERE org_id = ? AND type = ? AND archived_at IS NULL ORDER BY is_default DESC, position LIMIT 1').bind(orgId, type).first<{ id: string }>())?.id ?? null;
   const taxOf = async (orgId: string, key: string) => (await db.prepare('SELECT id FROM fin_tax_codes WHERE org_id = ? AND system_key = ? AND archived_at IS NULL').bind(orgId, key).first<{ id: string }>())?.id ?? null;
   const notes = `Intercompany: ${seller.name} to ${buyer.name}, BIZOMAT ERP ${row.number}. A draft: check the amount, tax and account before approving.`;
@@ -288,7 +295,8 @@ export async function consolidate(env: Env, a: ErpAccess, user: User, opts: { fr
   for (const m of members) {
     const chart = await chartOf(db, m.fa);
     const ic = new Set(links.results.filter((l) => l.fin_org_id === m.fa.orgId && memberIds.has(l.entity_id) && l.entity_id !== m.e.id).map((l) => l.contact_id));
-    const contacts = await db.prepare('SELECT id, name FROM fin_contacts WHERE org_id = ? AND archived_at IS NULL').bind(m.fa.orgId).all<{ id: string; name: string }>();
+    // archived contacts too: what was posted against them is still intercompany
+    const contacts = await db.prepare('SELECT id, name FROM fin_contacts WHERE org_id = ?').bind(m.fa.orgId).all<{ id: string; name: string }>();
     for (const c of contacts.results) {
       const other = names.get(c.name.toLowerCase());
       if (other && other !== m.e.id) ic.add(c.id);

@@ -86,6 +86,21 @@ describe('price lists and promotions on sales orders', () => {
     expect(amended.lines.map((l: any) => l.priceNote)).toEqual(before.lines.map((l: any) => l.priceNote));
     expect(amended.order.revision).toBe(before.order.revision + 1);
 
+    // a draft whose quantity drops below the list's break, or whose customer changes, keeping the price: called typed
+    const third = await customer(owner, tools.crm, 'Third Buyer');
+    const d1 = await owner.json('POST', erp(co, '/sales-orders'), { crmCompanyId: third.crmCompanyId, lines: [{ productId: kit.id, quantity: 12 }] });
+    const d1v = await owner.json('GET', erp(co, `/sales-orders/${d1.id}`));
+    expect(d1v.lines[0].priceNote).toContain('Trade prices');
+    const keep = (v: any, patch: Record<string, unknown>) => v.lines.map((l: any) => ({ id: l.id, productId: l.productId, quantity: l.quantity, unitPriceCents: l.unitPriceCents, discountBp: l.discountBp, taxCode: l.taxCode, ...patch }));
+    await owner.json('PUT', erp(co, `/sales-orders/${d1.id}`), { lines: keep(d1v, { quantity: 2 }) });
+    expect((await owner.json('GET', erp(co, `/sales-orders/${d1.id}`))).lines[0].priceNote).toBe('Price typed on the order');
+    const d2 = await owner.json('POST', erp(co, '/sales-orders'), { crmCompanyId: trade.crmCompanyId, lines: [{ productId: kit.id, quantity: 1 }] });
+    const d2v = await owner.json('GET', erp(co, `/sales-orders/${d2.id}`));
+    expect(d2v.lines[0].priceNote).toContain('Trade Customer contract prices');
+    await owner.json('PUT', erp(co, `/sales-orders/${d2.id}`), { crmCompanyId: third.crmCompanyId, lines: keep(d2v, {}) });
+    const d2after = await owner.json('GET', erp(co, `/sales-orders/${d2.id}`));
+    expect(d2after.lines[0].priceNote).not.toContain('Trade Customer contract prices');
+
     // the Pricing module switched off: standard prices only, nothing noted from the lists
     await env.DB.prepare("INSERT INTO feature_flags (key, scope, scope_id, value, reason, updated_by, updated_at) VALUES ('module_commercial_enabled', 'company', ?, 'off', 'test switch', 'test', ?)").bind(co, Date.now()).run();
     const off = await owner.json('GET', erp(co, `/sales-orders/price?productId=${kit.id}&customer=crm:${trade.crmCompanyId}&qty=20`));
