@@ -11,6 +11,7 @@
 //   assets, requests, work orders and files:  routes-assets.ts, routes-requests.ts, routes-work.ts, routes-files.ts
 //   stages M2 and M3: pm.ts (preventive maintenance), routes-meters.ts, routes-inspections.ts (templates, inspections,
 //   prestarts), routes-parts.ts (parts, labour, downtime), routes-setup.ts (sites, trades, stores, QR, scan), reports.ts
+//   routes-stock.ts                     reservations, requisitions from work orders, stocktakes of the stores
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -38,6 +39,7 @@ import { roundRoutes } from './routes-rounds';
 import { stockRoutes } from './routes-stock';
 import { jobRoutes } from './routes-job';
 import { OPEN_REQUESTS, OUTSTANDING, eventDTO, eventStmt, sqlList, todayFrom } from './util';
+import { moduleEnabled } from '../platform/flags';
 
 export const maintenanceRoutes = new Hono<AppEnv>();
 
@@ -65,6 +67,8 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
     departments,
     // Names only for everyone; the role of each person matters to whoever assigns work.
     people: people.map((p) => ({ id: p.id, name: p.name, role: isManager(a) ? p.role : undefined })),
+    // ERP Inventory (Warehouse: stock) switched on for the company: stocktakes and reservations need it.
+    stockModule: await moduleEnabled(db, 'inventory', a.companyId).catch(() => true),
     can: {
       manageAssets: isManager(a),
       importAssets: a.role === 'admin',

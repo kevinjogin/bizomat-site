@@ -720,6 +720,14 @@ inventoryRoutes.post('/c/:company/reservations', async (c) => {
   return c.json({ id }, 201);
 });
 
+/** The maintenance work order a reservation was made for (Maintenance's mt_wo_reservations), if any. */
+async function maintenanceReservationOf(db: D1Database, companyId: string, reservationId: string) {
+  return db
+    .prepare('SELECT w.number FROM mt_wo_reservations x JOIN mt_work_orders w ON w.company_id = x.company_id AND w.id = x.work_order_id WHERE x.company_id = ? AND x.reservation_id = ?')
+    .bind(companyId, reservationId)
+    .first<{ number: string }>();
+}
+
 inventoryRoutes.post('/c/:company/reservations/:id/:action{release|issue}', async (c) => {
   const a = await requireErp(c, 'inventory.operate');
   const db = c.env.DB;
@@ -730,6 +738,10 @@ inventoryRoutes.post('/c/:company/reservations/:id/:action{release|issue}', asyn
   // order line's allocated quantity in step
   const so = await db.prepare('SELECT o.number FROM erp_so_allocations x JOIN erp_so_lines l ON l.company_id = x.company_id AND l.id = x.so_line_id JOIN erp_sales_orders o ON o.company_id = l.company_id AND o.id = l.so_id WHERE x.company_id = ? AND x.reservation_id = ?').bind(a.companyId, r.id).first<{ number: string }>();
   if (so) badState(`This stock is allocated to sales order ${so.number}: release it or ship it there`);
+  // Release 4 (Maintenance, the field release): stock reserved for a maintenance work order is issued or released on the
+  // work order, which keeps its required parts in step.
+  const wo = await maintenanceReservationOf(db, a.companyId, r.id);
+  if (wo) badState(`This stock is reserved for maintenance work order ${wo.number}: issue it or release it on the work order in Maintenance`);
   const open = q6(r.quantity - r.issued_qty - r.released_qty);
   const input = await body(c, z.object({ quantity: zQ.optional(), reason: zText(500).optional() }));
   const qn = input.quantity ?? open;
@@ -886,15 +898,20 @@ inventoryRoutes.post('/c/:company/adjustments/:id/:decision{approve|reject}', as
 });
 
 // ------------------------------------------------------------------ counts
+//
+// Opening a count, its lines, entering what was counted, and submitting or cancelling it are functions, so
+// Maintenance's Stocktakes page (src/worker/maintenance/routes-stock.ts) counts its stores with the same rules. Only
+// Inventory approves a count and posts its differences (POST /counts/:id/approve, under inventory.approve with
+// segregation of duties).
 
-const COUNT_SELECT = `SELECT n.*, w.code AS warehouse_code, w.name AS warehouse_name, l.code AS location_code, cb.name AS created_name, sb.name AS submitted_name, ab.name AS approved_name,
+export const COUNT_SELECT = `SELECT n.*, w.code AS warehouse_code, w.name AS warehouse_name, l.code AS location_code, cb.name AS created_name, sb.name AS submitted_name, ab.name AS approved_name,
   (SELECT COUNT(*) FROM erp_count_lines x WHERE x.company_id = n.company_id AND x.count_id = n.id) AS lines,
   (SELECT COUNT(*) FROM erp_count_lines x WHERE x.company_id = n.company_id AND x.count_id = n.id AND x.counted_qty IS NOT NULL) AS counted,
   (SELECT COUNT(*) FROM erp_count_lines x WHERE x.company_id = n.company_id AND x.count_id = n.id AND x.counted_qty IS NOT NULL AND abs(x.counted_qty - x.expected_qty) > 1e-9) AS variances
   FROM erp_counts n JOIN erp_warehouses w ON w.company_id = n.company_id AND w.id = n.warehouse_id LEFT JOIN erp_locations l ON l.company_id = n.company_id AND l.id = n.location_id
   LEFT JOIN users cb ON cb.id = n.created_by LEFT JOIN users sb ON sb.id = n.submitted_by LEFT JOIN users ab ON ab.id = n.approved_by`;
 
-const countDTO = (n: any) => ({
+export const countDTO = (n: any) => ({
   id: n.id,
   number: n.number,
   kind: n.kind,
@@ -905,6 +922,7 @@ const countDTO = (n: any) => ({
   locationCode: n.location_code,
   status: n.status,
   notes: n.notes,
+  dueDate: n.due_date ?? null,
   lines: n.lines,
   counted: n.counted,
   variances: n.variances,
@@ -920,26 +938,30 @@ const countDTO = (n: any) => ({
   createdAt: n.created_at,
 });
 
-async function loadCount(db: D1Database, companyId: string, id: string) {
+export async function loadCount(db: D1Database, companyId: string, id: string) {
   const n = await db.prepare(`${COUNT_SELECT} WHERE n.company_id = ? AND n.id = ?`).bind(companyId, String(id).slice(0, 64)).first<any>();
   if (!n) throw notFound('Count');
   return n;
 }
 
-inventoryRoutes.get('/c/:company/counts', async (c) => {
-  const a = await requireErp(c, 'inventory.view');
-  const status = c.req.query('status');
-  const rows = await c.env.DB.prepare(`${COUNT_SELECT} WHERE n.company_id = ? ${status ? 'AND n.status = ?' : ''} ORDER BY n.created_at DESC LIMIT 300`)
-    .bind(a.companyId, ...(status ? [status] : []))
-    .all<any>();
-  return c.json({ counts: rows.results.map(countDTO), can: { operate: can(a, 'inventory.operate'), approve: can(a, 'inventory.approve') } });
-});
+/** Who acts on a count: the company and the person (an ERP or a Maintenance access). */
+type CountActor = { companyId: string; userId: string };
 
-/** Opens a count: one line per stock row in the warehouse (or under one location), expected = on hand now. */
-inventoryRoutes.post('/c/:company/counts', async (c) => {
-  const a = await requireErp(c, 'inventory.operate');
-  const db = c.env.DB;
-  const input = await body(c, z.object({ kind: z.enum(['stocktake', 'cycle']).default('stocktake'), warehouseId: zId, locationId: zId.nullable().optional(), productIds: z.array(zId).max(500).optional(), notes: zText(1000).optional() }));
+export interface CountInput {
+  kind?: 'stocktake' | 'cycle';
+  warehouseId: string;
+  locationId?: string | null;
+  productIds?: string[];
+  notes?: string;
+  dueDate?: string | null;
+}
+
+/**
+ * Opens a count: one line per stock row in the warehouse (or under one location), expected = on hand now. `requireLines`
+ * refuses a count with nothing to count; `extra` statements join the same transaction.
+ */
+export async function openCount(db: D1Database, a: CountActor, input: CountInput, o: { requireLines?: boolean; extra?: D1PreparedStatement[] } = {}) {
+  const kind = input.kind ?? 'stocktake';
   const w = await db.prepare('SELECT * FROM erp_warehouses WHERE company_id = ? AND id = ? AND archived_at IS NULL').bind(a.companyId, input.warehouseId).first<any>();
   if (!w) throw notFound('Warehouse');
   let locIds: string[] | null = null;
@@ -961,26 +983,26 @@ inventoryRoutes.post('/c/:company/counts', async (c) => {
     )
     .bind(a.companyId, w.id, ...(locIds ?? []), ...(input.productIds ?? []))
     .all<any>();
+  if (o.requireLines && !rows.results.length) throw new HttpError(400, `There is no stock in ${w.code} to count. A part found on the shelves is added to a count in Inventory.`);
   const id = newId();
   const number = await nextNumber(db, a.companyId, 'count');
   const t = now();
   const stmts: D1PreparedStatement[] = [
-    db.prepare('INSERT INTO erp_counts (id, company_id, number, kind, warehouse_id, location_id, notes, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(id, a.companyId, number, input.kind, w.id, input.locationId ?? null, input.notes ?? '', a.userId, t, t),
+    db.prepare('INSERT INTO erp_counts (id, company_id, number, kind, warehouse_id, location_id, notes, due_date, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(id, a.companyId, number, kind, w.id, input.locationId ?? null, input.notes ?? '', input.dueDate ?? null, a.userId, t, t),
     ...rows.results.map((s) =>
       db
         .prepare('INSERT INTO erp_count_lines (id, company_id, count_id, product_id, location_id, lot, serial, expected_qty) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
         .bind(newId(), a.companyId, id, s.product_id, s.location_id, s.lot, s.serial, s.on_hand),
     ),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'count.opened', entityType: 'count', entityId: id, summary: `${number}: ${input.kind === 'cycle' ? 'cycle count' : 'stocktake'} opened in ${w.code} with ${rows.results.length} lines`, at: t }),
+    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'count.opened', entityType: 'count', entityId: id, summary: `${number}: ${kind === 'cycle' ? 'cycle count' : 'stocktake'} opened in ${w.code} with ${rows.results.length} lines`, at: t }),
+    ...(o.extra ?? []),
   ];
   await db.batch(stmts);
-  return c.json({ id, number }, 201);
-});
+  return { id, number, lines: rows.results.length, warehouseCode: w.code as string };
+}
 
-inventoryRoutes.get('/c/:company/counts/:id', async (c) => {
-  const a = await requireErp(c, 'inventory.view');
-  const db = c.env.DB;
-  const n = await loadCount(db, a.companyId, c.req.param('id'));
+/** The lines of a count, with whether stock moved at each since it was opened. */
+export async function countLinesOf(db: D1Database, companyId: string, n: any) {
   const lines = await db
     .prepare(
       `SELECT x.*, p.number AS product_number, p.name AS product_name, p.uom, l.code AS location_code, u.name AS counted_name,
@@ -988,25 +1010,88 @@ inventoryRoutes.get('/c/:company/counts/:id', async (c) => {
          FROM erp_count_lines x JOIN erp_products p ON p.company_id = x.company_id AND p.id = x.product_id JOIN erp_locations l ON l.company_id = x.company_id AND l.id = x.location_id
          LEFT JOIN users u ON u.id = x.counted_by WHERE x.company_id = ? AND x.count_id = ? ORDER BY l.code COLLATE NOCASE, p.number COLLATE NOCASE, x.lot, x.serial`,
     )
-    .bind(a.companyId, n.id)
+    .bind(companyId, n.id)
     .all<any>();
-  const list = lines.results.map((x) => ({
-    id: x.id,
-    productId: x.product_id,
-    productNumber: x.product_number,
-    productName: x.product_name,
-    uom: x.uom,
-    locationId: x.location_id,
-    locationCode: x.location_code,
-    lot: x.lot,
-    serial: x.serial,
+  return lines.results.map((x) => ({
+    id: x.id as string,
+    productId: x.product_id as string,
+    productNumber: x.product_number as string,
+    productName: x.product_name as string,
+    uom: x.uom as string,
+    locationId: x.location_id as string,
+    locationCode: x.location_code as string,
+    lot: x.lot as string,
+    serial: x.serial as string,
     expected: q6(x.expected_qty),
     counted: x.counted_qty === null ? null : q6(x.counted_qty),
     variance: x.counted_qty === null ? null : q6(x.counted_qty - x.expected_qty),
-    countedByName: x.counted_name ?? null,
+    countedByName: (x.counted_name ?? null) as string | null,
     // stock moved here since the count was opened: the variance is against the quantity when it was opened
     movedSince: n.status !== 'posted' && Math.abs(Number(x.now_on_hand ?? 0) - x.expected_qty) > 1e-9,
   }));
+}
+
+/**
+ * Records what was counted on lines of an open count (null clears a line). Each line changes only while the count is
+ * still open, so a count submitted or cancelled at the same moment keeps what it had. A serial line counts 0 or 1.
+ */
+export async function recordCounted(db: D1Database, a: CountActor, n: any, lines: { id: string; counted: number | null }[]) {
+  if (n.status !== 'open') badState(`${n.number} is ${n.status}: counts can be entered only while it is open`);
+  const t = now();
+  const res = await db.batch([
+    ...lines.map((x) =>
+      db
+        .prepare(
+          "UPDATE erp_count_lines SET counted_qty = ?, counted_by = ?, counted_at = ? WHERE company_id = ? AND count_id = ? AND id = ? AND (serial = '' OR ? IS NULL OR ? <= 1) AND EXISTS (SELECT 1 FROM erp_counts c WHERE c.company_id = ? AND c.id = ? AND c.status = 'open')",
+        )
+        .bind(x.counted, x.counted === null ? null : a.userId, x.counted === null ? null : t, a.companyId, n.id, x.id, x.counted, x.counted, a.companyId, n.id),
+    ),
+    db.prepare("UPDATE erp_counts SET updated_at = ? WHERE company_id = ? AND id = ? AND status = 'open'").bind(t, a.companyId, n.id),
+  ]);
+  if (lines.length && !res[res.length - 1].meta.changes) badState(`${n.number} is no longer open`);
+  return { changed: res.slice(0, -1).reduce((k, r) => k + (r.meta.changes ?? 0), 0) };
+}
+
+/** Submits an open count for approval, or cancels an open or submitted one; `extra` statements join the transaction. */
+export async function closeCount(db: D1Database, a: CountActor, n: any, action: 'submit' | 'cancel', extra: D1PreparedStatement[] = []) {
+  const submit = action === 'submit';
+  if (submit && n.status !== 'open') badState(`${n.number} is ${n.status}`);
+  if (!submit && n.status !== 'open' && n.status !== 'submitted') badState(`${n.number} is ${n.status}`);
+  if (submit && n.counted < n.lines) badState(`Count every line first: ${n.lines - n.counted} of ${n.lines} have no count`);
+  if (submit && !n.lines) badState('The count has no lines');
+  const t = now();
+  const res = await db.batch([
+    db
+      .prepare(`UPDATE erp_counts SET status = ?, ${submit ? 'submitted_by = ?, submitted_at = ?,' : ''} updated_at = ? WHERE company_id = ? AND id = ? AND status = ?`)
+      .bind(submit ? 'submitted' : 'cancelled', ...(submit ? [a.userId, t] : []), t, a.companyId, n.id, n.status),
+    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: submit ? 'count.submitted' : 'count.cancelled', entityType: 'count', entityId: n.id, summary: `${n.number} ${submit ? `submitted for approval with ${n.variances} variance${n.variances === 1 ? '' : 's'}` : 'cancelled'}`, at: t }),
+    ...extra,
+  ]);
+  return { changed: !!res[0].meta.changes };
+}
+
+inventoryRoutes.get('/c/:company/counts', async (c) => {
+  const a = await requireErp(c, 'inventory.view');
+  const status = c.req.query('status');
+  const rows = await c.env.DB.prepare(`${COUNT_SELECT} WHERE n.company_id = ? ${status ? 'AND n.status = ?' : ''} ORDER BY n.created_at DESC LIMIT 300`)
+    .bind(a.companyId, ...(status ? [status] : []))
+    .all<any>();
+  return c.json({ counts: rows.results.map(countDTO), can: { operate: can(a, 'inventory.operate'), approve: can(a, 'inventory.approve') } });
+});
+
+/** Opens a count: one line per stock row in the warehouse (or under one location), expected = on hand now. */
+inventoryRoutes.post('/c/:company/counts', async (c) => {
+  const a = await requireErp(c, 'inventory.operate');
+  const input = await body(c, z.object({ kind: z.enum(['stocktake', 'cycle']).default('stocktake'), warehouseId: zId, locationId: zId.nullable().optional(), productIds: z.array(zId).max(500).optional(), notes: zText(1000).optional(), dueDate: zDate.optional() }));
+  const r = await openCount(c.env.DB, a, input);
+  return c.json({ id: r.id, number: r.number }, 201);
+});
+
+inventoryRoutes.get('/c/:company/counts/:id', async (c) => {
+  const a = await requireErp(c, 'inventory.view');
+  const db = c.env.DB;
+  const n = await loadCount(db, a.companyId, c.req.param('id'));
+  const list = await countLinesOf(db, a.companyId, n);
   if (wantsCsv(c)) {
     return csvResponse(`count-${n.number}`, [['Location', 'Product', 'Name', 'Lot', 'Serial', 'Expected', 'Counted', 'Variance', 'Unit', 'Counted by'], ...list.map((x) => [x.locationCode, x.productNumber, x.productName, x.lot, x.serial, x.expected, x.counted ?? '', x.variance ?? '', x.uom, x.countedByName ?? ''])]);
   }
@@ -1055,15 +1140,7 @@ inventoryRoutes.put('/c/:company/counts/:id/counted', async (c) => {
   const n = await loadCount(db, a.companyId, c.req.param('id'));
   if (n.status !== 'open') badState(`${n.number} is ${n.status}: counts can be entered only while it is open`);
   const input = await body(c, z.object({ lines: z.array(z.object({ id: zId, counted: z.number().min(0).max(1e9).nullable() })).min(1).max(2000) }));
-  const t = now();
-  await db.batch([
-    ...input.lines.map((x) =>
-      db
-        .prepare("UPDATE erp_count_lines SET counted_qty = ?, counted_by = ?, counted_at = ? WHERE company_id = ? AND count_id = ? AND id = ? AND (serial = '' OR ? IS NULL OR ? <= 1)")
-        .bind(x.counted, x.counted === null ? null : a.userId, x.counted === null ? null : t, a.companyId, n.id, x.id, x.counted, x.counted),
-    ),
-    db.prepare('UPDATE erp_counts SET updated_at = ? WHERE company_id = ? AND id = ?').bind(t, a.companyId, n.id),
-  ]);
+  await recordCounted(db, a, n, input.lines);
   return c.json({ ok: true });
 });
 
@@ -1071,18 +1148,7 @@ inventoryRoutes.post('/c/:company/counts/:id/:action{submit|cancel}', async (c) 
   const a = await requireErp(c, 'inventory.operate');
   const db = c.env.DB;
   const n = await loadCount(db, a.companyId, c.req.param('id'));
-  const submit = c.req.param('action') === 'submit';
-  if (submit && n.status !== 'open') badState(`${n.number} is ${n.status}`);
-  if (!submit && n.status !== 'open' && n.status !== 'submitted') badState(`${n.number} is ${n.status}`);
-  if (submit && n.counted < n.lines) badState(`Count every line first: ${n.lines - n.counted} of ${n.lines} have no count`);
-  if (submit && !n.lines) badState('The count has no lines');
-  const t = now();
-  await db.batch([
-    db
-      .prepare(`UPDATE erp_counts SET status = ?, ${submit ? 'submitted_by = ?, submitted_at = ?,' : ''} updated_at = ? WHERE company_id = ? AND id = ? AND status = ?`)
-      .bind(submit ? 'submitted' : 'cancelled', ...(submit ? [a.userId, t] : []), t, a.companyId, n.id, n.status),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: submit ? 'count.submitted' : 'count.cancelled', entityType: 'count', entityId: n.id, summary: `${n.number} ${submit ? `submitted for approval with ${n.variances} variance${n.variances === 1 ? '' : 's'}` : 'cancelled'}`, at: t }),
-  ]);
+  await closeCount(db, a, n, c.req.param('action') === 'submit' ? 'submit' : 'cancel');
   return c.json({ ok: true });
 });
 
