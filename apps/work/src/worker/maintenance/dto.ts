@@ -29,6 +29,9 @@ export function requestDTO(r: any) {
     closedAt: r.closed_at,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
+    // The field release: withdrawn by the person who raised it (the request is then closed).
+    withdrawnAt: r.withdrawn_at ?? null,
+    withdrawReason: r.withdraw_reason ?? '',
   };
 }
 

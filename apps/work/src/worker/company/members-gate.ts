@@ -87,6 +87,12 @@ async function madeByScope(db: D1Database, a: MemberAccess, ctx: RequestContext,
   return !!row.owner && people.includes(row.owner);
 }
 
+/**
+ * Withdrawing one's own maintenance request (POST /maintenance/c/<id>/requests/<id>/withdraw): whoever may raise a
+ * request may take it back, read-only members included. The route lets only the person who raised it do so.
+ */
+const maintenanceWithdrawal = (segments: string[]) => segments[0] === 'maintenance' && segments[3] === 'requests' && segments.length === 6 && segments[5] === 'withdraw';
+
 const isExportAnswer = (res: Response) => {
   const type = (res.headers.get('Content-Type') ?? '').toLowerCase();
   return type.includes('text/csv') || type.includes('spreadsheetml') || type.includes('application/vnd.ms-excel');
@@ -126,7 +132,8 @@ export const memberAccessGate: MiddlewareHandler<AppEnv> = async (c, next) => {
     const safety =
       method === 'POST' &&
       ((segments[0] === 'whs' && (segments[3] === 'hazards' || segments[3] === 'incidents') && segments.length === 4) ||
-        (segments[0] === 'maintenance' && segments[3] === 'requests' && segments.length === 4));
+        (segments[0] === 'maintenance' && segments[3] === 'requests' && segments.length === 4) ||
+        maintenanceWithdrawal(segments));
     if (!safety) {
       if (!roleAllows(a.role, 'create_edit')) throw new HttpError(403, 'Your company role can view but not change anything.', { code: 'READ_ONLY' });
       if ((method === 'DELETE' || DELETE_LIKE.has(last)) && !roleAllows(a.role, 'delete')) throw new HttpError(403, 'Your company role cannot delete records.', { code: 'ROLE_FORBIDS', capability: 'delete' });

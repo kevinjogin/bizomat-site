@@ -17,6 +17,9 @@ import { pmCancelStmts, pmCompleteStmts, pmReopenStmts } from './pm';
 import { priceLabourStmt } from './routes-setup';
 import { workOrderExtras } from './routes-parts';
 import { inSiteSql } from './m2util';
+// The field release, stream A: the list's extra filters and its CSV file.
+import { csvResponse } from '../erp/util';
+import { CSV_MAX, workOrderCsvRows, workOrderListFilters } from './lists';
 import {
   JOB_TYPES,
   LOCKED,
@@ -44,15 +47,18 @@ import {
 
 export const workRoutes = new Hono<AppEnv>();
 
-/** The work order columns with asset, people, department, actual minutes and whether the caller's timer runs (bind the caller's id first). */
-export const WO_SELECT = `SELECT w.*, a.number AS asset_number, a.name AS asset_name, u.name AS assignee_name, d.name AS department_name, cu.name AS completer_name,
-    (SELECT COALESCE(SUM(l.minutes), 0) FROM mt_labour l WHERE l.work_order_id = w.id AND l.ended_at IS NOT NULL) AS actual_minutes,
-    (SELECT 1 FROM mt_labour l2 WHERE l2.work_order_id = w.id AND l2.user_id = ? AND l2.ended_at IS NULL) AS my_timer
-  FROM mt_work_orders w
+/** The work order columns with asset, people, department, actual minutes and whether the caller's timer runs (one ? : the caller's id). */
+export const WO_COLUMNS = `w.*, a.number AS asset_number, a.name AS asset_name, u.name AS assignee_name, d.name AS department_name, cu.name AS completer_name,
+    (SELECT COALESCE(SUM(l.minutes), 0) FROM mt_labour l WHERE l.company_id = w.company_id AND l.work_order_id = w.id AND l.ended_at IS NOT NULL) AS actual_minutes,
+    (SELECT 1 FROM mt_labour l2 WHERE l2.company_id = w.company_id AND l2.work_order_id = w.id AND l2.user_id = ? AND l2.ended_at IS NULL) AS my_timer`;
+/** The tables of WO_COLUMNS: the work order with its asset, technician, department and who completed it. */
+export const WO_FROM = `FROM mt_work_orders w
   JOIN mt_assets a ON a.company_id = w.company_id AND a.id = w.asset_id
   LEFT JOIN users u ON u.id = w.assigned_to
   LEFT JOIN co_departments d ON d.id = w.department_id
   LEFT JOIN users cu ON cu.id = w.completed_by`;
+/** The work order columns with asset, people, department, actual minutes and whether the caller's timer runs (bind the caller's id first). */
+export const WO_SELECT = `SELECT ${WO_COLUMNS} ${WO_FROM}`;
 
 /** The work order if the caller may see it, else 404 (also for another company's). */
 export async function loadWorkOrder(db: D1Database, a: MtAccess, id: string) {
@@ -191,6 +197,7 @@ export async function workOrderStatements(db: D1Database, a: MtAccess, input: Wo
 
 const SORTS: Record<string, string> = {
   due: "COALESCE(w.due_finish, '9999-12-31')",
+  dueStart: "COALESCE(w.due_start, '9999-12-31')",
   finish: 'COALESCE(w.completed_at, 0)',
   number: 'w.number COLLATE NOCASE',
   priority: PRIORITY_RANK.replace('{col}', 'w.priority'),
@@ -199,6 +206,15 @@ const SORTS: Record<string, string> = {
   created: 'w.created_at',
   status: 'w.status',
 };
+
+/**
+ * The list's rows: WO_SELECT's columns and tables, plus who raised the work order and its asset's site (for the CSV
+ * file). Bind the caller's id first, as for WO_SELECT.
+ */
+const WO_LIST_SELECT = `SELECT ${WO_COLUMNS}, cr.name AS creator_name, lst.code AS site_code, lst.name AS site_name ${WO_FROM}
+  LEFT JOIN users cr ON cr.id = w.created_by
+  LEFT JOIN mt_asset_sites lxs ON lxs.company_id = a.company_id AND lxs.asset_id = a.id
+  LEFT JOIN mt_sites lst ON lst.company_id = lxs.company_id AND lst.id = lxs.site_id`;
 
 workRoutes.get('/c/:company/work-orders', async (c) => {
   const a = await requireMt(c);
@@ -263,17 +279,27 @@ workRoutes.get('/c/:company/work-orders', async (c) => {
     where.push(inSiteSql('a'));
     args.push(qp('siteId').slice(0, 64));
   }
+  // The field release: dates raised, completed and due start, due today or this week, unassigned, department, raised by
+  // and contractor (lists.ts).
+  const f = workOrderListFilters(qp, today);
+  where.push(...f.where);
+  args.push(...f.args);
   const sort = SORTS[qp('sort')] ?? SORTS.due;
   const dir = qp('dir') === 'desc' ? 'DESC' : 'ASC';
+  if (qp('format') === 'csv') {
+    const all = await c.env.DB.prepare(`${WO_LIST_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} ${dir}, w.number ${dir} LIMIT ${CSV_MAX}`).bind(a.userId, ...args).all<any>();
+    return csvResponse(`maintenance-work-orders-${today}`, workOrderCsvRows(all.results, f.tz));
+  }
   const limit = Math.min(Math.max(Number(qp('limit')) || 100, 1), 500);
   const offset = Math.max(Number(qp('offset')) || 0, 0);
-  const sql = `${WO_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} ${dir}, w.number ${dir} LIMIT ? OFFSET ?`;
+  const sql = `${WO_LIST_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} ${dir}, w.number ${dir} LIMIT ? OFFSET ?`;
   const [rows, total, trades] = await c.env.DB.batch([
     c.env.DB.prepare(sql).bind(a.userId, ...args, limit, offset),
     c.env.DB.prepare(`SELECT COUNT(*) AS n FROM mt_work_orders w JOIN mt_assets a ON a.company_id = w.company_id AND a.id = w.asset_id WHERE ${where.join(' AND ')}`).bind(...args),
-    c.env.DB.prepare("SELECT DISTINCT trade FROM mt_work_orders WHERE company_id = ? AND trade <> '' ORDER BY trade COLLATE NOCASE LIMIT 100").bind(a.companyId),
+    // The company's trades and the trades written on its work orders, once each whatever the letter case.
+    c.env.DB.prepare("SELECT MIN(t) AS trade FROM (SELECT name AS t FROM mt_trades WHERE company_id = ?1 AND archived_at IS NULL UNION ALL SELECT trade FROM mt_work_orders WHERE company_id = ?1 AND trade <> '') GROUP BY lower(t) ORDER BY lower(t) LIMIT 100").bind(a.companyId),
   ]);
-  return c.json({ workOrders: (rows.results as any[]).map(workOrderDTO), total: (total.results[0] as any)?.n ?? 0, trades: (trades.results as any[]).map((r) => r.trade), today });
+  return c.json({ workOrders: (rows.results as any[]).map(workOrderDTO), total: (total.results[0] as any)?.n ?? 0, trades: (trades.results as any[]).map((r) => r.trade), today, weekEnd: f.weekEnd, limit, offset });
 });
 
 // ------------------------------------------------------------------ create, read, change
