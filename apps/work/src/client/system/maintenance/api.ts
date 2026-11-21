@@ -107,6 +107,8 @@ export interface MtFile {
   mime: string;
   size: number;
   isImage: boolean;
+  /** The picture of a work order's sign-off, the current one or an earlier one: kept on record, never shown as a photo. */
+  signature?: boolean;
   uploadedBy: string | null;
   uploadedByName: string | null;
   createdAt: number;
@@ -197,10 +199,12 @@ export interface WorkOrder {
   actualMinutes: number | null;
   timerRunning: boolean;
   createdBy?: string | null;
-  /** The sign-off: a typed name and a picture drawn on screen, not a verified electronic signature. */
+  /** The sign-off: a typed name and a picture drawn on screen, or the typed name alone; not a verified electronic signature. */
   signedByName: string | null;
   signedByRole: string;
   signedAt: number | null;
+  /** Signed with the typed name alone (no picture). */
+  signedTyped?: boolean;
   signatureFileId: string | null;
   signatureUrl: string | null;
   /** Made and completed in one step for work already done. */

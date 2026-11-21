@@ -29,7 +29,7 @@ import { priceLabourStmt } from './routes-setup';
 import { roundForCard } from './routes-rounds';
 import { JOB_TYPES, PRIORITY, commentsOf, eventStmt, filesOf, validDate, zId, zText } from './util';
 import { DAY_MS, addDays, doneStmt, utcDate } from './m2util';
-import { SIGN_OFF_SET, discardSignature, signOffValues, signatureBytes, signatureFileStmts, signatureSchema, storeSignature, workSettings, type PreparedSignature } from './signoff';
+import { SIGN_OFF_SET, checkSignOff, discardSignature, signOffAfter, signOffValues, signatureFileStmts, signatureSchema, signedOffText, storeSignOff, workSettings } from './signoff';
 
 export const jobRoutes = new Hono<AppEnv>();
 
@@ -58,7 +58,8 @@ jobRoutes.get('/c/:company/work-orders/:id/job-card', async (c) => {
   const asset = (assetRows.results[0] ?? {}) as any;
   const extras = await workOrderExtras(db, a, w);
   const files = await filesOf(db, a.companyId, 'work_order_id', w.id);
-  const signed = (w.status === 'completed' || w.status === 'closed') && !!w.signed_at && !!w.signature_file_id;
+  // A sign-off is a drawn signature (a picture) or a typed one (the name alone, no picture).
+  const signed = (w.status === 'completed' || w.status === 'closed') && !!w.signed_at && (!!w.signature_file_id || !!w.signed_by_name);
   return c.json({
     company: { id: a.companyId, name: a.companyName },
     printedAt: now(),
@@ -102,10 +103,13 @@ jobRoutes.get('/c/:company/work-orders/:id/job-card', async (c) => {
     downtime: extras.downtime ? { startedAt: extras.downtime.startedAt, endedAt: extras.downtime.endedAt, minutes: extras.downtime.minutes, cause: extras.downtime.cause } : null,
     notes: (await commentsOf(db, a.companyId, 'work_order_id', w.id)).map((n) => ({ authorName: n.authorName, at: n.at, body: n.body })),
     files: {
-      images: files.filter((f) => f.isImage && f.id !== w.signature_file_id).map((f) => ({ id: f.id, name: f.name, url: f.url })),
-      documents: files.filter((f) => !f.isImage).map((f) => ({ id: f.id, name: f.name, mime: f.mime, size: f.size })),
+      // Sign-off pictures, this one and any earlier one, are never printed as photos.
+      images: files.filter((f) => f.isImage && !f.signature && f.id !== w.signature_file_id).map((f) => ({ id: f.id, name: f.name, url: f.url })),
+      documents: files.filter((f) => !f.isImage && !f.signature).map((f) => ({ id: f.id, name: f.name, mime: f.mime, size: f.size })),
     },
-    signOff: signed ? { name: w.signed_by_name, role: w.signed_by_role ?? '', at: w.signed_at, url: `/api/maintenance/c/${a.companyId}/files/${w.signature_file_id}` } : null,
+    signOff: signed
+      ? { name: w.signed_by_name, role: w.signed_by_role ?? '', at: w.signed_at, typed: !w.signature_file_id, url: w.signature_file_id ? `/api/maintenance/c/${a.companyId}/files/${w.signature_file_id}` : null }
+      : null,
   });
 });
 
@@ -149,7 +153,7 @@ jobRoutes.post('/c/:company/work-orders/done', async (c) => {
   const dt = input.downtime;
   if (dt && (dt.endedAt < dt.startedAt || dt.endedAt > t0 + 5 * 60_000 || dt.startedAt < t0 - 400 * DAY_MS)) throw new HttpError(400, 'Check the downtime: it must have ended, and cannot end before it starts or in the future');
   // The sign-off is checked before a work order number is used; the picture is stored last, just before the transaction.
-  const bytes = signatureBytes(input.signature, ws);
+  const checked = checkSignOff(input.signature, ws);
   const made = await workOrderStatements(db, a, {
     assetId: input.assetId,
     description: input.description,
@@ -171,7 +175,7 @@ jobRoutes.post('/c/:company/work-orders/done', async (c) => {
   // The downtime goes in as PUT /downtime records it (routes-parts.ts); its times were checked above. Read before the
   // picture is stored, so nothing outside the transaction is written before the last read.
   const downtime = dt ? await downtimeStmts(db, a, { id: made.id, asset_id: input.assetId }, dt, t) : [];
-  const sig: PreparedSignature | null = bytes && input.signature ? await storeSignature(c, a, { id: made.id, number: made.number }, input.signature, bytes) : null;
+  const sig = await storeSignOff(c, a, { id: made.id, number: made.number }, checked);
   const stmts: D1PreparedStatement[] = [
     ...(input.requestKey ? [doneStmt(db, a.companyId, `wo-done:${a.userId}:${input.requestKey}`, t)] : []),
     ...made.stmts,
@@ -197,8 +201,8 @@ jobRoutes.post('/c/:company/work-orders/done', async (c) => {
       action: 'work_order.recorded_done',
       assetId: input.assetId,
       workOrderId: made.id,
-      summary: `Work order ${made.number} recorded as done on ${input.doneDate}${minutes ? `: ${minutes} min` : ''}${sig ? `, signed off by ${sig.name}` : ''}`,
-      after: { doneDate: input.doneDate, doneBy, minutes, notes: input.notes, ...(sig ? { signedBy: sig.name, signedByRole: sig.role } : {}) },
+      summary: `Work order ${made.number} recorded as done on ${input.doneDate}${minutes ? `: ${minutes} min` : ''}${signedOffText(sig)}`,
+      after: { doneDate: input.doneDate, doneBy, minutes, ...signOffAfter(sig), notes: input.notes },
       at: t,
     }),
   );

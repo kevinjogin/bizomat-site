@@ -12,7 +12,7 @@ import { useToast } from '../../components/ui/overlays';
 import { JOB_TYPE_LABELS, PRIORITY_LABELS, localToMs, localToday, mtPage, mtPath, type MtMe, type Priority, type WorkOrder } from './api';
 import { Section, options } from './common';
 import { AssetPicker, DepartmentField, PersonSelect, useAssetLabel, type PickedAsset } from './pickers';
-import { SignOffFields, emptySignOff, signOffProblem, signatureBody, signatureRequired, type SignOffValue } from './SignOff';
+import { SignOffFields, emptySignOff, showSignOffProblem, signOffProblem, signatureBody, signatureRequired, type SignOffValue } from './SignOff';
 
 export function RecordWorkPage({ companyId, me }: { companyId: string; me: MtMe }) {
   usePageTitle('Record work done');
@@ -128,7 +128,7 @@ export function RecordWorkPage({ companyId, me }: { companyId: string; me: MtMe 
           <textarea id="mtd-notes" className="textarea" rows={4} required maxLength={10000} value={form.notes} onChange={f('notes')} />
         </div>
         <SignOffFields me={me} value={sign} onChange={setSign} idPrefix="mtd-sign" />
-        {problem && (sign.name.trim() || sign.image || me.requireSignature) ? <p className="small mt-sign-problem" role="status">{problem}</p> : null}
+        {showSignOffProblem(sign, me.requireSignature) ? <p className="small mt-sign-problem" role="status">{problem}</p> : null}
       </section>
       <div className="row wrap">
         <button className="btn primary lg" disabled={busy || !asset || !form.description.trim() || !form.notes.trim() || !form.doneDate || total > 1440 || !!problem || !!downProblem}>{busy ? 'Recording…' : 'Record the work'}</button>
@@ -158,7 +158,7 @@ export function WorkOrderSettingsSection({ companyId, me }: { companyId: string;
         <Switch checked={me.requireSignature} disabled={!me.can.roles} onChange={(v) => void save({ requireSignature: v })} label="Completion needs a signature" />
         <span className="grow">Completion needs a signature</span>
       </div>
-      <p className="muted small">{me.requireSignature ? 'Completing a work order asks for the name and signature of the person signing.' : 'A signature is optional when a work order is completed.'} The signature is a picture drawn on screen, not a verified electronic signature.</p>
+      <p className="muted small">{me.requireSignature ? 'Completing a work order asks for the name and signature of the person signing. Someone who cannot draw on the screen signs with the typed name instead.' : 'A signature is optional when a work order is completed.'} The signature is a picture drawn on screen, or a typed name, not a verified electronic signature.</p>
       <div className="row wrap">
         <Switch checked={me.techniciansRecordWork} disabled={!me.can.roles} onChange={(v) => void save({ techniciansRecordWork: v })} label="Technicians can record work already done" />
         <span className="grow">Technicians can record work already done</span>

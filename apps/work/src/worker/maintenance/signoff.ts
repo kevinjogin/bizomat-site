@@ -2,11 +2,14 @@
 // (migration 0040).
 //
 // A sign-off is the name the person signing typed, their role (optional) and a picture of the signature drawn on the
-// screen. It records who signed on that screen. It is not a verified electronic signature: nothing here, on the screens
-// or on the job card may call it one. The picture is checked as a PNG of a sensible size (its header only; it is not
-// decoded), written to the file store before the transaction (the file store cannot join one), and recorded as an
-// mt_files row of the work order by a guarded INSERT in the same transaction that completes it. When that transaction
-// fails or loses a race with another completion, the stored picture is deleted again (discardSignature).
+// screen. Someone who cannot draw on the screen (keyboard or screen reader users, for example) signs with the typed name
+// alone instead: a typed sign-off, recorded as one, with no picture. Either records who signed on that screen. Neither is
+// a verified electronic signature: nothing here, on the screens or on the job card may call one that. The picture is
+// checked as a PNG of a sensible size (its header only; it is not decoded), written to the file store before the
+// transaction (the file store cannot join one), under a key of its own (signature-<id>, never given to an upload, so a
+// sign-off picture is told apart from photos for good), and recorded as an mt_files row of the work order by a guarded
+// INSERT in the same transaction that completes it. When that transaction fails or loses a race with another
+// completion, the stored picture is deleted again (discardSignature).
 //
 // Settings, per company (mt_settings, both off until a maintenance administrator switches one on):
 //   require_signature        completing a work order needs a sign-off (400 SIGNATURE_REQUIRED without one);
@@ -18,7 +21,7 @@ import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, newId } from '../lib/util';
 import { isManager, type MtAccess } from './access';
-import { zText } from './util';
+import { SIGNATURE_KEY_PART, zText } from './util';
 
 export interface WorkSettings {
   requireSignature: boolean;
@@ -34,23 +37,30 @@ export async function workSettings(db: D1Database, companyId: string): Promise<W
 /** Supervisors and administrators always record work already done; technicians only when the company allows it. */
 export const canRecordWork = (a: Pick<MtAccess, 'role'>, s: WorkSettings) => isManager(a) || (a.role === 'technician' && s.techniciansRecordWork);
 
-export const signatureSchema = z.object({
-  name: zText(120).min(1, 'Type the name of the person signing'),
-  role: zText(120).optional(),
-  image: z.string().max(400_000, 'The signature picture is too large: clear the pad and sign again'),
-});
+export const signatureSchema = z
+  .object({
+    name: zText(120).min(1, 'Type the name of the person signing'),
+    role: zText(120).optional(),
+    image: z.string().max(400_000, 'The signature picture is too large: clear the pad and sign again').optional(),
+    // Signed with the typed name alone, by someone who cannot draw a signature on the screen: no picture is kept.
+    typed: z.boolean().optional(),
+  })
+  .refine((s) => (s.typed ? !s.image : !!s.image), { message: 'Draw the signature, or sign with the typed name (not both)', path: ['image'] });
 export type SignatureInput = z.infer<typeof signatureSchema>;
 
 /** Completing a work order: what was done, and an optional sign-off. */
 export const completeSchema = z.object({ notes: zText(10000).min(1, 'Write what was done'), signature: signatureSchema.optional() });
 
 export interface PreparedSignature {
-  fileId: string;
-  key: string;
+  /** The picture's file and its key in the file store; null for a typed sign-off. */
+  fileId: string | null;
+  key: string | null;
   size: number;
   name: string;
   role: string;
   fileName: string;
+  /** Signed with the typed name alone (no picture). */
+  typed: boolean;
 }
 
 const PREFIX = 'data:image/png;base64,';
@@ -78,40 +88,57 @@ export function decodeSignature(image: string): Uint8Array {
   return bytes;
 }
 
-/**
- * The picture's bytes when a sign-off is given, null without one; 400 SIGNATURE_REQUIRED when the company asks for one
- * and none is given, 400 SIGNATURE_INVALID when the picture cannot be read. Nothing is stored.
- */
-export function signatureBytes(s: SignatureInput | undefined, settings: WorkSettings): Uint8Array | null {
-  if (!s) {
-    if (settings.requireSignature) throw new HttpError(400, 'This company asks for a signature when work is completed. The person signing types their name and signs.', { code: 'SIGNATURE_REQUIRED' });
-    return null;
-  }
-  return decodeSignature(s.image);
+/** A sign-off checked: the picture's bytes, or null when it is signed with the typed name. */
+export interface CheckedSignOff {
+  input: SignatureInput;
+  bytes: Uint8Array | null;
 }
 
-/** Writes the picture to the file store, under the work order's own files. */
-export async function storeSignature(c: Context<AppEnv>, a: MtAccess, w: { id: string; number: string }, s: SignatureInput, bytes: Uint8Array): Promise<PreparedSignature> {
+/**
+ * The sign-off checked, null without one; 400 SIGNATURE_REQUIRED when the company asks for one and none is given (a
+ * typed sign-off counts), 400 SIGNATURE_INVALID when the picture cannot be read. Nothing is stored.
+ */
+export function checkSignOff(s: SignatureInput | undefined, settings: WorkSettings): CheckedSignOff | null {
+  if (!s) {
+    if (settings.requireSignature) {
+      throw new HttpError(400, 'This company asks for a sign-off when work is completed. The person signing types their name and draws a signature, or signs with the typed name.', { code: 'SIGNATURE_REQUIRED' });
+    }
+    return null;
+  }
+  return { input: s, bytes: s.typed ? null : decodeSignature(s.image ?? '') };
+}
+
+/** Writes the picture, if any, to the file store under the work order's own files (a typed sign-off stores nothing). */
+export async function storeSignOff(c: Context<AppEnv>, a: MtAccess, w: { id: string; number: string }, checked: CheckedSignOff | null): Promise<PreparedSignature | null> {
+  if (!checked) return null;
+  const { input: s, bytes } = checked;
+  if (!bytes) return { fileId: null, key: null, size: 0, name: s.name, role: s.role ?? '', fileName: '', typed: true };
   const fileId = newId();
-  const key = `mt/${a.companyId}/work_order/${w.id}/${fileId}`;
+  const key = `mt/${a.companyId}/work_order/${w.id}/${SIGNATURE_KEY_PART}${fileId}`;
   await c.env.FILES.put(key, bytes, { httpMetadata: { contentType: 'image/png' }, customMetadata: { uploader: a.userId, purpose: 'signature' } });
-  return { fileId, key, size: bytes.byteLength, name: s.name, role: s.role ?? '', fileName: `signature-${w.number}.png` };
+  return { fileId, key, size: bytes.byteLength, name: s.name, role: s.role ?? '', fileName: `signature-${w.number}.png`, typed: false };
 }
 
 /** The checks, then the picture stored: null without a sign-off. Call it last before the transaction. */
 export async function prepareSignature(c: Context<AppEnv>, a: MtAccess, w: { id: string; number: string }, s: SignatureInput | undefined, settings?: WorkSettings): Promise<PreparedSignature | null> {
-  const bytes = signatureBytes(s, settings ?? (await workSettings(c.env.DB, a.companyId)));
-  return bytes && s ? storeSignature(c, a, w, s, bytes) : null;
+  return storeSignOff(c, a, w, checkSignOff(s, settings ?? (await workSettings(c.env.DB, a.companyId))));
 }
 
 /** The sign-off columns a completion writes (every completion writes them, so a new one replaces an earlier one). */
 export const SIGN_OFF_SET = 'signed_by_name = ?, signed_by_role = ?, signed_at = ?, signature_file_id = ?';
 
+/** A typed sign-off is a name and a time with no picture. */
 export const signOffValues = (sig: PreparedSignature | null, t: number): unknown[] => (sig ? [sig.name, sig.role, t, sig.fileId] : [null, '', null, null]);
+
+/** The words the history adds for the sign-off, saying when it was signed with a typed name. */
+export const signedOffText = (sig: PreparedSignature | null) => (!sig ? '' : sig.typed ? `, signed off by ${sig.name} with a typed name (no signature drawn)` : `, signed off by ${sig.name}`);
+
+/** What the history line keeps of the sign-off. */
+export const signOffAfter = (sig: PreparedSignature | null) => (sig ? { signedBy: sig.name, signedByRole: sig.role, ...(sig.typed ? { signedTyped: true } : {}) } : {});
 
 /** The picture as a file of the work order, written only when this completion is the one that named it. */
 export function signatureFileStmts(db: D1Database, a: MtAccess, w: { id: string }, sig: PreparedSignature | null, t: number): D1PreparedStatement[] {
-  if (!sig) return [];
+  if (!sig?.fileId) return [];
   return [
     db
       .prepare("INSERT INTO mt_files (id, company_id, work_order_id, name, mime, size, r2_key, uploaded_by, created_at) SELECT ?, ?, ?, ?, 'image/png', ?, ?, ?, ? WHERE EXISTS (SELECT 1 FROM mt_work_orders WHERE company_id = ? AND id = ? AND signature_file_id = ?)")
@@ -121,9 +148,10 @@ export function signatureFileStmts(db: D1Database, a: MtAccess, w: { id: string 
 
 /** Deletes a stored picture that no work order names (its transaction failed or lost). Never throws. */
 export function discardSignature(c: Context<AppEnv>, sig: PreparedSignature | null) {
-  if (!sig) return;
+  if (!sig?.key) return;
+  const key = sig.key;
   try {
-    const p = c.env.FILES.delete(sig.key).catch(() => undefined);
+    const p = c.env.FILES.delete(key).catch(() => undefined);
     try {
       c.executionCtx.waitUntil(p);
     } catch {

@@ -74,7 +74,8 @@ export interface JobCard {
   downtime: { startedAt: number; endedAt: number | null; minutes: number | null; cause: string } | null;
   notes: { authorName: string | null; at: number; body: string }[];
   files: { images: { id: string; name: string; url: string }[]; documents: { id: string; name: string; mime: string; size: number }[] };
-  signOff: { name: string; role: string; at: number; url: string } | null;
+  /** A drawn signature (url of its picture) or one signed with the typed name alone (typed, no url). */
+  signOff: { name: string; role: string; at: number; typed: boolean; url: string | null } | null;
 }
 
 const INSPECTION_STATUS: Record<string, string> = { open: 'Not done yet', passed: 'Passed', failed: 'Failed' };
@@ -395,7 +396,12 @@ function JobCardView({ card, companyId }: { card: JobCard; companyId: string }) 
 
         <section aria-labelledby="jc-sign">
           <h2 id="jc-sign">Sign-off</h2>
-          {card.signOff ? (
+          {card.signOff && !card.signOff.url ? (
+            <p className="small">
+              Signed with a typed name by <strong>{card.signOff.name}</strong>
+              {card.signOff.role ? `, ${card.signOff.role}` : ''}, {dateTimeText(card.signOff.at)}. No signature was drawn. Not a verified electronic signature.
+            </p>
+          ) : card.signOff?.url ? (
             <figure className="mt-signoff">
               <img src={appUrl(card.signOff.url)} alt={`Signature of ${card.signOff.name}`} />
               <figcaption className="small">

@@ -404,8 +404,9 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
   const est = d.totals.estimatedMinutes;
   const actual = d.totals.actualMinutes;
   const extras = { companyId, me, woId: w.id, assetId: w.assetId, d, canWork: d.can.work, seeCosts: !!d.can.seeCosts, act };
-  // The sign-off's picture shows under Sign-off, not among the files, while the work order is completed or closed.
-  const signedOff = (w.status === 'completed' || w.status === 'closed') && !!w.signatureFileId;
+  // Sign-off pictures, the current one and any earlier one, are never shown among the photos: the current one shows
+  // under Sign-off, and each stays on record with the work order (its history names who signed).
+  const photosAndDocs = d.files.filter((f) => !f.signature && f.id !== w.signatureFileId);
   return (
     <div className="stack">
       <div className="mt-head">
@@ -564,7 +565,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
           <DowntimeSection key={`dt-${d.downtime?.startedAt ?? 0}-${d.downtime?.endedAt ?? 0}`} {...extras} />
           <ReadingsSection {...extras} />
           <Section title="Photos and documents" actions={d.can.work ? <UploadButton companyId={companyId} target={{ workOrderId: w.id }} onDone={refresh} /> : null}>
-            <FileList files={signedOff ? d.files.filter((f) => f.id !== w.signatureFileId) : d.files} canRemove={(f) => d.can.work && f.id !== w.signatureFileId && (f.uploadedBy === me.user.id || me.can.manageWork)} onRemove={(f) => act(() => del(mtPath(companyId, `/files/${f.id}`)), 'File removed')} />
+            <FileList files={photosAndDocs} canRemove={(f) => d.can.work && (f.uploadedBy === me.user.id || me.can.manageWork)} onRemove={(f) => act(() => del(mtPath(companyId, `/files/${f.id}`)), 'File removed')} />
           </Section>
           <Section title="Notes">
             <Comments comments={d.comments} canAdd={d.can.work} onAdd={async (body) => { await post(`${base}/comments`, { body }); await refresh(); }} />
