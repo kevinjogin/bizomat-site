@@ -298,8 +298,10 @@ and the four work streams' designs). Tests: `apps/work/test/maintenance-A.test.t
   the recorded answers, labour, downtime, notes, photos inline (other files by name) and the sign-off. It never shows costs
   or rates. There is no server PDF: the browser's print saves one.
 - **Sign-off:** completing may carry a typed name, an optional role and a signature drawn on screen (a PNG checked for size
-  and format, stored as a file of the work order). Required only when a maintenance administrator switches on "Completion
-  needs a signature". It records who signed on screen; it is not a verified electronic signature.
+  and format, stored as a file of the work order), or, for someone who cannot draw on the screen (a keyboard or a screen
+  reader, for example), the typed name alone, recorded as a typed sign-off. Required only when a maintenance administrator
+  switches on "Completion needs a signature" (a typed sign-off counts). An earlier picture stays on record after a reopen
+  but never shows as a photo. It records who signed on screen; it is not a verified electronic signature.
 - **Work recorded after it was done:** supervisors and administrators (and technicians, when "Technicians can record work
   already done" is on) make and complete a work order in one step with the date done, time, downtime and notes. It counts
   in the reports like any completed work order. No parts are issued in that step.
