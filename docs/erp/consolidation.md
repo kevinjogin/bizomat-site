@@ -32,7 +32,9 @@ duties), then **Make the invoice and the bill**:
 - the amount is in the seller's currency; the bill is converted at the rate on the transaction's date when the buyer's
   workspace keeps another currency, and its notes say at which rate;
 - the Finance contact that stands for each entity is found (by a remembered link or by name) or made, and remembered in
-  `erp_ic_contacts`;
+  `erp_ic_contacts`: one contact per entity and workspace. When trade goes the other way it becomes a customer and
+  supplier, and when it was archived it is restored, never replaced, so what was posted against it is still eliminated.
+  Either change needs the person's Finance right to change that contact and is written to the workspace's audit log;
 - the person needs a Finance role that may create invoices in the seller's workspace and bills in the buyer's. Both
   documents stay drafts: each workspace's own Finance roles check and approve them.
 
