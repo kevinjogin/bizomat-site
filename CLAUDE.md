@@ -265,8 +265,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `calibration`, `environment`, `fleet`, `industry`), **on by default because the owner asked for them to be published for
   testing** (20 Nov 2026); a platform admin switches any off. Payroll is **not certified payroll**: it uses the rates the
   company sets, has no statutory tax tables, makes no payment and reports nothing to any tax authority; never claim
-  otherwise. Depreciation, revenue schedules and pay runs are **not** posted to Finance's ledger; consolidation and the
-  supplier portal are planned. Healthcare is administration only: no clinical or patient records. Released 20 Nov 2026
+  otherwise. Depreciation, revenue schedules, pay runs and cost allocations reach Finance's ledger only through batch 2's
+  posting service (below); disposals are not posted. Healthcare is administration only: no clinical or patient records. Released 20 Nov 2026
   (kevinjogin/bizomat-site#111, deploy run 51, image d62af2b-run51, migration 0038 applied at start-up) after the
   staging walk (`infrastructure/staging/verify.mjs`, every flag off) passed with the new modules in it.
   **Product Management analysis** (owner, 20 Nov 2026: Product Management "like Phocas", a functional reference only, no
@@ -278,6 +278,24 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   lines and the stock ledger (`apps/work/src/worker/erp/analysis.ts`). Returns are not deducted; budgets, forecasts,
   scheduled subscriptions and alerts are planned: never present them as working. Released 20 Nov 2026
   (kevinjogin/bizomat-site#115, deploy run 54).
+  **ERP batch 2** (owner, 20 Nov 2026: "Continue with the next batch, in priority order"; migration 0041; status in
+  `docs/erp/STATUS.md`): **postings to Finance's ledger** (`docs/erp/postings.md`, `src/worker/erp/objects/postings.ts`):
+  monthly depreciation, approved pay runs, earned revenue (and once, invoiced revenue to deferred) and cost allocations
+  become posted journals through Finance's own `validateJournal` and `journalStmts`, into the accounts each company
+  chooses on the module's Finance postings tab (suggested from its chart, saved by an ERP administrator or finance
+  controller), once per record and month (`erp_integration_events`), locked months on the first open day, a Finance role
+  that posts journals required, reversible from the ERP or in Finance; **consolidation and intercompany**
+  (`docs/erp/consolidation.md`): legal entities name their Finance workspaces (another company's only where the person is
+  its owner or administrator), intercompany sales approved by someone else make a draft invoice and a draft bill at the
+  company's rate, one remembered contact per entity and workspace, and the consolidated profit and loss and balance sheet
+  at closing rates with the eliminations (no translation reserve, no minority interest); records in another currency
+  post at the company's rates, never converted without one; **custom fields** on every kind of record of the modules
+  framework (choices keep their keys); **price lists on sales orders** (one rule with the price check, each line says
+  where its price came from); **OEE**, **replenishment** to maximum levels, **putaway** suggestions. **Two-factor sign-in
+  for every account** (flag `account_two_factor`) and the **supplier portal** (flag `supplier_portal`,
+  `docs/erp/supplier-portal.md`: a supplier's own people, invited, with their own accounts, see only that supplier's sent
+  orders and requests) are built and **off**: never switch either on without the owner's approval. Released
+  21 Nov 2026 (kevinjogin/bizomat-site#121, deploy run 58, merge b0df4ef).
   **Example company** (owner, 14 Nov 2026; `src/worker/system/example.ts`, migration 0019): every account gets its own
   "Acme Studio (example)" of invented data in every tool on its first ERP visit, made through the app's own API; only
   its owner sees it, nobody can be invited to it, it sends no email, it is counted apart in the console, and it is

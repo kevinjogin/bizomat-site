@@ -129,6 +129,28 @@ runs, depreciation and revenue schedules to Finance's ledger; repricing sales or
 subcontracting; email inboxes and customer portals; custom fields on the new modules; example records for the new modules
 in the example company.
 
+## Batch 2 of the modules: ledger postings, consolidation, custom fields, two-factor, pricing, supplier portal (21 Nov 2026)
+
+Live since 21 Nov 2026 (kevinjogin/bizomat-site#121, deploy run 58, merge b0df4ef, migration 0041 applied at start-up). The
+flags `account_two_factor` and `supplier_portal` are off. Before release, the work was reviewed by area and every finding
+verified by three independent reviewers, then each round of fixes was reviewed again until a round found nothing of
+substance.
+
+| Area | What | Evidence |
+| --- | --- | --- |
+| Postings to Finance's ledger (18, 22, 90; `docs/erp/postings.md`) | Monthly depreciation, approved pay runs, earned revenue (and once, the move of an invoiced amount to deferred revenue) as posted journals in the company's Finance workspace, into the accounts each company chooses on the module's Finance postings tab (suggested from its chart, saved by an ERP administrator or finance controller). Finance's own ledger code, once per record and month, locked months on the first open day, a Finance role that posts journals needed, reversible; guards keep posted records consistent with the ledger | `apps/work/test/erp-postings.test.ts` (exact amounts, concurrency, lock date, reversal in the ERP and in Finance) |
+| Consolidation and intercompany (21; `docs/erp/consolidation.md`) | Legal entities name their Finance workspaces; intercompany sales approved by someone else make a draft invoice for the seller and a draft bill for the buyer (converted at the company's rate); the consolidated profit and loss and balance sheet translate each ledger at the closing rate and eliminate intercompany balances, leaving out (with the reason) a workspace the person may not read; records in another currency post at the company's rates | `apps/work/test/erp-consolidation.test.ts` |
+| Custom fields and example records (10) | ERP administrators add the company's own fields to any kind of record of the newer modules, checked by the server, in forms, lists, filters and CSV; a choice keeps its key when the choices change, and one taken out stays readable, marked no longer offered; the example company has records in the newer modules | `apps/work/test/erp-custom-fields.test.ts`, `test/example-company.test.ts` |
+| Price lists on sales orders (30) | One pricing rule for the price check and sales orders: the customer's list, the lowest list price for the quantity, the standard price, then the best promotion; each line says where its price came from, and keeps that note when an edit leaves its price, quantity, customer and date unchanged; a list made for either half of a customer record (CRM company or Finance contact) applies | `apps/work/test/erp-pricing.test.ts` |
+| Two-factor sign-in for every account (4) | Built behind the flag `account_two_factor`, **off**: enrolment in Settings, Security; a password or Google sign-in then makes no session until a code; the founder removes it for someone who lost their phone | `apps/work/test/two-factor.test.ts` |
+| Supplier portal (41; `docs/erp/supplier-portal.md`) | Built behind the flag `supplier_portal`, **off**: buyers invite a supplier's people, who sign in with their own accounts and see only that supplier's sent orders and requests; they answer orders, send quotations and add documents | `apps/work/test/supplier-portal.test.ts` |
+| Partly built modules (20, 49, 53, 64) | Cost allocation by department percentage posted to Finance; putaway suggestions used by receipts; replenishment to maximum levels on one draft requisition, never for a product already on an open requisition, request for quotation or purchase order; the OEE report from shop-floor records, saying when it cannot be calculated | `apps/work/test/erp-postings.test.ts`, `test/erp-r3.test.ts` |
+
+Not done in this batch: disposals of fixed assets posted from the ERP, translation reserves and minority interest, one
+currency within a workspace, cash forecast scenarios (14), tax rules outside Australia (19), configure-to-order (63),
+machines sending data, scheduled replenishment, and supplier invoices or catalogues in the portal. Turning on
+`account_two_factor` and `supplier_portal` is the owner's decision.
+
 ## BIZOMAT WHS, Release 1
 
 Live since 15 Nov 2026 (kevinjogin/bizomat-site#74, deploy run 37, version e0cad51, migration 0026). Details, sources checked and
@@ -183,6 +205,11 @@ rate-based repetitive schedules.
 
 ## Decisions waiting for the owner
 
+- Batch 2's two flags, both off: `account_two_factor` (two-factor sign-in offered to every account) and `supplier_portal`
+  (suppliers' own people invited to answer orders and requests). Switching either on, for a company or everyone, is the
+  owner's decision in the Control Centre.
+- Disposals of fixed assets are not posted to Finance by the ERP (the gain or loss is recorded on the asset only), and
+  consolidation has no translation reserve or minority interest: say if either should come next.
 - Email of purchase orders and requests for quotation with the PDF attached needs attachments in the email outbox: a
   change to the email service, not built.
 - Stock value postings to Finance: which accounts (inventory, cost of goods, stock adjustments) and when (Release 3).
