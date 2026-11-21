@@ -1,4 +1,4 @@
--- Reverse of migrations/0040_maintenance_field.sql. Run only to take the field release back out, after a database copy,
+-- Reverse of migrations/0042_maintenance_field.sql. Run only to take the field release back out, after a database copy,
 -- with this release's code rolled back.
 --
 -- Before running it, while this release's code is still deployed: release every open maintenance reservation (on each
@@ -63,4 +63,4 @@ ALTER TABLE mt_requests DROP COLUMN withdrawn_at;
 -- only and stays.
 DELETE FROM feature_flags WHERE key = 'maintenance_email_alerts';
 
-DELETE FROM d1_migrations WHERE name = '0040_maintenance_field.sql';
+DELETE FROM d1_migrations WHERE name = '0042_maintenance_field.sql';

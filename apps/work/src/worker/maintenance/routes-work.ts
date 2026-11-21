@@ -22,7 +22,7 @@ import { failIfStmt, inSiteSql } from './m2util';
 // The field release, stream A: the list's extra filters and its CSV file.
 import { csvResponse } from '../erp/util';
 import { CSV_MAX, workOrderCsvRows, workOrderListFilters } from './lists';
-// The field release (migration 0040): the sign-off when a work order is completed, and alerts to the people concerned.
+// The field release (migration 0042): the sign-off when a work order is completed, and alerts to the people concerned.
 import { alertRequestsCompleted, alertWorkOrderAssigned } from './alerts';
 import { SIGN_OFF_SET, completeSchema, discardSignature, prepareSignature, signOffAfter, signOffValues, signatureFileStmts, signedOffText } from './signoff';
 // The field release: an inspection round's work order completes only once every asset's checklist is done.

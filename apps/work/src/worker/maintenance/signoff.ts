@@ -1,5 +1,5 @@
 // The sign-off when a work order is completed, and the company's two settings for completing work orders
-// (migration 0040).
+// (migration 0042).
 //
 // A sign-off is the name the person signing typed, their role (optional) and a picture of the signature drawn on the
 // screen. Someone who cannot draw on the screen (keyboard or screen reader users, for example) signs with the typed name

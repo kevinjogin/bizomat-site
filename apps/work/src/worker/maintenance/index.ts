@@ -38,7 +38,7 @@ import { inspectionRoutes } from './routes-inspections';
 import { partsRoutes } from './routes-parts';
 import { setupRoutes } from './routes-setup';
 import { reportRoutes } from './reports';
-// The field release (migration 0040; MEX a functional reference only): the asset summary and duplicate warnings,
+// The field release (migration 0042; MEX a functional reference only): the asset summary and duplicate warnings,
 // inspection rounds and readings, reservations, requisitions and stocktakes, and the job card, sign-off and record of
 // work already done. Each stream's routes live in its own file.
 import { assetSummaryRoutes } from './asset-summary';
@@ -74,7 +74,7 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
     roleIsDefault: a.roleIsDefault,
     companyRole: a.companyRole,
     approvalRequired: await requireApproval(db, a.companyId),
-    // Completing work orders (migration 0040): whether a signature is needed, and whether technicians record work done.
+    // Completing work orders (migration 0042): whether a signature is needed, and whether technicians record work done.
     requireSignature: ws.requireSignature,
     techniciansRecordWork: ws.techniciansRecordWork,
     departments,

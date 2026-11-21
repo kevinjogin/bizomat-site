@@ -1,4 +1,4 @@
-// The job itself (migration 0040), under /api/maintenance/c/:company/...
+// The job itself (migration 0042), under /api/maintenance/c/:company/...
 //
 //   GET   /work-orders/:id/job-card   what the printable job card shows (read only): the asset and its place, the work,
 //                                     tasks, parts, inspections with their answer boxes, an inspection round's assets
@@ -52,7 +52,7 @@ jobRoutes.get('/c/:company/work-orders/:id/job-card', async (c) => {
     db.prepare(ASSET_SQL).bind(a.companyId, w.asset_id),
     db.prepare(`SELECT r.number, r.description, r.created_at, u.name AS requester_name FROM mt_requests r LEFT JOIN users u ON u.id = r.requested_by WHERE r.company_id = ? AND r.work_order_id = ? AND ${rq.sql} ORDER BY r.created_at`).bind(a.companyId, w.id, ...rq.args),
     db.prepare('SELECT t.position, t.text, t.done_at, u.name AS done_by_name FROM mt_wo_tasks t LEFT JOIN users u ON u.id = t.done_by WHERE t.company_id = ? AND t.work_order_id = ? ORDER BY t.position, t.created_at').bind(a.companyId, w.id),
-    // A part line may name an ERP product (migration 0040): its number is what technicians pick by.
+    // A part line may name an ERP product (migration 0042): its number is what technicians pick by.
     db.prepare('SELECT p.position, p.part, p.quantity, pr.number AS product_number, pr.uom FROM mt_wo_parts p LEFT JOIN erp_products pr ON pr.company_id = p.company_id AND pr.id = p.product_id WHERE p.company_id = ? AND p.work_order_id = ? ORDER BY p.position, p.created_at').bind(a.companyId, w.id),
   ]);
   const asset = (assetRows.results[0] ?? {}) as any;

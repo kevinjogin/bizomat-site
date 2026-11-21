@@ -214,7 +214,7 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
   } catch {
     // before migration 0026 (a test database without it): no WHS records
   }
-  // Maintenance's field release (migrations/0040_maintenance_field.sql) and stages M2 and M3 (0024) first: they point at
+  // Maintenance's field release (migrations/0042_maintenance_field.sql) and stages M2 and M3 (0024) first: they point at
   // 0018's records, the inspection rounds before the checklists, assets and work orders they name, and the work order
   // reservations and requisitions before the ERP block deletes what they link.
   for (const table of [

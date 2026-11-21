@@ -52,7 +52,7 @@ export interface MtMe {
   roleIsDefault: boolean;
   companyRole: 'owner' | 'admin' | 'manager' | 'employee' | 'read_only';
   approvalRequired: boolean;
-  /** Completing a work order needs a sign-off (migration 0040). */
+  /** Completing a work order needs a sign-off (migration 0042). */
   requireSignature: boolean;
   /** Technicians may record their own work already done. */
   techniciansRecordWork: boolean;
