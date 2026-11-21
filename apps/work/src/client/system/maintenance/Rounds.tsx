@@ -596,14 +596,16 @@ function LineScreen({ companyId, workOrderId, lineId }: { companyId: string; me:
         return { itemId, text: a.text ?? s.text ?? '', note: s.note ?? '' };
       })
       .filter(Boolean);
+  // The asset is read again whatever the outcome, so the screen shows what the server holds (an answer saved before a
+  // step that failed, an item a supervisor added).
   const run = async (fn: () => Promise<void>) => {
     setBusy(true);
     try {
       await fn();
-      await refresh();
     } catch (err) {
       toast(errorMessage(err), 'error');
     } finally {
+      await refresh();
       setBusy(false);
     }
   };
@@ -619,8 +621,10 @@ function LineScreen({ companyId, workOrderId, lineId }: { companyId: string; me:
     run(async () => {
       const list = changed();
       if (list.length) await put(roundsPath(companyId, workOrderId, `/lines/${lineId}/results`), { results: list });
+      // The answers stay on screen until the asset is completed: when completing fails, they are still shown.
+      const r = await post<Completed>(roundsPath(companyId, workOrderId, `/lines/${lineId}/complete`), {});
       setAnswers({});
-      setDone(await post<Completed>(roundsPath(companyId, workOrderId, `/lines/${lineId}/complete`), {}));
+      setDone(r);
     });
   const decide = (decision: 'approved' | 'not_approved') =>
     run(async () => {
@@ -682,18 +686,18 @@ function LineScreen({ companyId, workOrderId, lineId }: { companyId: string; me:
                   </div>
                 ) : i.kind === 'number' ? (
                   <div className="field">
-                    <label htmlFor={`rl-${i.id}`}>{i.unit ? `Value (${i.unit})` : 'Value'}{i.min != null || i.max != null ? `, ${i.min ?? '…'} to ${i.max ?? '…'}` : ''}</label>
+                    <label htmlFor={`rl-${i.id}`}><span className="sr-only">{i.label}: </span>{i.unit ? `Value (${i.unit})` : 'Value'}{i.min != null || i.max != null ? `, ${i.min ?? '…'} to ${i.max ?? '…'}` : ''}</label>
                     <input id={`rl-${i.id}`} className="input" type="number" inputMode="decimal" step="any" disabled={!editable} value={a.value ?? ''} onChange={(e) => set(i.id, { value: e.target.value })} />
                   </div>
                 ) : (
                   <div className="field">
-                    <label htmlFor={`rl-${i.id}`}>Notes</label>
+                    <label htmlFor={`rl-${i.id}`}><span className="sr-only">{i.label}: </span>Notes</label>
                     <input id={`rl-${i.id}`} className="input" maxLength={2000} disabled={!editable} value={a.text ?? ''} onChange={(e) => set(i.id, { text: e.target.value })} />
                   </div>
                 )}
                 {a.passed === false || (i.kind === 'number' && a.value && ((i.min != null && Number(a.value) < i.min) || (i.max != null && Number(a.value) > i.max))) ? (
                   <div className="field">
-                    <label htmlFor={`rl-n-${i.id}`}>What is wrong?</label>
+                    <label htmlFor={`rl-n-${i.id}`}>What is wrong<span className="sr-only"> with {i.label}</span>?</label>
                     <input id={`rl-n-${i.id}`} className="input" maxLength={1000} disabled={!editable} value={a.note ?? ''} onChange={(e) => set(i.id, { note: e.target.value })} />
                   </div>
                 ) : null}
