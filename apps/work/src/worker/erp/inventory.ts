@@ -19,7 +19,7 @@ import { assertCan, can, requireErp, segregation, type ErpAccess } from './acces
 import { loadSettings, COSTING_LABELS, type ErpSettings } from './settings';
 import { MOVE_LABELS, StockOps, availableByProduct, onOrderByProduct, onceStmt, q6, runStock, type StockKey } from './stock';
 import { qrSvg } from './qr';
-import { NUMBER_RE, badState, csvResponse, dollars, eventStmt, historyOf, likeOf, nextNumber, paging, wantsCsv, zDate, zId, zText } from './util';
+import { NUMBER_RE, badState, csvResponse, dollars, eventStmt, eventStmtIf, historyOf, likeOf, nextNumber, paging, wantsCsv, zDate, zId, zText } from './util';
 
 export const inventoryRoutes = new Hono<AppEnv>();
 
@@ -1037,6 +1037,15 @@ export async function countLinesOf(db: D1Database, companyId: string, n: any) {
  */
 export async function recordCounted(db: D1Database, a: CountActor, n: any, lines: { id: string; counted: number | null }[]) {
   if (n.status !== 'open') badState(`${n.number} is ${n.status}: counts can be entered only while it is open`);
+  // A serial number is one item: any other count on a serial line is refused here, never skipped without a word.
+  const odd = lines.filter((x) => x.counted !== null && x.counted !== 0 && x.counted !== 1).map((x) => x.id);
+  if (odd.length) {
+    const serial = await db
+      .prepare("SELECT serial FROM erp_count_lines WHERE company_id = ? AND count_id = ? AND serial <> '' AND id IN (SELECT value FROM json_each(?)) LIMIT 1")
+      .bind(a.companyId, n.id, JSON.stringify(odd))
+      .first<{ serial: string }>();
+    if (serial) throw new HttpError(400, `Serial ${serial.serial} is one item: count it as 0 or 1`, { code: 'SERIAL_COUNT' });
+  }
   const t = now();
   const res = await db.batch([
     ...lines.map((x) =>
@@ -1052,20 +1061,38 @@ export async function recordCounted(db: D1Database, a: CountActor, n: any, lines
   return { changed: res.slice(0, -1).reduce((k, r) => k + (r.meta.changes ?? 0), 0) };
 }
 
-/** Submits an open count for approval, or cancels an open or submitted one; `extra` statements join the transaction. */
-export async function closeCount(db: D1Database, a: CountActor, n: any, action: 'submit' | 'cancel', extra: D1PreparedStatement[] = []) {
+/** A SQL condition (with its arguments) that holds only when this submit or cancel made its change, and its time. */
+export interface CountClosed {
+  sql: string;
+  args: unknown[];
+  t: number;
+}
+
+/**
+ * Submits an open count for approval, or cancels an open or submitted one; `extra` statements join the transaction (a
+ * function gets the condition that holds only when this call made the change, for history lines of its own). The
+ * count's history line is written only when the change was made, so a submit or cancel that loses a race with another
+ * records nothing.
+ */
+export async function closeCount(db: D1Database, a: CountActor, n: any, action: 'submit' | 'cancel', extra: D1PreparedStatement[] | ((done: CountClosed) => D1PreparedStatement[]) = []) {
   const submit = action === 'submit';
   if (submit && n.status !== 'open') badState(`${n.number} is ${n.status}`);
   if (!submit && n.status !== 'open' && n.status !== 'submitted') badState(`${n.number} is ${n.status}`);
   if (submit && n.counted < n.lines) badState(`Count every line first: ${n.lines - n.counted} of ${n.lines} have no count`);
   if (submit && !n.lines) badState('The count has no lines');
   const t = now();
+  const status = submit ? 'submitted' : 'cancelled';
+  const done: CountClosed = {
+    sql: `EXISTS (SELECT 1 FROM erp_counts WHERE company_id = ? AND id = ? AND status = ? AND updated_at = ?${submit ? ' AND submitted_by = ?' : ''})`,
+    args: [a.companyId, n.id, status, t, ...(submit ? [a.userId] : [])],
+    t,
+  };
   const res = await db.batch([
     db
       .prepare(`UPDATE erp_counts SET status = ?, ${submit ? 'submitted_by = ?, submitted_at = ?,' : ''} updated_at = ? WHERE company_id = ? AND id = ? AND status = ?`)
-      .bind(submit ? 'submitted' : 'cancelled', ...(submit ? [a.userId, t] : []), t, a.companyId, n.id, n.status),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: submit ? 'count.submitted' : 'count.cancelled', entityType: 'count', entityId: n.id, summary: `${n.number} ${submit ? `submitted for approval with ${n.variances} variance${n.variances === 1 ? '' : 's'}` : 'cancelled'}`, at: t }),
-    ...extra,
+      .bind(status, ...(submit ? [a.userId, t] : []), t, a.companyId, n.id, n.status),
+    eventStmtIf(db, { companyId: a.companyId, actorId: a.userId, action: submit ? 'count.submitted' : 'count.cancelled', entityType: 'count', entityId: n.id, summary: `${n.number} ${submit ? `submitted for approval with ${n.variances} variance${n.variances === 1 ? '' : 's'}` : 'cancelled'}`, at: t }, done.sql, done.args),
+    ...(typeof extra === 'function' ? extra(done) : extra),
   ]);
   return { changed: !!res[0].meta.changes };
 }

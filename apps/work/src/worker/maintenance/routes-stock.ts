@@ -30,7 +30,7 @@ import { createRequisition } from '../erp/procurement';
 import { MODULES, moduleEnabled } from '../platform/flags';
 import { requireMt, type MtAccess } from './access';
 import { eventStmt, validDate, zDate, zId, zText } from './util';
-import { doneStmt, todayNear } from './m2util';
+import { doneStmt, eventIfStmt, failIfStmt, guardFailed, todayNear, woOutstandingGuard } from './m2util';
 import { STORE_FREE, STORE_STOCK_FROM } from './routes-setup';
 import { REQUISITION_RIGHT_NOTE, erpAccessOrNone, openWoReservations, reservationTakenStmt, runParts, storeLocation, workable } from './routes-parts';
 
@@ -66,25 +66,36 @@ function stockActor(a: MtAccess): ErpAccess {
   return { companyId: a.companyId, kind: a.kind, companyName: a.companyName, companyRole: a.companyRole as ErpAccess['companyRole'], userId: a.userId, userName: a.userName, roles: [], solo: false };
 }
 
-/** One work order transaction; a CHECK or UNIQUE refusal (someone changed the same records at the same moment) answers 409. */
+/**
+ * One work order transaction; a CHECK or UNIQUE refusal, or a guard (failIfStmt) that refused, answers 409: someone
+ * changed the same records at the same moment, and nothing of the transaction was kept.
+ */
 export async function runWoBatch(db: D1Database, stmts: D1PreparedStatement[], conflictMessage: string) {
   try {
     return await db.batch(stmts);
   } catch (e) {
-    if (/CHECK constraint failed|UNIQUE constraint failed/i.test(String((e as Error)?.message ?? e))) throw new HttpError(409, conflictMessage);
+    if (guardFailed(e) || /CHECK constraint failed|UNIQUE constraint failed/i.test(String((e as Error)?.message ?? e))) throw new HttpError(409, conflictMessage);
     throw e;
   }
 }
 
 /**
  * The statements that give back to free stock everything still reserved for a work order, when it is completed or
- * cancelled (routes-work.ts puts them in the same transaction). None when nothing is reserved. The reservations'
- * updates have no status guard: a release or issue at the same moment fails the reservation's CHECK, and the whole
- * completion with it. The StockOps access comes from the maintenance access, never from an ERP role.
+ * cancelled (routes-work.ts puts them in the same transaction, after its own UPDATE). The reservations' updates have no
+ * status guard: a release or issue at the same moment fails the reservation's CHECK, and the whole completion with it.
+ * The last statement fails the transaction when a reservation of the work order is still open after them: one made
+ * after they were read (a reserve at the same moment) is never left held against a locked work order. The StockOps
+ * access comes from the maintenance access, never from an ERP role.
  */
 export async function woReservationReleaseStmts(db: D1Database, a: MtAccess, w: { id: string; number: string; asset_id: string }, why: 'completed' | 'cancelled', t: number): Promise<D1PreparedStatement[]> {
   const open = (await openWoReservations(db, a.companyId, w.id)).filter((r) => r.open > 1e-9);
-  if (!open.length) return [];
+  const noneLeft = failIfStmt(
+    db,
+    a.companyId,
+    "EXISTS (SELECT 1 FROM mt_wo_reservations x JOIN erp_reservations r ON r.company_id = x.company_id AND r.id = x.reservation_id WHERE x.company_id = ? AND x.work_order_id = ? AND r.status = 'open')",
+    [a.companyId, w.id],
+  );
+  if (!open.length) return [noneLeft];
   const ops = new StockOps(db, stockActor(a), await loadSettings(db, a.companyId), t);
   const updates: D1PreparedStatement[] = [];
   for (const r of open) {
@@ -103,7 +114,7 @@ export async function woReservationReleaseStmts(db: D1Database, a: MtAccess, w: 
     at: t,
   });
   // No posting kind: a reservation moves no value, so no Finance posting is recorded.
-  return [...ops.stmts, ...ops.finish({ type: 'work_order', id: w.id }), ...updates, event];
+  return [...ops.stmts, ...ops.finish({ type: 'work_order', id: w.id }), ...updates, event, noneLeft];
 }
 
 // ------------------------------------------------------------------ reserving for a required part
@@ -181,9 +192,11 @@ stockRoutes.post('/c/:company/work-orders/:id/parts/:partId/reserve', async (c) 
       at: ops.t,
     }),
   );
+  // Nothing is reserved for a work order completed or cancelled since it was read: its completion would not release it.
+  after.push(woOutstandingGuard(db, a.companyId, w.id));
   const before = input.requestKey ? [doneStmt(db, a.companyId, `wo-reserve:${input.requestKey}`, ops.t)] : [];
   // No posting kind: reserving moves no value, so no Finance posting is recorded.
-  await runParts(db, ops.all(before, after, { type: 'work_order', id: w.id }));
+  await runParts(db, ops.all(before, after, { type: 'work_order', id: w.id }), `${w.number} was completed or cancelled at the same moment: nothing was reserved. Refresh to see it.`);
   return c.json({ reserved, short: Math.max(0, q6(want - total)) }, 201);
 });
 
@@ -249,12 +262,11 @@ stockRoutes.post('/c/:company/work-orders/:id/requisition', async (c) => {
   }
   const today = todayNear(c.req.query('today'));
   const due = [w.due_start, w.due_finish].find((d) => d && validDate(d) && d >= today);
-  let departmentId = input.departmentId;
-  if (departmentId === undefined) {
-    // The work order's department while it is still in use, so the default never makes the requisition fail.
-    const d = w.department_id ? await db.prepare('SELECT id FROM co_departments WHERE company_id = ? AND id = ? AND archived_at IS NULL').bind(a.companyId, w.department_id).first<{ id: string }>() : null;
-    departmentId = a.kind === 'registered' && d ? d.id : null;
-  }
+  // The department chosen, else the work order's. One no longer in use (archived) or not of this company is left off,
+  // so the work order's department never makes the requisition fail; the form says which one it will use.
+  const wanted = input.departmentId === undefined ? w.department_id : input.departmentId;
+  const d = a.kind === 'registered' && wanted ? await db.prepare('SELECT id FROM co_departments WHERE company_id = ? AND id = ? AND archived_at IS NULL').bind(a.companyId, wanted).first<{ id: string }>() : null;
+  const departmentId = d ? d.id : null;
   const title = (input.title || `For ${w.number} on ${w.asset_number} ${w.asset_name}`).slice(0, 200);
   const reason = (input.reason || `Parts for maintenance work order ${w.number}: ${w.description}`).slice(0, 2000);
   try {
@@ -385,8 +397,8 @@ stockRoutes.post('/c/:company/stocktakes/:countId/submit', async (c) => {
   await assertModule(db, a.companyId, 'inventory');
   await erpRight(db, a, 'inventory.operate');
   const n = await loadStocktake(db, a.companyId, c.req.param('countId'));
-  const t = now();
-  const r = await closeCount(db, a, n, 'submit', [eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'stocktake.submitted', summary: `Stocktake ${n.number} of ${n.warehouse_code} submitted for approval in Inventory`, after: { countId: n.id }, at: t })]);
+  // The history line is written only when this submit made the change (closeCount's condition).
+  const r = await closeCount(db, a, n, 'submit', (done) => [eventIfStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'stocktake.submitted', summary: `Stocktake ${n.number} of ${n.warehouse_code} submitted for approval in Inventory`, after: { countId: n.id }, at: done.t }, done.sql, done.args)]);
   if (!r.changed) throw new HttpError(409, `${n.number} changed at the same moment: refresh and try again`);
   return c.json({ ok: true });
 });
@@ -400,8 +412,7 @@ stockRoutes.post('/c/:company/stocktakes/:countId/cancel', async (c) => {
   const input = await body(c, z.object({ reason: zText(1000).min(1, 'Say why it is cancelled') }));
   if (n.status === 'submitted') throw new HttpError(409, `${n.number} is waiting for approval: a warehouse manager cancels it in Inventory`);
   if (n.status !== 'open') throw new HttpError(409, `${n.number} is ${STOCKTAKE_LABELS[n.status]?.toLowerCase() ?? n.status}`);
-  const t = now();
-  const r = await closeCount(db, a, n, 'cancel', [eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'stocktake.cancelled', summary: `Stocktake ${n.number} of ${n.warehouse_code} cancelled: ${input.reason}`.slice(0, 500), after: { countId: n.id, reason: input.reason }, at: t })]);
+  const r = await closeCount(db, a, n, 'cancel', (done) => [eventIfStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'stocktake.cancelled', summary: `Stocktake ${n.number} of ${n.warehouse_code} cancelled: ${input.reason}`.slice(0, 500), after: { countId: n.id, reason: input.reason }, at: done.t }, done.sql, done.args)]);
   if (!r.changed) throw new HttpError(409, `${n.number} changed at the same moment: refresh and try again`);
   return c.json({ ok: true });
 });

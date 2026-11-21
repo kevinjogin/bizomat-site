@@ -35,7 +35,7 @@ import { atLeast, companyPeople, deny, isManager, requireMt, workOrderScope, typ
 import { workOrderDTO } from './dto';
 import { assertUnlocked, canWork, createSchema, loadWorkOrder, workOrderStatements } from './routes-work';
 import { evaluate, followUpStatements, itemDTO, resultDTO, resultInput, type FollowUp } from './routes-inspections';
-import { doneStmt, eventIfStmt, isUnique } from './m2util';
+import { doneStmt, eventIfStmt, guardFailed, isUnique, woOutstandingGuard } from './m2util';
 // The technician given a round is told, as for any work order given to them (alerts.ts).
 import { alertWorkOrderAssigned } from './alerts';
 import { LOCKED, OUTSTANDING, eventDTO, eventStmt, likeOf, sqlList, zId, zText } from './util';
@@ -396,8 +396,11 @@ roundRoutes.post('/c/:company/work-orders/:id/round/assets', async (c) => {
         return lineInsert(db, a.companyId, a.userId, { roundId: ro.id, woId: w.id, assetId: x.assetId, templateId: lt.id, templateName: lt.name, position: start + i + 1, t });
       }),
       eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'round.assets_added', assetId: w.asset_id, workOrderId: w.id, summary: `${plural(add.length, 'asset', 'assets')} added to the round`, after: { assets: add.map((x) => byAsset.get(x.assetId)!.number) }, at: t }),
+      // No open asset is added to a round whose work order was completed or cancelled since it was read.
+      woOutstandingGuard(db, a.companyId, w.id),
     ]);
   } catch (e) {
+    if (guardFailed(e)) throw refuse(409, `${w.number} was completed or cancelled a moment ago: no asset was added. Refresh to see it.`, 'ROUND_LOCKED');
     if (isUnique(e)) throw new HttpError(409, 'Someone added these assets a moment ago: refresh');
     throw e;
   }

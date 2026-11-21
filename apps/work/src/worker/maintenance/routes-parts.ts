@@ -29,7 +29,7 @@ import { assertPerson, deny, isManager, requireMt, type MtAccess } from './acces
 import { assertUnlocked, canWork, loadWorkOrder } from './routes-work';
 import { LOCKED, eventStmt, likeOf, validDate, zId, zText } from './util';
 import { STORE_FREE, STORE_STOCK_FROM, priceLabourStmt } from './routes-setup';
-import { doneStmt, isUnique, utcDate } from './m2util';
+import { doneStmt, guardFailed, isUnique, utcDate, woOutstandingGuard } from './m2util';
 import { inspectionsOf } from './routes-inspections';
 
 export const partsRoutes = new Hono<AppEnv>();
@@ -38,11 +38,15 @@ const zQ = z.number().positive().max(1e9);
 const zKey = z.string().trim().min(8).max(80).optional();
 const line = z.object({ productId: zId, locationId: zId, lot: zText(80).optional(), serial: zText(80).optional(), quantity: zQ });
 
-/** One stock transaction; a once-only key already used (the same request sent twice) answers 409. */
-export async function runParts(db: D1Database, stmts: D1PreparedStatement[]) {
+/**
+ * One stock transaction; a once-only key already used (the same request sent twice) answers 409, and so does a guard
+ * that refused (failIfStmt: the work order was completed or cancelled at the same moment), with `guardMessage`.
+ */
+export async function runParts(db: D1Database, stmts: D1PreparedStatement[], guardMessage = 'The work order was completed or cancelled at the same moment: nothing was changed. Refresh to see it.') {
   try {
     return await runStock(db, stmts);
   } catch (e) {
+    if (guardFailed(e)) throw new HttpError(409, guardMessage);
     if (/mt_done/.test(String((e as Error)?.message ?? e))) throw new HttpError(409, 'This was already done: refresh to see it');
     throw e;
   }
@@ -128,7 +132,9 @@ partsRoutes.post('/c/:company/work-orders/:id/stock/issue', async (c) => {
     summary.push(`${x.quantity} ${p.uom} of ${p.number} ${p.name} from ${l.warehouse_code}/${l.code}${key.lot ? ` lot ${key.lot}` : ''}${key.serial ? ` serial ${key.serial}` : ''}`);
   }
   after.push(eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'parts.issued', assetId: w.asset_id, workOrderId: w.id, summary: `Parts issued: ${summary.join('; ')}`.slice(0, 500), after: { groupId: ops.groupId, lines: input.lines }, at: ops.t }));
-  await runParts(db, ops.all(before, after, { type: 'work_order', id: w.id, kind: 'finance.maintenance_posting' }));
+  // Nothing is issued to a work order completed or cancelled since it was read.
+  after.push(woOutstandingGuard(db, a.companyId, w.id));
+  await runParts(db, ops.all(before, after, { type: 'work_order', id: w.id, kind: 'finance.maintenance_posting' }), `${w.number} was completed or cancelled at the same moment: nothing was issued. Refresh to see it.`);
   return c.json({ ok: true, groupId: ops.groupId }, 201);
 });
 

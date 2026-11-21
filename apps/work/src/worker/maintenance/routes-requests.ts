@@ -399,13 +399,17 @@ requestRoutes.post('/c/:company/requests/:id/convert', async (c) => {
   try {
     res = await db.batch([
       ...made.stmts,
-      db.prepare("UPDATE mt_requests SET status = 'converted', work_order_id = ?, decided_by = COALESCE(decided_by, ?), decided_at = COALESCE(decided_at, ?), updated_at = ? WHERE company_id = ? AND id = ? AND work_order_id IS NULL").bind(made.id, a.userId, t, t, a.companyId, r.id),
+      db.prepare("UPDATE mt_requests SET status = 'converted', work_order_id = ?, decided_by = COALESCE(decided_by, ?), decided_at = COALESCE(decided_at, ?), updated_at = ? WHERE company_id = ? AND id = ? AND work_order_id IS NULL AND status IN ('submitted','awaiting_approval','approved')").bind(made.id, a.userId, t, t, a.companyId, r.id),
       eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.converted', assetId, requestId: r.id, workOrderId: made.id, summary: `Request ${r.number} made into work order ${made.number}`, before: { status: r.status }, after: { status: 'converted', workOrder: made.number }, at: t }),
     ]);
   } catch (e) {
-    // Someone made it into a work order a moment ago: the transaction is rolled back.
-    const now2 = await db.prepare('SELECT work_order_id FROM mt_requests WHERE company_id = ? AND id = ?').bind(a.companyId, r.id).first<{ work_order_id: string | null }>();
-    if (now2?.work_order_id) throw new HttpError(409, `${r.number} already has a work order`);
+    // The request changed a moment ago (made into a work order, withdrawn, declined or closed): the work order was not
+    // made (its INSERT found the request no longer convertible) and the transaction is rolled back.
+    const cur = await db.prepare('SELECT work_order_id, status, withdrawn_at FROM mt_requests WHERE company_id = ? AND id = ?').bind(a.companyId, r.id).first<{ work_order_id: string | null; status: string; withdrawn_at: number | null }>();
+    if (cur?.work_order_id) throw new HttpError(409, `${r.number} already has a work order`);
+    if (cur && !['submitted', 'awaiting_approval', 'approved'].includes(cur.status)) {
+      throw new HttpError(409, cur.withdrawn_at ? `${r.number} was withdrawn a moment ago by the person who raised it: it cannot be made into a work order` : `${r.number} is ${cur.status.replace(/_/g, ' ')}: it cannot be made into a work order`, { code: 'REQUEST_CHANGED', status: cur.status });
+    }
     throw e;
   }
   if (!res[0].meta.changes) throw new HttpError(409, `${r.number} already has a work order`);

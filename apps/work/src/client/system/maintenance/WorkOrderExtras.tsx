@@ -445,7 +445,9 @@ function RaiseRequisitionDialog({ companyId, me, wo, lines, act, onClose }: { co
   const candidates = lines.filter((l) => (l.toOrder ?? 0) > 1e-9);
   const [pick, setPick] = useState<Record<string, { on: boolean; qty: string }>>(() => Object.fromEntries(candidates.map((l) => [l.id, { on: true, qty: String(l.toOrder) }])));
   const today = localToday();
-  const [f, setF] = useState({ requiredDate: wo.dueStart && wo.dueStart >= today ? wo.dueStart : today, departmentId: wo.departmentId ?? '', reason: '', submit: false });
+  // The work order's department only while it is still in use: one archived since is left off (the server does the same).
+  const woDeptActive = !!wo.departmentId && me.departments.some((x) => x.id === wo.departmentId);
+  const [f, setF] = useState({ requiredDate: wo.dueStart && wo.dueStart >= today ? wo.dueStart : today, departmentId: woDeptActive ? wo.departmentId! : '', reason: '', submit: false });
   const [key] = useState(requestKey);
   const [busy, setBusy] = useState(false);
   const chosen = candidates.filter((l) => pick[l.id]?.on && Number(pick[l.id].qty) > 0);
@@ -488,11 +490,16 @@ function RaiseRequisitionDialog({ companyId, me, wo, lines, act, onClose }: { co
         {me.departments.length ? (
           <div className="field">
             <label htmlFor="rq-dept">Department</label>
-            <select id="rq-dept" className="select" value={f.departmentId} onChange={(e) => setF((x) => ({ ...x, departmentId: e.target.value }))}>
+            <select id="rq-dept" className="select" value={f.departmentId} aria-describedby={wo.departmentId && !woDeptActive ? 'rq-dept-note' : undefined} onChange={(e) => setF((x) => ({ ...x, departmentId: e.target.value }))}>
               <option value="">None</option>
               {me.departments.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
             </select>
           </div>
+        ) : null}
+        {wo.departmentId && !woDeptActive ? (
+          <p id="rq-dept-note" className="muted small crm-span">
+            The work order’s department{wo.departmentName ? `, ${wo.departmentName},` : ''} is no longer in use, so the requisition has no department{me.departments.length ? ' unless you choose one' : ''}.
+          </p>
         ) : null}
         <div className="field crm-span"><label htmlFor="rq-reason">Reason (optional)</label><textarea id="rq-reason" className="textarea" rows={2} maxLength={2000} value={f.reason} placeholder={`Parts for maintenance work order ${wo.number}`} onChange={(e) => setF((x) => ({ ...x, reason: e.target.value }))} /></div>
       </div>

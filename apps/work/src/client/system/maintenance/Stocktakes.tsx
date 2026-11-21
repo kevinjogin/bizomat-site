@@ -164,17 +164,19 @@ function StartDialog({ companyId, stores, defaultStore, onClose }: { companyId: 
       </div>
       <div className="field">
         <label htmlFor="st-new-loc">Part of the store</label>
-        <select id="st-new-loc" className="select" value={f.locationId} onChange={(e) => setF((x) => ({ ...x, locationId: e.target.value }))}>
+        <select id="st-new-loc" className="select" value={f.locationId} aria-describedby="st-new-loc-hint" onChange={(e) => setF((x) => ({ ...x, locationId: e.target.value }))}>
           <option value="">The whole store</option>
           {(store?.locations ?? []).map((l) => <option key={l.id} value={l.id}>{l.code} {l.name}</option>)}
         </select>
+        <span id="st-new-loc-hint" className="muted small">This decides what is counted: the whole store, or one location and everything in it.</span>
       </div>
       <div className="field">
         <label htmlFor="st-new-kind">Kind</label>
-        <select id="st-new-kind" className="select" value={f.kind} onChange={(e) => setF((x) => ({ ...x, kind: e.target.value }))}>
-          <option value="stocktake">Stocktake: every part in the store</option>
-          <option value="cycle">Cycle count: one part of the store</option>
+        <select id="st-new-kind" className="select" value={f.kind} aria-describedby="st-new-kind-hint" onChange={(e) => setF((x) => ({ ...x, kind: e.target.value }))}>
+          <option value="stocktake">Stocktake</option>
+          <option value="cycle">Cycle count</option>
         </select>
+        <span id="st-new-kind-hint" className="muted small">A label for the count in Inventory; it does not change what is counted.</span>
       </div>
       <div className="field"><label htmlFor="st-new-due">Due</label><input id="st-new-due" className="input" type="date" value={f.dueDate} onChange={(e) => setF((x) => ({ ...x, dueDate: e.target.value }))} /></div>
       <div className="field"><label htmlFor="st-new-notes">Notes</label><textarea id="st-new-notes" className="textarea" rows={2} maxLength={1000} value={f.notes} onChange={(e) => setF((x) => ({ ...x, notes: e.target.value }))} /></div>
@@ -228,18 +230,31 @@ export function StocktakeDetail({ companyId }: { companyId: string; me: MtMe }) 
     if (raw === undefined) return;
     dirty.current.delete(line.id);
     const counted = raw.trim() === '' ? null : Number(raw);
+    const back = () => setValues((x) => ({ ...x, [line.id]: line.counted === null ? '' : String(line.counted) }));
     if (counted !== null && !(counted >= 0)) {
       toast('Enter a number of zero or more', 'error');
-      setValues((x) => ({ ...x, [line.id]: line.counted === null ? '' : String(line.counted) }));
+      back();
+      return;
+    }
+    // A serial number is one item (the server refuses any other count too).
+    if (line.serial && counted !== null && counted !== 0 && counted !== 1) {
+      toast(`Serial ${line.serial} is one item: count it as 0 or 1`, 'error');
+      back();
       return;
     }
     if (counted === line.counted) return;
     try {
       await put(`${path}/counted`, { lines: [{ id: line.id, counted }] });
       await qc.invalidateQueries({ queryKey: ['mt', companyId, 'stocktake', countId] });
+      // The box shows what the server holds from now on.
+      setValues((x) => {
+        const n = { ...x };
+        if (!dirty.current.has(line.id)) delete n[line.id];
+        return n;
+      });
     } catch (err) {
       toast(errorMessage(err), 'error');
-      setValues((x) => ({ ...x, [line.id]: line.counted === null ? '' : String(line.counted) }));
+      back();
     }
   };
 

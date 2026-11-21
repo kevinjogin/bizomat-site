@@ -18,13 +18,13 @@ import { priceLabourStmt } from './routes-setup';
 import { checkPartLines, partLineStmts, workOrderExtras } from './routes-parts';
 // The field release: stock still reserved for a work order is released when it is completed or cancelled.
 import { runWoBatch, woReservationReleaseStmts } from './routes-stock';
-import { inSiteSql } from './m2util';
+import { failIfStmt, inSiteSql } from './m2util';
 // The field release, stream A: the list's extra filters and its CSV file.
 import { csvResponse } from '../erp/util';
 import { CSV_MAX, workOrderCsvRows, workOrderListFilters } from './lists';
 // The field release (migration 0040): the sign-off when a work order is completed, and alerts to the people concerned.
 import { alertRequestsCompleted, alertWorkOrderAssigned } from './alerts';
-import { SIGN_OFF_SET, completeSchema, discardSignature, prepareSignature, signOffValues, signatureFileStmts } from './signoff';
+import { SIGN_OFF_SET, completeSchema, discardSignature, prepareSignature, signOffAfter, signOffValues, signatureFileStmts, signedOffText } from './signoff';
 // The field release: an inspection round's work order completes only once every asset's checklist is done.
 import { assertRoundDone } from './round-guard';
 import {
@@ -432,6 +432,19 @@ workRoutes.post('/c/:company/work-orders/:id/status', async (c) => {
 const stopAllTimers = (db: D1Database, companyId: string, woId: string, t: number) =>
   db.prepare('UPDATE mt_labour SET ended_at = ?1, minutes = MAX(0, CAST(ROUND((?1 - started_at) / 60000.0) AS INTEGER)) WHERE company_id = ?2 AND work_order_id = ?3 AND ended_at IS NULL').bind(t, companyId, woId);
 
+/**
+ * Why a completion or cancellation whose transaction a guard refused did not happen, from the work order as it is now:
+ * it is no longer open, an asset of its round is open again, or something else changed at the same moment.
+ */
+async function lostRace(db: D1Database, a: MtAccess, w: { id: string; number: string }, e: unknown, roundToo: boolean): Promise<never> {
+  if (e instanceof HttpError && e.status === 409) {
+    const cur = await db.prepare('SELECT status FROM mt_work_orders WHERE company_id = ? AND id = ?').bind(a.companyId, w.id).first<{ status: string }>();
+    if (cur && !(OUTSTANDING as string[]).includes(cur.status)) throw new HttpError(409, `${w.number} is not open any more`);
+    if (roundToo) await assertRoundDone(db, a.companyId, w);
+  }
+  throw e;
+}
+
 workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
   const a = await requireMt(c, 'technician');
   const db = c.env.DB;
@@ -440,7 +453,8 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
   if (!(OUTSTANDING as string[]).includes(w.status)) assertUnlocked(w);
   // What was done, and an optional sign-off (required when the company asks for one: signoff.ts).
   const input = await body(c, completeSchema);
-  // An inspection round's work order completes only once every asset's checklist is done (round-guard.ts).
+  // An inspection round's work order completes only once every asset's checklist is done (round-guard.ts); the
+  // transaction checks it again, for an asset opened or added after this.
   await assertRoundDone(db, a.companyId, w);
   const linked = (await db.prepare("SELECT id, number, requested_by FROM mt_requests WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(a.companyId, w.id).all<{ id: string; number: string; requested_by: string | null }>()).results;
   const t = now();
@@ -448,7 +462,7 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
   const release = await woReservationReleaseStmts(db, a, w, 'completed', t);
   // A preventive work order: its schedule's next due date or meter value moves on (guarded on this completion).
   const pm = await pmCompleteStmts(db, a.companyId, w, t, a.userId);
-  // The signature picture is stored last: it is the one step outside the transaction, deleted again if that fails.
+  // The sign-off: a picture is stored last, the one step outside the transaction, deleted again if that fails.
   const sig = await prepareSignature(c, a, w, input.signature);
   let res: D1Result[];
   try {
@@ -457,13 +471,17 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
       [
         // Every completion writes the sign-off columns, so one without a signature clears an earlier sign-off.
         db.prepare(`UPDATE mt_work_orders SET status = 'completed', completion_notes = ?, completed_at = ?, completed_by = ?, updated_at = ?, ${SIGN_OFF_SET} WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(input.notes, t, a.userId, t, ...signOffValues(sig, t), a.companyId, w.id),
+        // A completion that lost to another one (or to a cancel) keeps nothing: no history line naming its sign-off.
+        failIfStmt(db, a.companyId, "NOT EXISTS (SELECT 1 FROM mt_work_orders WHERE company_id = ? AND id = ? AND status = 'completed' AND completed_at = ? AND completed_by = ?)", [a.companyId, w.id, t, a.userId]),
+        // An asset of the round opened (not approved) or added since the check above.
+        failIfStmt(db, a.companyId, "EXISTS (SELECT 1 FROM mt_round_assets ra WHERE ra.company_id = ? AND ra.work_order_id = ? AND ra.status = 'open')", [a.companyId, w.id]),
         ...release,
         ...signatureFileStmts(db, a, w, sig, t),
         stopAllTimers(db, a.companyId, w.id, t),
         priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
         // Completing a work order completes the requests it was made from.
         db.prepare("UPDATE mt_requests SET status = 'completed', completed_at = ?, updated_at = ? WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(t, t, a.companyId, w.id),
-        eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.completed', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} completed${sig ? `, signed off by ${sig.name}` : ''}`, before: { status: w.status }, after: { status: 'completed', notes: input.notes, ...(sig ? { signedBy: sig.name, signedByRole: sig.role } : {}) }, at: t }),
+        eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.completed', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} completed${signedOffText(sig)}`, before: { status: w.status }, after: { status: 'completed', ...signOffAfter(sig), notes: input.notes }, at: t }),
         ...linked.map((r) => eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.completed', assetId: w.asset_id, requestId: r.id, workOrderId: w.id, summary: `Request ${r.number} completed with work order ${w.number}`, before: { status: 'converted' }, after: { status: 'completed' }, at: t })),
         ...pm,
       ],
@@ -471,7 +489,7 @@ workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
     );
   } catch (e) {
     discardSignature(c, sig);
-    throw e;
+    return lostRace(db, a, w, e, true);
   }
   if (!res[0].meta.changes) {
     discardSignature(c, sig);
@@ -523,15 +541,22 @@ workRoutes.post('/c/:company/work-orders/:id/cancel', async (c) => {
   const input = await body(c, z.object({ reason: zText(2000).min(1, 'Give a reason for cancelling') }));
   const t = now();
   const release = await woReservationReleaseStmts(db, a, w, 'cancelled', t);
-  await runWoBatch(db, [
-    db.prepare(`UPDATE mt_work_orders SET status = 'cancelled', cancelled_at = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(t, t, a.companyId, w.id),
-    ...release,
-    stopAllTimers(db, a.companyId, w.id, t),
-    priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
-    commentStmt(db, { companyId: a.companyId, workOrderId: w.id, authorId: a.userId, body: `Cancelled: ${input.reason}`, at: t }),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.cancelled', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} cancelled: ${input.reason}`, before: { status: w.status }, after: { status: 'cancelled', reason: input.reason }, at: t }),
-    ...(await pmCancelStmts(db, a.companyId, w, t, a.userId)),
-  ], `${w.number} changed at the same moment: refresh and try again`);
+  const pm = await pmCancelStmts(db, a.companyId, w, t, a.userId);
+  try {
+    await runWoBatch(db, [
+      db.prepare(`UPDATE mt_work_orders SET status = 'cancelled', cancelled_at = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(t, t, a.companyId, w.id),
+      // A cancel that lost to a completion (or another cancel) keeps nothing.
+      failIfStmt(db, a.companyId, "NOT EXISTS (SELECT 1 FROM mt_work_orders WHERE company_id = ? AND id = ? AND status = 'cancelled' AND cancelled_at = ?)", [a.companyId, w.id, t]),
+      ...release,
+      stopAllTimers(db, a.companyId, w.id, t),
+      priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
+      commentStmt(db, { companyId: a.companyId, workOrderId: w.id, authorId: a.userId, body: `Cancelled: ${input.reason}`, at: t }),
+      eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.cancelled', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} cancelled: ${input.reason}`, before: { status: w.status }, after: { status: 'cancelled', reason: input.reason }, at: t }),
+      ...pm,
+    ], `${w.number} changed at the same moment: refresh and try again`);
+  } catch (e) {
+    return lostRace(db, a, w, e, false);
+  }
   return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
 });
 

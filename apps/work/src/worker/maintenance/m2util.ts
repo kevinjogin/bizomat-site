@@ -3,7 +3,7 @@
 // object (the cron has none).
 
 import { HttpError, newId, now } from '../lib/util';
-import { validDate } from './util';
+import { OUTSTANDING, sqlList, validDate } from './util';
 
 export const DAY_MS = 86_400_000;
 
@@ -47,6 +47,22 @@ export function todayNear(q: string | undefined, t = now()): string {
 export const doneStmt = (db: D1Database, companyId: string, key: string, t = now()) => db.prepare('INSERT INTO mt_done (company_id, key, created_at) VALUES (?, ?, ?)').bind(companyId, key.slice(0, 200), t);
 
 export const isUnique = (e: unknown) => /UNIQUE constraint failed|SQLITE_CONSTRAINT/i.test(String((e as Error)?.message ?? e));
+
+/**
+ * A statement that makes its whole transaction fail when `cond` (a SQL condition) holds, and writes nothing otherwise.
+ * A D1 batch commits every statement it holds, so this is how a check made in the same transaction stops the rest: it
+ * writes a once-only key without a name, which mt_done refuses. guardFailed tells that refusal apart; check it before
+ * isUnique, which also matches it.
+ */
+export const failIfStmt = (db: D1Database, companyId: string, cond: string, args: unknown[] = []) =>
+  db.prepare(`INSERT INTO mt_done (company_id, key, created_at) SELECT ?, NULL, 0 WHERE ${cond}`).bind(companyId, ...args);
+
+/** Whether a transaction failed on a failIfStmt guard. */
+export const guardFailed = (e: unknown) => /NOT NULL constraint failed: mt_done\.key/i.test(String((e as Error)?.message ?? e));
+
+/** Fails the transaction when the work order is no longer open (completed, closed or cancelled since it was read). */
+export const woOutstandingGuard = (db: D1Database, companyId: string, woId: string) =>
+  failIfStmt(db, companyId, `NOT EXISTS (SELECT 1 FROM mt_work_orders WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)}))`, [companyId, woId]);
 
 /** A line of history written only when `guard` (a SQL condition) holds in the same transaction. */
 export function eventIfStmt(db: D1Database, e: { companyId: string; actorId: string | null; action: string; assetId?: string | null; requestId?: string | null; workOrderId?: string | null; summary: string; before?: unknown; after?: unknown; at?: number }, guard: string, guardArgs: unknown[]) {
