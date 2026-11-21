@@ -170,3 +170,55 @@
   .mt-cal-date { flex-basis: 100%; }
   .mt-scan-row .btn { flex: 1 1 auto; height: 48px; }
 }
+
+/* Field release, stream D, the job: the signature pad, the sign-off and the printable job card (WorkOrderPrint.tsx).
+   The job card is white paper with navy text in both themes, as the QR labels are. No @page rule, so label printing is
+   unchanged. */
+.mt-signature { display: block; width: 100%; max-width: 560px; height: 180px; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; touch-action: none; cursor: crosshair; }
+.mt-signoff { margin: 0; display: grid; gap: 6px; }
+.mt-signoff img { width: 100%; max-width: 320px; height: auto; border: 1px solid var(--border); border-radius: var(--radius); background: #fff; }
+.mt-sign-problem { color: var(--danger); }
+
+.mt-print-page { padding: 16px; min-height: 100vh; background: var(--surface-2); }
+.mt-print-bar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; max-width: 210mm; margin: 0 auto 12px; }
+.mt-print { max-width: 210mm; margin: 0 auto; padding: 14mm 12mm; background: #fff; color: #0a1f33; border: 1px solid var(--border); border-radius: var(--radius); display: grid; gap: 14px; font-size: 13px; }
+.mt-print h1 { font-size: 22px; margin: 0; }
+.mt-print h2 { font-size: 15px; margin: 0 0 6px; padding-bottom: 2px; border-bottom: 1px solid #0a1f33; }
+.mt-print h3 { font-size: 13px; margin: 8px 0 4px; }
+.mt-print section { break-inside: avoid; }
+.mt-print-head { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.mt-print-facts { display: grid; grid-template-columns: max-content 1fr max-content 1fr; gap: 4px 12px; margin: 0; }
+.mt-print-facts dt { font-weight: 600; }
+.mt-print-facts dd { margin: 0; overflow-wrap: anywhere; }
+.mt-print-scroll { overflow-x: auto; }
+.mt-print table { width: 100%; border-collapse: collapse; }
+.mt-print th, .mt-print td { border: 1px solid #9aa5b1; padding: 4px 6px; text-align: left; vertical-align: top; }
+.mt-print thead { display: table-header-group; }
+.mt-print .mt-print-blank td { height: 24px; }
+.mt-print .mt-safety { background: #fff7ed; color: #0a1f33; }
+.mt-print-list { margin: 0; padding-left: 18px; display: grid; gap: 4px; }
+.mt-print-insp { margin-bottom: 8px; }
+.mt-box { display: inline-block; width: 14px; height: 14px; border: 1.5px solid #0a1f33; border-radius: 2px; vertical-align: -2px; position: relative; flex: none; }
+.mt-box.done::after { content: ''; position: absolute; left: 4px; top: 0; width: 4px; height: 9px; border: solid #0a1f33; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+.mt-print-task { display: flex; gap: 8px; align-items: flex-start; padding: 3px 0; }
+.mt-passfail-print { display: inline-flex; gap: 6px; align-items: center; white-space: nowrap; }
+.mt-answer { display: inline-block; min-width: 120px; height: 16px; border-bottom: 1px solid #0a1f33; }
+.mt-answer.wide { display: block; width: 100%; height: 22px; }
+.mt-print-lines { display: grid; gap: 14px; }
+.mt-print-lines > span { display: block; height: 18px; border-bottom: 1px solid #0a1f33; }
+.mt-print-photos { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.mt-print-photos figure { margin: 0; break-inside: avoid; }
+.mt-print-photos img { width: 100%; max-height: 240px; object-fit: contain; border: 1px solid #9aa5b1; }
+.mt-print-sign { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+.mt-print-sign > div { min-height: 40px; display: flex; align-items: flex-end; border-bottom: 1px solid #0a1f33; font-size: 11px; color: #475569; }
+.mt-print-foot { font-size: 11px; color: #475569; border-top: 1px solid #9aa5b1; padding-top: 6px; }
+@media print {
+  .mt-print-bar { display: none !important; }
+  .mt-print-page { padding: 0; background: #fff; min-height: 0; }
+  .mt-print { border: 0; border-radius: 0; padding: 0; max-width: none; }
+}
+@media (max-width: 760px) {
+  .mt-print { padding: 16px 12px; }
+  .mt-print-facts { grid-template-columns: max-content 1fr; }
+  .mt-print-sign, .mt-print-photos { grid-template-columns: 1fr; }
+}

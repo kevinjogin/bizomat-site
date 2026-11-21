@@ -31,6 +31,7 @@ import { Comments, FileList, FilterPanel, History, PriorityBadge, Props, Request
 import { AssetPicker, DepartmentField, PersonSelect, useAssetLabel, type PickedAsset } from './pickers';
 import { ReasonDialog } from './Requests';
 import { DowntimeSection, InspectionsSection, LabourSection, PartsSection, PreventiveNote, ReadingsSection, type WoExtras } from './WorkOrderExtras';
+import { CompleteDialog, SignOffSection } from './SignOff';
 
 const OUTSTANDING = ['open', 'assigned', 'in_progress', 'on_hold'];
 
@@ -63,6 +64,7 @@ export function WorkOrdersPage({ companyId, me }: { companyId: string; me: MtMe 
         <nav className="tabs grow" aria-label="Work order lists">
           {views.map(([v, l]) => <button key={v} className={`tab${view === v ? ' active' : ''}`} aria-current={view === v ? 'page' : undefined} onClick={() => set('view', v)}>{l}</button>)}
         </nav>
+        {me.can.recordWork ? <Link className="btn" to={mtPage(companyId, '/work-orders/record')}><Icon name="check" /> Record work done</Link> : null}
         {manager ? <Link className="btn primary" to={mtPage(companyId, '/work-orders/new')}><Icon name="plus" /> New work order</Link> : null}
       </div>
       <FilterPanel active={['status', 'priority', 'jobType', 'trade', 'dueFrom', 'dueTo', 'q', 'assetId'].filter((k) => g(k)).length}>
@@ -335,6 +337,8 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
   const est = d.totals.estimatedMinutes;
   const actual = d.totals.actualMinutes;
   const extras = { companyId, me, woId: w.id, assetId: w.assetId, d, canWork: d.can.work, seeCosts: !!d.can.seeCosts, act };
+  // The sign-off's picture shows under Sign-off, not among the files, while the work order is completed or closed.
+  const signedOff = (w.status === 'completed' || w.status === 'closed') && !!w.signatureFileId;
   return (
     <div className="stack">
       <div className="mt-head">
@@ -343,6 +347,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
           <div className="mt-badges"><WoBadge status={w.status} /><PriorityBadge priority={w.priority} /><span className="badge">{JOB_TYPE_LABELS[w.jobType] ?? w.jobType}</span></div>
         </div>
         <div className="mt-head-actions">
+          <Link className="btn" to={mtPage(companyId, `/work-orders/${w.id}/print`)} target="_blank" rel="noopener"><Icon name="file" /> Print job card</Link>
           {d.can.edit ? <button className="btn" onClick={() => setDialog('edit')}><Icon name="edit" /> Edit</button> : null}
           {d.can.work && w.status !== 'on_hold' ? <button className="btn" onClick={() => setDialog('hold')}>Put on hold</button> : null}
           {d.can.work && w.status === 'on_hold' ? <button className="btn" onClick={() => act(() => post(`${base}/status`, { status: 'in_progress' }), 'Resumed')}>Resume</button> : null}
@@ -363,7 +368,9 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
         <div className="warn-box mt-locked">
           <Icon name="lock" />
           <span className="grow">
-            {w.status === 'completed' ? `Completed ${dateTimeText(w.completedAt)}${w.completedByName ? ` by ${w.completedByName}` : ''}.` : w.status === 'closed' ? 'Closed.' : 'Cancelled.'} It is locked: no changes until a supervisor or administrator reopens it with a reason.
+            {w.status === 'completed' && w.recordedDone
+              ? `Recorded as already done: work done on ${dateText(w.dueFinish)}, recorded ${dateTimeText(w.createdAt)}${w.completedByName ? ` by ${w.completedByName}` : ''}.`
+              : w.status === 'completed' ? `Completed ${dateTimeText(w.completedAt)}${w.completedByName ? ` by ${w.completedByName}` : ''}.` : w.status === 'closed' ? 'Closed.' : 'Cancelled.'} It is locked: no changes until a supervisor or administrator reopens it with a reason.
           </span>
         </div>
       ) : null}
@@ -459,6 +466,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
               <p className="mt-pre">{w.completionNotes}</p>
             </Section>
           ) : null}
+          <SignOffSection w={w} />
           <Section title={`Tasks (${d.tasks.filter((t) => t.done).length} of ${d.tasks.length} done)`}>
             {d.tasks.length ? (
               <ul className="mt-tasks">
@@ -512,7 +520,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
           <DowntimeSection key={`dt-${d.downtime?.startedAt ?? 0}-${d.downtime?.endedAt ?? 0}`} {...extras} />
           <ReadingsSection {...extras} />
           <Section title="Photos and documents" actions={d.can.work ? <UploadButton companyId={companyId} target={{ workOrderId: w.id }} onDone={refresh} /> : null}>
-            <FileList files={d.files} canRemove={(f) => d.can.work && (f.uploadedBy === me.user.id || me.can.manageWork)} onRemove={(f) => act(() => del(mtPath(companyId, `/files/${f.id}`)), 'File removed')} />
+            <FileList files={signedOff ? d.files.filter((f) => f.id !== w.signatureFileId) : d.files} canRemove={(f) => d.can.work && f.id !== w.signatureFileId && (f.uploadedBy === me.user.id || me.can.manageWork)} onRemove={(f) => act(() => del(mtPath(companyId, `/files/${f.id}`)), 'File removed')} />
           </Section>
           <Section title="Notes">
             <Comments comments={d.comments} canAdd={d.can.work} onAdd={async (body) => { await post(`${base}/comments`, { body }); await refresh(); }} />
@@ -522,7 +530,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
           </Section>
         </div>
       </div>
-      {dialog === 'complete' ? <ReasonDialog title={`Complete ${w.number}`} label="Completion notes: what was done and what was found" confirm="Complete" onClose={() => setDialog(null)} onSubmit={(notes) => act(() => post(`${base}/complete`, { notes }), 'Completed')} /> : null}
+      {dialog === 'complete' ? <CompleteDialog companyId={companyId} me={me} w={w} onClose={() => setDialog(null)} onDone={async () => { await refresh(); setDialog(null); }} /> : null}
       {dialog === 'reopen' ? <ReasonDialog title={`Reopen ${w.number}`} label="Reason for reopening (kept in the history)" confirm="Reopen" onClose={() => setDialog(null)} onSubmit={(reason) => act(() => post(`${base}/reopen`, { reason }), 'Reopened')} /> : null}
       {dialog === 'cancel' ? <ReasonDialog danger title={`Cancel ${w.number}`} label="Reason for cancelling" confirm="Cancel the work order" onClose={() => setDialog(null)} onSubmit={(reason) => act(() => post(`${base}/cancel`, { reason }), 'Cancelled')} /> : null}
       {dialog === 'hold' ? <ReasonDialog optional title={`Put ${w.number} on hold`} label="Why? (optional, for example waiting for a part)" confirm="Put on hold" onClose={() => setDialog(null)} onSubmit={(note) => act(() => post(`${base}/status`, { status: 'on_hold', ...(note ? { note } : {}) }), 'On hold')} /> : null}
