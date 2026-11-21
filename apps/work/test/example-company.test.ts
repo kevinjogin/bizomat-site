@@ -73,6 +73,9 @@ describe('the example company', () => {
     expect(overview.assets).toBe(7);
     expect(overview.openWorkOrders).toBe(2);
     expect(overview.openRequests).toBeGreaterThanOrEqual(2);
+    // The field release: one duplicate request, withdrawn by the person who raised it.
+    const withdrawn = await a.json('GET', `/api/maintenance/c/${built.companyId}/requests?status=withdrawn`);
+    expect((withdrawn.requests ?? withdrawn.rows ?? withdrawn).map((r: any) => [r.status, r.withdrawReason])).toEqual([['closed', 'Raised twice: the same fault is already reported.']]);
 
     // The build's API token is gone.
     const tokens = await env.DB.prepare('SELECT COUNT(*) AS n FROM api_tokens WHERE user_id = ?').bind(a.userId).first<{ n: number }>();

@@ -214,8 +214,11 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
   } catch {
     // before migration 0026 (a test database without it): no WHS records
   }
-  // Maintenance stages M2 and M3 (migrations/0024_maintenance_m2_m3.sql) first: they point at 0018's records.
+  // Maintenance's field release (migrations/0040_maintenance_field.sql) and stages M2 and M3 (0024) first: they point at
+  // 0018's records, and the work order reservations and requisitions before the ERP block deletes what they link.
   for (const table of [
+    'mt_wo_reservations',
+    'mt_wo_requisitions',
     'mt_insp_results',
     'mt_wo_inspections',
     'mt_pm_occurrences',
@@ -689,6 +692,8 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     await api('Maintenance', 'PUT', mt(`/stores/${wh.id}`), { store: true });
     const spares = await loc({ code: 'MNT', name: 'Maintenance spares', level: 'zone', parentId: store.id });
     await api('Inventory', 'POST', e('/adjustments'), { productId: bolt.id, locationId: spares.id, quantity: 4, unitCostCents: 18, reason: 'Spare bolts for the maintenance store' });
+    // The bolts are a required part of the chiller work order (the field release), then issued from the store.
+    await api('Maintenance', 'POST', mt(`/work-orders/${chillerWo.workOrder.id}/parts`), { productId: bolt.id, quantity: 4 });
     await api('Maintenance', 'POST', mt(`/work-orders/${chillerWo.workOrder.id}/stock/issue`), { lines: [{ productId: bolt.id, locationId: spares.id, quantity: 4 }] });
     await api('Maintenance', 'PUT', mt(`/work-orders/${chillerWo.workOrder.id}/downtime`), { startedAt: at(-1, 14), endedAt: null, cause: 'Laser stopped on the chiller alarm' });
     // The monthly service: made by its schedule, inspected, labour and a part recorded, completed.
@@ -743,6 +748,9 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
       reading: { meterId: laserHours.id, value: 4215 },
       today: d(0),
     });
+    // A duplicate of the press brake request, raised and withdrawn by the person who raised it (the field release).
+    const dup = await api('Maintenance', 'POST', mt('/requests'), { assetId: brake.id, priority: 'low', description: 'Press brake back gauge not homing after a job change.' });
+    await api('Maintenance', 'POST', mt(`/requests/${dup.id}/withdraw`), { reason: 'Raised twice: the same fault is already reported.' });
 
     // ---------------------------------------------------------------- Quality (ERP Release 4 part A)
     // A released incoming inspection plan for the bracket arms, the incoming inspection of the arms received above (one

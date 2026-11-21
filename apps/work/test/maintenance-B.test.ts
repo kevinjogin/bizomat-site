@@ -624,7 +624,7 @@ describe('the example company', () => {
   // Needs system/example.ts to carry this stream's hunk (the chiller work order's bolt line, and mt_wo_reservations and
   // mt_wo_requisitions at the head of removeExample's stages M2 and M3 list): the integration commit adds it and drops
   // the skip.
-  it.skip('lists the chiller work order’s bolts as a required part, and is removed with its reservations and requisitions', async () => {
+  it('lists the chiller work order’s bolts as a required part, and is removed with its reservations and requisitions', async () => {
     const a = await signup('Example Parts Removed');
     const built = (await a.json('POST', '/api/system/demo', {})) as any;
     expect(built.status).toBe('ready');
