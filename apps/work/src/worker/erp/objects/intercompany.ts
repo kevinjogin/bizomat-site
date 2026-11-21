@@ -62,31 +62,58 @@ async function entities(db: D1Database, companyId: string): Promise<Entity[]> {
 
 // ------------------------------------------------------------------ the Finance contact standing for an entity
 
-/** The contact for `entity` in workspace `fa` (customer for invoices, supplier for bills), found or made. */
-async function contactFor(db: D1Database, companyId: string, fa: FinAccess, entity: Entity, role: 'customer' | 'supplier'): Promise<{ id: string; name: string; stmts: D1PreparedStatement[] }> {
-  const kinds = role === 'customer' ? "('customer','both')" : "('supplier','both')";
-  const linked = await db
-    .prepare(`SELECT c.id, c.name FROM erp_ic_contacts l JOIN fin_contacts c ON c.id = l.contact_id AND c.org_id = l.fin_org_id WHERE l.company_id = ? AND l.entity_id = ? AND l.fin_org_id = ? AND c.archived_at IS NULL AND c.kind IN ${kinds} LIMIT 1`)
-    .bind(companyId, entity.id, fa.orgId)
-    .first<{ id: string; name: string }>();
-  if (linked) return { ...linked, stmts: [] };
+/**
+ * The contact for `entity` in workspace `fa` (customer for invoices, supplier for bills), found or made. One contact per
+ * entity and workspace is remembered: when trade goes the other way, that contact becomes a customer and supplier ('both')
+ * rather than a second contact of the same name. The link is replaced only when its contact is gone, and a new contact is
+ * made only by the request whose link won, so two requests at once leave one contact.
+ */
+async function contactFor(db: D1Database, companyId: string, fa: FinAccess, entity: Entity, role: 'customer' | 'supplier'): Promise<{ id: string; name: string }> {
   const name = entity.legalName || entity.name;
-  const byName = await db.prepare(`SELECT id, name FROM fin_contacts WHERE org_id = ? AND archived_at IS NULL AND kind IN ${kinds} AND lower(name) = lower(?) LIMIT 1`).bind(fa.orgId, name).first<{ id: string; name: string }>();
-  const t = now();
-  const link = (contactId: string) => db.prepare('INSERT INTO erp_ic_contacts (company_id, entity_id, fin_org_id, contact_id, created_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(company_id, entity_id, fin_org_id) DO UPDATE SET contact_id = excluded.contact_id').bind(companyId, entity.id, fa.orgId, contactId, t);
-  if (byName) return { ...byName, stmts: [link(byName.id)] };
-  if (!fa.perms.contacts.create) throw new HttpError(403, `Your Finance role in ${fa.org.name} cannot add ${name} as a ${role}`);
-  const id = newId();
-  return {
-    id,
-    name,
-    stmts: [db.prepare('INSERT INTO fin_contacts (id, org_id, name, kind, email, phone, abn, address, search, created_by, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(id, fa.orgId, name, role, '', '', '', '', searchText(name), fa.userId, t, t), link(id)],
+  type C = { id: string; name: string; kind: string; created_by: string | null };
+  const linkedNow = () =>
+    db
+      .prepare('SELECT c.id, c.name, c.kind, c.created_by FROM erp_ic_contacts l JOIN fin_contacts c ON c.id = l.contact_id AND c.org_id = l.fin_org_id WHERE l.company_id = ? AND l.entity_id = ? AND l.fin_org_id = ? AND c.archived_at IS NULL')
+      .bind(companyId, entity.id, fa.orgId)
+      .first<C>();
+  const usable = async (c: C) => {
+    if (c.kind === role || c.kind === 'both') return { id: c.id, name: c.name };
+    const edit = (fa.perms.contacts as unknown as Record<string, unknown>).edit;
+    if (!(edit === true || edit === 'all' || (edit === 'own' && c.created_by === fa.userId))) throw new HttpError(403, `${c.name} is a ${c.kind} in ${fa.org.name}, and your Finance role cannot make it a ${role} as well`);
+    await db.prepare("UPDATE fin_contacts SET kind = 'both', updated_at = ? WHERE id = ? AND org_id = ? AND kind <> 'both'").bind(now(), c.id, fa.orgId).run();
+    return { id: c.id, name: c.name };
   };
+  const linked = await linkedNow();
+  if (linked) return usable(linked);
+  const t = now();
+  const link = (contactId: string) =>
+    db
+      .prepare('INSERT INTO erp_ic_contacts (company_id, entity_id, fin_org_id, contact_id, created_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(company_id, entity_id, fin_org_id) DO UPDATE SET contact_id = excluded.contact_id WHERE NOT EXISTS (SELECT 1 FROM fin_contacts c WHERE c.id = erp_ic_contacts.contact_id AND c.org_id = erp_ic_contacts.fin_org_id AND c.archived_at IS NULL)')
+      .bind(companyId, entity.id, fa.orgId, contactId, t);
+  // a contact of that name already there (of this role first)
+  const byName = await db
+    .prepare("SELECT id FROM fin_contacts WHERE org_id = ? AND archived_at IS NULL AND lower(name) = lower(?) ORDER BY CASE WHEN kind IN (?, 'both') THEN 0 ELSE 1 END, created_at LIMIT 1")
+    .bind(fa.orgId, name, role)
+    .first<{ id: string }>();
+  if (byName) await link(byName.id).run();
+  else {
+    if (!fa.perms.contacts.create) throw new HttpError(403, `Your Finance role in ${fa.org.name} cannot add ${name} as a ${role}`);
+    const id = newId();
+    await db.batch([
+      link(id),
+      db
+        .prepare('INSERT INTO fin_contacts (id, org_id, name, kind, email, phone, abn, address, search, created_by, created_at, updated_at) SELECT ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? WHERE EXISTS (SELECT 1 FROM erp_ic_contacts WHERE company_id = ? AND entity_id = ? AND fin_org_id = ? AND contact_id = ?)')
+        .bind(id, fa.orgId, name, role, '', '', '', '', searchText(name), fa.userId, t, t, companyId, entity.id, fa.orgId, id),
+    ]);
+  }
+  const now2 = await linkedNow();
+  if (!now2) throw new HttpError(409, `The contact for ${name} could not be found or made in ${fa.org.name}: try again`);
+  return usable(now2);
 }
 
 // ------------------------------------------------------------------ the invoice and the bill
 
-async function oneDoc(env: Env, a: ErpAccess, key: string, sourceId: string, fa: FinAccess, make: () => Promise<string>): Promise<{ id: string; number: string }> {
+async function oneDoc(env: Env, a: ErpAccess, key: string, sourceId: string, fa: FinAccess, make: () => Promise<string>): Promise<{ id: string; number: string; workspace: string }> {
   const db = env.DB;
   const t = now();
   await db
@@ -95,17 +122,22 @@ async function oneDoc(env: Env, a: ErpAccess, key: string, sourceId: string, fa:
     .run();
   const ev = await db.prepare('SELECT * FROM erp_integration_events WHERE company_id = ? AND idempotency_key = ?').bind(a.companyId, key).first<any>();
   if (!ev) throw new HttpError(409, 'That document belongs to another company');
-  const numberOf = async (id: string) => (await db.prepare('SELECT number FROM fin_docs WHERE id = ? AND org_id = ?').bind(id, ev.target_org_id).first<{ number: string }>())?.number ?? '';
-  if (ev.status === 'done') return { id: ev.target_ref, number: await numberOf(ev.target_ref) };
+  const numberOf = async (id: string, orgId: string) => (await db.prepare('SELECT number FROM fin_docs WHERE id = ? AND org_id = ?').bind(id, orgId).first<{ number: string }>())?.number ?? '';
+  if (ev.status === 'done') {
+    // made earlier, perhaps in the workspace the entity had then
+    const org = await db.prepare('SELECT name FROM fin_orgs WHERE id = ?').bind(ev.target_org_id).first<{ name: string }>();
+    return { id: ev.target_ref, number: await numberOf(ev.target_ref, ev.target_org_id), workspace: org?.name ?? fa.org.name };
+  }
+  // a retry makes the document in the entity's workspace now, and records that one
   const claim = await db
-    .prepare("UPDATE erp_integration_events SET attempts = attempts + 1, status = 'pending', updated_at = ? WHERE company_id = ? AND idempotency_key = ? AND attempts = ? AND status IN ('pending','failed') AND (attempts = 0 OR status = 'failed' OR updated_at < ?)")
-    .bind(t, a.companyId, key, ev.attempts, t - 120_000)
+    .prepare("UPDATE erp_integration_events SET attempts = attempts + 1, status = 'pending', target_org_id = ?, updated_at = ? WHERE company_id = ? AND idempotency_key = ? AND attempts = ? AND status IN ('pending','failed') AND (attempts = 0 OR status = 'failed' OR updated_at < ?)")
+    .bind(fa.orgId, t, a.companyId, key, ev.attempts, t - 120_000)
     .run();
   if (!claim.meta.changes) throw new HttpError(409, 'The documents are being made now: refresh in a moment');
   try {
     const id = await make();
     await db.prepare("UPDATE erp_integration_events SET status = 'done', target_ref = ?, last_error = '', updated_at = ? WHERE company_id = ? AND idempotency_key = ?").bind(id, now(), a.companyId, key).run();
-    return { id, number: await numberOf(id) };
+    return { id, number: await numberOf(id, fa.orgId), workspace: fa.org.name };
   } catch (e) {
     const msg = e instanceof HttpError ? e.message : 'Finance could not make the document';
     await db.prepare("UPDATE erp_integration_events SET status = 'failed', last_error = ?, updated_at = ? WHERE company_id = ? AND idempotency_key = ?").bind(msg.slice(0, 200), now(), a.companyId, key).run();
@@ -142,7 +174,6 @@ export async function intercompanyDocuments(env: Env, a: ErpAccess, user: User, 
   const description = str(data.description).slice(0, 1000);
   const customer = await contactFor(db, a.companyId, fs, buyer, 'customer');
   const supplier = await contactFor(db, a.companyId, fb, seller, 'supplier');
-  if (customer.stmts.length || supplier.stmts.length) await db.batch([...customer.stmts, ...supplier.stmts]);
   const accountOf = async (orgId: string, type: 'revenue' | 'expense') => (await db.prepare('SELECT id FROM fin_accounts WHERE org_id = ? AND type = ? AND archived_at IS NULL ORDER BY is_default DESC, position LIMIT 1').bind(orgId, type).first<{ id: string }>())?.id ?? null;
   const taxOf = async (orgId: string, key: string) => (await db.prepare('SELECT id FROM fin_tax_codes WHERE org_id = ? AND system_key = ? AND archived_at IS NULL').bind(orgId, key).first<{ id: string }>())?.id ?? null;
   const notes = `Intercompany: ${seller.name} to ${buyer.name}, BIZOMAT ERP ${row.number}. A draft: check the amount, tax and account before approving.`;
@@ -153,8 +184,8 @@ export async function intercompanyDocuments(env: Env, a: ErpAccess, user: User, 
     (await createDoc(env, fb, { kind: 'bill', contactId: supplier.id, issueDate: date, reference, notes: `${notes}${rate.rate !== 1 ? ` Converted from ${cur} at ${Number(rate.rate.toPrecision(8))} (exchange rate ${rate.source}).` : ''}`, action: 'draft', lines: [{ itemCode: '', description, unit: '', quantity: 1, unitPrice: billAmount, discountBp: 0, accountId: await accountOf(fb.orgId, 'expense'), taxCodeId: fb.gst ? await taxOf(fb.orgId, 'gst_purchases') : null }] } as any)).id,
   );
   return {
-    data: { ...data, currency: cur, buyerAmount: `${fb.org.currency} ${(billAmount / 100).toFixed(2)}`, rateUsed: cur === fb.org.currency ? `Same currency (${cur})` : `${cur} to ${fb.org.currency} at ${Number(rate.rate.toPrecision(8))}, ${rate.source}`, invoiceNumber: `${invoice.number} in ${fs.org.name}`, billNumber: `${bill.number} in ${fb.org.name}` },
-    message: `Draft invoice ${invoice.number} made in ${fs.org.name} and draft bill ${bill.number} in ${fb.org.name}`,
+    data: { ...data, currency: cur, buyerAmount: `${fb.org.currency} ${(billAmount / 100).toFixed(2)}`, rateUsed: cur === fb.org.currency ? `Same currency (${cur})` : `${cur} to ${fb.org.currency} at ${Number(rate.rate.toPrecision(8))}, ${rate.source}`, invoiceNumber: `${invoice.number} in ${invoice.workspace}`, billNumber: `${bill.number} in ${bill.workspace}` },
+    message: `Draft invoice ${invoice.number} made in ${invoice.workspace} and draft bill ${bill.number} in ${bill.workspace}`,
   };
 }
 

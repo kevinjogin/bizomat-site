@@ -77,6 +77,18 @@ describe('consolidation and intercompany', () => {
     expect(invoices.results[0]).toMatchObject({ total: 100_000, status: 'draft', name: 'Pa NZ Ltd' });
     expect(bills.results).toHaveLength(1);
     expect(bills.results[0]).toMatchObject({ total: 111_111, status: 'draft', name: 'Pa Parent' });
+    // trade the other way: each workspace keeps one contact for the other entity, now customer and supplier
+    const back = await create(owner, co, 'ic_transaction', { seller: sub.record.id, buyer: parent.record.id, date: day(-4), description: 'Parts', amount: 11_000, currency: 'NZD' });
+    await step(owner, co, 'ic_transaction', back.record.id, 'submit');
+    await step(controller, co, 'ic_transaction', back.record.id, 'approve');
+    const backMade = await owner.json('POST', obj(co, 'ic_transaction', `/${back.record.id}/action/documents`), {});
+    expect(backMade.message).toContain('Draft invoice');
+    for (const [org, name] of [[fa, 'Pa NZ Ltd'], [fc, 'Pa Parent']]) {
+      const contacts = await env.DB.prepare('SELECT kind FROM fin_contacts WHERE org_id = ? AND name = ?').bind(org, name).all<any>();
+      expect(contacts.results).toEqual([{ kind: 'both' }]);
+    }
+    const backBill = await env.DB.prepare("SELECT d.total, c.name FROM fin_docs d JOIN fin_contacts c ON c.id = d.contact_id WHERE d.org_id = ? AND d.kind = 'bill'").bind(fa).first<any>();
+    expect(backBill).toMatchObject({ name: 'Pa NZ Ltd', total: 9_900 });
 
     // Finance approves both (each workspace's own roles); the parent also sells 500.00 outside the group
     await owner.json('POST', `/api/fin/orgs/${fa}/docs/${invoices.results[0].id}/approve`, {});

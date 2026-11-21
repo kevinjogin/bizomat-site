@@ -36,8 +36,19 @@ const slug = (s: string) =>
     .replace(/^_+|_+$/g, '')
     .slice(0, 30) || 'field';
 
+interface Choice {
+  key: string;
+  label: string;
+  /** No longer offered: kept so the values already given still read as they did. */
+  retired?: boolean;
+}
+
+const RETIRED = ' (no longer offered)';
+const baseLabel = (l: string) => (l.endsWith(RETIRED) ? l.slice(0, -RETIRED.length) : l);
+
 function toField(r: Row): FieldDef {
-  const options = parseJson<{ key: string; label: string }[]>(r.options_json, []);
+  const options = parseJson<Choice[]>(r.options_json, []);
+  const retired = options.filter((o) => o.retired).map((o) => o.key);
   return {
     key: r.key,
     label: r.label,
@@ -46,7 +57,7 @@ function toField(r: Row): FieldDef {
     required: !!r.required,
     list: !!r.list,
     filter: r.type === 'select' || r.type === 'bool',
-    ...(r.type === 'select' ? { options: Object.fromEntries(options.map((o) => [o.key, o.label])) } : {}),
+    ...(r.type === 'select' ? { options: Object.fromEntries(options.map((o) => [o.key, o.label])), ...(retired.length ? { retired } : {}) } : {}),
     ...(r.type === 'text' ? { max: 500 } : r.type === 'textarea' ? { max: 5000 } : {}),
     ...(r.type === 'number' ? { min: -1e12, max: 1e12 } : r.type === 'money' ? { min: -1e13, max: 1e13 } : {}),
     ...(r.help ? { help: r.help } : {}),
@@ -66,7 +77,7 @@ export async function withCustom(db: D1Database, companyId: string, def: ObjectD
 }
 
 export function customDTO(r: Row) {
-  return { key: r.key, label: r.label, type: r.type, typeLabel: CUSTOM_TYPE_LABELS[r.type], options: parseJson<{ key: string; label: string }[]>(r.options_json, []), required: !!r.required, list: !!r.list, help: r.help, position: r.position, archived: !!r.archived_at };
+  return { key: r.key, label: r.label, type: r.type, typeLabel: CUSTOM_TYPE_LABELS[r.type], options: parseJson<Choice[]>(r.options_json, []).map((o) => ({ key: o.key, label: o.label, retired: !!o.retired })), required: !!r.required, list: !!r.list, help: r.help, position: r.position, archived: !!r.archived_at };
 }
 
 export async function listCustom(db: D1Database, companyId: string, object: string) {
@@ -114,11 +125,27 @@ export async function changeCustom(db: D1Database, companyId: string, object: st
   if (!r) throw new HttpError(404, 'Custom field not found');
   const label = input.label !== undefined ? input.label.trim().slice(0, 80) : r.label;
   if (!label) throw new HttpError(400, 'Give the field a name');
-  let options = parseJson<{ key: string; label: string }[]>(r.options_json, []);
+  let options = parseJson<Choice[]>(r.options_json, []);
   if (input.options !== undefined && r.type === 'select') {
-    // choices keep their keys (values already given stay readable); new ones get new keys
-    const next = cleanOptions('select', input.options);
-    for (const o of options) if (!next.some((n) => n.key === o.key) && !next.some((n) => n.label === o.label)) next.push({ ...o, label: `${o.label} (no longer offered)` });
+    // A choice still offered keeps its key, matched by its name, so a value already given never changes meaning; a new
+    // choice gets a key never used on this field; a choice left out is kept, marked no longer offered (once).
+    const labels = cleanOptions('select', input.options).map((o) => o.label);
+    const used = new Set(options.map((o) => o.key));
+    const next: Choice[] = [];
+    for (const label of labels) {
+      const hit = options.find((o) => baseLabel(o.label).toLowerCase() === label.toLowerCase() && !next.some((n) => n.key === o.key));
+      if (hit) {
+        next.push({ key: hit.key, label });
+        continue;
+      }
+      const stem = slug(label).slice(0, 36);
+      let k = stem;
+      for (let i = 2; used.has(k) || next.some((n) => n.key === k); i++) k = `${stem}_${i}`;
+      used.add(k);
+      next.push({ key: k, label });
+    }
+    for (const o of options) if (!next.some((n) => n.key === o.key)) next.push({ key: o.key, label: `${baseLabel(o.label)}${RETIRED}`, retired: true });
+    if (next.length > 100) throw new HttpError(400, 'Too many choices, offered and no longer offered: make a new field instead');
     options = next;
   }
   if (input.archived === false && r.archived_at) {

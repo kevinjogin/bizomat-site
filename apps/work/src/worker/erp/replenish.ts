@@ -5,8 +5,9 @@
 //              warehouse's receiving area. A goods receipt uses it (purchasing.ts) and the receipt screen shows it.
 //   Replenish  every stocked product whose available stock and what is on order is at or below its reorder point,
 //              ordered up to its maximum level, on one draft requisition through the requisition code
-//              (procurement.ts), so it is approved as any other. A product already on an open requisition is not
-//              asked for twice; one without a maximum level is listed, not ordered.
+//              (procurement.ts), so it is approved as any other. A product already on an open requisition, an open
+//              request for quotation or a purchase order (draft included) is not asked for twice; one without a maximum
+//              level is listed, not ordered.
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -84,6 +85,8 @@ async function needs(db: D1Database, companyId: string): Promise<Need[]> {
               -- orders still being drafted or approved count as on order too, so nothing is asked for twice
               (SELECT COALESCE(SUM(pl.quantity - pl.received_qty), 0) FROM erp_po_lines pl JOIN erp_purchase_orders o ON o.company_id = pl.company_id AND o.id = pl.po_id WHERE pl.company_id = p.company_id AND pl.product_id = p.id AND o.status IN ('draft','awaiting_approval','approved','sent','partially_received')) AS on_order,
               (SELECT r.number FROM erp_requisition_lines rl JOIN erp_requisitions r ON r.company_id = rl.company_id AND r.id = rl.requisition_id WHERE rl.company_id = p.company_id AND rl.product_id = p.id AND r.status IN ('draft','submitted','approved') ORDER BY r.created_at DESC LIMIT 1) AS on_req,
+              -- a request for quotation still out (its requisition is then 'converted'): the need is being bought already
+              (SELECT q.number FROM erp_rfq_lines ql JOIN erp_rfqs q ON q.company_id = ql.company_id AND q.id = ql.rfq_id WHERE ql.company_id = p.company_id AND ql.product_id = p.id AND q.status IN ('draft','sent','awarded','approved') ORDER BY q.created_at DESC LIMIT 1) AS on_rfq,
               (SELECT x.price_cents FROM erp_product_suppliers x WHERE x.company_id = p.company_id AND x.product_id = p.id AND x.preferred = 1 LIMIT 1) AS supplier_price
          FROM erp_products p JOIN erp_product_stock ps ON ps.company_id = p.company_id AND ps.product_id = p.id
         WHERE p.company_id = ? AND p.archived_at IS NULL AND p.type <> 'service' AND ps.reorder_point IS NOT NULL
@@ -108,10 +111,10 @@ async function needs(db: D1Database, companyId: string): Promise<Need[]> {
       onOrder: q6(Number(r.on_order)),
       reorderPoint: Number(r.reorder_point),
       maxQty: max,
-      suggestQty: r.on_req || made ? null : qty !== null && qty > 0 ? qty : null,
-      onRequisition: r.on_req ?? null,
+      suggestQty: r.on_req || r.on_rfq || made ? null : qty !== null && qty > 0 ? qty : null,
+      onRequisition: r.on_req ?? r.on_rfq ?? null,
       unitCostCents: r.supplier_price ?? r.standard_cost_cents ?? null,
-      note: made ? 'Made by the company: plan it in Manufacturing (MRP or a manufacturing order)' : r.on_req ? `Already on requisition ${r.on_req}` : max === null ? 'Set a maximum level to order up to' : qty !== null && qty > 0 ? `Order up to the maximum level of ${max}` : 'The maximum level is reached by what is on order',
+      note: made ? 'Made by the company: plan it in Manufacturing (MRP or a manufacturing order)' : r.on_req ? `Already on requisition ${r.on_req}` : r.on_rfq ? `Already on request for quotation ${r.on_rfq}` : max === null ? 'Set a maximum level to order up to' : qty !== null && qty > 0 ? `Order up to the maximum level of ${max}` : 'The maximum level is reached by what is on order',
     });
   }
   return out;

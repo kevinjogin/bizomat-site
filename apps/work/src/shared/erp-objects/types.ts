@@ -43,6 +43,8 @@ export interface FieldDef {
   max?: number;
   min?: number;
   options?: Record<string, string>;
+  /** Choices no longer offered on the form; the values already given still read and save. */
+  retired?: string[];
   ref?: RefKind;
   help?: string;
   /** Shown as a column in the list. */

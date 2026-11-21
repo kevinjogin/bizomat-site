@@ -82,6 +82,22 @@ export async function loadPricing(db: D1Database, companyId: string, productIds:
   return { lists, promos };
 }
 
+/**
+ * A customer's references for matching price lists: those given (crm:<company> or fin:<contact>) and the other half of
+ * each through the company's one customer record (co_customer_links), so a list made for either half applies.
+ */
+export async function customerRefsFor(db: D1Database, companyId: string, given: string[]): Promise<string[]> {
+  const refs = new Set(given.filter((x) => /^(crm|fin):[A-Za-z0-9_-]{1,64}$/.test(x)).slice(0, 4));
+  for (const r of [...refs]) {
+    const id = r.slice(4);
+    const other = r.startsWith('crm:')
+      ? await db.prepare('SELECT fin_contact_id AS id FROM co_customer_links WHERE company_id = ? AND crm_company_id = ?').bind(companyId, id).first<{ id: string }>()
+      : await db.prepare('SELECT crm_company_id AS id FROM co_customer_links WHERE company_id = ? AND fin_contact_id = ?').bind(companyId, id).first<{ id: string }>();
+    if (other?.id) refs.add(`${r.startsWith('crm:') ? 'fin' : 'crm'}:${other.id}`);
+  }
+  return [...refs];
+}
+
 export function suggest(p: Pricing, q: { productId: string; standard: number | null; customerRefs: string[]; qty: number; date: string; currency: string; orderTotal?: number }): Suggestion {
   const hits = p.lists.filter((l) => l.product === q.productId && l.currency === q.currency && (!l.from || l.from <= q.date) && (!l.to || l.to >= q.date) && (!l.customer || q.customerRefs.includes(l.customer)) && l.minQty <= q.qty + 1e-9);
   // the customer's own list first, then the lowest price

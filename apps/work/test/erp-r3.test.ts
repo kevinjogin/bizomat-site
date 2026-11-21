@@ -693,6 +693,15 @@ describe('OEE, replenishment and putaway', () => {
     // asked again: already on that requisition, nothing more is made
     expect((await p.json('GET', erp(co, '/inventory/replenishment'))).products.find((x: any) => x.productId === part.id).note).toContain(reqView.requisition.number);
     expect((await p.req('POST', erp(co, '/inventory/replenishment'), {})).status).toBe(409);
+    // a product on an open request for quotation is not asked for again either
+    const bolt = await p.json('POST', erp(co, '/products'), { name: 'Bolt', type: 'purchased_item' });
+    await p.json('PUT', erp(co, `/products/${bolt.id}/stock-settings`), { reorderPoint: 10, maxQty: 50 });
+    expect((await p.json('GET', erp(co, '/inventory/replenishment'))).products.find((x: any) => x.productId === bolt.id).suggestQty).toBe(50);
+    const rfq = await p.json('POST', erp(co, '/rfqs'), { lines: [{ productId: bolt.id, quantity: 50 }] });
+    const boltNeed = (await p.json('GET', erp(co, '/inventory/replenishment'))).products.find((x: any) => x.productId === bolt.id);
+    expect(boltNeed.suggestQty).toBeNull();
+    expect(boltNeed.note).toContain((await p.json('GET', erp(co, `/rfqs/${rfq.id}`))).rfq.number);
+    expect((await p.req('POST', erp(co, '/inventory/replenishment'), {})).status).toBe(409);
 
     // putaway: the default location, else where it is stored the most, else the receiving area
     const sugg = async (id: string) => (await p.json('GET', erp(co, `/inventory/putaway?productIds=${id}`))).suggestions[id];

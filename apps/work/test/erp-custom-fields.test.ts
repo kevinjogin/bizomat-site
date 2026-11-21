@@ -79,6 +79,24 @@ describe('custom fields', () => {
     expect(back.record.data.cf_risk_rating).toBe('high');
     expect(back.record.data.reference).toBe('R-1');
 
+    // changing the choices: one still offered keeps its key, whatever the order; one left out is kept, marked once,
+    // and not offered on the form; a new one gets a key never used
+    await owner.json('PATCH', x(co, '/fields/ct_contract/cf_risk_rating'), { options: ['High', 'Critical', 'Low'] });
+    await owner.json('PATCH', x(co, '/fields/ct_contract/cf_risk_rating'), { options: ['Low', 'High', 'Critical'] });
+    const listed = (await owner.json('GET', x(co, '/fields/ct_contract'))).fields.find((f: any) => f.key === 'cf_risk_rating');
+    expect(listed.options).toEqual([
+      { key: 'low', label: 'Low', retired: false },
+      { key: 'high', label: 'High', retired: false },
+      { key: 'critical', label: 'Critical', retired: false },
+      { key: 'medium', label: 'Medium (no longer offered)', retired: true },
+    ]);
+    const shown = await contracts.json('GET', x(co, `/o/ct_contract/${made.record.id}`));
+    expect(shown.record.data.cf_risk_rating).toBe('high');
+    expect(shown.object.fields.find((f: any) => f.key === 'cf_risk_rating')).toMatchObject({ retired: ['medium'] });
+    // offered again: it gets its own key back
+    await owner.json('PATCH', x(co, '/fields/ct_contract/cf_risk_rating'), { options: ['Low', 'Medium', 'High', 'Critical'] });
+    expect((await owner.json('GET', x(co, '/fields/ct_contract'))).fields.find((f: any) => f.key === 'cf_risk_rating').options.map((o: any) => o.key)).toEqual(['low', 'medium', 'high', 'critical']);
+
     // another company has none of them, and cannot reach these
     const other = await company('Cg');
     expect((await other.owner.json('GET', x(other.co, '/o/ct_contract'))).object.fields.some((f: any) => f.custom)).toBe(false);

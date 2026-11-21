@@ -72,6 +72,20 @@ describe('price lists and promotions on sales orders', () => {
     expect(check.priceList).toMatchObject({ price: 3_600, customer: true });
     expect(check.unitPrice).toBe(3_600 - 360);
 
+    // a list made for the Finance half of the customer record applies when the CRM half is chosen, in both places
+    const finOnly = await owner.json('POST', x(co, '/o/pr_pricelist'), { data: { name: 'Walk In account prices', customer: `fin:${walkIn.finContactId}`, currency: 'AUD' }, lines: [{ product: kit.id, minQty: 1, unitPrice: 3_700 }] });
+    await owner.json('POST', x(co, `/o/pr_pricelist/${finOnly.record.id}/step/activate`), {});
+    expect((await owner.json('GET', x(co, `/price?product=${kit.id}&customer=crm:${walkIn.crmCompanyId}&qty=2`))).priceList).toMatchObject({ price: 3_700, customer: true });
+    expect((await owner.json('GET', erp(co, `/sales-orders/price?productId=${kit.id}&customer=crm:${walkIn.crmCompanyId}&qty=2`))).unitPriceCents).toBe(3_700);
+
+    // an amendment that changes only the delivery address keeps every line's note, though the suggestion has changed
+    await owner.json('POST', erp(co, `/sales-orders/${so.id}/confirm`), {});
+    const before = await owner.json('GET', erp(co, `/sales-orders/${so.id}`));
+    await owner.json('POST', erp(co, `/sales-orders/${so.id}/amend`), { reason: 'New delivery address', deliveryAddress: '1 New Street', lines: before.lines.map((l: any) => ({ id: l.id, productId: l.productId, quantity: l.quantity, unitPriceCents: l.unitPriceCents, discountBp: l.discountBp, taxCode: l.taxCode })) });
+    const amended = await owner.json('GET', erp(co, `/sales-orders/${so.id}`));
+    expect(amended.lines.map((l: any) => l.priceNote)).toEqual(before.lines.map((l: any) => l.priceNote));
+    expect(amended.order.revision).toBe(before.order.revision + 1);
+
     // the Pricing module switched off: standard prices only, nothing noted from the lists
     await env.DB.prepare("INSERT INTO feature_flags (key, scope, scope_id, value, reason, updated_by, updated_at) VALUES ('module_commercial_enabled', 'company', ?, 'off', 'test switch', 'test', ?)").bind(co, Date.now()).run();
     const off = await owner.json('GET', erp(co, `/sales-orders/price?productId=${kit.id}&customer=crm:${trade.crmCompanyId}&qty=20`));

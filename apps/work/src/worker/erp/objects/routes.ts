@@ -44,7 +44,7 @@ import { linesOf, removeRecord, saveRecord, takeStep, todayUtc, unarchiveRecord 
 import { runAction } from './actions';
 import { reportsOf, runReport } from './reports';
 import { consolidate } from './intercompany';
-import { loadPricing, suggest } from './pricing';
+import { customerRefsFor, loadPricing, suggest } from './pricing';
 import { CUSTOM_TYPES, CUSTOM_TYPE_LABELS, addCustom, changeCustom, listCustom, withCustom } from './custom';
 import { KIND_LABELS, POSTING_OF, financeTarget, postRecord, postingSettings, postingsOf, savePostingSettings, type PostingKind } from './postings';
 
@@ -723,10 +723,10 @@ objectRoutes.get('/c/:company/x/price', async (c) => {
   // the sales orders' currency (the ERP's), as orders are priced
   const currency = /^[A-Z]{3}$/.test(c.req.query('currency') ?? '') ? c.req.query('currency')! : (await db.prepare('SELECT currency FROM erp_settings WHERE company_id = ?').bind(a.companyId).first<{ currency: string }>())?.currency ?? 'AUD';
   // the same rule sales orders use (pricing.ts)
-  const s = suggest(await loadPricing(db, a.companyId, [product]), { productId: product, standard: p.price_cents ?? null, customerRefs: customer ? [customer] : [], qty, date, currency });
+  const s = suggest(await loadPricing(db, a.companyId, [product]), { productId: product, standard: p.price_cents ?? null, customerRefs: await customerRefsFor(db, a.companyId, customer ? [customer] : []), qty, date, currency });
   const unit = s.listUnit ?? 0;
   const off = s.promotion?.offPerUnit ?? 0;
-  return c.json({ product: { id: p.id, label: `${p.number} ${p.name}`, standardPrice: p.price_cents ?? null, currency: p.currency ?? 'AUD' }, quantity: qty, date, priceList: s.priceList ? { list: s.priceList.label, listId: s.priceList.id, price: s.priceList.price, customer: s.priceList.customer, minQty: s.priceList.minQty, currency } : null, promotion: s.promotion ? { id: s.promotion.id, name: s.promotion.label, off } : null, unitPrice: unit - off, total: Math.round((unit - off) * qty), note: 'The price sales orders take when no price is typed: the customer’s price list, else the lowest list price for the quantity, then the best promotion.' });
+  return c.json({ product: { id: p.id, label: `${p.number} ${p.name}`, standardPrice: p.price_cents ?? null, currency: p.currency ?? 'AUD' }, quantity: qty, date, priceList: s.priceList ? { list: s.priceList.label, listId: s.priceList.id, price: s.priceList.price, customer: s.priceList.customer, minQty: s.priceList.minQty, currency } : null, promotion: s.promotion ? { id: s.promotion.id, name: s.promotion.label, off } : null, unitPrice: unit - off, total: Math.round((unit - off) * qty), note: 'The price sales orders take when no price is typed: the customer’s price list, else the lowest list price for the quantity, then the best promotion. A promotion’s minimum order is checked here against this quantity alone; an order checks its whole value.' });
 });
 
 // ------------------------------------------------------------------ postings to Finance's ledger
