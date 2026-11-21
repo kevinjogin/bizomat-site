@@ -235,6 +235,10 @@ changed**: their owners can remove and remake them in Administration.
 
 ## The field release (21 Nov 2026)
 
+Released 21 Nov 2026: kevinjogin/bizomat-site#126 merged as 3b7eca6, deploy run 60 (image `3b7eca6-run60`), migration
+0042 applied at start-up. It is on for every company with the Maintenance module; email copies of alerts stay off
+(`maintenance_email_alerts`).
+
 Design records: `docs/maintenance/design/` (the gap analysis of MEX's field app against Maintenance, with its two checks,
 and the four work streams' designs). Tests: `apps/work/test/maintenance-A.test.ts` to `maintenance-D.test.ts`.
 

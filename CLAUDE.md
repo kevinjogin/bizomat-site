@@ -59,7 +59,8 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   Maintenance module switch, as the owner chose for the ERP redesign; email copies of alerts sit behind
   `maintenance_email_alerts`, off: never call them working or switch the flag on without the owner's approval. M4's AI
   scheduling assistant, workload planning and offline field work are planned; maintenance costs are not posted to
-  Finance.
+  Finance. Released 21 Nov 2026 (kevinjogin/bizomat-site#126, deploy run 60,
+  migration 0042 applied at start-up).
   **ERP Release 1** (owner's brief of 14 Nov 2026; `docs/erp/release-1.md`, status by release in
   `docs/erp/STATUS.md`; merged and deployed 14 Nov 2026): the product master
   with variants, revisions with change requests and change orders (approval and release with segregation of duties),
