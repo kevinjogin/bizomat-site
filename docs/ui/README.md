@@ -148,6 +148,11 @@ The behaviour (a closed dialog leaves only an inert copy that goes within a mome
 company switch never shows the old company's heading uncovered) is checked by `apps/work/e2e/ui-new.spec.ts`
 (`npm run test:e2e:node`, run locally; the work app's end-to-end specs are not part of CI).
 
+## Released
+
+19 Nov 2026 with Stage 1 (kevinjogin/bizomat-site#91, deploy run 42); phases 2 to 6 on 21 Nov 2026
+(kevinjogin/bizomat-site#123, deploy run 59). Both with the flag off.
+
 ## Switching it on
 
 Only with the owner's approval (CLAUDE.md, Admin Control Centre): Control Centre, `new_ui_enabled`, a company or the
