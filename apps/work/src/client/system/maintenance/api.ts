@@ -54,6 +54,8 @@ export interface MtMe {
   approvalRequired: boolean;
   departments: { id: string; name: string; parentId: string | null }[];
   people: { id: string; name: string; role?: MtRole }[];
+  /** ERP Inventory (Warehouse: stock) is switched on for the company: stocktakes and reservations need it. */
+  stockModule?: boolean;
   can: { manageAssets: boolean; importAssets: boolean; manageWork: boolean; decide: boolean; roles: boolean; managePm: boolean; manageSetup: boolean; manageStores: boolean; reports: boolean; readings: boolean; prestart: boolean };
 }
 
@@ -255,7 +257,7 @@ export interface Schedule {
   jobType: string;
   priority: Priority;
   tasks: string[];
-  parts: { part: string; quantity: number }[];
+  parts: { part: string; quantity: number; productId?: string | null; productNumber?: string }[];
   estimatedMinutes: number | null;
   leadDays: number;
   trade: string;

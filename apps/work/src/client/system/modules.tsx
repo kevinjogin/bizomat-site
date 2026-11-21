@@ -229,10 +229,10 @@ export function ModuleMenu({ companyId, cad, admin, footer, shortcuts }: { compa
   const mt = useMtMe(module === 'maintenance' ? companyId : '');
   const whs = useWhsMe(module === 'whs' ? companyId : '');
   // A new module's page (/m/<key>) shows under the person's recent and favourite modules below.
-  // Inspection rounds and stocktakes are for technicians and above; stream B narrows Stocktakes to companies whose
-  // Warehouse: stock module is on.
+  // Inspection rounds and stocktakes are for technicians and above; Stocktakes only where the company's Warehouse: stock
+  // module is on (maintenance's /me says so).
   const mtField = !!mt.data && mt.data.role !== 'requester';
-  const groups = menu(module, { cad, admin, mtReports: !!mt.data?.can.reports, whsView: !!whs.data?.can.view, mtField, mtStock: true });
+  const groups = menu(module, { cad, admin, mtReports: !!mt.data?.can.reports, whsView: !!whs.data?.can.view, mtField, mtStock: mt.data?.stockModule !== false });
   return (
     <>
       <div className="nav-section erp-module-title">{MODULE_TITLES[module]}</div>

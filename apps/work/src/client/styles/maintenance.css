@@ -170,3 +170,19 @@
   .mt-cal-date { flex-basis: 100%; }
   .mt-scan-row .btn { flex: 1 1 auto; height: 48px; }
 }
+
+/* Field release, stream B: required parts with products, reservations, requisitions and stocktakes. The progress bars
+   reuse .mt-bar (lists) and .mt-meter (a stocktake's header). */
+.mt-part-pick { display: grid; gap: 4px; min-width: 0; flex: 1 1 220px; }
+.mt-part-status { white-space: nowrap; }
+.mt-count-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.mt-count-line { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); }
+.mt-count-line.done { border-left: 4px solid var(--success, var(--accent)); }
+.mt-count-line.found { outline: 2px solid var(--accent); }
+.mt-count-line .input { width: 110px; }
+.mt-count-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 760px) {
+  .mt-count-line { grid-template-columns: 1fr; }
+  .mt-count-line .input { width: 100%; font-size: 16px; }
+  .mt-count-actions { position: sticky; bottom: 0; background: var(--surface-2); padding: 8px 0; }
+}

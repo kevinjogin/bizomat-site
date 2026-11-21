@@ -7,7 +7,7 @@ import { errorMessage, get, patch, post, put } from '../../lib/api';
 import { Icon } from '../../components/ui/Icon';
 import { ErrorBox, Loading } from '../../components/ui/ui';
 import { useToast } from '../../components/ui/overlays';
-import { ROLE_LABELS, dateTimeText, money, mtPath, useSites, type MtMe, type MtRole } from './api';
+import { ROLE_LABELS, dateTimeText, money, mtPage, mtPath, useSites, type MtMe, type MtRole } from './api';
 import { Section } from './common';
 
 function useRun(companyId: string) {
@@ -160,7 +160,7 @@ export function StoresSection({ companyId }: { companyId: string; me: MtMe }) {
   if (!q.data) return <Loading />;
   return (
     <Section title="Maintenance stores">
-      <p className="muted small">Spare parts are products of ERP Inventory, kept in its warehouses: there is no second stock system. Mark the warehouses technicians issue parts from. Stock is received, moved and counted in Inventory; stocktakes of a store are Inventory’s counts.</p>
+      <p className="muted small">Spare parts are products of ERP Inventory, kept in its warehouses: there is no second stock system. Mark the warehouses technicians issue parts from. Stock is received and moved in Inventory; stocktakes of a store are Inventory’s counts, started and counted under Stocktakes and approved in Inventory.</p>
       {q.data.warehouses.length ? (
         <table className="data-table mt-table">
           <thead><tr><th>Warehouse</th><th>Maintenance store</th><th>Stocktakes</th></tr></thead>
@@ -174,7 +174,7 @@ export function StoresSection({ companyId }: { companyId: string; me: MtMe }) {
                 <td data-label="Stocktakes">
                   {w.isStore ? (
                     <span className="small">
-                      {w.counts.length ? w.counts.map((k) => `${k.number} (${k.status}, ${dateTimeText(k.createdAt)})`).join('; ') : 'None yet'} · <Link to={`/c/${encodeURIComponent(companyId)}/inventory`}>Count it in Inventory</Link>
+                      {w.counts.length ? w.counts.map((k) => `${k.number} (${k.status}, ${dateTimeText(k.createdAt)})`).join('; ') : 'None yet'} · <Link to={mtPage(companyId, `/stocktakes?storeId=${encodeURIComponent(w.id)}`)}>Stocktakes</Link>
                     </span>
                   ) : null}
                 </td>

@@ -28,6 +28,7 @@ import {
   type MtMe,
   type Schedule,
 } from './api';
+import { PartLinesEditor, partLinesBody, type PartLine } from './WorkOrderExtras';
 import { PriorityBadge, Props, Section, WoBadge, options } from './common';
 import { AssetPicker, PersonSelect, useAssetLabel, type PickedAsset } from './pickers';
 
@@ -186,7 +187,7 @@ interface Def {
   jobType: string;
   priority: string;
   tasks: string;
-  parts: string;
+  parts: PartLine[];
   hours: string;
   leadDays: string;
   trade: string;
@@ -197,7 +198,7 @@ interface Def {
   meterId: string;
 }
 
-const blank = (): Def => ({ name: '', description: '', triggerKind: 'time', intervalN: '1', intervalUnit: 'month', basis: 'completion', meterInterval: '', condBelow: '', condAbove: '', startDate: localToday(), jobType: 'preventive', priority: 'medium', tasks: '', parts: '', hours: '', leadDays: '0', trade: '', assignedTo: '', inspectionTemplateId: '', instructions: '', safety: '', meterId: '' });
+const blank = (): Def => ({ name: '', description: '', triggerKind: 'time', intervalN: '1', intervalUnit: 'month', basis: 'completion', meterInterval: '', condBelow: '', condAbove: '', startDate: localToday(), jobType: 'preventive', priority: 'medium', tasks: '', parts: [], hours: '', leadDays: '0', trade: '', assignedTo: '', inspectionTemplateId: '', instructions: '', safety: '', meterId: '' });
 
 function fromSchedule(s: Partial<Schedule> & { name: string }): Def {
   return {
@@ -214,7 +215,7 @@ function fromSchedule(s: Partial<Schedule> & { name: string }): Def {
     jobType: s.jobType ?? 'preventive',
     priority: s.priority ?? 'medium',
     tasks: (s.tasks ?? []).join('\n'),
-    parts: (s.parts ?? []).map((p) => `${p.quantity} x ${p.part}`).join('\n'),
+    parts: (s.parts ?? []).map((p) => ({ part: p.part, quantity: String(p.quantity), productId: p.productId ?? null, productLabel: p.productNumber ? `${p.productNumber} ${p.part}` : '' })),
     hours: s.estimatedMinutes != null ? String(s.estimatedMinutes / 60) : '',
     leadDays: String(s.leadDays ?? 0),
     trade: s.trade ?? '',
@@ -228,18 +229,6 @@ function fromSchedule(s: Partial<Schedule> & { name: string }): Def {
 
 const num = (v: string) => (v.trim() === '' ? null : Number(v));
 
-/** "2 x Filter" or "Filter" per line. */
-function partsOf(text: string) {
-  return text
-    .split('\n')
-    .map((l) => l.trim())
-    .filter(Boolean)
-    .map((l) => {
-      const m = /^(\d+(?:\.\d+)?)\s*[x×]\s*(.+)$/i.exec(l);
-      return m ? { part: m[2].trim(), quantity: Number(m[1]) } : { part: l, quantity: 1 };
-    });
-}
-
 function defBody(f: Def, edit: boolean) {
   const out: Record<string, unknown> = {
     name: f.name.trim(),
@@ -247,7 +236,7 @@ function defBody(f: Def, edit: boolean) {
     jobType: f.jobType,
     priority: f.priority,
     tasks: f.tasks.split('\n').map((t) => t.trim()).filter(Boolean),
-    parts: partsOf(f.parts),
+    parts: partLinesBody(f.parts),
     estimatedHours: num(f.hours),
     leadDays: Number(f.leadDays) || 0,
     trade: f.trade,
@@ -309,7 +298,7 @@ function DefinitionFields({ companyId, me, f, setF, edit, meters }: { companyId:
         <PersonSelect me={me} id="pmf-tech" label="Technician" minRole="technician" value={f.assignedTo} onChange={(x) => setF((y) => ({ ...y, assignedTo: x }))} empty="Not assigned" />
         <div className="field"><label htmlFor="pmf-insp">Inspection</label><select id="pmf-insp" className="select" value={f.inspectionTemplateId} onChange={v('inspectionTemplateId')}><option value="">None</option>{(templates.data?.templates ?? []).map((t) => <option key={t.id} value={t.id}>{t.name}</option>)}</select></div>
         <div className="field crm-span"><label htmlFor="pmf-tasks">Tasks (one a line)</label><textarea id="pmf-tasks" className="textarea" rows={4} value={f.tasks} onChange={v('tasks')} /></div>
-        <div className="field crm-span"><label htmlFor="pmf-parts">Required parts (one a line, for example 2 x Hydraulic filter)</label><textarea id="pmf-parts" className="textarea" rows={2} value={f.parts} onChange={v('parts')} /></div>
+        <div className="field crm-span"><span className="label">Required parts</span><PartLinesEditor companyId={companyId} value={f.parts} onChange={(parts) => setF((y) => ({ ...y, parts }))} idPrefix="pmf-part" /></div>
         <div className="field crm-span"><label htmlFor="pmf-ins">Instructions</label><textarea id="pmf-ins" className="textarea" rows={3} value={f.instructions} onChange={v('instructions')} /></div>
         <div className="field crm-span"><label htmlFor="pmf-safety">Safety requirements</label><textarea id="pmf-safety" className="textarea" rows={2} value={f.safety} onChange={v('safety')} /></div>
       </div>
@@ -426,7 +415,7 @@ export function ScheduleDetail({ companyId, me }: { companyId: string; me: MtMe 
                 ['Trade', s.trade],
                 ['Technician', s.assignedToName ?? 'Not assigned'],
                 ['Inspection', s.inspectionTemplateName],
-                ['Required parts', s.parts.map((p) => `${p.quantity} x ${p.part}`).join(', ')],
+                ['Required parts', s.parts.map((p) => `${p.quantity} x ${p.productNumber ? `${p.productNumber} ` : ''}${p.part}`).join(', ')],
               ]}
             />
             {s.tasks.length ? <ol className="small">{s.tasks.map((t, i) => <li key={i}>{t}</li>)}</ol> : null}
