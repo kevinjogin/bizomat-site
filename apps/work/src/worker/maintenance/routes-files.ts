@@ -111,6 +111,10 @@ fileRoutes.delete('/c/:company/files/:id', async (c) => {
   const a = await requireMt(c);
   const { f, parent } = await loadFile(c, a, true);
   if (parent.column === 'request_id' && f.uploaded_by !== a.userId && !isManager(a)) deny('You can remove only files you added');
+  // The picture of a work order's sign-off (signoff.ts) stays while the work order names it.
+  if (f.work_order_id && (await c.env.DB.prepare('SELECT 1 FROM mt_work_orders WHERE company_id = ? AND id = ? AND signature_file_id = ?').bind(a.companyId, f.work_order_id, f.id).first())) {
+    throw new HttpError(409, 'This is the signature of the work order’s sign-off. It stays with the work order.');
+  }
   const t = now();
   await c.env.DB.batch([
     c.env.DB.prepare('UPDATE mt_files SET deleted_at = ? WHERE company_id = ? AND id = ?').bind(t, a.companyId, f.id),

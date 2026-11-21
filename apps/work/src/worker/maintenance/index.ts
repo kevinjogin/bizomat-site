@@ -11,6 +11,8 @@
 //   assets, requests, work orders and files:  routes-assets.ts, routes-requests.ts, routes-work.ts, routes-files.ts
 //   stages M2 and M3: pm.ts (preventive maintenance), routes-meters.ts, routes-inspections.ts (templates, inspections,
 //   prestarts), routes-parts.ts (parts, labour, downtime), routes-setup.ts (sites, trades, stores, QR, scan), reports.ts
+//   the field release: routes-job.ts (the job card, work recorded after it was done, the completing settings), signoff.ts
+//   (the sign-off at completion), alerts.ts (alerts in the ERP, with email copies behind maintenance_email_alerts)
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -37,6 +39,7 @@ import { assetSummaryRoutes } from './asset-summary';
 import { roundRoutes } from './routes-rounds';
 import { stockRoutes } from './routes-stock';
 import { jobRoutes } from './routes-job';
+import { canRecordWork, workSettings } from './signoff';
 import { OPEN_REQUESTS, OUTSTANDING, eventDTO, eventStmt, sqlList, todayFrom } from './util';
 
 export const maintenanceRoutes = new Hono<AppEnv>();
@@ -55,6 +58,7 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
       ? (await db.prepare('SELECT id, name, parent_id FROM co_departments WHERE company_id = ? AND archived_at IS NULL ORDER BY name COLLATE NOCASE').bind(a.companyId).all<{ id: string; name: string; parent_id: string | null }>()).results.map((d) => ({ id: d.id, name: d.name, parentId: d.parent_id }))
       : [];
   const people = await companyPeople(db, a);
+  const ws = await workSettings(db, a.companyId);
   return c.json({
     company: { id: a.companyId, name: a.companyName, kind: a.kind },
     user: { id: a.userId, name: a.userName },
@@ -62,6 +66,9 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
     roleIsDefault: a.roleIsDefault,
     companyRole: a.companyRole,
     approvalRequired: await requireApproval(db, a.companyId),
+    // Completing work orders (migration 0040): whether a signature is needed, and whether technicians record work done.
+    requireSignature: ws.requireSignature,
+    techniciansRecordWork: ws.techniciansRecordWork,
     departments,
     // Names only for everyone; the role of each person matters to whoever assigns work.
     people: people.map((p) => ({ id: p.id, name: p.name, role: isManager(a) ? p.role : undefined })),
@@ -78,6 +85,7 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
       reports: isManager(a),
       readings: true,
       prestart: true,
+      recordWork: canRecordWork(a, ws),
     },
   });
 });

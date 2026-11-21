@@ -12,6 +12,8 @@ import { rateLimit } from '../auth/rate-limit';
 import { deny, isManager, requestScope, requireMt, workOrderScope, type MtAccess } from './access';
 import { requestDTO, workOrderDTO } from './dto';
 import { WO_SELECT, fromRequestSchema, loadWorkOrder, workOrderStatements } from './routes-work';
+// The field release (migration 0040): alerts to the people concerned, after each change is saved.
+import { alertInfoGiven, alertRequestDecided, alertRequestOnWorkOrder, alertRequestRaised, alertWorkOrderAssigned } from './alerts';
 import { OPEN_REQUESTS, OUTSTANDING, PRIORITY, PRIORITY_RANK, commentStmt, commentsOf, departmentName, eventDTO, eventStmt, filesOf, likeOf, nextNumber, searchText, sqlList, validDate, zDate, zId, zText, type RequestStatus } from './util';
 
 export const requestRoutes = new Hono<AppEnv>();
@@ -146,7 +148,9 @@ requestRoutes.post('/c/:company/requests', async (c) => {
     insertCompanyRow(c.env.DB, 'mt_requests', row),
     eventStmt(c.env.DB, { companyId: a.companyId, actorId: a.userId, action: 'request.created', assetId: (cols.asset_id as string) ?? null, requestId: id, summary: `Request ${number} raised${status === 'awaiting_approval' ? ', awaiting approval' : ''}`, after: { ...cols, status }, at: t }),
   ]);
-  return c.json(requestDTO(await loadRequest(c.env.DB, a, id)), 201);
+  const made = await loadRequest(c.env.DB, a, id);
+  await alertRequestRaised(c, a, made, t);
+  return c.json(requestDTO(made), 201);
 });
 
 requestRoutes.get('/c/:company/requests/:id', async (c) => {
@@ -226,7 +230,7 @@ requestRoutes.patch('/c/:company/requests/:id', async (c) => {
 // ------------------------------------------------------------------ decisions
 
 /** A status change by a supervisor or administrator, only from the statuses given; optional comment. */
-async function decide(c: any, opts: { from: RequestStatus[]; to: RequestStatus; action: string; summary: (r: any) => string; comment?: string; note?: string }) {
+async function decide(c: any, opts: { from: RequestStatus[]; to: RequestStatus; action: string; summary: (r: any) => string; comment?: string; note?: string; notify?: (a: MtAccess, r: any, t: number) => Promise<unknown> }) {
   const a = await requireMt(c, 'supervisor');
   const db = c.env.DB as D1Database;
   const r = await loadRequest(db, a, c.req.param('id'));
@@ -239,25 +243,26 @@ async function decide(c: any, opts: { from: RequestStatus[]; to: RequestStatus; 
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: opts.action, assetId: r.asset_id, requestId: r.id, summary: opts.summary(r), before: { status: r.status }, after: { status: opts.to, ...(opts.note ? { note: opts.note } : {}) }, at: t }),
   ]);
   if (!res[0].meta.changes) throw new HttpError(409, `${r.number} changed while you were deciding`);
+  if (opts.notify) await opts.notify(a, r, t);
   return c.json(requestDTO(await loadRequest(db, a, r.id)));
 }
 
 requestRoutes.post('/c/:company/requests/:id/approve', async (c) => {
   await requireMt(c, 'supervisor');
   const input = await body(c, z.object({ note: zText(2000).optional() }).default({}));
-  return decide(c, { from: ['submitted', 'awaiting_approval', 'info_requested'], to: 'approved', action: 'request.approved', summary: (r) => `Request ${r.number} approved`, note: input.note || undefined, comment: input.note || undefined });
+  return decide(c, { from: ['submitted', 'awaiting_approval', 'info_requested'], to: 'approved', action: 'request.approved', summary: (r) => `Request ${r.number} approved`, note: input.note || undefined, comment: input.note || undefined, notify: (a, r, t) => alertRequestDecided(c, a, r, 'approved', input.note ?? '', t) });
 });
 
 requestRoutes.post('/c/:company/requests/:id/decline', async (c) => {
   await requireMt(c, 'supervisor');
   const input = await body(c, z.object({ reason: zText(2000).min(1, 'Give a reason') }));
-  return decide(c, { from: ['submitted', 'awaiting_approval', 'info_requested', 'approved'], to: 'declined', action: 'request.declined', summary: (r) => `Request ${r.number} declined: ${input.reason}`, note: input.reason, comment: `Declined: ${input.reason}` });
+  return decide(c, { from: ['submitted', 'awaiting_approval', 'info_requested', 'approved'], to: 'declined', action: 'request.declined', summary: (r) => `Request ${r.number} declined: ${input.reason}`, note: input.reason, comment: `Declined: ${input.reason}`, notify: (a, r, t) => alertRequestDecided(c, a, r, 'declined', input.reason, t) });
 });
 
 requestRoutes.post('/c/:company/requests/:id/request-info', async (c) => {
   await requireMt(c, 'supervisor');
   const input = await body(c, z.object({ comment: zText(2000).min(1, 'Say what information is needed') }));
-  return decide(c, { from: ['submitted', 'awaiting_approval', 'approved'], to: 'info_requested', action: 'request.info_requested', summary: (r) => `More information requested on ${r.number}: ${input.comment}`, comment: input.comment });
+  return decide(c, { from: ['submitted', 'awaiting_approval', 'approved'], to: 'info_requested', action: 'request.info_requested', summary: (r) => `More information requested on ${r.number}: ${input.comment}`, comment: input.comment, notify: (a, r, t) => alertRequestDecided(c, a, r, 'info_requested', input.comment, t) });
 });
 
 requestRoutes.post('/c/:company/requests/:id/close', async (c) => {
@@ -276,11 +281,12 @@ requestRoutes.post('/c/:company/requests/:id/respond', async (c) => {
   const input = await body(c, z.object({ comment: zText(5000).min(1, 'Write the information asked for'), description: zText(5000).min(1).optional() }));
   const to: RequestStatus = (await requireApproval(db, a.companyId)) ? 'awaiting_approval' : 'submitted';
   const t = now();
-  await db.batch([
+  const res = await db.batch([
     db.prepare("UPDATE mt_requests SET status = ?, description = COALESCE(?, description), updated_at = ? WHERE company_id = ? AND id = ? AND status = 'info_requested'").bind(to, input.description ?? null, t, a.companyId, r.id),
     commentStmt(db, { companyId: a.companyId, requestId: r.id, authorId: a.userId, body: input.comment, at: t }),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.info_given', assetId: r.asset_id, requestId: r.id, summary: `Information given on ${r.number}`, before: { status: r.status }, after: { status: to }, at: t }),
   ]);
+  if (res[0].meta.changes) await alertInfoGiven(c, a, r, input.comment, to, t);
   return c.json(requestDTO(await loadRequest(db, a, r.id)));
 });
 
@@ -332,7 +338,10 @@ requestRoutes.post('/c/:company/requests/:id/convert', async (c) => {
     throw e;
   }
   if (!res[0].meta.changes) throw new HttpError(409, `${r.number} already has a work order`);
-  return c.json({ request: requestDTO(await loadRequest(db, a, r.id)), workOrder: workOrderDTO(await loadWorkOrder(db, a, made.id)) }, 201);
+  const wo = await loadWorkOrder(db, a, made.id);
+  await alertRequestOnWorkOrder(c, a, r, { id: made.id, number: made.number }, 'converted');
+  if (wo.assigned_to) await alertWorkOrderAssigned(c, a, wo, t);
+  return c.json({ request: requestDTO(await loadRequest(db, a, r.id)), workOrder: workOrderDTO(wo) }, 201);
 });
 
 /** Attach the request to an open work order (for example one already made for the same fault). */
@@ -352,5 +361,6 @@ requestRoutes.post('/c/:company/requests/:id/attach', async (c) => {
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.attached', assetId: r.asset_id ?? w.asset_id, requestId: r.id, workOrderId: w.id, summary: `Request ${r.number} attached to work order ${w.number}`, before: { status: r.status }, after: { status: 'converted', workOrder: w.number }, at: t }),
   ]);
   if (!res[0].meta.changes) throw new HttpError(409, `${r.number} already has a work order`);
+  await alertRequestOnWorkOrder(c, a, r, { id: w.id, number: w.number }, 'attached');
   return c.json(requestDTO(await loadRequest(db, a, r.id)));
 });
