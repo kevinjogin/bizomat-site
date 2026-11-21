@@ -214,8 +214,15 @@ async function clearSpaces(c: Context<AppEnv>, userId: string, companyId: string
   } catch {
     // before migration 0026 (a test database without it): no WHS records
   }
-  // Maintenance stages M2 and M3 (migrations/0024_maintenance_m2_m3.sql) first: they point at 0018's records.
+  // Maintenance's field release (migrations/0042_maintenance_field.sql) and stages M2 and M3 (0024) first: they point at
+  // 0018's records, the inspection rounds before the checklists, assets and work orders they name, and the work order
+  // reservations and requisitions before the ERP block deletes what they link.
   for (const table of [
+    'mt_round_results',
+    'mt_round_assets',
+    'mt_rounds',
+    'mt_wo_reservations',
+    'mt_wo_requisitions',
     'mt_insp_results',
     'mt_wo_inspections',
     'mt_pm_occurrences',
@@ -651,9 +658,12 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     // a prestart checklist, a monthly service schedule that made its work order (inspected with a failed item that
     // raised a request, labour and a part recorded, then completed, so its next due date moved on), a meter-based and a
     // condition-based schedule, a template for the class of machines, the workshop store as a maintenance store with
-    // spare bolts issued to the chiller work order, a breakdown with its downtime, and a passed prestart. The earlier
-    // releases' figures stay as they were: seven assets, two open work orders, eight products, and only the bracket arms
-    // in stock (the spare bolts received into the store are all issued).
+    // spare bolts issued to the chiller work order, a breakdown with its downtime, and a passed prestart. The field
+    // release adds the bolts as a required part of the chiller work order, a belt change recorded after it was done, a
+    // duplicate request withdrawn by the person who raised it, and a completed inspection round over three machines (a
+    // failed item recorded only, one asset approved). The earlier releases' figures stay as they were: seven assets, two
+    // open work orders, eight products, and only the bracket arms in stock (the spare bolts received into the store are
+    // all issued).
     const mtSite = await api('Maintenance', 'POST', mt('/sites'), { code: 'RIVERSIDE', name: 'Riverside workshop', address: '12 Example Street' });
     await api('Maintenance', 'PUT', mt(`/assets/${site.id}/site`), { siteId: mtSite.id, includeChildren: true });
     const fitter = await api('Maintenance', 'POST', mt('/trades'), { name: 'Mechanical fitter', rateCents: 8500 });
@@ -690,6 +700,8 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     await api('Maintenance', 'PUT', mt(`/stores/${wh.id}`), { store: true });
     const spares = await loc({ code: 'MNT', name: 'Maintenance spares', level: 'zone', parentId: store.id });
     await api('Inventory', 'POST', e('/adjustments'), { productId: bolt.id, locationId: spares.id, quantity: 4, unitCostCents: 18, reason: 'Spare bolts for the maintenance store' });
+    // The bolts are a required part of the chiller work order (the field release), then issued from the store.
+    await api('Maintenance', 'POST', mt(`/work-orders/${chillerWo.workOrder.id}/parts`), { productId: bolt.id, quantity: 4 });
     await api('Maintenance', 'POST', mt(`/work-orders/${chillerWo.workOrder.id}/stock/issue`), { lines: [{ productId: bolt.id, locationId: spares.id, quantity: 4 }] });
     await api('Maintenance', 'PUT', mt(`/work-orders/${chillerWo.workOrder.id}/downtime`), { startedAt: at(-1, 14), endedAt: null, cause: 'Laser stopped on the chiller alarm' });
     // The monthly service: made by its schedule, inspected, labour and a part recorded, completed.
@@ -736,6 +748,16 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
     await api('Maintenance', 'PUT', mt(`/work-orders/${burst.id}/downtime`), { startedAt: at(-12, 9), endedAt: at(-12, 12.5), cause: 'Hose burst' });
     await api('Maintenance', 'POST', mt(`/work-orders/${burst.id}/labour`), { date: d(-12), minutes: 150, note: 'Hose replaced and bled' });
     await api('Maintenance', 'POST', mt(`/work-orders/${burst.id}/complete`), { notes: 'Hose replaced, system bled and tested.' });
+    // Work recorded after it was done (the field release): made and completed in one step, with its time.
+    await api('Maintenance', 'POST', mt('/work-orders/done'), {
+      assetId: comp.id,
+      description: 'Replaced the worn drive belt on the air compressor',
+      jobType: 'corrective',
+      priority: 'medium',
+      doneDate: d(-3),
+      minutes: 40,
+      notes: 'Belt replaced and tensioned. Compressor run for ten minutes without a fault.',
+    });
     // Today's prestart of the laser, passed, with its hours.
     const ps = await api('Maintenance', 'GET', mt(`/assets/${laser.id}/prestart`));
     await api('Maintenance', 'POST', mt('/prestarts'), {
@@ -744,6 +766,50 @@ async function makeExample(c: Context<AppEnv>, user: AuthUser, companyId: string
       reading: { meterId: laserHours.id, value: 4215 },
       today: d(0),
     });
+    // A duplicate of the press brake request, raised and withdrawn by the person who raised it (the field release).
+    const dup = await api('Maintenance', 'POST', mt('/requests'), { assetId: brake.id, priority: 'low', description: 'Press brake back gauge not homing after a job change.' });
+    await api('Maintenance', 'POST', mt(`/requests/${dup.id}/withdraw`), { reason: 'Raised twice: the same fault is already reported.' });
+    // An inspection round of the fabrication bay (the field release): one work order over three machines, each checklist
+    // completed, the faded label on the press brake recorded as a failure only (no follow-up), the laser cutter approved
+    // under the recorded one-person exception, then the work order completed.
+    const guardRound = await api('Maintenance', 'POST', mt('/inspection-templates'), {
+      name: 'Weekly machine guard round',
+      description: 'Walk the fabrication bay: guards, emergency stops and warning labels.',
+      failAction: 'none',
+      items: [
+        { label: 'Guards fitted and undamaged', kind: 'pass_fail', critical: true },
+        { label: 'Emergency stop tested', kind: 'pass_fail', critical: true },
+        { label: 'Warning labels readable', kind: 'pass_fail' },
+        { label: 'Remarks', kind: 'text', required: false },
+      ],
+    });
+    const guardItem = (label: string) => guardRound.items.find((x: any) => x.label === label)?.id;
+    const madeRound = await api('Maintenance', 'POST', mt('/inspection-rounds'), {
+      templateId: guardRound.id,
+      assets: [{ assetId: laser.id }, { assetId: brake.id }, { assetId: comp.id }],
+      assignedTo: user.id,
+      priority: 'medium',
+      dueStart: d(0),
+      dueFinish: d(0),
+      estimatedHours: 0.75,
+    });
+    const roundWoId = madeRound.workOrder.id;
+    const roundLines = (await api('Maintenance', 'GET', mt(`/work-orders/${roundWoId}/round`))).lines as any[];
+    for (const l of roundLines) {
+      const faded = l.assetNumber === 'MC-0107';
+      await api('Maintenance', 'PUT', mt(`/work-orders/${roundWoId}/round/lines/${l.id}/results`), {
+        results: [
+          { itemId: guardItem('Guards fitted and undamaged'), passed: true },
+          { itemId: guardItem('Emergency stop tested'), passed: true },
+          faded ? { itemId: guardItem('Warning labels readable'), passed: false, note: 'Label on the rear guard has faded' } : { itemId: guardItem('Warning labels readable'), passed: true },
+        ],
+      });
+      await api('Maintenance', 'POST', mt(`/work-orders/${roundWoId}/round/lines/${l.id}/complete`), {});
+    }
+    const laserLine = roundLines.find((l) => l.assetNumber === 'MC-0104');
+    if (laserLine) await api('Maintenance', 'POST', mt(`/work-orders/${roundWoId}/round/lines/${laserLine.id}/decide`), { decision: 'approved' });
+    await api('Maintenance', 'POST', mt(`/work-orders/${roundWoId}/labour`), { date: d(0), minutes: 40, note: 'Guard round' });
+    await api('Maintenance', 'POST', mt(`/work-orders/${roundWoId}/complete`), { notes: 'Round done. The press brake rear guard label needs replacing.' });
 
     // ---------------------------------------------------------------- Quality (ERP Release 4 part A)
     // A released incoming inspection plan for the bracket arms, the incoming inspection of the arms received above (one

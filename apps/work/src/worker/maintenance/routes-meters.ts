@@ -3,18 +3,20 @@
 // any value. Each reading is checked against the expected range, adds to the meter's life total, and runs the meter-
 // and condition-based preventive maintenance of that meter straight away (generation is idempotent: pm.ts).
 // Supervisors and administrators set meters up; anyone with access to the company may enter readings (by hand, from a
-// work order or in a prestart check).
+// work order or in a prestart check). The Readings page (the field release) lists the live meters with filters (site,
+// kind, not read for some days, an asset and the assets under it, search) and sends several readings at once: each is
+// recorded on its own, as one reading would be, so one refused reading never undoes the others.
 
 import { Hono } from 'hono';
 import { z } from 'zod';
 import type { AppEnv } from '../env';
 import { HttpError, body, newId, notFound, now } from '../lib/util';
 import { isManager, requireMt, type MtAccess } from './access';
-import { loadAsset } from './routes-assets';
+import { SUBTREE_SQL, loadAsset } from './routes-assets';
 import { loadWorkOrder } from './routes-work';
-import { eventStmt, zId, zText } from './util';
+import { eventStmt, likeOf, zId, zText } from './util';
 import { generateDue } from './pm';
-import { isUnique, todayNear } from './m2util';
+import { DAY_MS, inSiteSql, isUnique, todayNear } from './m2util';
 
 export const meterRoutes = new Hono<AppEnv>();
 
@@ -37,6 +39,18 @@ export function meterDTO(m: any) {
     lastReadAt: m.last_read_at,
     readings: m.last_seq,
     archived: !!m.archived_at,
+  };
+}
+
+/** A row of the Readings page: the meter with its asset's location and site, and whether its last value is outside the range. */
+export function readingRowDTO(m: any) {
+  const last = m.last_value;
+  return {
+    ...meterDTO(m),
+    assetLocation: (m.asset_location ?? '') as string,
+    siteCode: (m.site_code ?? null) as string | null,
+    siteName: (m.site_name ?? null) as string | null,
+    lastOutOfRange: last !== null && last !== undefined && ((m.expected_min !== null && last < m.expected_min) || (m.expected_max !== null && last > m.expected_max)),
   };
 }
 
@@ -140,16 +154,62 @@ function checkRange(min: number | null | undefined, max: number | null | undefin
   if (min !== null && min !== undefined && max !== null && max !== undefined && min > max) throw new HttpError(400, 'The expected minimum cannot be above the maximum');
 }
 
+/**
+ * The company's meters. Without filters, as before: every live meter (archived ones too with archived=1). The Readings
+ * page adds view=readings (assets not archived, with their site and location), siteId, q, notReadForDays, kind,
+ * assetId with includeChildren, sort=lastRead and paging; total counts every match.
+ */
 meterRoutes.get('/c/:company/meters', async (c) => {
   const a = await requireMt(c);
-  const assetId = c.req.query('assetId');
-  const rows = await c.env.DB.prepare(
-    `SELECT m.*, a.number AS asset_number, a.name AS asset_name FROM mt_meters m JOIN mt_assets a ON a.company_id = m.company_id AND a.id = m.asset_id
-      WHERE m.company_id = ? ${assetId ? 'AND m.asset_id = ?' : ''} ${c.req.query('archived') === '1' ? '' : 'AND m.archived_at IS NULL'} ORDER BY a.number COLLATE NOCASE, m.name COLLATE NOCASE LIMIT 500`,
-  )
-    .bind(a.companyId, ...(assetId ? [assetId.slice(0, 64)] : []))
-    .all<any>();
-  return c.json({ meters: rows.results.map(meterDTO), can: { manage: isManager(a) } });
+  const qp = (k: string) => c.req.query(k) ?? '';
+  const view = qp('view') === 'readings';
+  const where: string[] = [];
+  const args: unknown[] = [];
+  const assetId = qp('assetId').slice(0, 64);
+  if (assetId && qp('includeChildren') === '1') {
+    where.push(`m.asset_id IN (${SUBTREE_SQL})`);
+    args.push(a.companyId, assetId, a.companyId);
+  } else if (assetId) {
+    where.push('m.asset_id = ?');
+    args.push(assetId);
+  }
+  if (qp('archived') !== '1') where.push('m.archived_at IS NULL');
+  if (view) where.push('a.archived_at IS NULL');
+  if (qp('siteId')) {
+    where.push(inSiteSql('a'));
+    args.push(qp('siteId').slice(0, 64));
+  }
+  if (qp('q').trim()) {
+    where.push('(a.search LIKE ? OR lower(m.name) LIKE ?)');
+    args.push(likeOf(qp('q')), likeOf(qp('q')));
+  }
+  const days = Number(qp('notReadForDays'));
+  if (Number.isInteger(days) && days >= 1 && days <= 3650) {
+    where.push('(m.last_read_at IS NULL OR m.last_read_at < ?)');
+    args.push(now() - days * DAY_MS);
+  }
+  if (qp('kind') === 'meter') where.push('m.rising = 1');
+  else if (qp('kind') === 'gauge') where.push('m.rising = 0');
+  const cond = where.map((w) => ` AND ${w}`).join('');
+  const order = qp('sort') === 'lastRead' ? 'COALESCE(m.last_read_at, 0) ASC, a.number COLLATE NOCASE, m.name COLLATE NOCASE' : 'a.number COLLATE NOCASE, m.name COLLATE NOCASE';
+  const limit = Math.min(Math.max(Number(qp('limit')) || (view ? 200 : 500), 1), 500);
+  const offset = Math.max(Number(qp('offset')) || 0, 0);
+  const db = c.env.DB;
+  const [rows, total] = await db.batch([
+    view
+      ? db
+          .prepare(
+            `SELECT m.*, a.number AS asset_number, a.name AS asset_name, a.location AS asset_location, s.code AS site_code, s.name AS site_name FROM mt_meters m
+               JOIN mt_assets a ON a.company_id = m.company_id AND a.id = m.asset_id
+               LEFT JOIN mt_asset_sites ms ON ms.company_id = a.company_id AND ms.asset_id = a.id
+               LEFT JOIN mt_sites s ON s.company_id = ms.company_id AND s.id = ms.site_id
+              WHERE m.company_id = ?${cond} ORDER BY ${order} LIMIT ? OFFSET ?`,
+          )
+          .bind(a.companyId, ...args, limit, offset)
+      : db.prepare(`SELECT m.*, a.number AS asset_number, a.name AS asset_name FROM mt_meters m JOIN mt_assets a ON a.company_id = m.company_id AND a.id = m.asset_id WHERE m.company_id = ?${cond} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(a.companyId, ...args, limit, offset),
+    db.prepare(`SELECT COUNT(*) AS n FROM mt_meters m JOIN mt_assets a ON a.company_id = m.company_id AND a.id = m.asset_id WHERE m.company_id = ?${cond}`).bind(a.companyId, ...args),
+  ]);
+  return c.json({ meters: (rows.results as any[]).map(view ? readingRowDTO : meterDTO), total: (total.results[0] as any)?.n ?? 0, can: { manage: isManager(a) } });
 });
 
 meterRoutes.post('/c/:company/meters', async (c) => {
@@ -223,6 +283,40 @@ meterRoutes.post('/c/:company/meters/:id/readings', async (c) => {
   return c.json(reading, 201);
 });
 
+/**
+ * Several readings at once (the Readings page), each of another meter. The whole body is checked first; then each
+ * reading is recorded on its own, in order, exactly as one reading is (its own transaction and its own preventive
+ * maintenance), and gets its own result: one refused reading never undoes the others.
+ */
+meterRoutes.post('/c/:company/readings/batch', async (c) => {
+  const a = await requireMt(c);
+  const db = c.env.DB;
+  const entry = z.object({ meterId: zId, value: z.number().finite().min(-1e12).max(1e12), reset: z.boolean().optional(), readAt: z.number().int().positive().optional(), note: zText(500).optional() });
+  const input = await body(c, z.object({ entries: z.array(entry).min(1).max(50), today: z.string().optional() }));
+  const seen = new Set<string>();
+  for (const e of input.entries) {
+    if (seen.has(e.meterId)) throw new HttpError(400, 'Each meter takes one reading per send: a meter appears twice', { code: 'DUPLICATE_METER', meterId: e.meterId });
+    seen.add(e.meterId);
+  }
+  const results: Record<string, unknown>[] = [];
+  for (const e of input.entries) {
+    try {
+      const r = await recordReading(db, a, e.meterId, { value: e.value, reset: e.reset, readAt: e.readAt, note: e.note, today: input.today });
+      results.push({ meterId: e.meterId, ok: true, ...r });
+    } catch (err) {
+      if (err instanceof HttpError) {
+        results.push({ meterId: e.meterId, ok: false, status: err.status, error: err.message });
+      } else {
+        // Never the value or the note: the meter and the kind of error only.
+        console.error('readings batch: row failed', { meterId: e.meterId, error: (err as Error)?.name });
+        results.push({ meterId: e.meterId, ok: false, status: 500, error: 'This reading was not saved. Try again.' });
+      }
+    }
+  }
+  const saved = results.filter((r) => r.ok).length;
+  return c.json({ saved, failed: results.length - saved, results });
+});
+
 export async function recordReading(db: D1Database, a: MtAccess, meterId: string, input: { value: number; reset?: boolean; readAt?: number; note?: string; workOrderId?: string | null; today?: string }) {
   const m = await loadMeter(db, a.companyId, meterId);
   let source: ReadingInput['source'] = 'manual';
@@ -238,6 +332,15 @@ export async function recordReading(db: D1Database, a: MtAccess, meterId: string
     if (isUnique(e)) throw new HttpError(409, 'Someone entered a reading of this meter at the same moment. Refresh and try again.');
     throw e;
   }
-  const generated = await generateDue(db, { companyId: a.companyId, meterId: m.id, today: todayNear(input.today), actorId: a.userId });
-  return { reading: { id: r.id, seq: r.seq, value: r.value, delta: r.delta, total: r.total, outOfRange: r.outOfRange }, generated: generated.made };
+  const reading = { id: r.id, seq: r.seq, value: r.value, delta: r.delta, total: r.total, outOfRange: r.outOfRange };
+  // The reading is saved. Making the preventive work it triggers is a step of its own: when that fails, the reading stays
+  // saved (never reported as not saved, which would have it entered twice) and the scheduled run checks the meter again.
+  try {
+    const generated = await generateDue(db, { companyId: a.companyId, meterId: m.id, today: todayNear(input.today), actorId: a.userId });
+    return { reading, generated: generated.made, pmPending: false };
+  } catch (e) {
+    // Never the value or the note: the meter and the kind of error only.
+    console.error('reading saved, preventive maintenance not checked', { meterId: m.id, error: (e as Error)?.name });
+    return { reading, generated: [] as Awaited<ReturnType<typeof generateDue>>['made'], pmPending: true };
+  }
 }

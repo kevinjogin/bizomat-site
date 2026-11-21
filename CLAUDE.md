@@ -47,8 +47,19 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   (ERP Release 4, part B: preventive maintenance by time, meter or condition with idempotent generation by the cron,
   readings, inspections with follow-ups, prestart checks that can set an asset out of service, parts issued through
   ERP Inventory's StockOps, trades and labour costs, downtime, sites, QR scanning and reliability reports; migration
-  0024) are live since 15 Nov 2026. M4's AI scheduling assistant
-  and offline field work are planned; maintenance costs are not posted to Finance.
+  0024) are live since 15 Nov 2026. The **field release** (owner, 21 Nov 2026: "Maintenance additions using MEX", MEX's
+  field app guide a functional reference only; migration 0042; `docs/maintenance/README.md`, design records in
+  `docs/maintenance/design/`): MEX-style list filters and quick lists with CSV, the asset summary and duplicate warnings,
+  request withdrawal, required parts by product with reservations (ERP Inventory's own, released on completion) and
+  purchase requisitions (Procurement's own), stocktakes of the maintenance stores (ERP Inventory counts; starting,
+  submitting and cancelling need `inventory.operate`, approval stays in Inventory), inspection rounds (one work order
+  over many assets, reviewed per asset), the Readings page, labels holding the ERP address, the printable job card (no
+  server PDF), sign-off with a drawn signature (never call it a verified electronic signature), work recorded after it
+  was done, and in-app alerts (the Alerts button only where the person has Maintenance). It ships on inside the
+  Maintenance module switch, as the owner chose for the ERP redesign; email copies of alerts sit behind
+  `maintenance_email_alerts`, off: never call them working or switch the flag on without the owner's approval. M4's AI
+  scheduling assistant, workload planning and offline field work are planned; maintenance costs are not posted to
+  Finance.
   **ERP Release 1** (owner's brief of 14 Nov 2026; `docs/erp/release-1.md`, status by release in
   `docs/erp/STATUS.md`; merged and deployed 14 Nov 2026): the product master
   with variants, revisions with change requests and change orders (approval and release with segregation of duties),

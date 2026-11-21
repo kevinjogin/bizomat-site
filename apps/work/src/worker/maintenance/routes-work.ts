@@ -15,8 +15,18 @@ import { requestDTO, workOrderDTO } from './dto';
 // work order shows its inspections, parts, costs, downtime and readings.
 import { pmCancelStmts, pmCompleteStmts, pmReopenStmts } from './pm';
 import { priceLabourStmt } from './routes-setup';
-import { workOrderExtras } from './routes-parts';
-import { inSiteSql } from './m2util';
+import { checkPartLines, partLineStmts, workOrderExtras } from './routes-parts';
+// The field release: stock still reserved for a work order is released when it is completed or cancelled.
+import { runWoBatch, woReservationReleaseStmts } from './routes-stock';
+import { failIfStmt, inSiteSql } from './m2util';
+// The field release, stream A: the list's extra filters and its CSV file.
+import { csvResponse } from '../erp/util';
+import { CSV_MAX, workOrderCsvRows, workOrderListFilters } from './lists';
+// The field release (migration 0042): the sign-off when a work order is completed, and alerts to the people concerned.
+import { alertRequestsCompleted, alertWorkOrderAssigned } from './alerts';
+import { SIGN_OFF_SET, completeSchema, discardSignature, prepareSignature, signOffAfter, signOffValues, signatureFileStmts, signedOffText } from './signoff';
+// The field release: an inspection round's work order completes only once every asset's checklist is done.
+import { assertRoundDone } from './round-guard';
 import {
   JOB_TYPES,
   LOCKED,
@@ -44,15 +54,18 @@ import {
 
 export const workRoutes = new Hono<AppEnv>();
 
-/** The work order columns with asset, people, department, actual minutes and whether the caller's timer runs (bind the caller's id first). */
-export const WO_SELECT = `SELECT w.*, a.number AS asset_number, a.name AS asset_name, u.name AS assignee_name, d.name AS department_name, cu.name AS completer_name,
-    (SELECT COALESCE(SUM(l.minutes), 0) FROM mt_labour l WHERE l.work_order_id = w.id AND l.ended_at IS NOT NULL) AS actual_minutes,
-    (SELECT 1 FROM mt_labour l2 WHERE l2.work_order_id = w.id AND l2.user_id = ? AND l2.ended_at IS NULL) AS my_timer
-  FROM mt_work_orders w
+/** The work order columns with asset, people, department, actual minutes and whether the caller's timer runs (one ? : the caller's id). */
+export const WO_COLUMNS = `w.*, a.number AS asset_number, a.name AS asset_name, u.name AS assignee_name, d.name AS department_name, cu.name AS completer_name,
+    (SELECT COALESCE(SUM(l.minutes), 0) FROM mt_labour l WHERE l.company_id = w.company_id AND l.work_order_id = w.id AND l.ended_at IS NOT NULL) AS actual_minutes,
+    (SELECT 1 FROM mt_labour l2 WHERE l2.company_id = w.company_id AND l2.work_order_id = w.id AND l2.user_id = ? AND l2.ended_at IS NULL) AS my_timer`;
+/** The tables of WO_COLUMNS: the work order with its asset, technician, department and who completed it. */
+export const WO_FROM = `FROM mt_work_orders w
   JOIN mt_assets a ON a.company_id = w.company_id AND a.id = w.asset_id
   LEFT JOIN users u ON u.id = w.assigned_to
   LEFT JOIN co_departments d ON d.id = w.department_id
   LEFT JOIN users cu ON cu.id = w.completed_by`;
+/** The work order columns with asset, people, department, actual minutes and whether the caller's timer runs (bind the caller's id first). */
+export const WO_SELECT = `SELECT ${WO_COLUMNS} ${WO_FROM}`;
 
 /** The work order if the caller may see it, else 404 (also for another company's). */
 export async function loadWorkOrder(db: D1Database, a: MtAccess, id: string) {
@@ -95,7 +108,8 @@ const fields = {
 };
 const lines = {
   tasks: z.array(zText(500).min(1)).max(100).optional(),
-  parts: z.array(z.object({ part: zText(200).min(1), quantity: z.number().positive().max(1e6) })).max(100).optional(),
+  // A product of the company or the part in words: routes-parts.ts checkPartLines checks which (never a refine here).
+  parts: z.array(z.object({ part: zText(200).optional(), productId: zId.nullable().optional(), quantity: z.number().positive().max(1e6) })).max(100).optional(),
 };
 export const createSchema = z.object({ ...fields, ...lines });
 /** Making a work order from a request: the asset comes from the request unless it has none. */
@@ -153,6 +167,7 @@ const woSearch = (r: Record<string, unknown>) => searchText(r.number as string, 
 export async function workOrderStatements(db: D1Database, a: MtAccess, input: WoInput, fromRequest?: { id: string; number: string; assetId: string | null }) {
   const cols = columnsOf(input);
   await validate(db, a, cols, null);
+  const partLines = await checkPartLines(db, a.companyId, input.parts ?? []);
   const id = newId();
   const number = await nextNumber(db, a.companyId, 'work_order');
   const t = now();
@@ -170,7 +185,7 @@ export async function workOrderStatements(db: D1Database, a: MtAccess, input: Wo
     stmts.push(insertCompanyRow(db, 'mt_work_orders', row));
   }
   (input.tasks ?? []).forEach((text, i) => stmts.push(db.prepare('INSERT INTO mt_wo_tasks (id, company_id, work_order_id, position, text, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)').bind(newId(), a.companyId, id, i + 1, text, a.userId, t)));
-  (input.parts ?? []).forEach((p, i) => stmts.push(db.prepare('INSERT INTO mt_wo_parts (id, company_id, work_order_id, position, part, quantity, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(newId(), a.companyId, id, i + 1, p.part, p.quantity, a.userId, t)));
+  stmts.push(...partLineStmts(db, a.companyId, id, partLines, a.userId, t));
   stmts.push(
     eventStmt(db, {
       companyId: a.companyId,
@@ -180,7 +195,7 @@ export async function workOrderStatements(db: D1Database, a: MtAccess, input: Wo
       workOrderId: id,
       requestId: fromRequest?.id,
       summary: `Work order ${number} created${fromRequest ? ` from request ${fromRequest.number}` : ''}`,
-      after: { ...cols, tasks: input.tasks?.length ?? 0, parts: input.parts?.length ?? 0 },
+      after: { ...cols, tasks: input.tasks?.length ?? 0, parts: partLines.length },
       at: t,
     }),
   );
@@ -191,6 +206,7 @@ export async function workOrderStatements(db: D1Database, a: MtAccess, input: Wo
 
 const SORTS: Record<string, string> = {
   due: "COALESCE(w.due_finish, '9999-12-31')",
+  dueStart: "COALESCE(w.due_start, '9999-12-31')",
   finish: 'COALESCE(w.completed_at, 0)',
   number: 'w.number COLLATE NOCASE',
   priority: PRIORITY_RANK.replace('{col}', 'w.priority'),
@@ -199,6 +215,15 @@ const SORTS: Record<string, string> = {
   created: 'w.created_at',
   status: 'w.status',
 };
+
+/**
+ * The list's rows: WO_SELECT's columns and tables, plus who raised the work order and its asset's site (for the CSV
+ * file). Bind the caller's id first, as for WO_SELECT.
+ */
+const WO_LIST_SELECT = `SELECT ${WO_COLUMNS}, cr.name AS creator_name, lst.code AS site_code, lst.name AS site_name ${WO_FROM}
+  LEFT JOIN users cr ON cr.id = w.created_by
+  LEFT JOIN mt_asset_sites lxs ON lxs.company_id = a.company_id AND lxs.asset_id = a.id
+  LEFT JOIN mt_sites lst ON lst.company_id = lxs.company_id AND lst.id = lxs.site_id`;
 
 workRoutes.get('/c/:company/work-orders', async (c) => {
   const a = await requireMt(c);
@@ -263,17 +288,27 @@ workRoutes.get('/c/:company/work-orders', async (c) => {
     where.push(inSiteSql('a'));
     args.push(qp('siteId').slice(0, 64));
   }
+  // The field release: dates raised, completed and due start, due today or this week, unassigned, department, raised by
+  // and contractor (lists.ts).
+  const f = workOrderListFilters(qp, today);
+  where.push(...f.where);
+  args.push(...f.args);
   const sort = SORTS[qp('sort')] ?? SORTS.due;
   const dir = qp('dir') === 'desc' ? 'DESC' : 'ASC';
+  if (qp('format') === 'csv') {
+    const all = await c.env.DB.prepare(`${WO_LIST_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} ${dir}, w.number ${dir} LIMIT ${CSV_MAX}`).bind(a.userId, ...args).all<any>();
+    return csvResponse(`maintenance-work-orders-${today}`, workOrderCsvRows(all.results, f.tz));
+  }
   const limit = Math.min(Math.max(Number(qp('limit')) || 100, 1), 500);
   const offset = Math.max(Number(qp('offset')) || 0, 0);
-  const sql = `${WO_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} ${dir}, w.number ${dir} LIMIT ? OFFSET ?`;
+  const sql = `${WO_LIST_SELECT} WHERE ${where.join(' AND ')} ORDER BY ${sort} ${dir}, w.number ${dir} LIMIT ? OFFSET ?`;
   const [rows, total, trades] = await c.env.DB.batch([
     c.env.DB.prepare(sql).bind(a.userId, ...args, limit, offset),
     c.env.DB.prepare(`SELECT COUNT(*) AS n FROM mt_work_orders w JOIN mt_assets a ON a.company_id = w.company_id AND a.id = w.asset_id WHERE ${where.join(' AND ')}`).bind(...args),
-    c.env.DB.prepare("SELECT DISTINCT trade FROM mt_work_orders WHERE company_id = ? AND trade <> '' ORDER BY trade COLLATE NOCASE LIMIT 100").bind(a.companyId),
+    // The company's trades and the trades written on its work orders, once each whatever the letter case.
+    c.env.DB.prepare("SELECT MIN(t) AS trade FROM (SELECT name AS t FROM mt_trades WHERE company_id = ?1 AND archived_at IS NULL UNION ALL SELECT trade FROM mt_work_orders WHERE company_id = ?1 AND trade <> '') GROUP BY lower(t) ORDER BY lower(t) LIMIT 100").bind(a.companyId),
   ]);
-  return c.json({ workOrders: (rows.results as any[]).map(workOrderDTO), total: (total.results[0] as any)?.n ?? 0, trades: (trades.results as any[]).map((r) => r.trade), today });
+  return c.json({ workOrders: (rows.results as any[]).map(workOrderDTO), total: (total.results[0] as any)?.n ?? 0, trades: (trades.results as any[]).map((r) => r.trade), today, weekEnd: f.weekEnd, limit, offset });
 });
 
 // ------------------------------------------------------------------ create, read, change
@@ -283,7 +318,9 @@ workRoutes.post('/c/:company/work-orders', async (c) => {
   const input = await body(c, createSchema);
   const made = await workOrderStatements(c.env.DB, a, input);
   await c.env.DB.batch(made.stmts);
-  return c.json(workOrderDTO(await loadWorkOrder(c.env.DB, a, made.id)), 201);
+  const w = await loadWorkOrder(c.env.DB, a, made.id);
+  if (w.assigned_to) await alertWorkOrderAssigned(c, a, w, made.at);
+  return c.json(workOrderDTO(w), 201);
 });
 
 workRoutes.get('/c/:company/work-orders/:id', async (c) => {
@@ -364,7 +401,10 @@ workRoutes.patch('/c/:company/work-orders/:id', async (c) => {
     }),
   ]);
   if (!res[0].meta.changes) throw new HttpError(409, `${w.number} was locked while you were changing it`);
-  return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
+  const after = await loadWorkOrder(db, a, w.id);
+  // A technician given the work order is told; taking one off, or any other change, tells nobody.
+  if (cols.assigned_to && cols.assigned_to !== w.assigned_to) await alertWorkOrderAssigned(c, a, after, set.updated_at as number);
+  return c.json(workOrderDTO(after));
 });
 
 // ------------------------------------------------------------------ status, complete, reopen, close, cancel
@@ -392,27 +432,70 @@ workRoutes.post('/c/:company/work-orders/:id/status', async (c) => {
 const stopAllTimers = (db: D1Database, companyId: string, woId: string, t: number) =>
   db.prepare('UPDATE mt_labour SET ended_at = ?1, minutes = MAX(0, CAST(ROUND((?1 - started_at) / 60000.0) AS INTEGER)) WHERE company_id = ?2 AND work_order_id = ?3 AND ended_at IS NULL').bind(t, companyId, woId);
 
+/**
+ * Why a completion or cancellation whose transaction a guard refused did not happen, from the work order as it is now:
+ * it is no longer open, an asset of its round is open again, or something else changed at the same moment.
+ */
+async function lostRace(db: D1Database, a: MtAccess, w: { id: string; number: string }, e: unknown, roundToo: boolean): Promise<never> {
+  if (e instanceof HttpError && e.status === 409) {
+    const cur = await db.prepare('SELECT status FROM mt_work_orders WHERE company_id = ? AND id = ?').bind(a.companyId, w.id).first<{ status: string }>();
+    if (cur && !(OUTSTANDING as string[]).includes(cur.status)) throw new HttpError(409, `${w.number} is not open any more`);
+    if (roundToo) await assertRoundDone(db, a.companyId, w);
+  }
+  throw e;
+}
+
 workRoutes.post('/c/:company/work-orders/:id/complete', async (c) => {
   const a = await requireMt(c, 'technician');
   const db = c.env.DB;
   const w = await loadWorkOrder(db, a, c.req.param('id'));
   assertWork(a, w);
   if (!(OUTSTANDING as string[]).includes(w.status)) assertUnlocked(w);
-  const input = await body(c, z.object({ notes: zText(10000).min(1, 'Write what was done') }));
-  const linked = (await db.prepare("SELECT id, number FROM mt_requests WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(a.companyId, w.id).all<{ id: string; number: string }>()).results;
+  // What was done, and an optional sign-off (required when the company asks for one: signoff.ts).
+  const input = await body(c, completeSchema);
+  // An inspection round's work order completes only once every asset's checklist is done (round-guard.ts); the
+  // transaction checks it again, for an asset opened or added after this.
+  await assertRoundDone(db, a.companyId, w);
+  const linked = (await db.prepare("SELECT id, number, requested_by FROM mt_requests WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(a.companyId, w.id).all<{ id: string; number: string; requested_by: string | null }>()).results;
   const t = now();
-  const res = await db.batch([
-    db.prepare(`UPDATE mt_work_orders SET status = 'completed', completion_notes = ?, completed_at = ?, completed_by = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(input.notes, t, a.userId, t, a.companyId, w.id),
-    stopAllTimers(db, a.companyId, w.id, t),
-    priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
-    // Completing a work order completes the requests it was made from.
-    db.prepare("UPDATE mt_requests SET status = 'completed', completed_at = ?, updated_at = ? WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(t, t, a.companyId, w.id),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.completed', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} completed`, before: { status: w.status }, after: { status: 'completed', notes: input.notes }, at: t }),
-    ...linked.map((r) => eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.completed', assetId: w.asset_id, requestId: r.id, workOrderId: w.id, summary: `Request ${r.number} completed with work order ${w.number}`, before: { status: 'converted' }, after: { status: 'completed' }, at: t })),
-    // A preventive work order: its schedule's next due date or meter value moves on (guarded on this completion).
-    ...(await pmCompleteStmts(db, a.companyId, w, t, a.userId)),
-  ]);
-  if (!res[0].meta.changes) throw new HttpError(409, `${w.number} is not open any more`);
+  // What is still reserved in the stores for it goes back to free stock, in the same transaction.
+  const release = await woReservationReleaseStmts(db, a, w, 'completed', t);
+  // A preventive work order: its schedule's next due date or meter value moves on (guarded on this completion).
+  const pm = await pmCompleteStmts(db, a.companyId, w, t, a.userId);
+  // The sign-off: a picture is stored last, the one step outside the transaction, deleted again if that fails.
+  const sig = await prepareSignature(c, a, w, input.signature);
+  let res: D1Result[];
+  try {
+    res = await runWoBatch(
+      db,
+      [
+        // Every completion writes the sign-off columns, so one without a signature clears an earlier sign-off.
+        db.prepare(`UPDATE mt_work_orders SET status = 'completed', completion_notes = ?, completed_at = ?, completed_by = ?, updated_at = ?, ${SIGN_OFF_SET} WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(input.notes, t, a.userId, t, ...signOffValues(sig, t), a.companyId, w.id),
+        // A completion that lost to another one (or to a cancel) keeps nothing: no history line naming its sign-off.
+        failIfStmt(db, a.companyId, "NOT EXISTS (SELECT 1 FROM mt_work_orders WHERE company_id = ? AND id = ? AND status = 'completed' AND completed_at = ? AND completed_by = ?)", [a.companyId, w.id, t, a.userId]),
+        // An asset of the round opened (not approved) or added since the check above.
+        failIfStmt(db, a.companyId, "EXISTS (SELECT 1 FROM mt_round_assets ra WHERE ra.company_id = ? AND ra.work_order_id = ? AND ra.status = 'open')", [a.companyId, w.id]),
+        ...release,
+        ...signatureFileStmts(db, a, w, sig, t),
+        stopAllTimers(db, a.companyId, w.id, t),
+        priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
+        // Completing a work order completes the requests it was made from.
+        db.prepare("UPDATE mt_requests SET status = 'completed', completed_at = ?, updated_at = ? WHERE company_id = ? AND work_order_id = ? AND status = 'converted'").bind(t, t, a.companyId, w.id),
+        eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.completed', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} completed${signedOffText(sig)}`, before: { status: w.status }, after: { status: 'completed', ...signOffAfter(sig), notes: input.notes }, at: t }),
+        ...linked.map((r) => eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'request.completed', assetId: w.asset_id, requestId: r.id, workOrderId: w.id, summary: `Request ${r.number} completed with work order ${w.number}`, before: { status: 'converted' }, after: { status: 'completed' }, at: t })),
+        ...pm,
+      ],
+      `${w.number} changed at the same moment: refresh and try again`,
+    );
+  } catch (e) {
+    discardSignature(c, sig);
+    return lostRace(db, a, w, e, true);
+  }
+  if (!res[0].meta.changes) {
+    discardSignature(c, sig);
+    throw new HttpError(409, `${w.number} is not open any more`);
+  }
+  await alertRequestsCompleted(c, a, w, linked, t);
   return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
 });
 
@@ -457,14 +540,23 @@ workRoutes.post('/c/:company/work-orders/:id/cancel', async (c) => {
   assertUnlocked(w);
   const input = await body(c, z.object({ reason: zText(2000).min(1, 'Give a reason for cancelling') }));
   const t = now();
-  await db.batch([
-    db.prepare(`UPDATE mt_work_orders SET status = 'cancelled', cancelled_at = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(t, t, a.companyId, w.id),
-    stopAllTimers(db, a.companyId, w.id, t),
-    priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
-    commentStmt(db, { companyId: a.companyId, workOrderId: w.id, authorId: a.userId, body: `Cancelled: ${input.reason}`, at: t }),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.cancelled', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} cancelled: ${input.reason}`, before: { status: w.status }, after: { status: 'cancelled', reason: input.reason }, at: t }),
-    ...(await pmCancelStmts(db, a.companyId, w, t, a.userId)),
-  ]);
+  const release = await woReservationReleaseStmts(db, a, w, 'cancelled', t);
+  const pm = await pmCancelStmts(db, a.companyId, w, t, a.userId);
+  try {
+    await runWoBatch(db, [
+      db.prepare(`UPDATE mt_work_orders SET status = 'cancelled', cancelled_at = ?, updated_at = ? WHERE company_id = ? AND id = ? AND status IN (${sqlList(OUTSTANDING)})`).bind(t, t, a.companyId, w.id),
+      // A cancel that lost to a completion (or another cancel) keeps nothing.
+      failIfStmt(db, a.companyId, "NOT EXISTS (SELECT 1 FROM mt_work_orders WHERE company_id = ? AND id = ? AND status = 'cancelled' AND cancelled_at = ?)", [a.companyId, w.id, t]),
+      ...release,
+      stopAllTimers(db, a.companyId, w.id, t),
+      priceLabourStmt(db, a.companyId, w.id, { endedAt: t }, { entry: 'timer', t }),
+      commentStmt(db, { companyId: a.companyId, workOrderId: w.id, authorId: a.userId, body: `Cancelled: ${input.reason}`, at: t }),
+      eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'work_order.cancelled', assetId: w.asset_id, workOrderId: w.id, summary: `Work order ${w.number} cancelled: ${input.reason}`, before: { status: w.status }, after: { status: 'cancelled', reason: input.reason }, at: t }),
+      ...pm,
+    ], `${w.number} changed at the same moment: refresh and try again`);
+  } catch (e) {
+    return lostRace(db, a, w, e, false);
+  }
   return c.json(workOrderDTO(await loadWorkOrder(db, a, w.id)));
 });
 
@@ -522,45 +614,7 @@ workRoutes.delete('/c/:company/work-orders/:id/tasks/:taskId', async (c) => {
   return c.json({ ok: true });
 });
 
-// ------------------------------------------------------------------ parts lines
-
-const partSchema = z.object({ part: zText(200).min(1), quantity: z.number().positive().max(1e6) });
-
-workRoutes.post('/c/:company/work-orders/:id/parts', async (c) => {
-  const { a, w, db } = await workable(c);
-  const input = await body(c, partSchema);
-  const pos = await db.prepare('SELECT COALESCE(MAX(position), 0) + 1 AS p FROM mt_wo_parts WHERE company_id = ? AND work_order_id = ?').bind(a.companyId, w.id).first<{ p: number }>();
-  const id = newId();
-  await db.batch([
-    db.prepare('INSERT INTO mt_wo_parts (id, company_id, work_order_id, position, part, quantity, created_by, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)').bind(id, a.companyId, w.id, pos?.p ?? 1, input.part, input.quantity, a.userId, now()),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'part.added', assetId: w.asset_id, workOrderId: w.id, summary: `Part added: ${input.quantity} × ${input.part}`, after: input }),
-  ]);
-  return c.json({ id }, 201);
-});
-
-workRoutes.patch('/c/:company/work-orders/:id/parts/:partId', async (c) => {
-  const { a, w, db } = await workable(c);
-  const part = await db.prepare('SELECT * FROM mt_wo_parts WHERE company_id = ? AND work_order_id = ? AND id = ?').bind(a.companyId, w.id, c.req.param('partId')).first<any>();
-  if (!part) throw notFound('Part line');
-  const input = await body(c, partSchema.partial());
-  const next = { part: input.part ?? part.part, quantity: input.quantity ?? part.quantity };
-  await db.batch([
-    db.prepare('UPDATE mt_wo_parts SET part = ?, quantity = ? WHERE company_id = ? AND id = ?').bind(next.part, next.quantity, a.companyId, part.id),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'part.updated', assetId: w.asset_id, workOrderId: w.id, summary: `Part changed: ${next.quantity} × ${next.part}`, before: { part: part.part, quantity: part.quantity }, after: next }),
-  ]);
-  return c.json({ ok: true });
-});
-
-workRoutes.delete('/c/:company/work-orders/:id/parts/:partId', async (c) => {
-  const { a, w, db } = await workable(c);
-  const part = await db.prepare('SELECT * FROM mt_wo_parts WHERE company_id = ? AND work_order_id = ? AND id = ?').bind(a.companyId, w.id, c.req.param('partId')).first<any>();
-  if (!part) throw notFound('Part line');
-  await db.batch([
-    db.prepare('DELETE FROM mt_wo_parts WHERE company_id = ? AND id = ?').bind(a.companyId, part.id),
-    eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: 'part.removed', assetId: w.asset_id, workOrderId: w.id, summary: `Part removed: ${part.quantity} × ${part.part}`, before: { part: part.part, quantity: part.quantity } }),
-  ]);
-  return c.json({ ok: true });
-});
+// Required part lines (add, change, remove) are in routes-parts.ts, with their products and reservations.
 
 // ------------------------------------------------------------------ labour timer
 

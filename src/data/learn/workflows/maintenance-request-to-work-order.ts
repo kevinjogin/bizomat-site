@@ -23,7 +23,7 @@ const workflow: Workflow = {
     needs: 'Anyone to report; a supervisor or maintenance administrator to approve, make, close and reopen work orders; the assigned technician to do the work.',
     steps: [
       { title: 'Report the fault', body: 'Choose Report a fault at the foot of the module rail. Fill in What is wrong, or what needs doing?, choose the Asset (if you know it), add Photos or documents and choose Send the request.', where: 'Send the request' },
-      { title: 'Review it', body: 'A supervisor opens Maintenance, Requests, Awaiting approval and opens the request.', where: 'Awaiting approval' },
+      { title: 'Review it', body: 'A supervisor opens Maintenance, Requests, Needing approval and opens the request. The Alerts button at the top of the ERP also lists it.', where: 'Needing approval' },
       { title: 'Decide', body: 'Choose Approve, Decline (with a reason the requester sees) or Ask for more information. The requester answers with Give the information.', where: 'Approve' },
       { title: 'Use open work if there is some', body: 'If Open work on this asset lists a work order for the same fault, choose Attach instead of making another.', where: 'Attach' },
       { title: 'Make the work order', body: 'Choose Make a work order, then the Job type (for example Breakdown or Corrective), Priority, Technician, Due finish, Estimated hours and Instructions. Choose Make the work order.', where: 'Make the work order' },

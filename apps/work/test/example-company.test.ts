@@ -73,6 +73,9 @@ describe('the example company', () => {
     expect(overview.assets).toBe(7);
     expect(overview.openWorkOrders).toBe(2);
     expect(overview.openRequests).toBeGreaterThanOrEqual(2);
+    // The field release: one duplicate request, withdrawn by the person who raised it.
+    const withdrawn = await a.json('GET', `/api/maintenance/c/${built.companyId}/requests?status=withdrawn`);
+    expect((withdrawn.requests ?? withdrawn.rows ?? withdrawn).map((r: any) => [r.status, r.withdrawReason])).toEqual([['closed', 'Raised twice: the same fault is already reported.']]);
     // the newer modules have records of their own: the person's employee record and leave waiting, a fixed asset in service
     // with its Finance posting accounts saved (nothing posted), a price list in use, a pay run worked out
     const xo = (o: string) => a.json('GET', `/api/erp/c/${built.companyId}/x/o/${o}`);

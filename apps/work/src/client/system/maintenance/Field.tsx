@@ -1,7 +1,10 @@
 // Screens for the field (stage M3), made for a phone: scan or type an asset's code to open it, do its prestart check or
 // report a fault; the prestart check itself (large pass and fail buttons, an optional meter reading); and a sheet of QR
 // labels to print. The camera is used only where the browser can read codes (BarcodeDetector) and the person allows it;
-// typing the code always works.
+// typing the code always works. Since the field release a label's QR code holds the asset's address in the ERP
+// (.../maintenance/scan?code=<number>), so a phone's own camera opens the Scan page on the asset after signing in;
+// labels holding ASSET: and the number still work on the Scan screen. CodeField is also used by inspection rounds and
+// the Readings page.
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -19,7 +22,8 @@ interface Detector {
   detect(source: CanvasImageSource): Promise<{ rawValue: string }[]>;
 }
 
-function CameraReader({ onCode, onClose }: { onCode: (code: string) => void; onClose: () => void }) {
+/** The camera reading a code (where the browser can); also used by Stocktakes to find a part or a location. */
+export function CameraReader({ onCode, onClose, label = "Camera view: point it at the asset's label" }: { onCode: (code: string) => void; onClose: () => void; label?: string }) {
   const video = useRef<HTMLVideoElement>(null);
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
@@ -58,30 +62,55 @@ function CameraReader({ onCode, onClose }: { onCode: (code: string) => void; onC
   }, [onCode]);
   return (
     <div className="card card-pad stack">
-      {error ? <p className="warn-box small">{error}</p> : <video ref={video} className="mt-camera" muted playsInline aria-label="Camera view: point it at the asset's label" />}
+      {error ? <p className="warn-box small">{error}</p> : <video ref={video} className="mt-camera" muted playsInline aria-label={label} />}
       <button className="btn" onClick={onClose}>Close the camera</button>
     </div>
   );
 }
 
-interface Scanned {
+export interface Scanned {
   asset: { id: string; number: string; name: string; status: string; criticality: string; archived: boolean; location: string };
   prestart: { templateId: string; name: string } | null;
   openWorkOrders: number;
 }
 
-function CodeField({ companyId, onFound }: { companyId: string; onFound: (s: Scanned) => void }) {
+/** The company and the code in a label's address (.../c/<company>/maintenance/scan?code=<number>), or null. */
+export function labelTarget(raw: string): { companyId: string; code: string } | null {
+  let u: URL;
+  try {
+    u = new URL(raw.trim());
+  } catch {
+    return null;
+  }
+  const m = /\/c\/([^/]+)\/maintenance\/scan\/?$/.exec(u.pathname);
+  if (!m) return null;
+  try {
+    return { companyId: decodeURIComponent(m[1]), code: (u.searchParams.get('code') ?? '').trim() };
+  } catch {
+    return null;
+  }
+}
+
+export function CodeField({ companyId, onFound }: { companyId: string; onFound: (s: Scanned) => void }) {
   const [code, setCode] = useState('');
   const [camera, setCamera] = useState(false);
   const [busy, setBusy] = useState(false);
   const toast = useToast();
+  const navigate = useNavigate();
   const canCamera = typeof window !== 'undefined' && 'BarcodeDetector' in window && !!navigator.mediaDevices?.getUserMedia;
   const look = async (value: string) => {
     const v = value.trim();
     if (!v) return;
+    const label = labelTarget(v);
+    // A label of another company opens that company's Scan page; the server there decides whether the person may see it.
+    if (label && label.companyId !== companyId) {
+      setCode('');
+      navigate(mtPage(label.companyId, `/scan?code=${encodeURIComponent(label.code)}`));
+      return;
+    }
     setBusy(true);
     try {
-      onFound(await get<Scanned>(mtPath(companyId, `/scan?code=${encodeURIComponent(v)}`)));
+      onFound(await get<Scanned>(mtPath(companyId, `/scan?code=${encodeURIComponent(label ? label.code : v)}`)));
       setCode('');
     } catch (err) {
       toast(errorMessage(err), 'error');
@@ -108,13 +137,22 @@ function CodeField({ companyId, onFound }: { companyId: string; onFound: (s: Sca
 
 export function ScanPage({ companyId, me }: { companyId: string; me: MtMe }) {
   usePageTitle('Scan an asset');
-  const [found, setFound] = useState<Scanned | null>(null);
+  const [params] = useSearchParams();
+  // A label's address opens this page with its code (?code=<number>): the asset is looked up straight away.
+  const code = (params.get('code') ?? '').trim();
+  const [typed, setTyped] = useState<Scanned | null>(null);
+  const lookup = useQuery({ queryKey: ['mt', companyId, 'scan', code], queryFn: () => get<Scanned>(mtPath(companyId, `/scan?code=${encodeURIComponent(code)}`)), enabled: !!code, retry: false });
+  const found = typed ?? lookup.data ?? null;
+  const meters = useQuery({ queryKey: ['mt', companyId, 'scan-meters', found?.asset.id ?? ''], queryFn: () => get<{ meters: unknown[] }>(mtPath(companyId, `/meters?assetId=${encodeURIComponent(found!.asset.id)}`)), enabled: !!found && !found.asset.archived });
+  const meterCount = meters.data?.meters.length ?? 0;
   return (
     <div className="stack mt-phone">
       <Section title="Scan or type a code">
-        <CodeField companyId={companyId} onFound={setFound} />
-        <p className="muted small">Asset labels carry a QR code with the asset number. You can also type the number, the serial number or the registration.</p>
+        <CodeField companyId={companyId} onFound={setTyped} />
+        <p className="muted small">Asset labels carry a QR code that opens the asset in BIZOMAT ERP from a phone’s camera (after signing in). You can also type the asset number, the serial number or the registration.</p>
       </Section>
+      {!typed && code && lookup.isLoading ? <Loading /> : null}
+      {!typed && lookup.error ? <p className="warn-box small">{errorMessage(lookup.error)}. Type or scan the code again.</p> : null}
       {found ? (
         <section className="card card-pad stack" aria-label="The asset">
           <div className="row wrap">
@@ -126,6 +164,7 @@ export function ScanPage({ companyId, me }: { companyId: string; me: MtMe }) {
           <div className="mt-big-actions">
             {found.prestart && !found.asset.archived ? <Link className="btn primary" to={mtPage(companyId, `/prestart/${found.asset.id}`)}><Icon name="checkSquare" /> Prestart check</Link> : null}
             {!found.asset.archived ? <Link className="btn" to={mtPage(companyId, `/requests/new?assetId=${found.asset.id}`)}><Icon name="alert" /> Report a fault</Link> : null}
+            {meterCount ? <Link className="btn" to={mtPage(companyId, `/readings?assetId=${found.asset.id}`)}><Icon name="activity" /> Enter readings ({meterCount})</Link> : null}
             <Link className="btn" to={mtPage(companyId, `/assets/${found.asset.id}`)}><Icon name="layers" /> Open the asset</Link>
           </div>
           {!found.prestart ? <p className="muted small">This asset has no prestart checklist yet. A supervisor sets one on the asset’s page.</p> : null}
@@ -329,7 +368,7 @@ export function LabelsPage({ companyId }: { companyId: string; me: MtMe }) {
         <span className="grow" />
         <button className="btn primary" onClick={() => window.print()}><Icon name="download" /> Print labels</button>
       </div>
-      <p className="muted small mt-no-print">Each label’s QR code holds ASSET: and the asset number. Scan it on the Scan screen, or with the phone’s camera on that screen where the browser can read codes.</p>
+      <p className="muted small mt-no-print">Each label’s QR code holds the asset’s address in BIZOMAT ERP: a phone’s own camera opens it (the person signs in first). The Scan screen reads it too, and older labels holding ASSET: and the number still work there.</p>
       {list.error ? <ErrorBox error={list.error} retry={() => list.refetch()} /> : !list.data ? <Loading /> : (
         <div className="mt-labels">
           {assets.map((a) => (

@@ -165,6 +165,13 @@ export async function departmentName(db: D1Database, companyId: string, id: stri
 
 // ------------------------------------------------------------------ files
 
+/**
+ * The part of the file store key that marks the picture of a work order's sign-off (signoff.ts): an upload's key is
+ * never given it, so a sign-off picture, the current one or an earlier one, never shows as a photo.
+ */
+export const SIGNATURE_KEY_PART = 'signature-';
+export const isSignatureFile = (f: { work_order_id?: string | null; r2_key?: string | null }) => !!f.work_order_id && !!String(f.r2_key ?? '').split('/').pop()?.startsWith(SIGNATURE_KEY_PART);
+
 export function fileDTO(f: any) {
   return {
     id: f.id,
@@ -172,6 +179,8 @@ export function fileDTO(f: any) {
     mime: f.mime,
     size: f.size,
     isImage: String(f.mime).startsWith('image/'),
+    // The picture of a sign-off (kept on record with the work order, never shown or printed as a photo).
+    signature: isSignatureFile(f),
     uploadedBy: f.uploaded_by,
     uploadedByName: f.uploader ?? null,
     createdAt: f.created_at,

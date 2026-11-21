@@ -327,6 +327,16 @@ const BASE: Record<string, FlagDef> = {
     enforcement: false,
     release: 'Moves',
   },
+  maintenance_email_alerts: {
+    label: 'Maintenance: email copies of alerts',
+    description:
+      'Maintenance alerts (a request waiting for approval, a request decided or made into a work order, a work order given to someone or completed) always show in the ERP. On, each alert is also sent by email where email is set up. Never for the example company.',
+    values: ONOFF,
+    scopes: ['global', 'stage', 'company'],
+    risk: 'medium',
+    enforcement: false,
+    release: 'Maintenance',
+  },
   billing_mode: {
     label: 'Billing mode',
     description: 'free: BIZOMAT is free for everyone. paid is refused while the server’s billing lock (BIZOMAT_BILLING_LOCK) is set.',

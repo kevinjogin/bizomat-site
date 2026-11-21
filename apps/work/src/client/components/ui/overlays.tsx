@@ -7,6 +7,13 @@ import { useExitAnimation } from '../../lib/ui';
 
 export function Modal({ title, onClose, children, footer, wide, xl, labelledBy }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; /** Nearly full screen (report preview). */ xl?: boolean; labelledBy?: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  // The latest onClose, read when it is needed: the focus effect below runs once, when the dialog opens. A parent that
+  // passes a new handler on every render (a page re-rendered each second by a running timer) would otherwise run it
+  // again and pull the focus back to the first field while the person types in another.
+  const closeRef = useRef(onClose);
+  useLayoutEffect(() => {
+    closeRef.current = onClose;
+  });
   const overlay = useRef<HTMLDivElement>(null);
   useExitAnimation([overlay]);
   useEffect(() => {
@@ -16,7 +23,7 @@ export function Modal({ title, onClose, children, footer, wide, xl, labelledBy }
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation();
-        onClose();
+        closeRef.current();
       }
       if (e.key === 'Tab' && ref.current) {
         const focusables = ref.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])');
@@ -37,7 +44,7 @@ export function Modal({ title, onClose, children, footer, wide, xl, labelledBy }
       document.removeEventListener('keydown', onKey, true);
       prev?.focus?.();
     };
-  }, [onClose]);
+  }, []);
   const id = labelledBy ?? 'modal-title';
   return createPortal(
     <div className="overlay" ref={overlay} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
@@ -68,13 +75,18 @@ export function Drawer({ title, onClose, children, footer, labelledBy = 'drawer-
   const ref = useRef<HTMLElement>(null);
   const scrim = useRef<HTMLDivElement>(null);
   useExitAnimation([scrim, ref]);
+  // As in Modal: the latest onClose, so the focus effect runs once and never pulls the focus back on a re-render.
+  const closeRef = useRef(onClose);
+  useLayoutEffect(() => {
+    closeRef.current = onClose;
+  });
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
     (ref.current?.querySelector<HTMLElement>('input, textarea, select, button:not(.drawer-close)') ?? ref.current)?.focus();
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !document.querySelector('.popover, .overlay:not(.ui-exit)')) {
         e.stopPropagation();
-        onClose();
+        closeRef.current();
       }
       if (e.key === 'Tab' && ref.current) {
         const focusables = ref.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])');
@@ -95,7 +107,7 @@ export function Drawer({ title, onClose, children, footer, labelledBy = 'drawer-
       document.removeEventListener('keydown', onKey, true);
       prev?.focus?.();
     };
-  }, [onClose]);
+  }, []);
   return createPortal(
     <>
       <div className="sidepanel-overlay" ref={scrim} onClick={onClose} />

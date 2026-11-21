@@ -212,10 +212,11 @@ procurementRoutes.get('/c/:company/requisitions', async (c) => {
 const zRequisitionIn = z.object({ ...reqFields, submit: z.boolean().optional() });
 
 /**
- * Raises a requisition (draft, or submitted for approval). The route below and MRP's purchase suggestions (planning.ts)
- * both come through here; the caller checks that the person may raise requisitions.
+ * Raises a requisition (draft, or submitted for approval). The route below, MRP's purchase suggestions (planning.ts)
+ * and Maintenance work orders (maintenance/routes-stock.ts) come through here; the caller checks that the person may
+ * raise requisitions. `extra` statements (the caller's own link to the requisition) join the same transaction.
  */
-export async function createRequisition(db: D1Database, a: ErpAccess, input: z.infer<typeof zRequisitionIn>, note = '') {
+export async function createRequisition(db: D1Database, a: ErpAccess, input: z.infer<typeof zRequisitionIn>, note = '', extra: (r: { id: string; number: string; t: number }) => D1PreparedStatement[] = () => []) {
   const lines = (await checkLines(db, a.companyId, input.lines ?? [])).map((l, i) => ({ ...l, estUnitCostCents: input.lines![i].estUnitCostCents ?? null }));
   const department = await checkDepartment(db, a, input.departmentId);
   const id = newId();
@@ -230,6 +231,7 @@ export async function createRequisition(db: D1Database, a: ErpAccess, input: z.i
       .bind(id, a.companyId, number, input.title ?? '', a.userId, department, input.requiredDate ?? null, input.budgetRef ?? '', input.reason ?? '', status, estimate(lines), input.currency ?? 'AUD', input.submit ? t : null, searchText(number, input.title, input.reason, ...lines.map((l) => l.item)), a.userId, t, t),
     ...reqLineStmts(db, a.companyId, id, lines),
     eventStmt(db, { companyId: a.companyId, actorId: a.userId, action: input.submit ? 'requisition.submitted' : 'requisition.created', entityType: 'requisition', entityId: id, summary: `${number} ${input.submit ? 'raised and submitted' : 'drafted'}: ${lines.length} line${lines.length === 1 ? '' : 's'}${note ? ` (${note})` : ''}`, at: t }),
+    ...extra({ id, number, t }),
   ]);
   return { id, number, status };
 }

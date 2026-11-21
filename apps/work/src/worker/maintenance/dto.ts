@@ -29,6 +29,9 @@ export function requestDTO(r: any) {
     closedAt: r.closed_at,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
+    // The field release: withdrawn by the person who raised it (the request is then closed).
+    withdrawnAt: r.withdrawn_at ?? null,
+    withdrawReason: r.withdraw_reason ?? '',
   };
 }
 
@@ -68,5 +71,14 @@ export function workOrderDTO(w: any) {
     updatedAt: w.updated_at,
     actualMinutes: w.actual_minutes ?? null,
     timerRunning: w.my_timer ? true : false,
+    // The sign-off (migration 0042): a typed name and a picture drawn on screen, or the typed name alone (no picture);
+    // neither is a verified electronic signature.
+    signedByName: w.signed_by_name ?? null,
+    signedByRole: w.signed_by_role ?? '',
+    signedAt: w.signed_at ?? null,
+    signedTyped: !!w.signed_at && !!w.signed_by_name && !w.signature_file_id,
+    signatureFileId: w.signature_file_id ?? null,
+    signatureUrl: w.signature_file_id ? `/api/maintenance/c/${w.company_id}/files/${w.signature_file_id}` : null,
+    recordedDone: !!w.recorded_done,
   };
 }

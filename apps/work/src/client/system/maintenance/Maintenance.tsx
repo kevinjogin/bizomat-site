@@ -1,8 +1,10 @@
 // Asset Management and Maintenance in BIZOMAT ERP (stages M1 to M3): the section inside a company, at
 // /erp/c/<company>/maintenance. Overview, Assets, Requests, Work orders, Preventive (schedules, calendar, templates),
-// Checklists (inspection templates), Prestart and Scan (phone screens), Reports, and Settings (roles, the approval rule,
-// sites, trades and rates, maintenance stores). The server
+// Checklists (inspection templates), Rounds (inspection rounds: one work order over many assets), Prestart, Readings and
+// Scan (phone screens), Reports, and Settings (roles, the approval rule, sites, trades and rates, maintenance stores). The server
 // (src/worker/maintenance) decides who may see and do what; these screens follow its answers.
+// The field release adds the printable job card (WorkOrderPrint.tsx, outside the ERP shell), the sign-off at completion
+// (SignOff.tsx) and recording work already done (RecordWork.tsx, with the Settings section for completing work orders).
 import { useState } from 'react';
 import { Link, NavLink, Navigate, Route, Routes } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -22,6 +24,10 @@ import { ChecklistEditor, ChecklistsPage } from './Checklists';
 import { LabelsPage, PrestartPage, ScanPage } from './Field';
 import { ReportsPage } from './MtReports';
 import { SitesSection, StoresSection, TradesSection } from './Setup';
+import { NewRoundPage, RoundLinePage, RoundPage, RoundsPage } from './Rounds';
+import { ReadingsPage } from './Readings';
+import { StocktakeDetail, StocktakesPage } from './Stocktakes';
+import { RecordWorkPage, WorkOrderSettingsSection } from './RecordWork';
 
 export function MaintenanceArea({ companyId, companyName }: { companyId: string; companyName: string }) {
   const me = useMtMe(companyId);
@@ -47,8 +53,11 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
     ['/work-orders', 'Work orders', 'wrench'],
     ['/preventive', 'Preventive', 'calendar'],
     ['/checklists', 'Checklists', 'list'],
+    ...(m.role !== 'requester' ? ([['/rounds', 'Rounds', 'target']] as [string, string, string][]) : []),
     ['/prestart', 'Prestart', 'checkSquare'],
+    ['/readings', 'Readings', 'activity'],
     ['/scan', 'Scan', 'eye'],
+    ...(m.role !== 'requester' && m.stockModule !== false ? ([['/stocktakes', 'Stocktakes', 'archive']] as [string, string, string][]) : []),
     ...(m.can.reports ? ([['/reports', 'Reports', 'chart']] as [string, string, string][]) : []),
     ['/settings', 'Settings', 'settings'],
   ];
@@ -71,6 +80,7 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
         <Route path="requests/:requestId" element={<RequestDetail companyId={companyId} me={m} />} />
         <Route path="work-orders" element={<WorkOrdersPage companyId={companyId} me={m} />} />
         <Route path="work-orders/new" element={<NewWorkOrderPage companyId={companyId} me={m} />} />
+        <Route path="work-orders/record" element={<RecordWorkPage companyId={companyId} me={m} />} />
         <Route path="work-orders/:workOrderId" element={<WorkOrderDetail companyId={companyId} me={m} />} />
         <Route path="preventive" element={<PreventivePage companyId={companyId} me={m} />} />
         <Route path="preventive/new" element={<NewSchedulePage companyId={companyId} me={m} />} />
@@ -79,6 +89,13 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
         <Route path="preventive/:scheduleId" element={<ScheduleDetail companyId={companyId} me={m} />} />
         <Route path="checklists" element={<ChecklistsPage companyId={companyId} me={m} />} />
         <Route path="checklists/:templateId" element={<ChecklistEditor companyId={companyId} me={m} />} />
+        <Route path="rounds" element={<RoundsPage companyId={companyId} me={m} />} />
+        <Route path="rounds/new" element={<NewRoundPage companyId={companyId} me={m} />} />
+        <Route path="rounds/:workOrderId" element={<RoundPage companyId={companyId} me={m} />} />
+        <Route path="rounds/:workOrderId/lines/:lineId" element={<RoundLinePage companyId={companyId} me={m} />} />
+        <Route path="readings" element={<ReadingsPage companyId={companyId} me={m} />} />
+        <Route path="stocktakes" element={<StocktakesPage companyId={companyId} me={m} />} />
+        <Route path="stocktakes/:countId" element={<StocktakeDetail companyId={companyId} me={m} />} />
         <Route path="prestart" element={<PrestartPage companyId={companyId} me={m} />} />
         <Route path="prestart/:assetId" element={<PrestartPage companyId={companyId} me={m} />} />
         <Route path="scan" element={<ScanPage companyId={companyId} me={m} />} />
@@ -112,6 +129,15 @@ interface OverviewData {
   preventiveOverdue: number;
   assetsDownNow: number;
   prestartsFailed: number;
+  // The field release: new (submitted without needing approval) and outstanding requests, work due today and this week
+  // (to weekEnd, the Sunday), outstanding work with no technician, and whether new requests need approval.
+  newRequests: number;
+  outstandingRequests: number;
+  dueToday: number;
+  dueThisWeek: number;
+  unassigned: number;
+  weekEnd: string;
+  approvalRequired: boolean;
 }
 
 function Stat({ label, value, to, hint, tone }: { label: string; value: number; to: string; hint?: string; tone?: 'danger' }) {
@@ -129,7 +155,7 @@ function Overview({ companyId, me }: { companyId: string; me: MtMe }) {
   const today = localToday();
   const q = useQuery({ queryKey: ['mt', companyId, 'overview', today], queryFn: () => get<OverviewData>(mtPath(companyId, `/overview?today=${today}`)) });
   const manager = me.can.decide;
-  const awaiting = useQuery({ queryKey: ['mt', companyId, 'requests', 'awaiting-top'], queryFn: () => get<{ requests: MtRequest[] }>(mtPath(companyId, '/requests?status=awaiting&limit=5&sort=priority')), enabled: manager });
+  const awaiting = useQuery({ queryKey: ['mt', companyId, 'requests', 'awaiting-top'], queryFn: () => get<{ requests: MtRequest[] }>(mtPath(companyId, '/requests?status=awaiting_approval&limit=5&sort=priority')), enabled: manager });
   const mine = useQuery({ queryKey: ['mt', companyId, 'work-orders', 'mine-top', today], queryFn: () => get<{ workOrders: WorkOrder[] }>(mtPath(companyId, `/work-orders?mine=1&status=outstanding&sort=due&limit=5&today=${today}`)), enabled: me.role !== 'requester' });
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
   if (!q.data) return <Loading />;
@@ -139,6 +165,7 @@ function Overview({ companyId, me }: { companyId: string; me: MtMe }) {
       <div className="row wrap">
         <Link className="btn primary lg" to={mtPage(companyId, '/requests/new')}><Icon name="alert" /> Report a fault</Link>
         {me.can.manageWork ? <Link className="btn lg" to={mtPage(companyId, '/work-orders/new')}><Icon name="wrench" /> New work order</Link> : null}
+        {me.can.recordWork ? <Link className="btn lg" to={mtPage(companyId, '/work-orders/record')}><Icon name="check" /> Record work done</Link> : null}
         {me.can.manageAssets ? <Link className="btn lg" to={mtPage(companyId, '/assets')}><Icon name="layers" /> Assets</Link> : null}
         <Link className="btn lg" to={mtPage(companyId, '/prestart')}><Icon name="checkSquare" /> Prestart check</Link>
         <Link className="btn lg" to={mtPage(companyId, '/scan')}><Icon name="eye" /> Scan an asset</Link>
@@ -150,20 +177,26 @@ function Overview({ companyId, me }: { companyId: string; me: MtMe }) {
         </div>
       ) : null}
       <div className="crm-stats">
-        {manager ? <Stat label="Requests awaiting approval" value={o.awaitingApproval} to={mtPage(companyId, '/requests?view=awaiting')} hint={o.infoRequested ? `${o.infoRequested} waiting for more information` : undefined} /> : null}
+        {manager ? <Stat label="Requests to approve" value={o.awaitingApproval} to={mtPage(companyId, '/requests?view=approval')} hint={o.infoRequested ? `${o.infoRequested} waiting for more information` : undefined} /> : null}
+        {manager && (o.newRequests > 0 || !o.approvalRequired) ? <Stat label="New requests" value={o.newRequests} to={mtPage(companyId, '/requests?view=outstanding&status=submitted')} hint="Raised without needing approval" /> : null}
         <Stat label="My open requests" value={o.myRequests} to={mtPage(companyId, '/requests?view=mine')} />
+        {me.role === 'requester' && o.infoRequested > 0 ? <Stat label="Waiting for your answer" value={o.infoRequested} tone="danger" to={mtPage(companyId, '/requests?view=mine&status=info_requested')} /> : null}
+        {me.role === 'requester' ? <Stat label="Work orders on my requests" value={o.openWorkOrders} to={mtPage(companyId, '/work-orders?view=outstanding')} /> : null}
         {me.role !== 'requester' ? <Stat label="Open work orders" value={o.openWorkOrders} to={mtPage(companyId, '/work-orders?view=outstanding')} hint={`${o.inProgress} in progress, ${o.onHold} on hold`} /> : null}
+        {me.role !== 'requester' ? <Stat label="Due today" value={o.dueToday} to={mtPage(companyId, '/work-orders?view=today')} /> : null}
+        {me.role !== 'requester' ? <Stat label="Due this week" value={o.dueThisWeek} to={mtPage(companyId, '/work-orders?view=week')} hint={`Up to ${dateText(o.weekEnd)}`} /> : null}
         {me.role !== 'requester' ? <Stat label="Overdue" value={o.overdue} tone="danger" to={mtPage(companyId, '/work-orders?view=overdue')} hint="Past their due finish" /> : null}
         {me.role !== 'requester' ? <Stat label="My work" value={o.myWork} to={mtPage(companyId, '/work-orders?view=mine')} hint="Assigned to you" /> : null}
+        {manager ? <Stat label="Unassigned" value={o.unassigned} to={mtPage(companyId, '/work-orders?view=unassigned')} hint="Open work orders with no technician" /> : null}
         {manager ? <Stat label="Completed, not closed" value={o.completedNotClosed} to={mtPage(companyId, '/work-orders?view=all&status=completed')} /> : null}
         <Stat label="Assets in the register" value={o.assets} to={mtPage(companyId, '/assets')} hint={o.assetsDown ? `${o.assetsDown} under maintenance or out of service` : undefined} />
         <Stat label="Preventive work open" value={o.preventiveOpen} to={mtPage(companyId, '/preventive?view=calendar')} hint={o.preventiveOverdue ? `${o.preventiveOverdue} overdue` : 'From the schedules'} />
         {o.assetsDownNow ? <Stat label="Assets down now" value={o.assetsDownNow} tone="danger" to={mtPage(companyId, me.can.reports ? '/reports?report=reliability' : '/work-orders')} hint="Downtime not ended" /> : null}
-        {o.prestartsFailed ? <Stat label="Failed prestarts today" value={o.prestartsFailed} tone="danger" to={mtPage(companyId, '/prestart')} hint="In the last 24 hours" /> : null}
+        {o.prestartsFailed ? <Stat label="Failed prestarts in the last 24 hours" value={o.prestartsFailed} tone="danger" to={mtPage(companyId, '/prestart')} /> : null}
       </div>
       <div className="mt-grid">
         {manager ? (
-          <Section title="Awaiting approval" actions={<Link className="btn sm" to={mtPage(companyId, '/requests?view=awaiting')}>All</Link>}>
+          <Section title="Requests to approve" actions={<Link className="btn sm" to={mtPage(companyId, '/requests?view=approval')}>All</Link>}>
             {!awaiting.data ? <Loading /> : awaiting.data.requests.length ? (
               <ul className="mt-docs">
                 {awaiting.data.requests.map((r) => (
@@ -250,6 +283,7 @@ function Settings({ companyId, me }: { companyId: string; me: MtMe }) {
         </div>
         <p className="muted small">{me.approvalRequired ? 'New requests wait as Awaiting approval.' : 'New requests are Submitted straight away; a supervisor can still decline them.'}{me.can.roles ? '' : ' Only maintenance administrators change this.'}</p>
       </Section>
+      <WorkOrderSettingsSection companyId={companyId} me={me} />
       {me.can.roles ? (
         <Section title="Maintenance roles">
           <ul className="mt-docs small">

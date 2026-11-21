@@ -1,10 +1,12 @@
-// Work orders: the list (My work, outstanding, overdue, all; filters and sort), a new work order, and the work order
-// itself: header, asset, the time with a start/stop timer, instructions and safety, tasks, parts lines, notes, photos and
-// documents, history, and completing or reopening it. A completed work order is locked by the server.
+// Work orders: the list (My work, outstanding, due today, due this week, overdue, unassigned, all; filters, sort, pages
+// and a CSV file), a new work order, and the work order itself: header, asset, the time with a start/stop timer,
+// instructions and safety, tasks, parts lines, notes, photos and documents, history, and completing or reopening it. A
+// completed work order is locked by the server.
 import { useEffect, useState, type FormEvent } from 'react';
 import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { del, errorMessage, get, patch, post } from '../../lib/api';
+import { appUrl } from '../../lib/base';
 import { usePageTitle } from '../../lib/hooks';
 import { Icon } from '../../components/ui/Icon';
 import { EmptyState, ErrorBox, Loading } from '../../components/ui/ui';
@@ -19,6 +21,7 @@ import {
   minutesText,
   mtPage,
   mtPath,
+  useSites,
   type MtComment,
   type MtEvent,
   type MtFile,
@@ -27,50 +30,90 @@ import {
   type Priority,
   type WorkOrder,
 } from './api';
-import { Comments, FileList, FilterPanel, History, PriorityBadge, Props, RequestBadge, Section, UploadButton, WoBadge, options } from './common';
+import { Comments, FileList, FilterPanel, History, ListPager, PriorityBadge, Props, RequestBadge, Section, UploadButton, WoBadge, options } from './common';
+import { AssetPanel } from './AssetPanel';
 import { AssetPicker, DepartmentField, PersonSelect, useAssetLabel, type PickedAsset } from './pickers';
 import { ReasonDialog } from './Requests';
-import { DowntimeSection, InspectionsSection, LabourSection, PartsSection, PreventiveNote, ReadingsSection, type WoExtras } from './WorkOrderExtras';
+import { DowntimeSection, InspectionsSection, LabourSection, PreventiveNote, ReadingsSection, type WoExtras } from './WorkOrderExtras';
+import { PartLinesEditor, PartsArea, partLinesBody, type PartLine } from './WorkOrderExtras';
+import { CompleteDialog, SignOffSection } from './SignOff';
+import { RoundSection } from './Rounds';
 
 const OUTSTANDING = ['open', 'assigned', 'in_progress', 'on_hold'];
 
 // ------------------------------------------------------------------ list
 
-type View = 'mine' | 'outstanding' | 'overdue' | 'all';
-const SORTS: Record<string, string> = { due: 'Due date', finish: 'Finish date', number: 'Number', priority: 'Priority', asset: 'Asset number', jobType: 'Job type' };
+type View = 'mine' | 'outstanding' | 'today' | 'week' | 'overdue' | 'unassigned' | 'all';
+const VIEWS: View[] = ['mine', 'outstanding', 'today', 'week', 'overdue', 'unassigned', 'all'];
+const SORTS: Record<string, string> = { due: 'Due finish', dueStart: 'Due start', created: 'Date raised', finish: 'Completed', number: 'Number', priority: 'Priority', asset: 'Asset number', jobType: 'Job type', status: 'Status' };
+/** The filters kept in the address and sent to the server as they are. */
+const WO_FILTERS = ['priority', 'jobType', 'trade', 'assetId', 'siteId', 'assignedTo', 'raisedBy', 'departmentId', 'department', 'contractor', 'raisedFrom', 'raisedTo', 'dueStartFrom', 'dueStartTo', 'dueFrom', 'dueTo', 'completedFrom', 'completedTo', 'q'];
+const LIST_LIMIT = 100;
+const EMPTY: Partial<Record<View, string>> = { mine: 'Nothing is assigned to you right now.', today: 'Nothing is due today.', week: 'Nothing else is due this week.', unassigned: 'Every open work order has a technician.' };
 
 export function WorkOrdersPage({ companyId, me }: { companyId: string; me: MtMe }) {
   usePageTitle('Work orders');
   const [params, setParams] = useSearchParams();
-  const set = (k: string, v: string) => setParams((p) => { const n = new URLSearchParams(p); if (v) n.set(k, v); else n.delete(k); return n; }, { replace: true });
+  // A new filter starts the list again from its first page.
+  const set = (k: string, v: string) => setParams((p) => { const n = new URLSearchParams(p); if (v) n.set(k, v); else n.delete(k); if (k !== 'offset') n.delete('offset'); return n; }, { replace: true });
   const manager = me.can.manageWork;
-  const view = (params.get('view') as View) ?? (me.role === 'technician' ? 'mine' : 'outstanding');
+  const requester = me.role === 'requester';
+  const asked = params.get('view') as View | null;
+  const fallback: View = me.role === 'technician' ? 'mine' : 'outstanding';
+  const view: View = !asked || !VIEWS.includes(asked) ? fallback : (asked === 'mine' && requester) || (asked === 'unassigned' && !manager) ? 'outstanding' : asked;
   const g = (k: string) => params.get(k) ?? '';
+  const offset = Math.max(0, Number(g('offset')) || 0);
   const assetLabel = useAssetLabel(companyId, g('assetId'));
-  const query = new URLSearchParams({ today: localToday() });
+  const sites = useSites(companyId);
+  const query = new URLSearchParams({ today: localToday(), tzOffset: String(new Date().getTimezoneOffset()) });
+  if (view === 'overdue') query.set('status', 'overdue');
+  else if (view === 'all') {
+    if (g('status')) query.set('status', g('status'));
+  } else query.set('status', g('status') || 'outstanding');
   if (view === 'mine') query.set('mine', '1');
-  if (view === 'mine' || view === 'outstanding') query.set('status', g('status') || 'outstanding');
-  else if (view === 'overdue') query.set('status', 'overdue');
-  else if (g('status')) query.set('status', g('status'));
-  for (const k of ['priority', 'jobType', 'trade', 'assetId', 'dueFrom', 'dueTo', 'q', 'sort', 'dir']) if (g(k)) query.set(k, g(k));
+  if (view === 'today' || view === 'week') query.set('due', view);
+  if (view === 'unassigned') query.set('unassigned', '1');
+  for (const k of [...WO_FILTERS, 'sort', 'dir']) if (g(k)) query.set(k, g(k));
   if (g('assetId') && g('includeChildren') === '1') query.set('includeChildren', '1');
-  const list = useQuery({ queryKey: ['mt', companyId, 'work-orders', query.toString()], queryFn: () => get<{ workOrders: WorkOrder[]; total: number; trades: string[]; today: string }>(mtPath(companyId, `/work-orders?${query}`)) });
-  const views: [View, string][] = [['mine', 'My work'], ['outstanding', 'Outstanding'], ['overdue', 'Overdue'], ['all', 'All']];
+  const csvQuery = new URLSearchParams(query);
+  csvQuery.set('format', 'csv');
+  query.set('limit', String(LIST_LIMIT));
+  if (offset) query.set('offset', String(offset));
+  const list = useQuery({ queryKey: ['mt', companyId, 'work-orders', query.toString()], queryFn: () => get<{ workOrders: WorkOrder[]; total: number; trades: string[]; today: string; weekEnd: string; limit: number; offset: number }>(mtPath(companyId, `/work-orders?${query}`)) });
+  const views: [View, string][] = (
+    [
+      ['mine', 'My work'],
+      ['outstanding', 'Outstanding'],
+      ['today', 'Due today'],
+      ['week', 'Due this week'],
+      ['overdue', 'Overdue'],
+      ['unassigned', 'Unassigned'],
+      ['all', 'All'],
+    ] as [View, string][]
+  ).filter(([v]) => !(v === 'mine' && requester) && !(v === 'unassigned' && !manager));
   const today = list.data?.today ?? localToday();
+  const active = [...WO_FILTERS, 'status'].filter((k) => g(k)).length;
+  const clear = () => setParams((p) => { const n = new URLSearchParams(); if (p.get('view')) n.set('view', p.get('view')!); return n; }, { replace: true });
   return (
     <div className="stack">
-      <div className="row wrap">
-        <nav className="tabs grow" aria-label="Work order lists">
+      <div className="row wrap mt-toolbar">
+        <nav className="tabs grow mt-wo-tabs" aria-label="Work order lists">
           {views.map(([v, l]) => <button key={v} className={`tab${view === v ? ' active' : ''}`} aria-current={view === v ? 'page' : undefined} onClick={() => set('view', v)}>{l}</button>)}
         </nav>
+        <select className="select" aria-label="Trade" value={g('trade')} onChange={(e) => set('trade', e.target.value)}>
+          <option value="">All trades</option>
+          {(list.data?.trades ?? []).map((t) => <option key={t} value={t}>{t}</option>)}
+        </select>
+        <a className="btn" href={appUrl(`/api${mtPath(companyId, `/work-orders?${csvQuery}`)}`)} download><Icon name="download" /> CSV</a>
+        {me.can.recordWork ? <Link className="btn" to={mtPage(companyId, '/work-orders/record')}><Icon name="check" /> Record work done</Link> : null}
         {manager ? <Link className="btn primary" to={mtPage(companyId, '/work-orders/new')}><Icon name="plus" /> New work order</Link> : null}
       </div>
-      <FilterPanel active={['status', 'priority', 'jobType', 'trade', 'dueFrom', 'dueTo', 'q', 'assetId'].filter((k) => g(k)).length}>
+      <FilterPanel active={active}>
         <div className="field">
           <label htmlFor="mtw-q">Search</label>
           <input id="mtw-q" className="input" type="search" value={g('q')} onChange={(e) => set('q', e.target.value)} placeholder="Number, words or asset" />
         </div>
-        {view === 'all' || view === 'mine' || view === 'outstanding' ? (
+        {view !== 'overdue' ? (
           <div className="field">
             <label htmlFor="mtw-status">Status</label>
             <select id="mtw-status" className="select" value={g('status')} onChange={(e) => set('status', e.target.value)}>
@@ -87,21 +130,52 @@ export function WorkOrdersPage({ companyId, me }: { companyId: string; me: MtMe 
           <label htmlFor="mtw-type">Job type</label>
           <select id="mtw-type" className="select" value={g('jobType')} onChange={(e) => set('jobType', e.target.value)}><option value="">Any</option>{options(JOB_TYPE_LABELS)}</select>
         </div>
+        {(
+          [
+            ['raisedFrom', 'Raised from'],
+            ['raisedTo', 'Raised to'],
+            ['dueStartFrom', 'Due start from'],
+            ['dueStartTo', 'Due start to'],
+            ['dueFrom', 'Due finish from'],
+            ['dueTo', 'Due finish to'],
+            ['completedFrom', 'Completed from'],
+            ['completedTo', 'Completed to'],
+          ] as const
+        ).map(([k, label]) => (
+          <div key={k} className="field">
+            <label htmlFor={`mtw-${k}`}>{label}</label>
+            <input id={`mtw-${k}`} className="input" type="date" value={g(k)} onChange={(e) => set(k, e.target.value)} />
+          </div>
+        ))}
+        {me.departments.length ? (
+          <div className="field">
+            <label htmlFor="mtw-dept">Department</label>
+            <select id="mtw-dept" className="select" value={g('departmentId')} onChange={(e) => set('departmentId', e.target.value)}>
+              <option value="">Any</option>
+              {me.departments.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
+            </select>
+          </div>
+        ) : (
+          <div className="field">
+            <label htmlFor="mtw-dept">Department</label>
+            <input id="mtw-dept" className="input" maxLength={120} value={g('department')} onChange={(e) => set('department', e.target.value)} />
+          </div>
+        )}
+        <PersonSelect me={me} id="mtw-raised-by" label="Raised by" value={g('raisedBy')} onChange={(v) => set('raisedBy', v)} empty="Anyone" />
+        {manager ? <PersonSelect me={me} id="mtw-tech" label="Technician" minRole="technician" value={g('assignedTo')} onChange={(v) => set('assignedTo', v)} empty="Anyone" /> : null}
         <div className="field">
-          <label htmlFor="mtw-trade">Trade</label>
-          <select id="mtw-trade" className="select" value={g('trade')} onChange={(e) => set('trade', e.target.value)}>
-            <option value="">Any</option>
-            {(list.data?.trades ?? []).map((t) => <option key={t} value={t}>{t}</option>)}
-          </select>
+          <label htmlFor="mtw-contractor">Contractor</label>
+          <input id="mtw-contractor" className="input" type="search" maxLength={100} value={g('contractor')} onChange={(e) => set('contractor', e.target.value)} />
         </div>
-        <div className="field">
-          <label htmlFor="mtw-from">Due from</label>
-          <input id="mtw-from" className="input" type="date" value={g('dueFrom')} onChange={(e) => set('dueFrom', e.target.value)} />
-        </div>
-        <div className="field">
-          <label htmlFor="mtw-to">Due to</label>
-          <input id="mtw-to" className="input" type="date" value={g('dueTo')} onChange={(e) => set('dueTo', e.target.value)} />
-        </div>
+        {sites.data?.sites.length ? (
+          <div className="field">
+            <label htmlFor="mtw-site">Site</label>
+            <select id="mtw-site" className="select" value={g('siteId')} onChange={(e) => set('siteId', e.target.value)}>
+              <option value="">Any</option>
+              {sites.data.sites.filter((s) => !s.archived || s.id === g('siteId')).map((s) => <option key={s.id} value={s.id}>{s.code} {s.name}</option>)}
+            </select>
+          </div>
+        ) : null}
         <div className="field">
           <label htmlFor="mtw-sort">Sort by</label>
           <select id="mtw-sort" className="select" value={g('sort') || 'due'} onChange={(e) => set('sort', e.target.value)}>{options(SORTS)}</select>
@@ -121,11 +195,16 @@ export function WorkOrdersPage({ companyId, me }: { companyId: string; me: MtMe 
             </label>
           ) : null}
         </div>
+        {active ? (
+          <div className="crm-span">
+            <button type="button" className="btn ghost sm" onClick={clear}><Icon name="x" size={14} /> Clear filters</button>
+          </div>
+        ) : null}
       </FilterPanel>
       {list.error ? <ErrorBox error={list.error} retry={() => list.refetch()} /> : null}
       <div className="card crm-table-card">
         {!list.data ? <Loading /> : !list.data.workOrders.length ? (
-          <EmptyState icon="wrench" title="No work orders here">{view === 'mine' ? 'Nothing is assigned to you right now.' : 'Try another list or remove a filter.'}</EmptyState>
+          <EmptyState icon="wrench" title="No work orders here">{(!active && EMPTY[view]) || 'Try another list or remove a filter.'}</EmptyState>
         ) : (
           <div className="crm-table-scroll">
             <table className="data-table mt-table">
@@ -152,7 +231,7 @@ export function WorkOrdersPage({ companyId, me }: { companyId: string; me: MtMe 
           </div>
         )}
       </div>
-      {list.data && list.data.total > list.data.workOrders.length ? <p className="muted small">Showing {list.data.workOrders.length} of {list.data.total}. Narrow the filters to see the rest.</p> : null}
+      {list.data ? <ListPager offset={offset} limit={LIST_LIMIT} total={list.data.total} shown={list.data.workOrders.length} setOffset={(n) => set('offset', n ? String(n) : '')} /> : null}
     </div>
   );
 }
@@ -169,7 +248,7 @@ export function NewWorkOrderPage({ companyId, me }: { companyId: string; me: MtM
   const [form, setForm] = useState({ description: '', jobType: 'corrective', priority: 'medium' as Priority, trade: '', assignedTo: '', contractor: '', dueStart: '', dueFinish: '', hours: '', instructions: '', safety: '', projectRef: '', customerRef: '' });
   const [dept, setDept] = useState({ departmentId: '', department: '' });
   const [tasks, setTasks] = useState<string[]>(['']);
-  const [parts, setParts] = useState<{ part: string; quantity: string }[]>([]);
+  const [parts, setParts] = useState<PartLine[]>([]);
   const [busy, setBusy] = useState(false);
   useEffect(() => {
     if (preset && preset.number !== '…' && !asset) setAsset(preset);
@@ -199,7 +278,7 @@ export function NewWorkOrderPage({ companyId, me }: { companyId: string; me: MtM
         department: dept.department,
         departmentId: dept.departmentId || null,
         tasks: tasks.map((t) => t.trim()).filter(Boolean),
-        parts: parts.filter((p) => p.part.trim() && Number(p.quantity) > 0).map((p) => ({ part: p.part.trim(), quantity: Number(p.quantity) })),
+        parts: partLinesBody(parts),
       });
       toast(`Work order ${w.number} made`);
       navigate(mtPage(companyId, `/work-orders/${w.id}`));
@@ -249,17 +328,8 @@ export function NewWorkOrderPage({ companyId, me }: { companyId: string; me: MtM
       </section>
       <section className="card card-pad stack">
         <h3 className="crm-subhead">Required parts</h3>
-        <p className="muted small">Write each part and the quantity. Issuing parts from stores comes in a later stage.</p>
-        <div className="mt-lines">
-          {parts.map((p, i) => (
-            <div key={i} className="mt-line">
-              <input className="input" aria-label={`Part ${i + 1}`} maxLength={200} value={p.part} placeholder="Part" onChange={(e) => setParts((x) => x.map((y, j) => (j === i ? { ...y, part: e.target.value } : y)))} />
-              <input className="input" aria-label={`Quantity of part ${i + 1}`} type="number" min="0" step="any" value={p.quantity} onChange={(e) => setParts((x) => x.map((y, j) => (j === i ? { ...y, quantity: e.target.value } : y)))} />
-              <button type="button" className="btn ghost icon" aria-label={`Remove part ${i + 1}`} onClick={() => setParts((x) => x.filter((_, j) => j !== i))}><Icon name="x" /></button>
-            </div>
-          ))}
-        </div>
-        <div className="row"><button type="button" className="btn sm" onClick={() => setParts((x) => [...x, { part: '', quantity: '1' }])}><Icon name="plus" size={14} /> Add a part</button></div>
+        <p className="muted small">Choose a product from the stores, or describe the part. Product lines can be reserved, issued and ordered from the work order.</p>
+        <PartLinesEditor companyId={companyId} value={parts} onChange={setParts} idPrefix="nwo-part" />
       </section>
       <div className="row wrap">
         <button className="btn primary lg" disabled={busy || !form.description.trim() || !asset}>{busy ? 'Making…' : 'Make the work order'}</button>
@@ -311,7 +381,6 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
   const q = useQuery({ queryKey: ['mt', companyId, 'work-order', workOrderId], queryFn: () => get<WoDetail>(mtPath(companyId, `/work-orders/${workOrderId}`)), retry: false });
   const [dialog, setDialog] = useState<null | 'complete' | 'reopen' | 'cancel' | 'edit' | 'hold'>(null);
   const [newTask, setNewTask] = useState('');
-  const [newPart, setNewPart] = useState({ part: '', quantity: '1' });
   useTick(!!q.data?.totals.myTimer);
   usePageTitle(q.data?.workOrder.number ?? 'Work order');
   if (q.error) return <ErrorBox error={q.error} retry={() => q.refetch()} />;
@@ -335,6 +404,9 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
   const est = d.totals.estimatedMinutes;
   const actual = d.totals.actualMinutes;
   const extras = { companyId, me, woId: w.id, assetId: w.assetId, d, canWork: d.can.work, seeCosts: !!d.can.seeCosts, act };
+  // Sign-off pictures, the current one and any earlier one, are never shown among the photos: the current one shows
+  // under Sign-off, and each stays on record with the work order (its history names who signed).
+  const photosAndDocs = d.files.filter((f) => !f.signature && f.id !== w.signatureFileId);
   return (
     <div className="stack">
       <div className="mt-head">
@@ -343,6 +415,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
           <div className="mt-badges"><WoBadge status={w.status} /><PriorityBadge priority={w.priority} /><span className="badge">{JOB_TYPE_LABELS[w.jobType] ?? w.jobType}</span></div>
         </div>
         <div className="mt-head-actions">
+          <Link className="btn" to={mtPage(companyId, `/work-orders/${w.id}/print`)} target="_blank" rel="noopener"><Icon name="file" /> Print job card</Link>
           {d.can.edit ? <button className="btn" onClick={() => setDialog('edit')}><Icon name="edit" /> Edit</button> : null}
           {d.can.work && w.status !== 'on_hold' ? <button className="btn" onClick={() => setDialog('hold')}>Put on hold</button> : null}
           {d.can.work && w.status === 'on_hold' ? <button className="btn" onClick={() => act(() => post(`${base}/status`, { status: 'in_progress' }), 'Resumed')}>Resume</button> : null}
@@ -363,7 +436,9 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
         <div className="warn-box mt-locked">
           <Icon name="lock" />
           <span className="grow">
-            {w.status === 'completed' ? `Completed ${dateTimeText(w.completedAt)}${w.completedByName ? ` by ${w.completedByName}` : ''}.` : w.status === 'closed' ? 'Closed.' : 'Cancelled.'} It is locked: no changes until a supervisor or administrator reopens it with a reason.
+            {w.status === 'completed' && w.recordedDone
+              ? `Recorded as already done: work done on ${dateText(w.dueFinish)}, recorded ${dateTimeText(w.createdAt)}${w.completedByName ? ` by ${w.completedByName}` : ''}.`
+              : w.status === 'completed' ? `Completed ${dateTimeText(w.completedAt)}${w.completedByName ? ` by ${w.completedByName}` : ''}.` : w.status === 'closed' ? 'Closed.' : 'Cancelled.'} It is locked: no changes until a supervisor or administrator reopens it with a reason.
           </span>
         </div>
       ) : null}
@@ -413,8 +488,8 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
                 ['Made', dateTimeText(w.createdAt)],
               ]}
             />
-            {d.otherOutstandingOnAsset ? <p className="muted small">{d.otherOutstandingOnAsset} other open {d.otherOutstandingOnAsset === 1 ? 'work order' : 'work orders'} on this asset.</p> : null}
           </Section>
+          <AssetPanel companyId={companyId} assetId={w.assetId} excludeWorkOrderId={w.id} />
           {d.requests.length ? (
             <Section title="From requests">
               <ul className="mt-docs">
@@ -459,6 +534,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
               <p className="mt-pre">{w.completionNotes}</p>
             </Section>
           ) : null}
+          <SignOffSection w={w} />
           <Section title={`Tasks (${d.tasks.filter((t) => t.done).length} of ${d.tasks.length} done)`}>
             {d.tasks.length ? (
               <ul className="mt-tasks">
@@ -482,37 +558,14 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
               </form>
             ) : null}
           </Section>
-          <Section title="Required parts">
-            {d.parts.length ? (
-              <table className="data-table mt-table">
-                <thead><tr><th>Part</th><th>Quantity</th><th><span className="sr-only">Actions</span></th></tr></thead>
-                <tbody>
-                  {d.parts.map((p) => (
-                    <tr key={p.id}>
-                      <td data-label="Part">{p.part}</td>
-                      <td data-label="Quantity" className="mt-num">{p.quantity}</td>
-                      <td>{d.can.work ? <button className="btn ghost icon sm" aria-label={`Remove ${p.part}`} onClick={() => act(() => del(`${base}/parts/${p.id}`), 'Part line removed')}><Icon name="trash" size={14} /></button> : null}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            ) : <p className="muted small">No parts listed.</p>}
-            {d.can.work ? (
-              <form className="mt-add-line" onSubmit={(e) => { e.preventDefault(); if (newPart.part.trim() && Number(newPart.quantity) > 0) void act(() => post(`${base}/parts`, { part: newPart.part.trim(), quantity: Number(newPart.quantity) })).then((ok) => ok && setNewPart({ part: '', quantity: '1' })); }}>
-                <input className="input" aria-label="Part" maxLength={200} placeholder="Part" value={newPart.part} onChange={(e) => setNewPart((x) => ({ ...x, part: e.target.value }))} />
-                <input className="input mt-qty" aria-label="Quantity" type="number" min="0" step="any" value={newPart.quantity} onChange={(e) => setNewPart((x) => ({ ...x, quantity: e.target.value }))} />
-                <button className="btn" disabled={!newPart.part.trim()}>Add</button>
-              </form>
-            ) : null}
-            <p className="muted small">A list of what the job needs. Parts taken from the maintenance stores are under Parts used.</p>
-          </Section>
+          <PartsArea {...extras} wo={w} locked={d.locked} />
+          <RoundSection companyId={companyId} woId={w.id} />
           <InspectionsSection {...extras} />
-          <PartsSection {...extras} />
           <LabourSection {...extras} />
           <DowntimeSection key={`dt-${d.downtime?.startedAt ?? 0}-${d.downtime?.endedAt ?? 0}`} {...extras} />
           <ReadingsSection {...extras} />
           <Section title="Photos and documents" actions={d.can.work ? <UploadButton companyId={companyId} target={{ workOrderId: w.id }} onDone={refresh} /> : null}>
-            <FileList files={d.files} canRemove={(f) => d.can.work && (f.uploadedBy === me.user.id || me.can.manageWork)} onRemove={(f) => act(() => del(mtPath(companyId, `/files/${f.id}`)), 'File removed')} />
+            <FileList files={photosAndDocs} canRemove={(f) => d.can.work && (f.uploadedBy === me.user.id || me.can.manageWork)} onRemove={(f) => act(() => del(mtPath(companyId, `/files/${f.id}`)), 'File removed')} />
           </Section>
           <Section title="Notes">
             <Comments comments={d.comments} canAdd={d.can.work} onAdd={async (body) => { await post(`${base}/comments`, { body }); await refresh(); }} />
@@ -522,7 +575,7 @@ export function WorkOrderDetail({ companyId, me }: { companyId: string; me: MtMe
           </Section>
         </div>
       </div>
-      {dialog === 'complete' ? <ReasonDialog title={`Complete ${w.number}`} label="Completion notes: what was done and what was found" confirm="Complete" onClose={() => setDialog(null)} onSubmit={(notes) => act(() => post(`${base}/complete`, { notes }), 'Completed')} /> : null}
+      {dialog === 'complete' ? <CompleteDialog companyId={companyId} me={me} w={w} onClose={() => setDialog(null)} onDone={async () => { await refresh(); setDialog(null); }} /> : null}
       {dialog === 'reopen' ? <ReasonDialog title={`Reopen ${w.number}`} label="Reason for reopening (kept in the history)" confirm="Reopen" onClose={() => setDialog(null)} onSubmit={(reason) => act(() => post(`${base}/reopen`, { reason }), 'Reopened')} /> : null}
       {dialog === 'cancel' ? <ReasonDialog danger title={`Cancel ${w.number}`} label="Reason for cancelling" confirm="Cancel the work order" onClose={() => setDialog(null)} onSubmit={(reason) => act(() => post(`${base}/cancel`, { reason }), 'Cancelled')} /> : null}
       {dialog === 'hold' ? <ReasonDialog optional title={`Put ${w.number} on hold`} label="Why? (optional, for example waiting for a part)" confirm="Put on hold" onClose={() => setDialog(null)} onSubmit={(note) => act(() => post(`${base}/status`, { status: 'on_hold', ...(note ? { note } : {}) }), 'On hold')} /> : null}

@@ -55,6 +55,7 @@ migration `0029_platform_controls.sql` (reverse: `apps/work/migrations-reverse/0
 | `individual_accounts_policy` | ALLOW_PERSONAL_WORKSPACE, INVITATION_ONLY, REQUIRE_COMPANY | everyone | high | yes | R7 |
 | `billing_mode` | free, paid | everyone | highest | yes | R1 (paid refused while locked) |
 | `module_<name>_enabled` | on, off | everyone, stage, company | medium | no | Maintenance and WHS now; the other modules in R4 |
+| `maintenance_email_alerts` | off, on | everyone, stage, company | medium | no | Since 21 Nov 2026 (Maintenance field release): email copies of maintenance alerts (a request waiting for approval, a request decided or made into a work order, work given to someone, work completed). The alerts always show in the ERP; never for the example company (`docs/maintenance/README.md`) |
 | `module_analysis_enabled` | on, off (on by default) | everyone, stage, company | medium | no | Since 20 Nov 2026: Product Management's sales and margin analysis and stock against sales (`docs/erp/analysis.md`); Products' own switch also turns it off |
 | `module_<switch>_enabled` of the modules framework | on, off (on by default) | everyone, stage, company | medium | no | Since 20 Nov 2026 (owner's brief "97-module enterprise expansion"): `organisation`, `finance_plus`, `commercial`, `services`, `workforce`, `people`, `payroll`, `trade`, `calibration`, `environment`, `fleet`, `industry` (`apps/work/src/shared/erp-objects` FRAMEWORK_SWITCHES; `docs/erp/MODULES.md`) |
 

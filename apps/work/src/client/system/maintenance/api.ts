@@ -52,9 +52,15 @@ export interface MtMe {
   roleIsDefault: boolean;
   companyRole: 'owner' | 'admin' | 'manager' | 'employee' | 'read_only';
   approvalRequired: boolean;
+  /** Completing a work order needs a sign-off (migration 0042). */
+  requireSignature: boolean;
+  /** Technicians may record their own work already done. */
+  techniciansRecordWork: boolean;
   departments: { id: string; name: string; parentId: string | null }[];
   people: { id: string; name: string; role?: MtRole }[];
-  can: { manageAssets: boolean; importAssets: boolean; manageWork: boolean; decide: boolean; roles: boolean; managePm: boolean; manageSetup: boolean; manageStores: boolean; reports: boolean; readings: boolean; prestart: boolean };
+  /** ERP Inventory (Warehouse: stock) is switched on for the company: stocktakes and reservations need it. */
+  stockModule?: boolean;
+  can: { manageAssets: boolean; importAssets: boolean; manageWork: boolean; decide: boolean; roles: boolean; managePm: boolean; manageSetup: boolean; manageStores: boolean; reports: boolean; readings: boolean; prestart: boolean; recordWork: boolean };
 }
 
 export interface Asset {
@@ -101,6 +107,8 @@ export interface MtFile {
   mime: string;
   size: number;
   isImage: boolean;
+  /** The picture of a work order's sign-off, the current one or an earlier one: kept on record, never shown as a photo. */
+  signature?: boolean;
   uploadedBy: string | null;
   uploadedByName: string | null;
   createdAt: number;
@@ -150,6 +158,12 @@ export interface MtRequest {
   workOrderNumber: string | null;
   workOrderStatus: WoStatus | null;
   createdAt: number;
+  // The field release: withdrawn by the person who raised it; on list rows, the other open work on the same asset that
+  // the person may see, and the asset's site.
+  withdrawnAt: number | null;
+  withdrawReason: string;
+  openOnAsset?: { requests: number; workOrders: number };
+  siteCode?: string | null;
 }
 
 export interface WorkOrder {
@@ -184,6 +198,17 @@ export interface WorkOrder {
   createdAt: number;
   actualMinutes: number | null;
   timerRunning: boolean;
+  createdBy?: string | null;
+  /** The sign-off: a typed name and a picture drawn on screen, or the typed name alone; not a verified electronic signature. */
+  signedByName: string | null;
+  signedByRole: string;
+  signedAt: number | null;
+  /** Signed with the typed name alone (no picture). */
+  signedTyped?: boolean;
+  signatureFileId: string | null;
+  signatureUrl: string | null;
+  /** Made and completed in one step for work already done. */
+  recordedDone: boolean;
 }
 
 export const mtPath = (companyId: string, path = '') => `/maintenance/c/${encodeURIComponent(companyId)}${path}`;
@@ -255,7 +280,7 @@ export interface Schedule {
   jobType: string;
   priority: Priority;
   tasks: string[];
-  parts: { part: string; quantity: number }[];
+  parts: { part: string; quantity: number; productId?: string | null; productNumber?: string }[];
   estimatedMinutes: number | null;
   leadDays: number;
   trade: string;

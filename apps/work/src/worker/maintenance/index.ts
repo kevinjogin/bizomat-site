@@ -11,6 +11,14 @@
 //   assets, requests, work orders and files:  routes-assets.ts, routes-requests.ts, routes-work.ts, routes-files.ts
 //   stages M2 and M3: pm.ts (preventive maintenance), routes-meters.ts, routes-inspections.ts (templates, inspections,
 //   prestarts), routes-parts.ts (parts, labour, downtime), routes-setup.ts (sites, trades, stores, QR, scan), reports.ts
+//   the field release, stream A (lists.ts: list filters, CSV files and the overview's extra counts):
+//   GET   /c/:company/assets/:id/summary      the asset, its path and the other open work on it (asset-summary.ts)
+//   POST  /c/:company/requests/:id/withdraw   the person who raised a request withdraws it (routes-requests.ts)
+//   routes-stock.ts                     reservations, requisitions from work orders, stocktakes of the stores
+//   the field release: routes-job.ts (the job card, work recorded after it was done, the completing settings), signoff.ts
+//   (the sign-off at completion), alerts.ts (alerts in the ERP, with email copies behind maintenance_email_alerts)
+//   inspection rounds: routes-rounds.ts (one work order over many assets, approval per asset); the Readings page:
+//   routes-meters.ts (the meter list's filters and several readings at once); labels that open the ERP: routes-setup.ts
 
 import { Hono } from 'hono';
 import { z } from 'zod';
@@ -30,7 +38,17 @@ import { inspectionRoutes } from './routes-inspections';
 import { partsRoutes } from './routes-parts';
 import { setupRoutes } from './routes-setup';
 import { reportRoutes } from './reports';
+// The field release (migration 0042; MEX a functional reference only): the asset summary and duplicate warnings,
+// inspection rounds and readings, reservations, requisitions and stocktakes, and the job card, sign-off and record of
+// work already done. Each stream's routes live in its own file.
+import { assetSummaryRoutes } from './asset-summary';
+import { overviewExtras } from './lists';
+import { roundRoutes } from './routes-rounds';
+import { stockRoutes } from './routes-stock';
+import { jobRoutes } from './routes-job';
+import { canRecordWork, workSettings } from './signoff';
 import { OPEN_REQUESTS, OUTSTANDING, eventDTO, eventStmt, sqlList, todayFrom } from './util';
+import { moduleEnabled } from '../platform/flags';
 
 export const maintenanceRoutes = new Hono<AppEnv>();
 
@@ -48,6 +66,7 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
       ? (await db.prepare('SELECT id, name, parent_id FROM co_departments WHERE company_id = ? AND archived_at IS NULL ORDER BY name COLLATE NOCASE').bind(a.companyId).all<{ id: string; name: string; parent_id: string | null }>()).results.map((d) => ({ id: d.id, name: d.name, parentId: d.parent_id }))
       : [];
   const people = await companyPeople(db, a);
+  const ws = await workSettings(db, a.companyId);
   return c.json({
     company: { id: a.companyId, name: a.companyName, kind: a.kind },
     user: { id: a.userId, name: a.userName },
@@ -55,9 +74,14 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
     roleIsDefault: a.roleIsDefault,
     companyRole: a.companyRole,
     approvalRequired: await requireApproval(db, a.companyId),
+    // Completing work orders (migration 0042): whether a signature is needed, and whether technicians record work done.
+    requireSignature: ws.requireSignature,
+    techniciansRecordWork: ws.techniciansRecordWork,
     departments,
     // Names only for everyone; the role of each person matters to whoever assigns work.
     people: people.map((p) => ({ id: p.id, name: p.name, role: isManager(a) ? p.role : undefined })),
+    // ERP Inventory (Warehouse: stock) switched on for the company: stocktakes and reservations need it.
+    stockModule: await moduleEnabled(db, 'inventory', a.companyId).catch(() => true),
     can: {
       manageAssets: isManager(a),
       importAssets: a.role === 'admin',
@@ -71,6 +95,7 @@ maintenanceRoutes.get('/c/:company/me', async (c) => {
       reports: isManager(a),
       readings: true,
       prestart: true,
+      recordWork: canRecordWork(a, ws),
     },
   });
 });
@@ -97,7 +122,7 @@ maintenanceRoutes.get('/c/:company/overview', async (c) => {
     db
       .prepare(
         `SELECT
-           SUM(CASE WHEN r.status IN ('awaiting_approval','submitted') THEN 1 ELSE 0 END) AS awaiting,
+           SUM(CASE WHEN r.status = 'awaiting_approval' THEN 1 ELSE 0 END) AS awaiting,
            SUM(CASE WHEN r.status = 'info_requested' THEN 1 ELSE 0 END) AS info,
            SUM(CASE WHEN r.status IN (${sqlList(OPEN_REQUESTS)}) THEN 1 ELSE 0 END) AS open_requests,
            SUM(CASE WHEN r.requested_by = ? AND r.status NOT IN ('closed','declined','completed') THEN 1 ELSE 0 END) AS my_requests
@@ -120,7 +145,11 @@ maintenanceRoutes.get('/c/:company/overview', async (c) => {
     .prepare('SELECT l.work_order_id, l.started_at, w.number FROM mt_labour l JOIN mt_work_orders w ON w.company_id = l.company_id AND w.id = l.work_order_id WHERE l.company_id = ? AND l.user_id = ? AND l.ended_at IS NULL ORDER BY l.started_at')
     .bind(a.companyId, a.userId)
     .all<{ work_order_id: string; started_at: number; number: string }>();
+  // The field release: due today and this week, unassigned, new and outstanding requests, and whether approval applies.
+  const extra = await overviewExtras(db, a, today);
   return c.json({
+    ...extra,
+    approvalRequired: await requireApproval(db, a.companyId),
     today,
     role: a.role,
     awaitingApproval: r.awaiting ?? 0,
@@ -189,12 +218,16 @@ maintenanceRoutes.patch('/c/:company/settings', async (c) => {
 });
 
 maintenanceRoutes.route('/', assetRoutes);
+maintenanceRoutes.route('/', assetSummaryRoutes);
 maintenanceRoutes.route('/', requestRoutes);
 maintenanceRoutes.route('/', workRoutes);
 maintenanceRoutes.route('/', fileRoutes);
 maintenanceRoutes.route('/', pmRoutes);
 maintenanceRoutes.route('/', meterRoutes);
 maintenanceRoutes.route('/', inspectionRoutes);
+maintenanceRoutes.route('/', roundRoutes);
 maintenanceRoutes.route('/', partsRoutes);
+maintenanceRoutes.route('/', stockRoutes);
 maintenanceRoutes.route('/', setupRoutes);
 maintenanceRoutes.route('/', reportRoutes);
+maintenanceRoutes.route('/', jobRoutes);
