@@ -18,6 +18,7 @@ import { TaskAccessTab } from './TaskAccess';
 import { TaskScheduleTab } from './controls/TaskSchedule';
 import { TaskKey } from './controls/schedule';
 import { useMoveEnabled } from './MoveDialog';
+import { useExitAnimation } from '../lib/ui';
 
 interface ItemDetail {
   item: ItemDTO;
@@ -52,6 +53,8 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
   const canMove = useMoveEnabled(bundle.board.id, canEdit && !!onMove && !unsaved) && !!bundle.board.caps?.deleteTasks;
   const confirm = useConfirm();
   const ref = useRef<HTMLDivElement>(null);
+  const scrim = useRef<HTMLDivElement>(null);
+  useExitAnimation([scrim, ref]);
   const menuRef = useRef<HTMLButtonElement>(null);
   const [menu, setMenu] = useState(false);
   // Prefer the live board copy (optimistic + realtime) when available.
@@ -85,7 +88,7 @@ export function ItemPanel({ itemId, bundle, computedItems, actions, canEdit, onC
 
   return createPortal(
     <>
-      <div className="sidepanel-overlay" onClick={onClose} />
+      <div className="sidepanel-overlay" ref={scrim} onClick={onClose} />
       <aside className="sidepanel" role="dialog" aria-modal="true" aria-label={item ? `Item ${item.name}` : 'Item'} ref={ref} tabIndex={-1}>
         {unsaved ? <Loading label="Saving the item…" /> : detail.isLoading && !item ? <Loading /> : detail.error && !item ? <div style={{ padding: 'var(--ui-s20, 20px)' }}><ErrorBox error={detail.error} /></div> : item ? (
           <>
@@ -433,7 +436,7 @@ function FilesTab({ item, attachments, canEdit, refresh }: { item: ItemDTO; atta
         <div className="list card">
           {attachments.map((a) => (
             <div key={a.id} className="list-row">
-              {a.contentType.startsWith('image/') ? <img src={a.url} alt="" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 6 }} /> : <Icon name="file" size={22} />}
+              {a.contentType.startsWith('image/') ? <img src={a.url} alt="" style={{ width: 40, height: 40, objectFit: 'cover', borderRadius: 'var(--ui-r6, 6px)' }} /> : <Icon name="file" size={22} />}
               <div className="grow">
                 <a href={a.url} target="_blank" rel="noopener noreferrer" className="ellipsis" style={{ display: 'block' }}>{a.fileName}</a>
                 <span className="muted small">{formatBytes(a.size)} · {timeAgo(a.createdAt)}</span>
@@ -519,7 +522,7 @@ function TimeTab({ item, entries, canEdit, refresh }: { item: ItemDTO; entries: 
       <div className="card card-pad row wrap">
         <div className="grow">
           <div className="muted small">Total tracked</div>
-          <div className="big-number" style={{ fontSize: 28 }}>{formatDuration(total)}</div>
+          <div className="big-number" style={{ fontSize: 'var(--ui-f28, 28px)' }}>{formatDuration(total)}</div>
         </div>
         {canEdit ? (
           running ? (

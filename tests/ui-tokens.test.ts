@@ -3,7 +3,7 @@
 // used for text meet WCAG 2.1 AA.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';
 import { join } from 'node:path';
 
@@ -117,4 +117,90 @@ test('text colours meet WCAG 2.1 AA (4.5:1) on their surfaces, light and dark', 
     ['dark: button text on teal', '#0a111c', '#2dd4bf'],
   ];
   for (const [name, fg, bg] of pairs) assert.ok(contrast(fg, bg) >= 4.5, `${name}: ${contrast(fg, bg).toFixed(2)}`);
+});
+
+/** The colour a token has in the light (default) or dark block of shared/brand/tokens.css, as [r, g, b, alpha]. */
+function tokenColour(name: string, dark: boolean): [number, number, number, number] {
+  const css = read('shared/brand/tokens.css');
+  const cut = css.indexOf("[data-theme='dark']");
+  const block = dark ? css.slice(cut) : css.slice(0, cut);
+  const raw = new RegExp(`--${name}:\\s*([^;]+);`).exec(block)?.[1].trim();
+  assert.ok(raw, `${name} in the ${dark ? 'dark' : 'light'} tokens`);
+  const hex = /^#([0-9a-f]{6})$/i.exec(raw!);
+  if (hex) return [0, 2, 4].map((i) => parseInt(hex[1].slice(i, i + 2), 16)).concat(1) as [number, number, number, number];
+  const rgb = /^rgb\((\d+) (\d+) (\d+) \/ ([\d.]+)\)$/.exec(raw!);
+  assert.ok(rgb, `${name}: ${raw} is a colour this test reads`);
+  return [Number(rgb![1]), Number(rgb![2]), Number(rgb![3]), Number(rgb![4])];
+}
+/** A colour laid over an opaque one, as #rrggbb. */
+function over([r, g, b, a]: number[], [R, G, B]: number[]): string {
+  return '#' + [r * a + R * (1 - a), g * a + G * (1 - a), b * a + B * (1 - a)].map((v) => Math.round(v).toString(16).padStart(2, '0')).join('');
+}
+const hexOf = (c: number[]) => over(c, [0, 0, 0]);
+
+test('badges and status colours meet WCAG 2.1 AA on their soft backgrounds, light and dark', () => {
+  for (const dark of [false, true]) {
+    const surface = tokenColour('bz-surface', dark);
+    for (const status of ['success', 'warning', 'danger', 'info']) {
+      const fg = hexOf(tokenColour(`bz-${status}`, dark));
+      const bg = over(tokenColour(`bz-${status}-soft`, dark), surface);
+      assert.ok(contrast(fg, bg) >= 4.5, `${dark ? 'dark' : 'light'} ${status}: ${contrast(fg, bg).toFixed(2)}`);
+    }
+    // The accent badge (the ERP's --accent-soft: the teal soft token in light, 16% teal over the surface in dark).
+    const teal = tokenColour('bz-teal', dark);
+    const soft = dark ? over([teal[0], teal[1], teal[2], 0.16], surface) : over(tokenColour('bz-teal-soft', false), surface);
+    assert.ok(contrast(hexOf(teal), soft) >= 4.5, `${dark ? 'dark' : 'light'} accent badge`);
+    // The neutral badge: secondary ink on the second paper.
+    const ink2 = hexOf(tokenColour('bz-ink-2', dark));
+    const paper2 = hexOf(tokenColour('bz-paper-2', dark));
+    assert.ok(contrast(ink2, paper2) >= 4.5, `${dark ? 'dark' : 'light'} neutral badge: ${contrast(ink2, paper2).toFixed(2)}`);
+  }
+});
+
+test('every inline spacing, font size and radius variable of the ERP screens has a token under the new UI', () => {
+  const css = read('apps/work/src/client/styles/ui-new.css');
+  const walk = (d: string): string[] =>
+    readdirSync(join(process.cwd(), d), { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(`${d}/${e.name}`) : e.name.endsWith('.tsx') ? [`${d}/${e.name}`] : []));
+  const used = new Set<string>();
+  for (const f of walk('apps/work/src/client')) for (const m of read(f).matchAll(/var\(--ui-([sfr])([\d_]+),/g)) used.add(`${m[1]}${m[2]}`);
+  assert.ok(used.size > 20, 'the screens use the inline variables');
+  for (const v of used) {
+    // Spacing of 1 to 3px is a hairline and stays as it is.
+    if (v.startsWith('s') && Number(v.slice(1).replace('_', '.')) < 4) continue;
+    assert.ok(new RegExp(`--ui-${v}:\\s*var\\(--bz-`).test(css), `--ui-${v} is defined in styles/ui-new.css`);
+  }
+});
+
+test('every button on the website is in the new UI’s button system', () => {
+  const css = read('src/styles/ui-new.css');
+  const section = css.slice(css.indexOf('---- buttons */'), css.indexOf('---- links */'));
+  const system = new Set([...section.matchAll(/\.([a-z][a-z0-9_-]*)/g)].map((m) => m[1]));
+  for (const c of ['button', 'bz-btn', 'btn', 'case__button', 'booking__button', 'site-header__cta', 'msg__button', 'assistant__send-btn', 'lib-link-button']) assert.ok(system.has(c), `${c} in the button rules`);
+  // Drawn controls inside illustrations and tutorial screen outlines are pictures of buttons, not buttons.
+  const drawn = new Set(['wi-button', 'lv-screen__button']);
+  const walk = (d: string): string[] =>
+    readdirSync(join(process.cwd(), d), { withFileTypes: true }).flatMap((e) => (e.isDirectory() ? walk(`${d}/${e.name}`) : e.name.endsWith('.astro') ? [`${d}/${e.name}`] : []));
+  const missing: string[] = [];
+  for (const f of walk('src')) {
+    for (const m of read(f).matchAll(/class="([^"{}]+)"/g)) {
+      const tokens = m[1].split(/\s+/).filter(Boolean);
+      if (tokens.some((t) => system.has(t))) continue;
+      for (const t of tokens) if (/(^|[-_])(button|btn)$/.test(t) && !t.includes('--') && !drawn.has(t)) missing.push(`${f}: ${t}`);
+    }
+  }
+  assert.deepEqual(missing, [], 'add these to the button rules of src/styles/ui-new.css, or say why they are drawn');
+});
+
+test('focus from the keyboard is never taken away under the new UI', () => {
+  // Each :focus-visible rule draws an outline, or (a field) changes its border colour: an outline is not a shadow, so no
+  // hover or variant shadow can hide it, and a solid teal outline has the 3:1 contrast WCAG 2.1 asks of it.
+  for (const file of ['apps/work/src/client/styles/ui-new.css', 'src/styles/ui-new.css']) {
+    const css = read(file).replace(/\/\*[\s\S]*?\*\//g, '');
+    const rules = [...css.matchAll(/([^{}]*:focus-visible[^{}]*)\{([^{}]*)\}/g)];
+    assert.ok(rules.length >= 2, `${file} has focus rules`);
+    for (const [, sel, body] of rules) {
+      const ok = /outline:\s*2px solid/.test(body) || (/outline:\s*none/.test(body) && /border-color:/.test(body));
+      assert.ok(ok, `${file}: ${sel.trim().slice(0, 80)} must draw an outline (or change a field's border)`);
+    }
+  }
 });

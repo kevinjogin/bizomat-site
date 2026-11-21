@@ -269,11 +269,13 @@ const slug = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, '-');
   @media (prefers-reduced-motion: reduce) { .nav-menu__chevron { transition: none; } }
 
   /* ui-new:generated begin (scripts/ui/gen-overrides.mjs; do not edit) */
+  :global(html[data-ui="new"]) .site-header { transition-duration: var(--bz-duration-base); transition-timing-function: var(--bz-ease-standard); }
   :global(html[data-ui="new"]) :global(.site-header__inner) { gap: var(--bz-space-5); }
   :global(html[data-ui="new"]) .site-header__brand { border-radius: var(--bz-radius-sm); }
   :global(html[data-ui="new"]) .site-nav { margin-left: var(--bz-space-4); }
-  :global(html[data-ui="new"]) .site-nav__link { gap: var(--bz-space-1); padding: 0 var(--bz-space-3); border-radius: var(--bz-radius-md); font-size: var(--bz-text-md); }
+  :global(html[data-ui="new"]) .site-nav__link { gap: var(--bz-space-1); padding: 0 var(--bz-space-3); border-radius: var(--bz-radius-md); font-size: var(--bz-text-md); transition-duration: var(--bz-duration-fast), var(--bz-duration-fast); transition-timing-function: var(--bz-ease-standard), var(--bz-ease-standard); }
   :global(html[data-ui="new"]) .site-nav__link.is-current::after { border-radius: var(--bz-radius-sm); }
+  :global(html[data-ui="new"]) .nav-menu__chevron { transition-duration: var(--bz-duration-fast); transition-timing-function: var(--bz-ease-standard); }
   :global(html[data-ui="new"]) .nav-menu__panel { padding: var(--bz-space-2); border-radius: var(--bz-radius-lg); }
   :global(html[data-ui="new"]) .nav-menu__panel--groups .nav-menu__groups { gap: 0 var(--bz-space-1); }
   :global(html[data-ui="new"]) .nav-menu__panel--groups .nav-menu__group + .nav-menu__group { padding-left: var(--bz-space-1); }

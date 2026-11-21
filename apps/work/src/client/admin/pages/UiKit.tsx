@@ -5,7 +5,8 @@ import { useState, type ReactNode } from 'react';
 import { useSession } from '../../lib/session';
 import { setUiPreview, uiPreviewOn } from '../../lib/ui';
 import { EmptyState, Loading } from '../../components/ui/ui';
-import { Dropdown, MenuItem, MenuSep, Modal, useToast } from '../../components/ui/overlays';
+import { Drawer, Dropdown, MenuItem, MenuSep, Modal, useToast } from '../../components/ui/overlays';
+import { WebsiteKit } from './UiKitWebsite';
 import { Icon } from '../../components/ui/Icon';
 
 /** A section of the kit, with the ERP's own card classes, so it reads the same in the ERP console and the older one. */
@@ -29,10 +30,12 @@ const VARIANTS: [string, string][] = [
   ['danger', 'Danger'],
   ['link', 'Link'],
 ];
+// The ERP's default button is small (32), as its screens are dense; .lg is the medium size (40) and .xl the large (48).
+// The website's are named small, default and large: the same three heights.
 const SIZES: [string, string][] = [
-  ['sm', 'Small (32)'],
-  ['lg', 'Medium (40)'],
-  ['xl', 'Large (48)'],
+  ['sm', 'Small, 32 (.sm, the default)'],
+  ['lg', 'Medium, 40 (.lg)'],
+  ['xl', 'Large, 48 (.xl)'],
 ];
 
 export default function UiKit() {
@@ -41,6 +44,7 @@ export default function UiKit() {
   const [preview, setPreview] = useState(uiPreviewOn() || document.documentElement.dataset.ui === 'new');
   const [density, setDensity] = useState(document.documentElement.dataset.density === 'compact');
   const [modal, setModal] = useState(false);
+  const [drawer, setDrawer] = useState(false);
   const [busy, setBusy] = useState(false);
   const flagOn = !!session?.ui?.newUi;
 
@@ -155,6 +159,7 @@ export default function UiKit() {
       <Card title="Overlays">
         <div className="row wrap">
           <button className="btn" type="button" onClick={() => setModal(true)}>Open a modal</button>
+          <button className="btn" type="button" onClick={() => setDrawer(true)}>Open a drawer</button>
           <Dropdown label="Example menu" trigger={(open, ref) => <button ref={ref} className="btn" type="button" onClick={open}>Open a menu</button>}>
             {(close) => (
               <>
@@ -177,9 +182,23 @@ export default function UiKit() {
         </EmptyState>
       </Card>
 
+      <Card title="Website" subtitle="The public website's buttons, links, cards and forms, from its own pages and stylesheets.">
+        <WebsiteKit newUi={preview || flagOn} />
+      </Card>
+
+      {drawer ? (
+        <Drawer title="A drawer" onClose={() => setDrawer(false)} footer={<><button className="btn ghost" type="button" onClick={() => setDrawer(false)}>Cancel</button><button className="btn primary" type="button" onClick={() => setDrawer(false)}>Save</button></>}>
+          <p>Drawers slide in from the right with the largest shadow, and slide out when they close.</p>
+          <div className="field">
+            <label htmlFor="kit-drawer-name">A field in a drawer</label>
+            <input id="kit-drawer-name" className="input" />
+          </div>
+        </Drawer>
+      ) : null}
+
       {modal ? (
         <Modal title="A modal" onClose={() => setModal(false)} footer={<><button className="btn ghost" type="button" onClick={() => setModal(false)}>Cancel</button><button className="btn primary" type="button" onClick={() => setModal(false)}>Confirm</button></>}>
-          <p>Modals fade and scale in, with the largest shadow.</p>
+          <p>Modals fade and scale in, with the largest shadow, and fade out when they close.</p>
         </Modal>
       ) : null}
     </div>

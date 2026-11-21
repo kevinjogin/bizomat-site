@@ -1,11 +1,14 @@
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { Icon } from './Icon';
+import { useExitAnimation } from '../../lib/ui';
 
 // ------------------------------------------------------------------ Modal
 
 export function Modal({ title, onClose, children, footer, wide, xl, labelledBy }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; wide?: boolean; /** Nearly full screen (report preview). */ xl?: boolean; labelledBy?: string }) {
   const ref = useRef<HTMLDivElement>(null);
+  const overlay = useRef<HTMLDivElement>(null);
+  useExitAnimation([overlay]);
   useEffect(() => {
     const prev = document.activeElement as HTMLElement | null;
     const first = ref.current?.querySelector<HTMLElement>('input, textarea, select, button:not(.modal-close)');
@@ -37,7 +40,7 @@ export function Modal({ title, onClose, children, footer, wide, xl, labelledBy }
   }, [onClose]);
   const id = labelledBy ?? 'modal-title';
   return createPortal(
-    <div className="overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+    <div className="overlay" ref={overlay} onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
       <div className={`modal${wide || xl ? ' wide' : ''}${xl ? ' xl' : ''}`} role="dialog" aria-modal="true" aria-labelledby={id} ref={ref}>
         <div className="modal-header">
           <h2 id={id} className="grow">
@@ -51,6 +54,64 @@ export function Modal({ title, onClose, children, footer, wide, xl, labelledBy }
         {footer ? <div className="modal-footer">{footer}</div> : null}
       </div>
     </div>,
+    document.body,
+  );
+}
+
+// ----------------------------------------------------------------- Drawer
+
+/**
+ * A panel that slides in from the right over the screen (the board's item panel has the same classes), with its own
+ * title, body and footer. Escape, the close button and a click beside it close it; Tab stays inside it.
+ */
+export function Drawer({ title, onClose, children, footer, labelledBy = 'drawer-title' }: { title: ReactNode; onClose: () => void; children: ReactNode; footer?: ReactNode; labelledBy?: string }) {
+  const ref = useRef<HTMLElement>(null);
+  const scrim = useRef<HTMLDivElement>(null);
+  useExitAnimation([scrim, ref]);
+  useEffect(() => {
+    const prev = document.activeElement as HTMLElement | null;
+    (ref.current?.querySelector<HTMLElement>('input, textarea, select, button:not(.drawer-close)') ?? ref.current)?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && !document.querySelector('.popover, .overlay:not(.ui-exit)')) {
+        e.stopPropagation();
+        onClose();
+      }
+      if (e.key === 'Tab' && ref.current) {
+        const focusables = ref.current.querySelectorAll<HTMLElement>('a[href], button:not([disabled]), input, textarea, select, [tabindex]:not([tabindex="-1"])');
+        if (!focusables.length) return;
+        const f = focusables[0];
+        const l = focusables[focusables.length - 1];
+        if (e.shiftKey && document.activeElement === f) {
+          e.preventDefault();
+          l.focus();
+        } else if (!e.shiftKey && document.activeElement === l) {
+          e.preventDefault();
+          f.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
+    return () => {
+      document.removeEventListener('keydown', onKey, true);
+      prev?.focus?.();
+    };
+  }, [onClose]);
+  return createPortal(
+    <>
+      <div className="sidepanel-overlay" ref={scrim} onClick={onClose} />
+      <aside className="sidepanel" role="dialog" aria-modal="true" aria-labelledby={labelledBy} ref={ref} tabIndex={-1}>
+        <div className="modal-header">
+          <h2 id={labelledBy} className="grow">
+            {title}
+          </h2>
+          <button className="btn ghost icon sm drawer-close" onClick={onClose} aria-label="Close">
+            <Icon name="x" />
+          </button>
+        </div>
+        <div className="modal-body grow">{children}</div>
+        {footer ? <div className="modal-footer">{footer}</div> : null}
+      </aside>
+    </>,
     document.body,
   );
 }

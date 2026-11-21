@@ -83,7 +83,7 @@ function FieldInput({ col, value, onChange, members }: { col: ColumnDTO; value: 
       return (
         <div className="row" role="radiogroup" aria-label={col.title}>
           {Array.from({ length: max }, (_, i) => (
-            <button type="button" key={i} className="btn ghost icon sm" aria-label={`${i + 1} stars`} aria-pressed={(value as number) === i + 1} style={{ color: (value as number) > i ? '#f5a524' : 'var(--border-strong)', fontSize: 18 }} onClick={() => onChange(i + 1)}>★</button>
+            <button type="button" key={i} className="btn ghost icon sm" aria-label={`${i + 1} stars`} aria-pressed={(value as number) === i + 1} style={{ color: (value as number) > i ? '#f5a524' : 'var(--border-strong)', fontSize: 'var(--ui-f18, 18px)' }} onClick={() => onChange(i + 1)}>★</button>
           ))}
         </div>
       );

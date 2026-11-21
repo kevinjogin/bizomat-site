@@ -316,7 +316,7 @@ function NotificationsBell() {
     <>
       <button ref={ref} className="btn ghost icon" aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`} onClick={() => setOpen((o) => !o)} style={{ position: 'relative' }}>
         <Icon name="bell" />
-        {unread ? <span style={{ position: 'absolute', top: 3, right: 3, width: 8, height: 8, borderRadius: 8, background: 'var(--danger)' }} /> : null}
+        {unread ? <span style={{ position: 'absolute', top: 3, right: 3, width: 8, height: 8, borderRadius: 'var(--ui-r8, 8px)', background: 'var(--danger)' }} /> : null}
       </button>
       {open ? (
         <Popover anchor={ref} onClose={() => setOpen(false)} align="end" width={360}>

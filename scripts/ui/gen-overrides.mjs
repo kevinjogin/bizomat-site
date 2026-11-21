@@ -3,7 +3,7 @@
 //
 // Reads the existing stylesheets of the ERP (apps/work/src/client/styles) and the website (src/styles and the <style>
 // blocks of src/**/*.astro) and writes override rules that put every hard-coded spacing, font size and radius on the
-// token scales of shared/brand/ui-tokens.css. Every override is scoped to html[data-ui="new"], which the flag
+// token scales of shared/brand/ui-tokens.css, and every transition and short animation on its motion tokens. Every override is scoped to html[data-ui="new"], which the flag
 // new_ui_enabled switches on, so with the flag off nothing changes.
 //
 //   node scripts/ui/gen-overrides.mjs           write the generated files
@@ -79,6 +79,48 @@ function radius(value) {
     return 'var(--bz-radius-lg)';
   });
   return changed ? out.join(' ') : null;
+}
+
+// ---------------------------------------------------------------- motion
+// Transitions and short animations on the motion tokens: a duration up to 150ms becomes fast (120), up to 250ms base
+// (200), up to 400ms slow (300); the easing becomes ease-standard (transitions) or ease-out (animations). Only the
+// longhands are written (transition-duration and -timing-function, animation-duration and -timing-function), so a
+// rule of the new UI that names what moves (the buttons' lift, a card's shadow) keeps its list of properties. Longer
+// animations (spinners, pulses, drawings) and delays stay as they are.
+const EASE = /^(ease|ease-in|ease-out|ease-in-out|cubic-bezier\([^)]*\)|var\(--(bz-)?ease\))$/;
+function ms(token) {
+  const m = /^(\d*\.?\d+)(ms|s)$/.exec(token);
+  return m ? Number(m[1]) * (m[2] === 's' ? 1000 : 1) : null;
+}
+const durationToken = (v) => `var(--bz-duration-${v <= 150 ? 'fast' : v <= 250 ? 'base' : 'slow'})`;
+// Buttons move as the new UI's button rules say (src/styles/ui-new.css, apps/work/src/client/styles/ui-new.css: base
+// duration, standard easing); a component's own transition is not converted, so it cannot speed them up or slow them.
+const BUTTON = /\.(button|bz-btn|btn|case__button|booking__button|site-header__cta|site-nav__cta|msg__button|assistant__send-btn)\b[^\s>+~]*$/;
+
+/** Declarations for a transition or animation shorthand, or null when nothing changes. */
+function motion(prop, value) {
+  if (/!important|var\(--bz-duration/.test(value) || /^\s*none\s*$/.test(value)) return null;
+  const animation = prop === 'animation';
+  const durations = [];
+  const eases = [];
+  let changed = false;
+  for (const item of splitTop(value, ',')) {
+    const tokens = item.trim().split(/\s+(?![^(]*\))/);
+    const times = tokens.map(ms).filter((t) => t !== null);
+    const duration = times.length ? times[0] : 0;
+    const ease = tokens.find((t) => EASE.test(t) || t === 'linear' || /^steps\(/.test(t));
+    if (duration > 0 && duration <= 400 && ease !== 'linear' && !/^steps\(/.test(ease ?? '')) {
+      durations.push(durationToken(duration));
+      eases.push(animation ? 'var(--bz-ease-out)' : 'var(--bz-ease-standard)');
+      changed = true;
+    } else {
+      durations.push(`${duration}ms`);
+      eases.push(ease ?? 'ease');
+    }
+  }
+  if (!changed) return null;
+  const k = animation ? 'animation' : 'transition';
+  return [`${k}-duration: ${durations.join(', ')}`, `${k}-timing-function: ${eases.join(', ')}`];
 }
 
 const SPACING_PROPS = /^(padding|margin|gap|row-gap|column-gap|padding-(top|right|bottom|left|inline|block|inline-start|inline-end|block-start|block-end)|margin-(top|right|bottom|left|inline|block|inline-start|inline-end|block-start|block-end))$/;
@@ -162,6 +204,13 @@ function overrides(css, scoped) {
       const prop = d.slice(0, k).trim();
       const value = d.slice(k + 1).trim();
       if (!prop || prop.startsWith('--')) continue;
+      const lower = prop.toLowerCase();
+      if (lower === 'transition' || lower === 'animation') {
+        if (lower === 'transition' && splitTop(b.selector, ',').some((x) => BUTTON.test(x.trim().replace(/:global\(([^)]*)\)/g, '$1')))) continue;
+        const m = motion(lower, value);
+        if (m) decls.push(...m);
+        continue;
+      }
       const v = convert(prop, value);
       if (v) decls.push(`${prop}: ${v}`);
     }

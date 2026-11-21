@@ -61,7 +61,7 @@ export function DocEditorContent({ editor, readOnly }: { editor: TiptapEditor | 
 function TB({ label, icon, text, active, disabled, onClick }: { label: string; icon?: string; text?: string; active?: boolean; disabled?: boolean; onClick: () => void }) {
   return (
     <button type="button" className={`btn ghost icon sm${active ? ' active' : ''}`} aria-label={label} title={label} aria-pressed={active} disabled={disabled} onMouseDown={(e) => e.preventDefault()} onClick={onClick}>
-      {icon ? <Icon name={icon} size={15} /> : <span style={{ fontWeight: 700, fontSize: 12 }}>{text}</span>}
+      {icon ? <Icon name={icon} size={15} /> : <span style={{ fontWeight: 700, fontSize: 'var(--ui-f12, 12px)' }}>{text}</span>}
     </button>
   );
 }
