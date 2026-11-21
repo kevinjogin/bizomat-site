@@ -73,7 +73,7 @@ interface Group {
 
 const exact = (p: string) => new RegExp(`^${p.replace(/[/-]/g, (c) => `\\${c}`)}$`);
 
-function menu(module: ErpModule, o: { cad: boolean; admin: boolean; mtReports: boolean; whsView: boolean }): Group[] {
+function menu(module: ErpModule, o: { cad: boolean; admin: boolean; mtReports: boolean; whsView: boolean; mtField: boolean; mtStock: boolean }): Group[] {
   switch (module) {
     case 'product':
       return [
@@ -172,8 +172,11 @@ function menu(module: ErpModule, o: { cad: boolean; admin: boolean; mtReports: b
             { to: 'maintenance/assets', label: 'Assets', icon: 'layers' },
             { to: 'maintenance/preventive', label: 'Preventive maintenance', icon: 'calendar' },
             { to: 'maintenance/checklists', label: 'Checklists', icon: 'list' },
+            ...(o.mtField ? [{ to: 'maintenance/rounds', label: 'Inspection rounds', icon: 'target' }] : []),
             { to: 'maintenance/prestart', label: 'Prestart checks', icon: 'checkSquare' },
+            { to: 'maintenance/readings', label: 'Readings', icon: 'activity' },
             { to: 'maintenance/scan', label: 'Scan an asset', icon: 'eye' },
+            ...(o.mtField && o.mtStock ? [{ to: 'maintenance/stocktakes', label: 'Stocktakes', icon: 'archive' }] : []),
             ...(o.mtReports ? [{ to: 'maintenance/reports', label: 'Reports', icon: 'chart' }] : []),
             { to: 'maintenance/settings', label: 'Settings', icon: 'settings' },
           ],
@@ -226,7 +229,10 @@ export function ModuleMenu({ companyId, cad, admin, footer, shortcuts }: { compa
   const mt = useMtMe(module === 'maintenance' ? companyId : '');
   const whs = useWhsMe(module === 'whs' ? companyId : '');
   // A new module's page (/m/<key>) shows under the person's recent and favourite modules below.
-  const groups = menu(module, { cad, admin, mtReports: !!mt.data?.can.reports, whsView: !!whs.data?.can.view });
+  // Inspection rounds and stocktakes are for technicians and above; stream B narrows Stocktakes to companies whose
+  // Warehouse: stock module is on.
+  const mtField = !!mt.data && mt.data.role !== 'requester';
+  const groups = menu(module, { cad, admin, mtReports: !!mt.data?.can.reports, whsView: !!whs.data?.can.view, mtField, mtStock: true });
   return (
     <>
       <div className="nav-section erp-module-title">{MODULE_TITLES[module]}</div>

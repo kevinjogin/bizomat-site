@@ -22,6 +22,10 @@ import { ChecklistEditor, ChecklistsPage } from './Checklists';
 import { LabelsPage, PrestartPage, ScanPage } from './Field';
 import { ReportsPage } from './MtReports';
 import { SitesSection, StoresSection, TradesSection } from './Setup';
+import { NewRoundPage, RoundsPage } from './Rounds';
+import { ReadingsPage } from './Readings';
+import { StocktakeDetail, StocktakesPage } from './Stocktakes';
+import { RecordWorkPage } from './RecordWork';
 
 export function MaintenanceArea({ companyId, companyName }: { companyId: string; companyName: string }) {
   const me = useMtMe(companyId);
@@ -47,8 +51,11 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
     ['/work-orders', 'Work orders', 'wrench'],
     ['/preventive', 'Preventive', 'calendar'],
     ['/checklists', 'Checklists', 'list'],
+    ...(m.role !== 'requester' ? ([['/rounds', 'Rounds', 'target']] as [string, string, string][]) : []),
     ['/prestart', 'Prestart', 'checkSquare'],
+    ['/readings', 'Readings', 'activity'],
     ['/scan', 'Scan', 'eye'],
+    ...(m.role !== 'requester' ? ([['/stocktakes', 'Stocktakes', 'archive']] as [string, string, string][]) : []),
     ...(m.can.reports ? ([['/reports', 'Reports', 'chart']] as [string, string, string][]) : []),
     ['/settings', 'Settings', 'settings'],
   ];
@@ -71,6 +78,7 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
         <Route path="requests/:requestId" element={<RequestDetail companyId={companyId} me={m} />} />
         <Route path="work-orders" element={<WorkOrdersPage companyId={companyId} me={m} />} />
         <Route path="work-orders/new" element={<NewWorkOrderPage companyId={companyId} me={m} />} />
+        <Route path="work-orders/record" element={<RecordWorkPage companyId={companyId} me={m} />} />
         <Route path="work-orders/:workOrderId" element={<WorkOrderDetail companyId={companyId} me={m} />} />
         <Route path="preventive" element={<PreventivePage companyId={companyId} me={m} />} />
         <Route path="preventive/new" element={<NewSchedulePage companyId={companyId} me={m} />} />
@@ -79,6 +87,11 @@ export function MaintenanceArea({ companyId, companyName }: { companyId: string;
         <Route path="preventive/:scheduleId" element={<ScheduleDetail companyId={companyId} me={m} />} />
         <Route path="checklists" element={<ChecklistsPage companyId={companyId} me={m} />} />
         <Route path="checklists/:templateId" element={<ChecklistEditor companyId={companyId} me={m} />} />
+        <Route path="rounds" element={<RoundsPage companyId={companyId} me={m} />} />
+        <Route path="rounds/new" element={<NewRoundPage companyId={companyId} me={m} />} />
+        <Route path="readings" element={<ReadingsPage companyId={companyId} me={m} />} />
+        <Route path="stocktakes" element={<StocktakesPage companyId={companyId} me={m} />} />
+        <Route path="stocktakes/:countId" element={<StocktakeDetail companyId={companyId} me={m} />} />
         <Route path="prestart" element={<PrestartPage companyId={companyId} me={m} />} />
         <Route path="prestart/:assetId" element={<PrestartPage companyId={companyId} me={m} />} />
         <Route path="scan" element={<ScanPage companyId={companyId} me={m} />} />

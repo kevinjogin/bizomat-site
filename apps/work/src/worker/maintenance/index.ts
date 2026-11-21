@@ -30,6 +30,13 @@ import { inspectionRoutes } from './routes-inspections';
 import { partsRoutes } from './routes-parts';
 import { setupRoutes } from './routes-setup';
 import { reportRoutes } from './reports';
+// The field release (migration 0040; MEX a functional reference only): the asset summary and duplicate warnings,
+// inspection rounds and readings, reservations, requisitions and stocktakes, and the job card, sign-off and record of
+// work already done. Each stream's routes live in its own file.
+import { assetSummaryRoutes } from './asset-summary';
+import { roundRoutes } from './routes-rounds';
+import { stockRoutes } from './routes-stock';
+import { jobRoutes } from './routes-job';
 import { OPEN_REQUESTS, OUTSTANDING, eventDTO, eventStmt, sqlList, todayFrom } from './util';
 
 export const maintenanceRoutes = new Hono<AppEnv>();
@@ -189,12 +196,16 @@ maintenanceRoutes.patch('/c/:company/settings', async (c) => {
 });
 
 maintenanceRoutes.route('/', assetRoutes);
+maintenanceRoutes.route('/', assetSummaryRoutes);
 maintenanceRoutes.route('/', requestRoutes);
 maintenanceRoutes.route('/', workRoutes);
 maintenanceRoutes.route('/', fileRoutes);
 maintenanceRoutes.route('/', pmRoutes);
 maintenanceRoutes.route('/', meterRoutes);
 maintenanceRoutes.route('/', inspectionRoutes);
+maintenanceRoutes.route('/', roundRoutes);
 maintenanceRoutes.route('/', partsRoutes);
+maintenanceRoutes.route('/', stockRoutes);
 maintenanceRoutes.route('/', setupRoutes);
 maintenanceRoutes.route('/', reportRoutes);
+maintenanceRoutes.route('/', jobRoutes);
