@@ -1,8 +1,9 @@
 import type { Guide } from '../types.ts';
 
-// Product Management, with Engineering's Design (engineering changes and documents) (ERP Release 1, with Release 2's stock in the bill of materials). Labels are the client's
-// own words: apps/work/src/client/system/erp/Products.tsx, Changes.tsx, Documents.tsx; rules from
-// apps/work/src/worker/erp/access.ts, changes.ts, engineering.ts and documents.ts.
+// Product Management, with Engineering's Design (engineering changes and documents) (ERP Release 1, with Release 2's stock in the bill of materials), and its
+// sales and margin analysis and stock against sales (20 Nov 2026). Labels are the client's own words:
+// apps/work/src/client/system/erp/Products.tsx, Analysis.tsx, Changes.tsx, Documents.tsx; rules from
+// apps/work/src/worker/erp/access.ts, analysis.ts, changes.ts, engineering.ts and documents.ts.
 const guide: Guide = {
   id: 'products',
   section: 'modules',
@@ -10,7 +11,7 @@ const guide: Guide = {
   short: 'Products',
   status: 'live',
   what:
-    'Product Management is the company’s product master: every product, part and material, with its variants, revisions and bills of materials; their engineering changes and documents are in Engineering, under Design. A released revision is locked, so a change always goes through a change order.',
+    'Product Management is the company’s product master: every product, part and material, with its variants, revisions and bills of materials; their engineering changes and documents are in Engineering, under Design. A released revision is locked, so a change always goes through a change order. Its Analysis section shows what was sold, what it cost and the margin, by product, customer and more, and stock against sales.',
   purpose: [
     'Keep one numbered record for each product, part, material and service.',
     'Build multi-level bills of materials and see the material cost of one.',
@@ -18,6 +19,8 @@ const guide: Guide = {
     'Keep drawings, models and specifications with every version.',
     'See where a component is used, and compare two revisions.',
     'Record who supplies each product, at what price and lead time.',
+    'Analyse sales, cost and margin by product, category, family, customer, salesperson, warehouse and month, against last year or the period before, and drill into any row.',
+    'See stock against sales: days of cover, what is at its reorder point and what is not moving.',
   ],
   who: [
     'Engineers, who add products and draft bills of materials and changes.',
@@ -25,12 +28,13 @@ const guide: Guide = {
     'Buyers and procurement managers, who record a product’s suppliers.',
     'Production and warehouse staff, who read the released bill of materials.',
     'Executives and viewers, who read everything without changing it.',
+    'Sales managers, executives and anyone who reads reports, who use the sales and margin analysis.',
   ],
   access: {
     path: ['BIZOMAT ERP', 'Product Management'],
     href: 'https://bizomat.ai/erp/products',
     label: 'Open Product Management',
-    note: 'The module rail opens it in the company you used last; its side menu lists Products. Engineering changes, documents and CAD Automation are in Engineering, under Design and CAD Automation.',
+    note: 'The module rail opens it in the company you used last; its side menu lists Products and, under Analysis, Sales and margin analysis and Stock against sales. Engineering changes, documents and CAD Automation are in Engineering, under Design and CAD Automation.',
   },
   tutorials: [
     {
@@ -194,6 +198,74 @@ const guide: Guide = {
         },
       ],
     },
+    {
+      id: 'analyse-sales',
+      title: 'Analyse sales and margin',
+      outcome: 'You see what was sold, what it cost and the margin, against the same period last year, and the rows behind any figure.',
+      needs: 'Anyone in the company who can see reports: every ERP role, viewers included.',
+      steps: [
+        {
+          title: 'Open Sales and margin analysis',
+          body: 'In Product Management, choose Sales and margin analysis under Analysis in the side menu. It opens on the last 12 months, compared with the same period last year, by product.',
+          where: 'Sales and margin analysis',
+        },
+        {
+          title: 'Choose the Period and Compare with',
+          body: 'Period offers Last 12 months, this or last month, quarter, financial year (from 1 July) and calendar year, or Dates of my choice. Compare with offers Same period last year, Previous period (as long, just before) or No comparison. The dates used are shown under the bar.',
+          where: 'Period',
+        },
+        {
+          title: 'Read the four figures',
+          body: 'Sales before tax, Cost of goods dispatched, Margin and Margin % head the page, each with its change against the comparison period. Sales are the goods dispatched to customers, at each sales order line’s value before tax; the cost is what the dispatch took out of stock.',
+          where: 'Sales before tax',
+        },
+        {
+          title: 'Look at By month',
+          body: 'The columns are this period’s sales by month and the line is the comparison period’s. Point at a month, or move to it with the Tab key, to see its sales, margin and the month it is compared with. Show as a table lists the same figures.',
+          where: 'By month',
+        },
+        {
+          title: 'Choose what to analyse by',
+          body: 'Under the chart, choose Product, Category, Family, Customer, Salesperson, Warehouse or Month. Sort by puts the rows in order of sales, margin, margin %, cost or quantity. Each row shows its share of the largest row, and the comparison period’s sales and the change when there is a comparison.',
+          where: 'Customer',
+        },
+        {
+          title: 'Click a row to drill down',
+          body: 'Click a row’s name to see it by the next dimension: a product by its customers, a customer by its products, a month by its products. The trail above the figures, starting at All sales, shows each step; click a step to go back, or its cross to remove it.',
+          where: 'All sales',
+        },
+        {
+          title: 'Save the view or export it',
+          body: 'Save view keeps the period, the comparison, the dimension, the drill-down and the sort under a name; tick Share it with everyone in the company who can see reports to share it. Saved view brings it back. Export CSV downloads the rows you see, with the total.',
+          where: 'Save view',
+        },
+      ],
+      after: 'Nothing in the analysis changes a record. A named period moves with the date, so a saved view of Last month always shows last month.',
+    },
+    {
+      id: 'stock-against-sales',
+      title: 'See stock against sales',
+      outcome: 'You know which products to reorder, which are slow and which are not moving.',
+      needs: 'Anyone in the company who can see reports.',
+      steps: [
+        {
+          title: 'Open Stock against sales',
+          body: 'In Product Management, choose Stock against sales under Analysis. Each product in stock, or dispatched in the time chosen, shows its on hand, reserved and available quantities, its stock value and its reorder point.',
+          where: 'Stock against sales',
+        },
+        {
+          title: 'Choose Sales over',
+          body: 'Choose the last 30, 90, 180 or 365 days. Dispatched is what left for customers in that time, and Days of cover is the stock available now over the average dispatched per day.',
+          where: 'Sales over',
+        },
+        {
+          title: 'Show one group',
+          body: 'Choose To reorder (at or below the reorder point), Slow (more than 180 days of cover), Not moving (in stock with nothing dispatched) or Moving. Export CSV downloads every product with its status.',
+          where: 'To reorder',
+        },
+      ],
+      after: 'Stock in quarantine is left out of available. Reorder points are set on each product’s stock settings in Warehouse.',
+    },
   ],
   buttons: [
     { label: 'New product', does: 'Opens the form for a new product.', when: 'For every new product, part, material or service.', after: 'The product is numbered and starts with revision A as a draft.' },
@@ -208,6 +280,9 @@ const guide: Guide = {
     { label: 'Release', does: 'Releases every revision in an approved change order and supersedes the ones they replace, in one step.', when: 'After approval.', after: 'The revisions are locked. This cannot be undone.' },
     { label: 'Archive', does: 'Takes a product out of the list and the pickers; its revisions, documents and history stay. Restore brings it back.', when: 'When a product is no longer used. Refused while it is in a bill of materials in use.' },
     { label: 'Export CSV', does: 'Downloads the list or view you are looking at, with its filters.', when: 'To work with the data in a spreadsheet.' },
+    { label: 'Compare with', does: 'Sets the period the analysis is compared with: the same dates last year, the period just before, or none.', when: 'To see growth or decline against last year or last period.' },
+    { label: 'Save view', does: 'Keeps the analysis as it is (period, comparison, dimension, drill-down, sort) under a name, for you or shared in the company.', when: 'For an analysis you come back to, such as margin by customer this financial year.', after: 'It is listed under Saved view. Only the person who saved it can change it; an ERP administrator can delete a shared one.' },
+    { label: 'Show as a table', does: 'Lists the months of the chart with their sales, margin and the comparison period’s sales.', when: 'To read exact figures, or with a screen reader.' },
   ],
   faqs: [
     {
@@ -242,6 +317,18 @@ const guide: Guide = {
       q: 'How do I export products or a bill of materials?',
       a: 'Lists and the All levels and Where used views have Export CSV. The Reports page in the module rail has the product catalogue, product lifecycle, bill of materials cost, where used, revisions and changes, and supplier list reports, each with a CSV (see /learn/reports/).',
     },
+    {
+      q: 'Where do the sales analysis figures come from?',
+      a: 'From goods dispatched to customers in Warehouse (Orders and dispatch): each shipment line’s quantity at its sales order line’s value before tax, and the cost that left stock for it in the stock ledger. Returns are not deducted (the returns report has them), and freight and invoices made in Finance without a sales order are not included. The figures match the sales report in Reports for the same dates.',
+    },
+    {
+      q: 'Why does margin leave out some sales?',
+      a: 'A dispatch that took nothing out of stock, such as a service or a product not kept in stock, has no cost. Margin and margin % are worked out on the sales that have a cost, and the page says how much had none. A row marked with an asterisk has some sales without a cost.',
+    },
+    {
+      q: 'Why can I not see Sales and margin analysis?',
+      a: 'It needs a role that can see reports (every ERP role, viewers included) in a company you are a member of. If it says the analysis or Products is switched off for this company, a platform administrator has turned it off, and BIZOMAT support can help (see /learn/trouble-access/).',
+    },
   ],
   related: ['manufacturing', 'procurement', 'inventory', 'quality', 'cad-automation', 'reports', 'roles-and-permissions'],
   chain: ['products', 'manufacturing', 'inventory', 'supply-chain'],
@@ -252,20 +339,26 @@ const guide: Guide = {
     { text: 'Drawings generated from an ERP product.', status: 'planned' },
     { text: 'Labour and machine cost from routings in a product’s cost roll-up (the roll-up is material cost today).', status: 'planned' },
     { text: 'One product catalogue shared by the CRM and the product master (the CRM keeps its own products for deals).', status: 'planned' },
+    { text: 'Budgets and forecasts beside actual sales in the analysis.', status: 'planned' },
+    { text: 'Saved views sent by email on a schedule, and alerts when a figure crosses a limit.', status: 'planned' },
   ],
   keywords: [
     'product master', 'item master', 'part number', 'SKU', 'BOM', 'bill of materials', 'multi-level BOM', 'BOM explosion',
     'where used', 'ECR', 'ECO', 'engineering change request', 'engineering change order', 'revision control', 'PLM',
     'variant', 'drawing', 'STEP', 'DXF', 'CAD reference', 'cost roll-up', 'lifecycle',
+    'sales analysis', 'margin analysis', 'gross margin', 'drill down', 'business intelligence', 'sales by customer',
+    'year on year', 'days of cover', 'slow moving stock', 'saved view',
   ],
   sources: [
     'apps/work/src/client/system/erp/Products.tsx',
+    'apps/work/src/client/system/erp/Analysis.tsx',
     'apps/work/src/client/system/erp/Changes.tsx',
     'apps/work/src/client/system/erp/Documents.tsx',
     'apps/work/src/client/system/erp/api.ts',
     'apps/work/src/client/system/SystemApp.tsx',
     'apps/work/src/client/components/layout/SuiteRail.tsx',
     'apps/work/src/worker/erp/access.ts',
+    'apps/work/src/worker/erp/analysis.ts',
     'apps/work/src/worker/erp/changes.ts',
     'apps/work/src/worker/erp/engineering.ts',
     'apps/work/src/worker/erp/documents.ts',

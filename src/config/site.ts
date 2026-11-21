@@ -73,37 +73,55 @@ export const SITE = {
 } as const;
 
 /**
- * Main navigation (one list for every screen size; Header.astro). Top-level items are kept to five, with short menus
- * for Products, Solutions, Resources and About. Product links come from src/config/products.ts so the header, footer,
- * homepage and /products/ never disagree. The names WORKOS and READOS stay retired from visible text (2 Nov 2026):
+ * Main navigation (one list for every screen size; Header.astro): Home, Systems, Resources, About and Contact, with
+ * short menus. System links come from src/config/systems.ts so the header, footer, homepage and /systems/ never
+ * disagree. The names WORKOS and READOS stay retired from visible text (2 Nov 2026):
  * the directory is "Tools" and the books are "Library"; URLs /tools/ and /reados/ are unchanged.
  */
 export type NavChild = { label: string; href?: string; description?: string; status?: string; external?: boolean };
+/** A group of links inside a menu, under a small heading (the Systems menu holds Systems and Learn). */
+export type NavGroup = { label: string; children: readonly NavChild[] };
 /** `short`: a short form shown only where the full label does not fit in the header row (the full label stays its
- * accessible name and tooltip). */
-export type NavItem = { label: string; short?: string; href: string; children?: readonly NavChild[] };
+ * accessible name and tooltip). A menu has either `children` (one list) or `groups` (lists side by side), and may end
+ * with one `action` across its foot. */
+export type NavItem = { label: string; short?: string; href: string; children?: readonly NavChild[]; groups?: readonly NavGroup[]; action?: NavChild };
+
+/** Every link of a menu: its list, its groups' lists and its action (the header marks the menu current from these). */
+export const menuLinks = (item: NavItem): readonly NavChild[] =>
+  [...(item.children ?? []), ...(item.groups ?? []).flatMap((g) => g.children), ...(item.action ? [item.action] : [])];
+
+/** Learn: the ERP Knowledge Centre, one page at /learn/ (src/data/learn/), and a section of each part of it. A group of
+ * the Systems menu (owner, 20 Nov 2026: Systems one menu item, Learn under it), also listed on /systems/. Each anchor
+ * is a section of /learn/ (SECTIONS in src/data/learn/types.ts; tests/navigation.test.ts checks them). */
+export const LEARN_LINKS: readonly NavChild[] = [
+  { label: 'Knowledge Centre', href: '/learn/', description: 'Every guide and tutorial, on one page.' },
+  { label: 'Getting started', href: '/learn/#getting-started', description: 'Your account and finding your way.' },
+  { label: 'ERP modules', href: '/learn/#modules', description: 'Every module, step by step.' },
+  { label: 'Workflows', href: '/learn/#workflows', description: 'Processes across modules, end to end.' },
+  { label: 'AI and integrations', href: '/learn/#ai', description: 'AI Search, automations and the API.' },
+  { label: 'CAD and engineering', href: '/learn/#cad', description: 'Your AI assistant in SOLIDWORKS.' },
+  { label: 'Administrator guide', href: '/learn/#admin', description: 'People, roles, security and settings.' },
+  { label: 'Troubleshooting', href: '/learn/#troubleshooting', description: 'Sign-in, access and connections.' },
+];
 
 export const NAV: readonly NavItem[] = [
-  // Home | Systems | Learn | Resources | About | Contact (owner, 14 Nov 2026; Learn added 20 Nov 2026). Systems is BIZOMAT's business software, as one
-  // catalogue (src/config/systems.ts); the applications open inside BIZOMAT ERP. Resources stay free and public.
+  // Home | Systems | Resources | About | Contact (owner, 14 Nov 2026; 20 Nov 2026: "SYSTEMS as a single menu item, with
+  // LEARN as a submenu under SYSTEMS"). Systems is BIZOMAT's business software on one page (src/config/systems.ts), and
+  // its menu holds two groups: the systems, and Learn (the Knowledge Centre, one page). The applications open inside
+  // BIZOMAT ERP. Resources stay free and public.
   { label: 'Home', href: '/' },
   {
-    label: 'Systems', href: SYSTEMS_HOME, children: [
-      { label: 'All systems', href: SYSTEMS_HOME, description: 'One connected platform to manage your business.' },
-      ...SYSTEMS.map((s) => ({ label: s.name, href: s.url, description: s.status === 'planned' ? `${s.kind}. Planned.` : s.line, status: s.status === 'planned' ? 'Planned' : undefined })),
-      { label: 'Open BIZOMAT ERP', href: APP_LINKS.erp.home, description: 'Sign in to your company\'s workspace.', external: true },
+    label: 'Systems', href: SYSTEMS_HOME,
+    groups: [
+      {
+        label: 'Systems', children: [
+          { label: 'All systems', href: SYSTEMS_HOME, description: 'Every system, on one page.' },
+          ...SYSTEMS.map((s) => ({ label: s.name, href: s.url, description: s.kind, status: s.status === 'planned' ? 'Planned' : undefined })),
+        ],
+      },
+      { label: 'Learn', children: LEARN_LINKS },
     ],
-  },
-  // Learn (owner, 20 Nov 2026): the ERP Knowledge Centre, the one place to learn BIZOMAT ERP (src/data/learn/).
-  {
-    label: 'Learn', href: '/learn/', children: [
-      { label: 'Knowledge Centre', href: '/learn/', description: 'Search any question, or learn any module step by step.' },
-      { label: 'Getting started', href: '/learn/#what-is-bizomat', description: 'What BIZOMAT ERP is, your account and finding your way around.' },
-      { label: 'ERP modules', href: '/learn/#modules', description: 'A guide to every module, with tutorials and common questions.' },
-      { label: 'Workflows', href: '/learn/#workflows', description: 'End-to-end processes, from the first record to the last.' },
-      { label: 'CAD and engineering', href: '/learn/#cad-automation', description: 'Your AI assistant working in SOLIDWORKS on your computer.' },
-      { label: 'Troubleshooting', href: '/learn/#troubleshooting', description: 'Sign-in, access, records and connections.' },
-    ],
+    action: { label: 'Open BIZOMAT ERP', href: APP_LINKS.erp.home, description: 'Sign in to your company\'s workspace.', external: true },
   },
   {
     label: 'Resources', href: '/resources/', children: [

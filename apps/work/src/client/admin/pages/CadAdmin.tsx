@@ -29,7 +29,9 @@ interface Account {
 interface Overview {
   connected: boolean;
   connectedReason: string | null;
-  health: { at: number; worker: Record<string, string | number | boolean | null>; companies: { id: string; name: string; computers: number; online?: number; running?: number; failed24h?: number; done24h?: number; avgSeconds?: number; storageBytes?: number }[] } | null;
+  health: { at: number; contract?: number; worker: Record<string, string | number | boolean | null>; companies: { id: string; name: string; computers: number; online?: number; queued?: number; running?: number; failed24h?: number; done24h?: number; avgSeconds?: number; storageBytes?: number }[] } | null;
+  sync?: { at: number; minutes: number; late: boolean; stale: boolean } | null;
+  password?: { flag: boolean; accounts: number; linked: number; ready: boolean; retired: boolean };
   totals: { accounts: number; mapped: number; review: number; computers: number; commands: number; grants: number; unassignedComputers: number; unassignedCommands: number; unassignedGrants: number };
   accounts: Account[];
   limits: { defaults: Limits; builtIn: Limits; bounds: Record<keyof Limits, [number, number]>; companies: { companyId: string; name: string; limits: Limits }[] };
@@ -68,8 +70,19 @@ export default function CadAdmin() {
   if (!q.data) return <Loading />;
   const v = q.data;
   const review = v.accounts.filter((a) => a.status === 'review');
+  const pw = v.password;
   return (
     <div className="stack">
+      {v.sync?.late ? (
+        <section className="co-prompt" role="alert">
+          <p>
+            <strong>CAD Automation has not reported for {v.sync.minutes} minutes.</strong>{' '}
+            {v.sync.stale
+              ? 'Its last answer from the ERP is now too old, so it works by person: company limits, team views and the read-only refusal do not apply to new work until it reports again. Nothing moves between companies.'
+              : 'After 15 minutes without an answer it works by person until it reports again. Check the cados app (fly-status in kevinjogin/bizomat-cad) and the ERP’s sync answer.'}
+          </p>
+        </section>
+      ) : null}
       <section className="card card-pad stack">
         <h2 className="crm-subhead">CAD Automation in the ERP</h2>
         <p className="muted small">CAD Automation works inside the ERP only where the flag <code>cad_in_erp</code> is on (a company for a pilot, a rollout stage, or everyone), and its parts where their own flags are on. The old pages at bizomat.ai/cad open in the ERP only while <code>cad_redirect</code> is on. Set both in the <Link to="/admin/controls">Control Centre</Link>; switching them off puts everything back as it was.</p>
@@ -77,6 +90,21 @@ export default function CadAdmin() {
           <div className="crm-prop"><dt>Connection from the ERP</dt><dd>{v.connected ? 'Set' : `Not set: ${v.connectedReason ?? ''}`}</dd></div>
           <div className="crm-prop"><dt>Last report from CAD Automation</dt><dd>{v.health ? `${timeAgo(v.health.at)} (version ${String(v.health.worker.version ?? 'unknown')}, ${String(v.health.worker.computersOnline ?? 0)} computers online, scanner ${String(v.health.worker.scanner ?? 'unknown')})` : 'None yet'}</dd></div>
           <div className="crm-prop"><dt>On for</dt><dd>{v.enabled.length ? v.enabled.map((e) => (e.scope === 'company' ? e.name ?? e.scopeId : `${e.scope}${e.scopeId ? ` ${e.scopeId}` : ''}`)).join(', ') : 'Nobody yet'}</dd></div>
+          <div className="crm-prop"><dt>Contract</dt><dd>{v.health ? (Number(v.health.contract ?? 1) >= 2 ? 'Version 2: read-only roles refused in the company, download permission and link downloads' : 'Version 1: CAD Automation does not know read-only roles or link downloads yet; it is told only the companies where people may work') : 'Not known yet'}</dd></div>
+          {pw ? (
+            <div className="crm-prop">
+              <dt>Password sign-in</dt>
+              <dd>
+                {pw.retired
+                  ? 'Retired: everyone signs in to CAD Automation with their BIZOMAT account.'
+                  : pw.flag
+                    ? `Not retired yet: the flag is on, but ${pw.accounts - pw.linked} of ${pw.accounts} CAD Automation accounts are not linked to a BIZOMAT account (place them in the review list below).`
+                    : pw.ready
+                      ? `In use. Ready to retire: all ${pw.accounts} CAD Automation accounts are linked to BIZOMAT accounts. Switch cad_password_retired on in the Control Centre.`
+                      : `In use. ${pw.linked} of ${pw.accounts} CAD Automation accounts are linked to BIZOMAT accounts; it can be retired once all are.`}
+              </dd>
+            </div>
+          ) : null}
         </dl>
       </section>
 
@@ -85,13 +113,14 @@ export default function CadAdmin() {
         {!v.health?.companies.length ? <p className="muted">No company has CAD work recorded yet.</p> : (
           <div className="crm-table-scroll">
             <table className="data-table responsive">
-              <thead><tr><th>Company</th><th className="num">Computers</th><th className="num">Online</th><th className="num">Running</th><th className="num">Done, 24 h</th><th className="num">Failed, 24 h</th><th className="num">Average</th><th className="num">Exports</th></tr></thead>
+              <thead><tr><th>Company</th><th className="num">Computers</th><th className="num">Online</th><th className="num">Waiting</th><th className="num">Running</th><th className="num">Done, 24 h</th><th className="num">Failed, 24 h</th><th className="num">Average</th><th className="num">Exports</th></tr></thead>
               <tbody>
                 {v.health.companies.map((c) => (
                   <tr key={c.id}>
                     <td data-label="Company">{c.name}</td>
                     <td data-label="Computers" className="num">{c.computers}</td>
                     <td data-label="Online" className="num">{c.online ?? 0}</td>
+                    <td data-label="Waiting" className="num">{c.queued ?? 0}</td>
                     <td data-label="Running" className="num">{c.running ?? 0}</td>
                     <td data-label="Done" className="num">{c.done24h ?? 0}</td>
                     <td data-label="Failed" className="num">{c.failed24h ?? 0}</td>

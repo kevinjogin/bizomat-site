@@ -9,9 +9,14 @@ Two directions, no new secret:
     do there (the ERP's central permissions) and the company's fair-use limits.
   - A thread here posts this server's accounts, usage by company, finished runs and checksums to the ERP once a
     minute (<provider>/api/id/cad-sync, this server's BIZOMAT client credentials, as erpstatus.py), and keeps the
-    answer in erp_link.json: each account's BIZOMAT account and the companies where it works in the ERP, the company
-    its earlier computers, commands and AI connections belong to, each company's limits, and whether the old pages
-    open in the ERP (flag cad_redirect). Nothing here acts for an account the ERP did not name.
+    answer in erp_link.json: each account's BIZOMAT account and the companies where it works in the ERP (with whether
+    its role there may send work and download files), the company its earlier computers, commands and AI connections
+    belong to, each company's limits, whether the old pages open in the ERP (flag cad_redirect) and whether password
+    sign-in is retired (flag cad_password_retired). Nothing here acts for an account the ERP did not name.
+
+Contract 2 (owner's approval of 20 Nov 2026, docs/ERP-MODULE.md "Contract 2"): the sync says `contract: 2`; the ERP
+then also names companies where the person's role is read only (operate false: refused there, never by person), says
+per company whether they may download (export), and takes the downloads made through an AI assistant's links.
 """
 
 from __future__ import annotations
@@ -42,6 +47,8 @@ SKEW = 30
 MAX_LIFE = 120
 MAX_RUNS = 500
 MAX_BODY = 64 * 1024
+MAX_DOWNLOADS = 500      # downloads through AI assistants' links waiting for the next sync
+CONTRACT = 2
 FRESH = 15 * 60          # s an ERP answer counts: older, nobody is treated as working inside the ERP
 RUN_STATUS = {"succeeded": "done", "failed": "failed", "rejected": "failed", "denied": "failed", "unknown": "failed",
               "cancelled": "cancelled", "expired": "expired"}
@@ -104,17 +111,40 @@ def account(account_id: str | None) -> dict | None:
 
 
 def companies_of(account_id: str | None) -> list[dict]:
-    """The companies where this account works inside the ERP (empty: it works as before, by person)."""
+    """The companies where this account is inside the ERP, read only included (empty: it works as before, by person)."""
     a = account(account_id)
     return list(a.get("companies") or []) if a else []
+
+
+def working_companies(account_id: str | None) -> list[dict]:
+    """The companies where this account may send work to SOLIDWORKS (its role there is not read only)."""
+    return [c for c in companies_of(account_id) if c.get("operate", True)]
 
 
 def in_erp(account_id: str | None) -> bool:
     return bool(companies_of(account_id))
 
 
+def _entry(account_id: str | None, company: str | None) -> dict | None:
+    return next((c for c in companies_of(account_id) if company and c.get("id") == company), None)
+
+
 def allowed(account_id: str | None, company: str | None) -> bool:
-    return bool(company) and any(c.get("id") == company for c in companies_of(account_id))
+    """The account may work with CAD Automation in this company (it is there, and its role is not read only)."""
+    e = _entry(account_id, company)
+    return bool(e) and bool(e.get("operate", True))
+
+
+def may_export(account_id: str | None, company: str | None) -> bool:
+    """The account's role in this company may download CAD files (the company's download setting, brief Part 4)."""
+    e = _entry(account_id, company)
+    return bool(e) and bool(e.get("export", True))
+
+
+def password_retired() -> bool:
+    """Password sign-in is retired (the ERP's flag cad_password_retired, which acts only once every account here is
+    linked to a BIZOMAT account). A stale answer counts for nothing: the server then works as before."""
+    return bool(state().get("passwordRetired")) and fresh()
 
 
 def default_company(account_id: str | None) -> str | None:
@@ -142,9 +172,14 @@ def company_for_connection(account_id: str | None, grant: dict | None) -> str | 
     if co:
         if allowed(account_id, co):
             return co
+        if _entry(account_id, co):
+            raise read_only_error(account_id, co)
         raise ErpError(403, "COMPANY_ACCESS", "This AI assistant works in a company where you can no longer use CAD Automation. "
                                               "Disconnect it, connect it again and choose a company.")
-    d = default_company(account_id) or (companies_of(account_id)[0]["id"] if len(companies_of(account_id)) == 1 else None)
+    working = working_companies(account_id)
+    if not working:
+        raise read_only_error(account_id, None)
+    d = default_company(account_id) or (working[0]["id"] if len(working) == 1 else None)
     if d:
         if grant and grant.get("id"):
             from . import mcpauth
@@ -152,6 +187,14 @@ def company_for_connection(account_id: str | None, grant: dict | None) -> str | 
         return d
     raise ErpError(403, "COMPANY_REQUIRED", "CAD Automation now works inside BIZOMAT ERP, by company. Disconnect this AI assistant, "
                                             "connect it again and choose the company it works in.")
+
+
+def read_only_error(account_id: str | None, company: str | None) -> "ErpError":
+    """Refused: the person's role is read only in the company (or in every company where they are inside the ERP)."""
+    names = [c.get("name") or "your company" for c in companies_of(account_id) if not company or c.get("id") == company]
+    where = names[0] if len(names) == 1 else "your companies"
+    return ErpError(403, "READ_ONLY", f"Your role in {where} is read only: you can see CAD Automation's work in BIZOMAT ERP, "
+                                      "but not send work to SOLIDWORKS. Ask an administrator of the company for another role.")
 
 
 def erp_url(path: str = "/erp") -> str:
@@ -715,6 +758,39 @@ async def api_assembly_read(request: Request, ctx: Ctx, data: dict):
     return {"commandId": cid}
 
 
+# ----------------------------------------------------------------------------- downloads through AI assistants' links
+
+def download_refused(info: dict) -> str | None:
+    """Why a company's export may not be downloaded through its link now (the owner's role there changed within the
+    hour, or the company no longer names them), else None. An export outside any company: never refused here."""
+    co, owner = info.get("company"), info.get("owner")
+    if not co:
+        return None
+    if not fresh():
+        return None  # the ERP's answer is stale: the server works as before
+    if not may_export(owner, co):
+        return "Your role in this company cannot download CAD files."
+    return None
+
+
+def record_download(info: dict) -> None:
+    """A company's export downloaded through its link: kept for the next sync, where it goes into the company's
+    history in the ERP (as a download from the ERP itself does). Never the file, a path or the link."""
+    import uuid
+    if not info.get("company"):
+        return
+    entry = {"id": uuid.uuid4().hex, "export": str(info.get("artifact_id") or "")[:64], "account": str(info.get("owner") or "")[:64],
+             "company": str(info["company"])[:64], "name": _scrub(str(info.get("filename") or ""))[:200],
+             "format": str(info.get("format") or "")[:16], "size": int(info.get("size_bytes") or 0),
+             "sha256": str(info.get("sha256") or "")[:64], "at": int(time.time() * 1000)}
+    with _lock:
+        d = state()
+        pending = d.setdefault("downloads", [])
+        pending.append(entry)
+        del pending[:-MAX_DOWNLOADS]
+        _save()
+
+
 # ----------------------------------------------------------------------------- the sync
 
 def _checksum(rows, keys) -> str:
@@ -745,14 +821,15 @@ def build() -> dict:
     companies = []
     for co in sorted({r["company"] for r in devices + commands if r.get("company")}):
         stats = devicebridge._q(
-            "SELECT SUM(CASE WHEN status NOT IN (%s) AND expires > ? THEN 1 ELSE 0 END) AS busy,"
+            "SELECT SUM(CASE WHEN status NOT IN (%s) AND status != 'queued' AND expires > ? THEN 1 ELSE 0 END) AS busy,"
+            " SUM(CASE WHEN status = 'queued' AND expires > ? THEN 1 ELSE 0 END) AS queued,"
             " SUM(CASE WHEN status IN ('failed','rejected','denied','unknown','expired') AND updated > ? THEN 1 ELSE 0 END) AS failed,"
             " SUM(CASE WHEN status = 'succeeded' AND updated > ? THEN 1 ELSE 0 END) AS done,"
             " AVG(CASE WHEN status = 'succeeded' AND updated > ? THEN updated - created END) AS avg FROM commands WHERE company = ?"
-            % ",".join("?" * len(devicebridge.TERMINAL)), (*devicebridge.TERMINAL, now, day, day, day, co), one=True) or {}
+            % ",".join("?" * len(devicebridge.TERMINAL)), (*devicebridge.TERMINAL, now, now, day, day, day, co), one=True) or {}
         devs = [r for r in devices if r.get("company") == co]
         companies.append({"id": co, "computers": len(devs), "online": sum(1 for r in devs if devicebridge._online(r)),
-                          "queued": 0, "running": int(stats.get("busy") or 0), "failed24h": int(stats.get("failed") or 0),
+                          "queued": int(stats.get("queued") or 0), "running": int(stats.get("busy") or 0), "failed24h": int(stats.get("failed") or 0),
                           "done24h": int(stats.get("done") or 0), "avgSeconds": round(float(stats.get("avg") or 0), 1),
                           "storageBytes": sum(i.get("_size") or 0 for i in artifacts.items_for(co))})
     cursor = float(state().get("cursor") or 0)
@@ -778,10 +855,14 @@ def build() -> dict:
         worker["scanner"] = "on" if st.get("running") else "off"
     except Exception:  # noqa: BLE001
         worker["scanner"] = "unknown"
+    with _lock:
+        downloads = [dict(x) for x in (state().get("downloads") or [])][:MAX_DOWNLOADS]
     return {
+        "contract": CONTRACT,
         "accounts": accounts_out,
         "companies": companies,
         "runs": runs,
+        "downloads": downloads,
         "worker": worker,
         "checksums": {"devices": _checksum(devices, ("id", "owner", "company")), "commands": _checksum(commands, ("id", "owner", "company")),
                       "grants": _checksum(grants, ("id", "user", "company"))},
@@ -793,20 +874,32 @@ def _version() -> str:
     return (os.environ.get("OPENSKETCH_VERSION") or "dev")[:40]
 
 
-def apply(answer: dict, runs: list[dict]) -> dict:
+def _company_in(c: dict) -> dict:
+    """One company of an account in the ERP's answer. An ERP from before contract 2 names only the companies where the
+    person may work, without these keys: they then mean what they meant (may work, may download)."""
+    return {"id": str(c.get("id")), "name": str(c.get("name") or ""), "operate": c.get("operate", True) is not False,
+            "export": c.get("export", True) is not False}
+
+
+def apply(answer: dict, runs: list[dict], sent_downloads: list[dict] | None = None) -> dict:
     """Keeps the ERP's answer, and moves an account's computers, commands and AI connections that have no company yet
-    into the company the ERP named for it (only one where CAD Automation works inside the ERP). Returns counts."""
+    into the company the ERP named for it (only one where it may work inside the ERP). Drops the downloads the ERP
+    has now taken. Returns counts."""
     from . import devicebridge, mcpauth
     accounts_in = answer.get("accounts") if isinstance(answer.get("accounts"), dict) else {}
     moved = {"computers": 0, "commands": 0, "grants": 0}
     with _lock:
         d = state()
-        d["accounts"] = {k: {"userId": v.get("userId"), "companies": [{"id": str(c.get("id")), "name": str(c.get("name") or "")}
-                                                                        for c in (v.get("companies") or []) if isinstance(c, dict) and c.get("id")],
+        d["accounts"] = {k: {"userId": v.get("userId"), "companies": [_company_in(c) for c in (v.get("companies") or [])
+                                                                        if isinstance(c, dict) and c.get("id")],
                              "default": v.get("default"), "review": bool(v.get("review"))}
                          for k, v in accounts_in.items() if isinstance(v, dict)}
         d["limits"] = {k: v for k, v in (answer.get("limits") or {}).items() if isinstance(v, dict)}
         d["redirect"] = bool(answer.get("redirect"))
+        d["passwordRetired"] = answer.get("passwordRetired") is True
+        if sent_downloads:
+            done = {x["id"] for x in sent_downloads}
+            d["downloads"] = [x for x in (d.get("downloads") or []) if x.get("id") not in done]
         d["at"] = time.time()
         d.setdefault("since", d["at"])
         if runs:
@@ -814,7 +907,7 @@ def apply(answer: dict, runs: list[dict]) -> dict:
         d.pop("last_error", None)
     for acc, v in state()["accounts"].items():
         co = v.get("default")
-        if not co or not any(c["id"] == co for c in v["companies"]):
+        if not co or not any(c["id"] == co and c.get("operate", True) for c in v["companies"]):
             continue
         moved["computers"] += devicebridge._exec("UPDATE devices SET company = ? WHERE owner = ? AND company IS NULL", (co, acc))
         moved["commands"] += devicebridge._exec("UPDATE commands SET company = ? WHERE owner = ? AND company IS NULL", (co, acc))
@@ -843,7 +936,7 @@ def sync_once(http: httpx.Client | None = None) -> dict:
             client.close()
     if r.status_code != 200:
         raise RuntimeError(f"the ERP answered {r.status_code}")
-    return apply(r.json(), runs)
+    return apply(r.json(), runs, body["downloads"])
 
 
 class Syncer:

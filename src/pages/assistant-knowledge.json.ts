@@ -1,7 +1,7 @@
 // Builds the assistant's knowledge base from the site's own content at build time.
 // Output: /assistant-knowledge.json, read by the chat function. Only published content is included,
 // so the assistant can never reveal drafts and stays in sync with every deploy.
-import { SITE, NAV } from '../config/site.ts';
+import { SITE, NAV, LEARN_LINKS } from '../config/site.ts';
 import { CATEGORIES } from '../config/taxonomy.ts';
 import { BACKGROUND, FUTURE, PRINCIPLES } from '../data/brand.ts';
 import { FAQ } from '../data/faq.ts';
@@ -66,7 +66,7 @@ export async function GET() {
       `Prices (costs, fees): ${PRICING_NOTE} This applies to the ${ASSESSMENT.name}, the ${FACTORY_FIX.name} and every package. BIZOMAT's software (the Systems, /systems/) is free.`,
       'Certification: not every assignment includes professional engineering certification, statutory approval or sign-off; regulated or specialist work (for example designs that legally require a registered engineer or certifier) may require appropriately qualified or registered professionals. See /disclaimer/.',
       'To ask a question, give feedback, suggest an idea, propose a collaboration, request a quote or discuss a project, use the enquiry form at /contact/ (REACHOS). Visitors can also book a meeting online: the Book a meeting option on /contact/ opens the BIZOMAT Proton Calendar booking page.',
-      `Main pages: ${NAV.map((n) => `${n.label} ${n.href}`).join(', ')}, Factory Fix /factory-fix/, Privacy /privacy/, Terms /terms/, Disclaimer /disclaimer/.`,
+      `Main pages: ${NAV.map((n) => `${n.label} ${n.href}`).join(', ')}, Learn (the ${LEARN_LINKS[0].label}, in the Systems menu) ${LEARN_LINKS[0].href}, Factory Fix /factory-fix/, Privacy /privacy/, Terms /terms/, Disclaimer /disclaimer/.`,
       SITE.email ? `Email: ${SITE.email}.` : 'There is no public email address or phone number listed; contact is through /contact/.',
     ].join(' '),
   });

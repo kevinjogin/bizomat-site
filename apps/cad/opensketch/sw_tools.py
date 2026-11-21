@@ -961,6 +961,15 @@ async def sw_export(format: Literal["step", "stl", "x_t", "igs", "sldprt", "slda
         info = await _thread(artifacts.publish, rec, raw, fmt, (res or {}).get("title") or "SOLIDWORKS")
     except artifacts.ArtifactError as exc:
         return _text({"error": str(exc)}, True)
+    # Inside a BIZOMAT ERP company whose download setting does not cover this person's role: the export is kept for
+    # the company (one hour, in the ERP's CAD Automation, Exports), without a link (erplink.py, contract 2).
+    from . import erplink, tenancy
+    company = tenancy.company()
+    if company and not erplink.may_export(store.owner_of(_who()), company):
+        info = {k: v for k, v in info.items() if k != "download_url"}
+        info["download"] = ("Not allowed for your role in this company, so there is no download link. The export is kept "
+                            "for an hour in BIZOMAT ERP (CAD Automation, Exports), where someone who may download can save "
+                            "it to a product.")
     return _text(dict(res, **info))
 
 

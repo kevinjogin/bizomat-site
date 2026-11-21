@@ -48,6 +48,8 @@ export const MODULES = {
   quality: { label: 'Quality', enforcedFrom: 'R4' },
   supply_chain: { label: 'Warehouse: orders and dispatch', enforcedFrom: 'R4' },
   cad: { label: 'CAD Automation', enforcedFrom: 'CAD' },
+  // Product Management's sales and margin analysis (owner, 20 Nov 2026: in the style of Phocas; released on for everyone).
+  analysis: { label: 'Product Management: sales and margin analysis', enforcedFrom: 'Analysis' },
   // The modules framework (owner's brief "97-module enterprise expansion", 20 Nov 2026): on by default like every module,
   // so the owner's request to publish them for testing is met; a platform admin switches any of them off per company,
   // rollout stage or everyone (src/shared/erp-objects FRAMEWORK_SWITCHES).
@@ -286,6 +288,15 @@ const BASE: Record<string, FlagDef> = {
     scopes: ['global', 'stage', 'company'],
     risk: 'low',
     enforcement: false,
+    release: 'CAD',
+  },
+  cad_password_retired: {
+    label: 'CAD Automation: password sign-in retired',
+    description: 'CAD Automation’s own email-and-password sign-in, sign-up, invitations, early access codes and the Companion’s password pairing stop: everyone signs in with their BIZOMAT account, and computers are paired with their code. Acts only while every CAD Automation account is linked to a BIZOMAT account (the console’s CAD Automation panel says so). Off: password sign-in again (rollback).',
+    values: ONOFF,
+    scopes: ['global'],
+    risk: 'high',
+    enforcement: true,
     release: 'CAD',
   },
   move_records: {

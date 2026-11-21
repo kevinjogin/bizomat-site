@@ -185,6 +185,7 @@ export const ERP_DOMAINS: readonly ErpDomain[] = [
       cap('Rebates', 'planned'),
       cap('Customer service', 'planned', 'CRM activities and timelines record contact with customers. Cases and service levels are planned.'),
       cap('Sales forecast and reports', 'live', 'CRM dashboard and 11 reports, including the weighted and commit forecast.'),
+      cap('Sales and margin analysis', 'live', 'In Product Management: sales, cost and margin of the goods dispatched, by product, category, family, customer, salesperson, warehouse and month, against the same period last year or the period before, with drill-down, saved views, CSV and stock against sales (days of cover, reorder, not moving). Budgets and forecasts beside it are planned.'),
     ],
   },
   {

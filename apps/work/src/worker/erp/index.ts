@@ -49,6 +49,7 @@ import { returnRoutes } from './returns';
 import { supplyReportRoutes, supplyCounts } from './supply-reports';
 // The modules framework (owner's brief "97-module enterprise expansion", 20 Nov 2026): src/worker/erp/objects
 import { objectRoutes } from './objects/routes';
+import { analysisRoutes } from './analysis';
 import { NEW_ROLE_HELP } from '../../shared/erp-objects/roles';
 
 export const erpRoutes = new Hono<AppEnv>();
@@ -261,3 +262,5 @@ erpRoutes.route('/', supplyReportRoutes);
 // The modules framework: People and HR, payroll, timesheets, service, contracts, fleet, calibration, fixed assets, the
 // industry solutions and the rest, with the 97-module catalogue
 erpRoutes.route('/', objectRoutes);
+// Product Management: sales and margin analysis, and stock against sales
+erpRoutes.route('/', analysisRoutes);

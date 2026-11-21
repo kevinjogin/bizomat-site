@@ -633,6 +633,27 @@ html[data-ui="new"] .erp-module-card { gap: var(--bz-space-2); }
 html[data-ui="new"] .erp-dispatch-job { margin-bottom: var(--bz-space-2); padding: var(--bz-space-2) var(--bz-space-2); }
 html[data-ui="new"] .nav-item.nav-sub { padding-left: var(--bz-space-8); font-size: var(--bz-text-sm); }
 html[data-ui="new"] .erp-crumbs { gap: var(--bz-space-2); }
+html[data-ui="new"] .erp-an { gap: var(--bz-space-3); }
+html[data-ui="new"] .erp-an-bar { gap: var(--bz-space-2) var(--bz-space-3); }
+html[data-ui="new"] .erp-an-field { gap: var(--bz-space-1); font-size: var(--bz-text-xs); }
+html[data-ui="new"] .erp-an-field.inline { gap: var(--bz-space-2); }
+html[data-ui="new"] .erp-an-trail { gap: var(--bz-space-1) var(--bz-space-2); }
+html[data-ui="new"] .erp-an-step { gap: var(--bz-space-1); }
+html[data-ui="new"] .erp-an-crumb { border-radius: var(--bz-radius-full); padding: var(--bz-space-1) var(--bz-space-3); font-size: var(--bz-text-sm); }
+html[data-ui="new"] .erp-an-body { gap: var(--bz-space-3); }
+html[data-ui="new"] .erp-an-tiles { gap: var(--bz-space-3); }
+html[data-ui="new"] .erp-an-tile { gap: var(--bz-space-1); padding: var(--bz-space-3) var(--bz-space-4); }
+html[data-ui="new"] .erp-an-label { font-size: var(--bz-text-xs); }
+html[data-ui="new"] .erp-an-value { font-size: var(--bz-text-2xl); }
+html[data-ui="new"] .erp-an-delta { gap: var(--bz-space-1); font-size: var(--bz-text-xs); }
+html[data-ui="new"] .erp-an-chart { gap: var(--bz-space-2); }
+html[data-ui="new"] .erp-an-legend { gap: var(--bz-space-2) var(--bz-space-4); font-size: var(--bz-text-sm); }
+html[data-ui="new"] .erp-an-key { gap: var(--bz-space-2); }
+html[data-ui="new"] .erp-an-svg text { font-size: var(--bz-text-2xs); }
+html[data-ui="new"] .erp-an-tip { padding: var(--bz-space-2) var(--bz-space-3); font-size: var(--bz-text-sm); }
+html[data-ui="new"] .erp-an-dims { gap: var(--bz-space-2); margin-bottom: var(--bz-space-2); }
+html[data-ui="new"] .erp-an-dim { border-radius: var(--bz-radius-full); padding: var(--bz-space-1) var(--bz-space-3); font-size: var(--bz-text-sm); }
+html[data-ui="new"] .erp-an-open { margin-left: var(--bz-space-2); }
 
 /* fin.css */
 html[data-ui="new"] .fin-hint { margin: 0 0 var(--bz-space-3); }
