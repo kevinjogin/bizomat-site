@@ -112,6 +112,18 @@ describe('price lists and promotions on sales orders', () => {
     await owner.json('PUT', erp(co, `/sales-orders/${d3.id}`), { lines: d3v.lines.map((l: any, i: number) => ({ id: l.id, productId: l.productId, quantity: l.quantity, unitPriceCents: i === 1 ? 1_000 : l.unitPriceCents, discountBp: l.discountBp, taxCode: l.taxCode })) });
     expect((await owner.json('GET', erp(co, `/sales-orders/${d3.id}`))).lines[0].priceNote).not.toContain('Big order');
 
+    // long names are shortened in the note, so the promotion part always fits and is recognised
+    const longPromo = await owner.json('POST', x(co, '/o/pr_promotion'), { data: { name: 'P'.repeat(150), discountType: 'percent', discountValue: 6, product: widget.id, minOrder: 10_000, validFrom: day(-1), validTo: day(30) } });
+    await owner.json('POST', x(co, `/o/pr_promotion/${longPromo.record.id}/step/activate`), {});
+    const longList = await owner.json('POST', x(co, '/o/pr_pricelist'), { data: { name: 'L'.repeat(150), currency: 'AUD' }, lines: [{ product: widget.id, minQty: 1, unitPrice: 2_000 }] });
+    await owner.json('POST', x(co, `/o/pr_pricelist/${longList.record.id}/step/activate`), {});
+    const d4 = await owner.json('POST', erp(co, '/sales-orders'), { crmCompanyId: third.crmCompanyId, lines: [{ productId: widget.id, quantity: 1 }, { productId: kit.id, quantity: 1, unitPriceCents: 9_000, discountBp: 0 }] });
+    const d4v = await owner.json('GET', erp(co, `/sales-orders/${d4.id}`));
+    expect(d4v.lines[0].priceNote.length).toBeLessThanOrEqual(300);
+    expect(d4v.lines[0].priceNote).toMatch(/, promotion .+ \(6% off\)$/);
+    await owner.json('PUT', erp(co, `/sales-orders/${d4.id}`), { lines: d4v.lines.map((l: any, i: number) => ({ id: l.id, productId: l.productId, quantity: l.quantity, unitPriceCents: i === 1 ? 1_000 : l.unitPriceCents, discountBp: l.discountBp, taxCode: l.taxCode })) });
+    expect((await owner.json('GET', erp(co, `/sales-orders/${d4.id}`))).lines[0].priceNote).not.toContain('promotion');
+
     // the Pricing module switched off: standard prices only, nothing noted from the lists
     await env.DB.prepare("INSERT INTO feature_flags (key, scope, scope_id, value, reason, updated_by, updated_at) VALUES ('module_commercial_enabled', 'company', ?, 'off', 'test switch', 'test', ?)").bind(co, Date.now()).run();
     const off = await owner.json('GET', erp(co, `/sales-orders/price?productId=${kit.id}&customer=crm:${trade.crmCompanyId}&qty=20`));
