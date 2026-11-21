@@ -2,9 +2,9 @@
 # Runs on pull requests and on main after a merge. Read-only: no secrets, nothing deployed, nothing pushed.
 #
 # Jobs: website (brand copies, verify, the design audit's layout check), work (lint, types, tests, builds incl. the
-# Node server), cad (pytest in two parts, npm test), proxy (tests, script and config checks), image (Docker build of
-# infrastructure/fly/Dockerfile, a migration round trip inside it, then the compose stack with the smoke test and the
-# secret-isolation check).
+# Node server, the end-to-end specs in Chromium against it), cad (pytest in two parts, npm test), proxy (tests, script
+# and config checks), image (Docker build of infrastructure/fly/Dockerfile, a migration round trip inside it, then the
+# compose stack with the smoke test and the secret-isolation check).
 name: BIZOMAT CI
 
 # Pull requests run it, and main runs it after a merge. A push to a branch with an open pull request used to run every
@@ -87,6 +87,24 @@ jobs:
       - run: npm run build
       - run: npm run test:node
       - run: npm run build:node
+      # The end-to-end specs (e2e/*.spec.ts) in Chromium, on desktop and phone, against the Node server with a fresh data
+      # folder (playwright.node.config.ts builds the client and the server and starts it): sign-in, Project Management,
+      # the CRM and Finance inside BIZOMAT ERP, the founder console and the new UI's behaviour. They ran only by hand
+      # before and drifted from the app unseen. A test that fails is run once more (CI=true), with a trace that time.
+      - name: Chromium for the end-to-end tests
+        run: npx playwright install --with-deps --only-shell chromium
+      - name: End-to-end tests (Node runtime)
+        run: npm run test:e2e:node -- --trace on-first-retry
+      - name: Keep the end-to-end report when it fails
+        if: failure()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: work-e2e
+          path: |
+            apps/work/playwright-report/node/
+            apps/work/test-results/node/
+          if-no-files-found: ignore
+          retention-days: 7
 
   cad:
     name: cad pytest (${{ matrix.part }})
