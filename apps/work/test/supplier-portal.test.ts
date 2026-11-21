@@ -34,10 +34,13 @@ describe('the supplier portal', () => {
     await portalOn(co);
 
     // an order sent to Acme (with an internal note), one still a draft, one to the other supplier
-    const po = await buyer.json('POST', erp(co, '/purchase-orders'), { supplierId: acme.id, notes: 'Internal: we expect 30 percent margin', terms: 'Deliver to the back dock', lines: [{ item: 'Hex bolt M8', quantity: 100, unitPriceCents: 25 }] });
+    const po = await buyer.json('POST', erp(co, '/purchase-orders'), { supplierId: acme.id, notes: 'Call before delivery', terms: 'Deliver to the back dock', lines: [{ item: 'Hex bolt M8', quantity: 100, unitPriceCents: 25 }] });
     await buyer.json('POST', erp(co, `/purchase-orders/${po.id}/submit`), {});
     await buyer.json('POST', erp(co, `/purchase-orders/${po.id}/sent`), {});
     const draft = await buyer.json('POST', erp(co, '/purchase-orders'), { supplierId: acme.id, lines: [{ item: 'Washer', quantity: 10, unitPriceCents: 5 }] });
+    // approved but not yet sent: still the company's own
+    const unsent = await buyer.json('POST', erp(co, '/purchase-orders'), { supplierId: acme.id, lines: [{ item: 'Spring', quantity: 5, unitPriceCents: 40 }] });
+    await buyer.json('POST', erp(co, `/purchase-orders/${unsent.id}/submit`), {});
     const theirs = await buyer.json('POST', erp(co, '/purchase-orders'), { supplierId: other.id, lines: [{ item: 'Sheet', quantity: 1, unitPriceCents: 9_000 }] });
     await buyer.json('POST', erp(co, `/purchase-orders/${theirs.id}/submit`), {});
     await buyer.json('POST', erp(co, `/purchase-orders/${theirs.id}/sent`), {});
@@ -82,10 +85,10 @@ describe('the supplier portal', () => {
     // the other supplier's order and records are not theirs
     expect((await rep.req('GET', `${base}/orders/${theirs.id}`)).status).toBe(404);
     expect((await rep.req('GET', `${base}/orders/${draft.id}`)).status).toBe(404);
+    expect((await rep.req('GET', `${base}/orders/${unsent.id}`)).status).toBe(404);
     expect((await rep.req('GET', `/api/supplier-portal/${co}/${other.id}`)).status).toBe(404);
     const detail = await rep.json('GET', `${base}/orders/${po.id}`);
-    expect(detail.order).toMatchObject({ number: po.number ?? expect.any(String), terms: 'Deliver to the back dock' });
-    expect(JSON.stringify(detail)).not.toContain('30 percent margin');
+    expect(detail.order).toMatchObject({ number: po.number ?? expect.any(String), terms: 'Deliver to the back dock', notes: 'Call before delivery' });
     expect(detail.files).toEqual([]);
     expect(detail.lines[0]).toMatchObject({ item: 'Hex bolt M8', quantity: 100, unitPriceCents: 25 });
 

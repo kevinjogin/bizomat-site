@@ -5,9 +5,9 @@
 // address. They are never members of the company and have no ERP role: the portal reads only that supplier's records
 // in that company, every statement scoped by company and supplier.
 //
-//   Purchase orders  approved, sent or being received (and closed or cancelled ones that were sent): the lines, prices,
-//                    dates and terms, never the company's internal notes; acknowledged once per revision (accepted with
-//                    the promised date, or declined), which tells the buyer.
+//   Purchase orders  once sent to the supplier (and later received, closed or cancelled): the lines, prices, dates,
+//                    terms and the notes for the supplier, as the order's PDF shows them; acknowledged once per revision
+//                    (accepted with the promised date, or declined), which tells the buyer.
 //   Requests         the requests for quotation the supplier is on, once sent; a quotation is sent while the request is
 //                    open, and replaces their earlier one. Nobody's other quotation, and not who was chosen.
 //   Documents        PDF and images added to an order, with the same checks as every upload; the portal shows the
@@ -242,8 +242,9 @@ function poLineDTO(l: any) {
 }
 
 async function poFor(db: D1Database, p: Portal, id: string) {
+  // only orders sent to the supplier: an approved order is still the company's until it is sent
   const po = await db
-    .prepare(`SELECT * FROM erp_purchase_orders WHERE company_id = ? AND supplier_id = ? AND id = ? AND (status IN (${SHOWN_PO.map(() => '?').join(',')}) OR (status = 'cancelled' AND sent_at IS NOT NULL))`)
+    .prepare(`SELECT * FROM erp_purchase_orders WHERE company_id = ? AND supplier_id = ? AND id = ? AND sent_at IS NOT NULL AND (status IN (${SHOWN_PO.map(() => '?').join(',')}) OR status = 'cancelled')`)
     .bind(p.companyId, p.supplierId, id.slice(0, 64), ...SHOWN_PO)
     .first<any>();
   if (!po) throw notFound('Purchase order');
@@ -254,7 +255,7 @@ supplierPortalRoutes.get('/:company/:supplier', async (c) => {
   const p = await portal(c);
   const db = c.env.DB;
   const [orders, rfqs] = await db.batch([
-    db.prepare(`SELECT id, number, status, revision, order_date, required_date, currency, total_cents, (SELECT decision FROM erp_po_acknowledgements k WHERE k.company_id = o.company_id AND k.po_id = o.id AND k.revision = o.revision) AS ack FROM erp_purchase_orders o WHERE o.company_id = ? AND o.supplier_id = ? AND (o.status IN (${SHOWN_PO.map(() => '?').join(',')}) OR (o.status = 'cancelled' AND o.sent_at IS NOT NULL)) ORDER BY o.order_date DESC LIMIT 200`).bind(p.companyId, p.supplierId, ...SHOWN_PO),
+    db.prepare(`SELECT id, number, status, revision, order_date, required_date, currency, total_cents, (SELECT decision FROM erp_po_acknowledgements k WHERE k.company_id = o.company_id AND k.po_id = o.id AND k.revision = o.revision) AS ack FROM erp_purchase_orders o WHERE o.company_id = ? AND o.supplier_id = ? AND o.sent_at IS NOT NULL AND (o.status IN (${SHOWN_PO.map(() => '?').join(',')}) OR o.status = 'cancelled') ORDER BY o.order_date DESC LIMIT 200`).bind(p.companyId, p.supplierId, ...SHOWN_PO),
     db.prepare("SELECT r.id, r.number, r.title, r.status, r.reply_by, r.required_date, r.currency, (SELECT total_cents FROM erp_quotations q WHERE q.company_id = r.company_id AND q.rfq_id = r.id AND q.supplier_id = x.supplier_id) AS quoted FROM erp_rfq_suppliers x JOIN erp_rfqs r ON r.company_id = x.company_id AND r.id = x.rfq_id WHERE x.company_id = ? AND x.supplier_id = ? AND x.sent_at IS NOT NULL AND r.status <> 'draft' ORDER BY r.created_at DESC LIMIT 200").bind(p.companyId, p.supplierId),
   ]);
   return c.json({
@@ -277,7 +278,7 @@ supplierPortalRoutes.get('/:company/:supplier/orders/:po', async (c) => {
   ]);
   const ack = (acks.results as any[]).find((k) => k.revision === po.revision) ?? null;
   return c.json({
-    order: { id: po.id, number: po.number, status: po.status, revision: po.revision, orderDate: po.order_date, requiredDate: po.required_date, deliveryAddress: po.delivery_address, paymentTermsDays: po.payment_terms_days, currency: po.currency, taxMode: po.tax_mode, terms: po.terms, subtotalCents: po.subtotal_cents, taxCents: po.tax_cents, totalCents: po.total_cents, cancelled: po.status === 'cancelled' },
+    order: { id: po.id, number: po.number, status: po.status, revision: po.revision, orderDate: po.order_date, requiredDate: po.required_date, deliveryAddress: po.delivery_address, paymentTermsDays: po.payment_terms_days, currency: po.currency, taxMode: po.tax_mode, terms: po.terms, notes: po.notes, subtotalCents: po.subtotal_cents, taxCents: po.tax_cents, totalCents: po.total_cents, cancelled: po.status === 'cancelled' },
     lines: (lines.results as any[]).map(poLineDTO),
     acknowledgement: ack ? { decision: ack.decision, promisedDate: ack.promised_date, note: ack.note, at: ack.created_at } : null,
     canAnswer: OPEN_PO.includes(po.status) && !ack,

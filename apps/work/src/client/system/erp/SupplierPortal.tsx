@@ -256,6 +256,7 @@ function PortalOrder() {
           {o.deliveryAddress ? <li>Deliver to {o.deliveryAddress}</li> : null}
           {o.paymentTermsDays !== null ? <li>Payment terms: {o.paymentTermsDays} days</li> : null}
           {o.terms ? <li>Terms: {o.terms}</li> : null}
+          {o.notes ? <li>Notes: {o.notes}</li> : null}
         </ul>
         <table className="data-table responsive">
           <thead><tr><th>Item</th><th className="num">Quantity</th><th className="num">Unit price</th><th className="num">Amount</th><th className="num">Received</th></tr></thead>
