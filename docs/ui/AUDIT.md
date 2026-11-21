@@ -139,3 +139,33 @@ size by its height in the kit and the README, rather than renaming 1,884 buttons
 
 Every phase keeps the rule that nothing changes with the flag off, and changes no route, behaviour or company-scoped
 check. Each ends with the website's and the work app's checks and screenshots.
+
+## 7. Status (21 Nov 2026)
+
+The owner approved phases 2 to 6 on 21 Nov 2026, with a local run and the UI kit's preview in place of the retired
+staging app (section 5). Phase 7 (breakpoints and the clean-up after the switch-on) was not part of the approval.
+
+| # | Done | Where |
+| --- | --- | --- |
+| G1 | The Knowledge Centre's `.bz-btn` on the button rules; its small size 32 px | `src/styles/ui-new.css` |
+| G2 | The Tools page's `.btn` with every state | the same |
+| G3 | The six one-off buttons on the button rules (and AI Search's Cancel, found by the new test) | the same, `BookingCard.astro`, `ChatWidget.astro` |
+| G4 | `lc-card`, `learn-card`, `dr-card`, `book-card`, `price-card` and `sys-box` on the card rules | `src/styles/ui-new.css` |
+| G5 | Every colour written out checked: the console's status pills and banner on the status colours; the rest deliberate (listed in the README) | `apps/work/src/client/styles/ui-new.css` |
+| G6 | The generator puts transitions and short animations on the motion tokens (longhands only; buttons left to their rules) | `scripts/ui/gen-overrides.mjs` |
+| G7 | `.mt-head` and the older console's top bar on the page template | `apps/work/src/client/styles/ui-new.css` |
+| G8 | Modals and drawers close in 200 ms (an inert copy fades out) | `lib/ui.ts` `useExitAnimation`, `overlays.tsx`, `ItemPanel.tsx` |
+| G9 | The company switch held, with a skeleton, until the new company's data has loaded; end-to-end test | `lib/ui.ts`, `e2e/ui-new.spec.ts` |
+| G10 | Not done: breakpoints wait for phase 7 | |
+| G11 | Inline font sizes and corners on the scales (24 values in 13 screens) | `scripts/ui/inline-styles.mjs` |
+| G12 | The kit's drawer and its website section | `admin/pages/UiKit.tsx`, `UiKitWebsite.tsx` |
+| G13 | Website tables; the AI Search panel's shadow and closing fade | `src/styles/ui-new.css`, `ChatWidget.astro` |
+| G14 | Contrast of the four status colours and the accent and neutral badges, light and dark; focus as a solid outline | `tests/ui-tokens.test.ts` |
+| G15 | Not done: phase 7 | |
+| G16 | The README corrected (inputs 32 px; screenshots) | `docs/ui/README.md` |
+
+Checks: with the flag off, every website page template (1440 and 390 px) and 29 ERP screens were compared pixel by
+pixel before and after the change on the same data. The only differences were the UI kit's own new wording and
+capture noise that the old version shows against itself too (lazy images, the sticky header in a full-page shot, one
+or two brightness levels on anti-aliased edges). With the new UI on, the website's design audit (30 pages, 1440 and
+390 px, light and dark) and the new end-to-end spec pass.

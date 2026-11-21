@@ -190,7 +190,14 @@ Read this file, `docs/BIZOMAT-PROJECT-STATUS.md`, `docs/BIZOMAT-ARCHITECTURE.md`
   `/api/auth/me`; the website's server asks `/tasks/api/ui/public` every minute (`WEB_UPSTREAM_WORK`) and marks pages
   before compressing them. Comfortable or Compact density is saved per account; the UI kit is `/erp/admin/ui-kit`.
   Illustrations are never converted. Never switch the flag on without the owner's approval. Released with Stage 1 and
-  Members on 19 Nov 2026 (kevinjogin/bizomat-site#91, deploy run 42), every new flag off.
+  Members on 19 Nov 2026 (kevinjogin/bizomat-site#91, deploy run 42), every new flag off. The brief came again on
+  20 Nov: its audit (`docs/ui/AUDIT.md`, section 7) and phases 2 to 6 (owner, 21 Nov 2026; a local run and the UI kit's
+  preview instead of staging) added one button system for every website button (a test fails on one outside it),
+  cards, tables and section spacing, the record headers on the page template, transitions on the motion tokens (the
+  generator writes only the longhands), modals and drawers closing in 200 ms (`useExitAnimation`), the company switch
+  held with a skeleton until the new company's data has loaded (`e2e/ui-new.spec.ts`), inline font sizes and corners,
+  focus as a solid 2 px outline with the 30% ring, and the kit's drawer and website section; still behind the flag,
+  and nothing changes with it off (compared pixel by pixel). Breakpoints wait for the clean-up after the switch-on.
   **CAD Automation inside the ERP** (owner's brief and approved audit of 19 Nov 2026; `docs/cad/README.md`, and
   kevinjogin/bizomat-cad `docs/ERP-MODULE.md`; migration 0037; flags `cad_in_erp`, `cad_redirect`, `cad_products`,
   `cad_bom`, `cad_manufacturing`, `cad_quality`, `cad_projects`, all off): the screens, accounts, computers, history and
